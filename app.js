@@ -9,19 +9,11 @@
   const VALID_LOADERS = new Set(["vanilla", "fabric", "forge", "neoforge", "unsure"]);
   const sectionIds = ["trophy", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request"];
 
-  const artifacts = [
-    artifact("algebra-miner", "Algebra Miner skin", "Solo", null, null, "vanilla", [], "Pending final load test"),
-    artifact("cursor-pet", "Cursor + pet mob", "Solo", null, null, "vanilla", [], "Pending final load test"),
-    artifact("sem1-sounds", "Victory sounds pack", "Solo", "1.21", "1.21.4", "vanilla", [], "Pending final load test"),
-    artifact("nether-theme", "Nether telemetry", "Site", null, null, "vanilla", [], "Browser tested"),
-    artifact("breeding-pen", "Auto-breeding pen", "Shareable", "1.21", "1.21.4", "unsure", [], "Waiting for modded test instance"),
-    artifact("tnt-blueprint", "TNT trajectory kit", "Solo", null, null, "vanilla", [], "Pending final load test"),
-    artifact("target-range", "Target-practice range", "Shareable", "1.21", "1.21.4", "unsure", [], "Waiting for modded test instance"),
-    artifact("distance-tool", "Distance calculator", "Solo", null, null, "vanilla", [], "Pending final load test"),
-    artifact("farm-optimizer", "Farm-rate optimizer", "Solo", null, null, "vanilla", [], "Pending final load test"),
-    artifact("analytics-kit", "Analytics template", "Solo", null, null, "vanilla", [], "Pending final load test"),
-    artifact("end-theme", "End telemetry", "Site", null, null, "vanilla", [], "Browser tested")
-  ];
+  // vault/manifest.json is the single source of truth for artifacts. Hardcoding a
+  // second copy here drifted immediately: it advertised the victory pack as 1.21.x
+  // when the built pack is pack_format 15, i.e. 1.20.1 only. Telling him a reward
+  // works on his version when it does not is the one unrecoverable failure.
+  let artifacts = [];
 
   let currentData = null;
   let intervalId = null;
@@ -198,19 +190,20 @@
             .filter(item => item.sectionNumber > 0 && item.state === "not_started")
             .map(item => item.sectionNumber)).size
       : 0;
+    // Ids must match vault/manifest.json exactly, or a milestone silently unlocks
+    // nothing.
     const conditions = {
-      "algebra-miner": (sem1?.allDone ?? 0) >= 90,
-      "cursor-pet": sem1SectionsSealed >= 4,
-      "sem1-sounds": (sem1?.percent ?? 0) >= 80,
-      "nether-theme": recent.length >= 3,
+      "algebra-miner-skin": (sem1?.allDone ?? 0) >= 90,
+      "momentum-cursor-pet": sem1SectionsSealed >= 4,
+      "sem1-victory-pack": (sem1?.percent ?? 0) >= 80,
       "nether-theme": sem2Submitted.length >= 3,
-      "breeding-pen": sectionDone(1),
-      "tnt-blueprint": sectionDone(2),
-      "target-range": sectionDone(3),
-      "distance-tool": sectionDone(4),
-      "farm-optimizer": sectionDone(5),
-      "analytics-kit": sectionDone(6),
-      "end-theme": data.semesters.every(semester =>
+      "auto-breeding-pen": sectionDone(1),
+      "ballistics-workbench": sectionDone(2),
+      "target-practice": sectionDone(3),
+      "surveyor": sectionDone(4),
+      "farm-rate-optimizer": sectionDone(5),
+      "youtube-analytics-template": sectionDone(6),
+      "end-theme-final": data.semesters.every(semester =>
         semester.activities.every(item => item.state !== "not_started"))
     };
     return new Set(Object.keys(conditions).filter(id => conditions[id]));
@@ -229,7 +222,7 @@
     const unlocked = evaluateUnlocks(data);
     const allowed = new Set(["overworld"]);
     if (unlocked.has("nether-theme")) allowed.add("nether");
-    if (unlocked.has("end-theme")) allowed.add("end");
+    if (unlocked.has("end-theme-final")) allowed.add("end");
     const stored = storageGet("mc.theme", "overworld");
     const theme = VALID_THEMES.has(stored) && allowed.has(stored) ? stored : "overworld";
     document.documentElement.dataset.theme = theme;
@@ -544,6 +537,21 @@
     startDriver();
   }
 
+  async function loadManifest() {
+    try {
+      const response = await fetch("vault/manifest.json");
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const entries = await response.json();
+      artifacts = (Array.isArray(entries) ? entries : []).map(entry => artifact(
+        entry.id, entry.name, entry.tier, entry.minVersion, entry.maxVersion,
+        entry.loader, entry.files || [], entry.testedOn
+      ));
+    } catch {
+      // Vault stays empty rather than showing rewards we cannot actually deliver.
+      artifacts = [];
+    }
+  }
+
   async function loadData(force = false) {
     try {
       const suffix = force ? `?refresh=${Date.now()}` : "";
@@ -714,5 +722,5 @@
   });
 
   bindEvents();
-  loadData();
+  loadManifest().then(loadData);
 })();

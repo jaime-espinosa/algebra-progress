@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Ballistics Workbench</title><style>
+  :root{color-scheme:dark;--bg:#0b0d10;--panel:#12151a;--line:#2b333d;--text:#e9edf1;--dim:#98a2ad;--accent:#6fdc82;--gold:#f2c14e}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 ui-monospace,monospace}
+  main{max-width:860px;margin:32px auto;padding:24px;border:1px solid var(--line);background:var(--panel)}
+  h1,h2{font-size:20px}label{display:grid;gap:5px;color:var(--dim)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+  input,button{font:inherit;color:var(--text);background:#0e1115;border:1px solid var(--line);padding:10px}
+  button{border-color:var(--accent);cursor:pointer}.result{margin-top:18px;padding:16px;border-left:4px solid var(--accent);white-space:pre-wrap}
+  .note{color:var(--dim)}code{color:var(--gold)}svg{max-width:100%;height:auto;background:#0e1115;border:1px solid var(--line)}
+</style>
+<main><h1>TNT Cannon Blueprint + Trajectory Calculator</h1><p class="note">Scratch-world design. The calculator is an ideal estimate; server tick rate and cannon geometry change real TNT motion.</p>
+<svg viewBox="0 0 720 210" role="img" aria-label="side-view safe test cannon blueprint">
+<g stroke="#242a33" stroke-width="1"><path d="M0 0v210"/><path d="M20 0v210"/><path d="M40 0v210"/><path d="M60 0v210"/><path d="M80 0v210"/><path d="M100 0v210"/><path d="M120 0v210"/><path d="M140 0v210"/><path d="M160 0v210"/><path d="M180 0v210"/><path d="M200 0v210"/><path d="M220 0v210"/><path d="M240 0v210"/><path d="M260 0v210"/><path d="M280 0v210"/><path d="M300 0v210"/><path d="M320 0v210"/><path d="M340 0v210"/><path d="M360 0v210"/><path d="M380 0v210"/><path d="M400 0v210"/><path d="M420 0v210"/><path d="M440 0v210"/><path d="M460 0v210"/><path d="M480 0v210"/><path d="M500 0v210"/><path d="M520 0v210"/><path d="M540 0v210"/><path d="M560 0v210"/><path d="M580 0v210"/><path d="M600 0v210"/><path d="M620 0v210"/><path d="M640 0v210"/><path d="M660 0v210"/><path d="M680 0v210"/><path d="M700 0v210"/><path d="M0 0h720"/><path d="M0 20h720"/><path d="M0 40h720"/><path d="M0 60h720"/><path d="M0 80h720"/><path d="M0 100h720"/><path d="M0 120h720"/><path d="M0 140h720"/><path d="M0 160h720"/><path d="M0 180h720"/><path d="M0 200h720"/></g>
+<g fill="#59636e"><path d="M80 140h300v40H80z"/><path d="M80 80h40v60H80z"/><path d="M340 100h40v40h-40z"/></g>
+<g fill="#6fdc82"><path d="M120 120h220v20H120z"/></g><g fill="#f2c14e"><path d="M380 120h40v40h-40z"/></g>
+<g fill="#e9edf1" font-family="monospace" font-size="14"><text x="82" y="72">backstop</text><text x="150" y="112">water channel</text><text x="366" y="94">payload</text><text x="450" y="132">clear flight path →</text></g></svg>
+<h2>Ideal trajectory</h2><div class="grid"><label>Launch speed (blocks/tick)<input id="speed" type="number" step=".05" value="1.2"></label><label>Angle (degrees)<input id="angle" type="number" step="1" value="35"></label><label>Height change (blocks)<input id="height" type="number" step=".5" value="0"></label></div>
+<button id="go">Estimate</button><div class="result" id="out">Enter your test values.</div>
+<p class="note">Build only where you have permission. Use water containment and a backup. This blueprint never runs commands or changes a world.</p></main>
+<script>function solve(){const v=+speed.value,a=+angle.value*Math.PI/180,h=+height.value,g=.05;const vx=v*Math.cos(a),vy=v*Math.sin(a);const disc=vy*vy-2*g*h;if(v<=0||disc<0){out.textContent="No ideal solution for those inputs.";return}const t=(vy+Math.sqrt(disc))/g;out.textContent="flight: "+t.toFixed(1)+" ticks\nrange: "+(vx*t).toFixed(1)+" blocks\napex above launch: "+(vy*vy/(2*g)).toFixed(1)+" blocks"}go.onclick=solve;solve();</script></html>

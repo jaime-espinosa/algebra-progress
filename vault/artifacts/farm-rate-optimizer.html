@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Farm-rate Optimizer</title><style>
+  :root{color-scheme:dark;--bg:#0b0d10;--panel:#12151a;--line:#2b333d;--text:#e9edf1;--dim:#98a2ad;--accent:#6fdc82;--gold:#f2c14e}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 ui-monospace,monospace}
+  main{max-width:860px;margin:32px auto;padding:24px;border:1px solid var(--line);background:var(--panel)}
+  h1,h2{font-size:20px}label{display:grid;gap:5px;color:var(--dim)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+  input,button{font:inherit;color:var(--text);background:#0e1115;border:1px solid var(--line);padding:10px}
+  button{border-color:var(--accent);cursor:pointer}.result{margin-top:18px;padding:16px;border-left:4px solid var(--accent);white-space:pre-wrap}
+  .note{color:var(--dim)}code{color:var(--gold)}svg{max-width:100%;height:auto;background:#0e1115;border:1px solid var(--line)}
+</style>
+<main><h1>Farm-rate Optimizer</h1><div class="grid"><label>Items per cycle<input id="items" type="number" value="18" min="0"></label><label>Cycle seconds<input id="seconds" type="number" value="12" min=".01" step=".1"></label><label>Parallel modules<input id="modules" type="number" value="1" min="1"></label><label>Measured uptime %<input id="uptime" type="number" value="85" min="0" max="100"></label></div>
+<button id="go">Calculate</button><div class="result" id="out"></div><p class="note">Measure a real ten-minute sample, then tune uptime until the estimate matches.</p></main>
+<script>function calc(){const rate=+items.value*3600/+seconds.value*+modules.value*(+uptime.value/100);out.textContent="items/hour: "+rate.toFixed(1)+"\nstacks/hour: "+(rate/64).toFixed(2)+"\nshulker boxes/hour: "+(rate/(64*27)).toFixed(3)}go.onclick=calc;calc();</script></html>

@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Surveyor</title><style>
+  :root{color-scheme:dark;--bg:#0b0d10;--panel:#12151a;--line:#2b333d;--text:#e9edf1;--dim:#98a2ad;--accent:#6fdc82;--gold:#f2c14e}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 ui-monospace,monospace}
+  main{max-width:860px;margin:32px auto;padding:24px;border:1px solid var(--line);background:var(--panel)}
+  h1,h2{font-size:20px}label{display:grid;gap:5px;color:var(--dim)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+  input,button{font:inherit;color:var(--text);background:#0e1115;border:1px solid var(--line);padding:10px}
+  button{border-color:var(--accent);cursor:pointer}.result{margin-top:18px;padding:16px;border-left:4px solid var(--accent);white-space:pre-wrap}
+  .note{color:var(--dim)}code{color:var(--gold)}svg{max-width:100%;height:auto;background:#0e1115;border:1px solid var(--line)}
+</style>
+<main><h1>Coordinate + Distance Calculator</h1><div class="grid"><label>X1<input id="x1" type="number" value="0"></label><label>Y1<input id="y1" type="number" value="0"></label><label>Z1<input id="z1" type="number" value="0"></label><label>X2<input id="x2" type="number" value="100"></label><label>Y2<input id="y2" type="number" value="100"></label><label>Z2<input id="z2" type="number" value="100"></label></div>
+<button id="go">Measure</button><div class="result" id="out"></div><p class="note">Nether conversion uses the vanilla 8:1 horizontal coordinate ratio. Y is unchanged.</p></main>
+<script>function calc(){const dx=+x2.value-x1.value,dy=+y2.value-y1.value,dz=+z2.value-z1.value;out.textContent="horizontal: "+Math.hypot(dx,dz).toFixed(2)+" blocks\n3D distance: "+Math.hypot(dx,dy,dz).toFixed(2)+" blocks\nOverworld → Nether target: "+(+x2.value/8).toFixed(1)+", "+(+y2.value).toFixed(1)+", "+(+z2.value/8).toFixed(1)}go.onclick=calc;calc();</script></html>

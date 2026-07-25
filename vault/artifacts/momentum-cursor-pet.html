@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Momentum Cursor Pet</title>
+<style>
+  :root{color-scheme:dark;--bg:#0b0d10;--panel:#12151a;--line:#2b333d;--text:#e9edf1;--dim:#98a2ad;--accent:#6fdc82;--gold:#f2c14e}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 ui-monospace,monospace}
+  main{max-width:860px;margin:32px auto;padding:24px;border:1px solid var(--line);background:var(--panel)}
+  h1,h2{font-size:20px}label{display:grid;gap:5px;color:var(--dim)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+  input,button{font:inherit;color:var(--text);background:#0e1115;border:1px solid var(--line);padding:10px}
+  button{border-color:var(--accent);cursor:pointer}.result{margin-top:18px;padding:16px;border-left:4px solid var(--accent);white-space:pre-wrap}
+  .note{color:var(--dim)}code{color:var(--gold)}svg{max-width:100%;height:auto;background:#0e1115;border:1px solid var(--line)}
+
+html{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath fill='%236fdc82' stroke='%23000' d='M2 2v17l5-5 4 8 4-2-4-8h7z'/%3E%3C/svg%3E") 2 2,auto}
+#pet{position:fixed;left:0;top:0;width:36px;height:36px;pointer-events:none;transform:translate(-80px,-80px);will-change:transform}
+#pet i{position:absolute;width:8px;height:8px;background:#6fdc82;box-shadow:8px 0 #2f6b3c,16px 0 #6fdc82,0 8px #2f6b3c,8px 8px #f2c14e,16px 8px #2f6b3c,8px 16px #6fdc82}
+</style><main><h1>Momentum Cursor + Ore Sprite</h1><p>Move the cursor. Your original ore sprite tracks it. This file works offline.</p><p class="note">No Minecraft install, server access, or browser extension.</p></main><div id="pet" aria-hidden="true"><i></i></div>
+<script>const pet=document.querySelector("#pet");let x=-80,y=-80;addEventListener("pointermove",e=>{x+=(e.clientX-x)*.35;y+=(e.clientY-y)*.35;pet.style.transform="translate("+(x+18)+"px,"+(y+18)+"px)"});</script></html>
