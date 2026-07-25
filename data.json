@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T08:01:29-07:00",
+  "generatedAt": "2026-07-25T15:01:08-07:00",
   "scrapeOk": true,
   "deadline": {
     "date": "2026-08-15",
@@ -16,7 +16,7 @@
       "pointsPossible": 1022,
       "gradableDone": 35,
       "gradableTotal": 41,
-      "allDone": 97,
+      "allDone": 98,
       "allTotal": 105,
       "lmsStart": "2026-05-19",
       "lmsEnd": "2026-08-25",
