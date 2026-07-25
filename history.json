@@ -12,6 +12,19 @@
         "allDone": 0,
         "percent": null
       }
+    },
+    {
+      "date": "2026-07-25",
+      "sem1": {
+        "gradableDone": 35,
+        "allDone": 97,
+        "percent": 86.58
+      },
+      "sem2": {
+        "gradableDone": 0,
+        "allDone": 0,
+        "percent": null
+      }
     }
   ]
 }
