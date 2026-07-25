@@ -160,10 +160,10 @@ test("Algebra Miner is a decoded 64x64 Java skin with opaque base regions", asyn
   }
 });
 
-test("victory pack is a readable ZIP with a valid 1.20.1 manifest", async () => {
-  const zip = readZip(await readFile(path.join(artifactsDir, "sem1-victory-pack-1.20.1.zip")));
+test("victory pack is a readable ZIP with a valid 1.21.11 manifest", async () => {
+  const zip = readZip(await readFile(path.join(artifactsDir, "sem1-victory-pack-1.21.11.zip")));
   const mcmeta = JSON.parse(zip.get("pack.mcmeta").toString("utf8"));
-  assert.equal(mcmeta.pack.pack_format, 15);
+  assert.equal(mcmeta.pack.pack_format, 75);
   assert.match(mcmeta.pack.description, /Algebra Quest/);
   assert.ok(mcmeta.pack.pack_format >= 1 && mcmeta.pack.pack_format <= 100);
 
@@ -216,8 +216,8 @@ test("manifest catalogs all milestones and locks untested Shareable entries", as
   }
 
   const pack = manifest.find(({ id }) => id === "sem1-victory-pack");
-  assert.equal(pack.minVersion, "1.20.1");
-  assert.equal(pack.maxVersion, "1.20.1");
+  assert.equal(pack.minVersion, "1.21.11");
+  assert.equal(pack.maxVersion, "1.21.11");
   assert.equal(pack.loader, "vanilla");
 });
 

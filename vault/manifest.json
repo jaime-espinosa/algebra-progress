@@ -6,7 +6,9 @@
     "minVersion": null,
     "maxVersion": null,
     "loader": "any",
-    "files": ["artifacts/algebra-miner.png"],
+    "files": [
+      "artifacts/algebra-miner.png"
+    ],
     "testedOn": "structural PNG decode; Minecraft Java launch pending",
     "milestoneId": 1,
     "locked": false,
@@ -22,7 +24,9 @@
     "minVersion": null,
     "maxVersion": null,
     "loader": "browser",
-    "files": ["artifacts/momentum-cursor-pet.html"],
+    "files": [
+      "artifacts/momentum-cursor-pet.html"
+    ],
     "testedOn": "standalone HTML source validation; browser launch pending",
     "milestoneId": 2,
     "locked": false,
@@ -35,11 +39,13 @@
     "id": "sem1-victory-pack",
     "name": "Semester 1 Victory Pack",
     "tier": "Solo",
-    "minVersion": "1.20.1",
-    "maxVersion": "1.20.1",
+    "minVersion": "1.21.11",
+    "maxVersion": "1.21.11",
     "loader": "vanilla",
-    "files": ["artifacts/sem1-victory-pack-1.20.1.zip"],
-    "testedOn": "structural ZIP, JSON, PNG, and Ogg checks; Minecraft Java 1.20.1 launch pending",
+    "files": [
+      "artifacts/sem1-victory-pack-1.21.11.zip"
+    ],
+    "testedOn": "structural ZIP/JSON/PNG/Ogg checks; pack_format 75 verified against minecraft.wiki and Mojang manifest; in-game load on 1.21.11 still pending",
     "milestoneId": 3,
     "locked": false,
     "untested": false,
@@ -86,7 +92,9 @@
     "minVersion": null,
     "maxVersion": null,
     "loader": "browser",
-    "files": ["artifacts/ballistics-workbench.html"],
+    "files": [
+      "artifacts/ballistics-workbench.html"
+    ],
     "testedOn": "standalone HTML source validation; in-game trajectory comparison pending",
     "milestoneId": 6,
     "locked": false,
@@ -118,7 +126,9 @@
     "minVersion": null,
     "maxVersion": null,
     "loader": "browser",
-    "files": ["artifacts/surveyor.html"],
+    "files": [
+      "artifacts/surveyor.html"
+    ],
     "testedOn": "standalone HTML source validation; browser launch pending",
     "milestoneId": 8,
     "locked": false,
@@ -134,7 +144,9 @@
     "minVersion": null,
     "maxVersion": null,
     "loader": "browser",
-    "files": ["artifacts/farm-rate-optimizer.html"],
+    "files": [
+      "artifacts/farm-rate-optimizer.html"
+    ],
     "testedOn": "standalone HTML source validation; browser launch pending",
     "milestoneId": 9,
     "locked": false,
@@ -150,7 +162,9 @@
     "minVersion": null,
     "maxVersion": null,
     "loader": "spreadsheet",
-    "files": ["artifacts/youtube-analytics-template.csv"],
+    "files": [
+      "artifacts/youtube-analytics-template.csv"
+    ],
     "testedOn": "RFC 4180-compatible CSV structure; spreadsheet import pending",
     "milestoneId": 10,
     "locked": false,
