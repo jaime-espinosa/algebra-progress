@@ -483,3 +483,94 @@ export function planTrack(data, today) {
     comeback,
   };
 }
+
+// --- Time the course was open ----------------------------------------------
+// The LMS Activity report does NOT measure time spent working. It measures how
+// long the course page was open, and nothing logs him out: the live report
+// contains a single 10h 8m entry starting 12:07 AM, which is a browser tab left
+// open overnight, not ten hours of algebra. Divide that by rows and you get
+// "619 minutes per row", which would tell a kid he is slow when he is not.
+//
+// So: nothing here is modelled, capped, or estimated. Every second returned is
+// the LMS's own figure, and the totals match the page exactly (93h 43m for
+// Semester 1). What this adds is naming the outliers rather than burying them,
+// so the page can show them instead of quietly counting or quietly dropping
+// them. Callers must label the number "time the course was open" — never
+// "hours worked", never "study time" — and must never divide it by rows.
+export const LONG_STRETCH_SECONDS = 3 * 3600;   // one unbroken entry this long is marked
+export const LONG_DAY_SECONDS = 8 * 3600;       // a day's total this long is marked
+
+function formatDuration(seconds) {
+  const whole = Math.max(0, Math.round(seconds));
+  const hours = Math.floor(whole / 3600);
+  const minutes = Math.round((whole % 3600) / 60);
+  if (hours === 0) return `${minutes}m`;
+  return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
+}
+
+export function openTime(activity, today) {
+  const courses = Array.isArray(activity?.courses) ? activity.courses : [];
+  const todayKey = parseDateKey(today);
+  const byDay = new Map();
+  const stretches = [];
+  let totalSeconds = 0;
+
+  for (const course of courses) {
+    // The course-level figure is what the LMS prints at the top of its own
+    // report, so the total on screen can be checked against the page directly.
+    totalSeconds += Number(course?.reportedTotalSeconds) || 0;
+    for (const day of course?.days ?? []) {
+      const date = typeof day?.date === "string" ? day.date : null;
+      if (!date || date > todayKey) continue;
+      const seconds = Number(day?.reportedSeconds) || 0;
+      const entry = byDay.get(date) ?? { date, seconds: 0, longest: 0, marked: false };
+      entry.seconds += seconds;
+      for (const item of day?.entries ?? []) {
+        const span = Number(item?.seconds) || 0;
+        entry.longest = Math.max(entry.longest, span);
+        // The parser's own idleSuspect fires at four hours and caught two
+        // entries in the whole dataset. Three hours unbroken catches the rest
+        // without inventing a value: the entry is still counted, just named.
+        if (span >= LONG_STRETCH_SECONDS || item?.idleSuspect === true) {
+          stretches.push({
+            date,
+            seconds: span,
+            startTime: typeof item?.startTime === "string" ? item.startTime : null,
+            text: formatDuration(span),
+          });
+        }
+      }
+      byDay.set(date, entry);
+    }
+  }
+
+  for (const entry of byDay.values()) {
+    entry.marked = entry.seconds >= LONG_DAY_SECONDS
+      || entry.longest >= LONG_STRETCH_SECONDS;
+    entry.text = formatDuration(entry.seconds);
+  }
+
+  const days = [...byDay.values()].sort((left, right) => left.date.localeCompare(right.date));
+  stretches.sort((left, right) => right.seconds - left.seconds);
+  const asOf = typeof activity?.generatedAt === "string"
+    ? activity.generatedAt.slice(0, 10)
+    : null;
+
+  return {
+    totalSeconds,
+    totalText: formatDuration(totalSeconds),
+    dayCount: days.length,
+    firstDay: days[0]?.date ?? null,
+    lastDay: days.at(-1)?.date ?? null,
+    days,
+    // Named, not removed. Every second above is still counted; these are the
+    // stretches long enough that "the tab was open" is the likelier story.
+    stretches,
+    markedDays: days.filter((day) => day.marked).length,
+    asOf,
+    // A caller that wants a total with the flagged stretches taken out has to
+    // ask for it explicitly, and then it must say so on screen.
+    withoutMarkedStretches: totalSeconds
+      - stretches.reduce((sum, stretch) => sum + stretch.seconds, 0),
+  };
+}

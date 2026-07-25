@@ -1155,3 +1155,59 @@ html.motion-paused *::after {
 .lesson-library__link:focus-visible {
   color: var(--accent);
 }
+
+/* Time the course was open. Deliberately quieter than the odometer: it is real,
+   it is large, and it is only loosely coupled to effort, so it reads as context
+   rather than as a score. */
+.open-time {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  margin: 20px 0 0;
+  border: 1px solid var(--line);
+  padding: 16px;
+  background: var(--panel-solid);
+  text-align: center;
+}
+
+.open-time__total {
+  font-size: 30px;
+  line-height: 1.1;
+  color: var(--accent);
+}
+
+.open-time__caption {
+  color: var(--text);
+  font-size: 12px;
+  letter-spacing: .08em;
+}
+
+.open-time__note {
+  max-width: 52ch;
+  margin: 4px 0 0;
+  font-size: 12px;
+}
+
+.open-time__marked {
+  width: 100%;
+  max-width: 52ch;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  font-size: 12px;
+  text-align: left;
+}
+
+.open-time__marked summary {
+  cursor: pointer;
+  color: var(--text);
+}
+
+.open-time__marked ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  color: var(--dim);
+}
+
+.open-time__asof {
+  font-size: 11px;
+}

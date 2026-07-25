@@ -1,4 +1,4 @@
-import { effortStats as questEffort, computePace, dashboard, planTrack } from "./js/quest.mjs";
+import { effortStats as questEffort, computePace, dashboard, openTime, planTrack } from "./js/quest.mjs";
 
 (() => {
   "use strict";
@@ -23,6 +23,7 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
   let artifacts = [];
 
   let currentData = null;
+  let currentActivity = null;
   let intervalId = null;
   let revealQueue = [];
   let revealCounter = null;
@@ -490,15 +491,13 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
     return `
       <div class="effort-graph">
         <svg viewBox="0 0 760 172" preserveAspectRatio="xMidYMid meet" role="img"
-          aria-label="${escapeHtml(`Rows submitted per calendar day from ${formatDay(firstDate)} through ${formatDay(today)}. Zero-work days are plotted as zero. A reference line marks ${requiredPerDay.toFixed(1)} rows per day. The hours axis has no data.`)}">
+          aria-label="${escapeHtml(`Rows submitted per calendar day from ${formatDay(firstDate)} through ${formatDay(today)}. Zero-work days are plotted as zero. A reference line marks ${requiredPerDay.toFixed(1)} rows per day.`)}">
           ${yTicks}
           <line class="effort-graph__axis" x1="${left}" y1="${top}" x2="${left}" y2="${bottom}"></line>
           <line class="effort-graph__axis" x1="${right}" y1="${top}" x2="${right}" y2="${bottom}"></line>
           <line class="effort-graph__axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"></line>
           <text class="effort-graph__axis-title" x="14" y="${(top + bottom) / 2}"
             text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">rows/day</text>
-          <text class="effort-graph__axis-title" x="746" y="${(top + bottom) / 2}"
-            text-anchor="middle" transform="rotate(90 746 ${(top + bottom) / 2})">hrs/day</text>
           <line class="effort-graph__reference" x1="${left}" y1="${requiredY.toFixed(2)}"
             x2="${right}" y2="${requiredY.toFixed(2)}"></line>
           <text class="effort-graph__reference-label" x="${left + 6}" y="${(requiredY - 5).toFixed(2)}"
@@ -507,8 +506,41 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
           ${squares}
           ${xLabels}
         </svg>
-        <div class="effort-graph__caption quiet">hrs/day is not measured yet — it needs the LMS Activity tab, which has not been scraped.</div>
       </div>`;
+  }
+
+  // Deliberately NOT a second axis on the graph above. Pairing open time with rows
+  // per day would imply a relationship the data does not support: Jul 20 was 13
+  // rows in 7.5 hours, Jul 24 was 1 row in 10.3 hours, and one of those 10.3 hours
+  // is a browser tab left open from 12:07 AM. A rate built from that reads "619
+  // minutes per row", which is both wrong and the exact discouraging message this
+  // page exists to undo. The honest, motivating figure is the lifetime total, so
+  // that leads, sits beside the show-up gauge, and is never divided by anything.
+  function openTimePanel(activity, today) {
+    if (!activity) return "";
+    const open = openTime(activity, today);
+    if (!open.totalSeconds) return "";
+    const marked = open.stretches.slice(0, 3).map(stretch =>
+      `<li>${formatDay(stretch.date)} — ${escapeHtml(stretch.text)}${
+        stretch.startTime ? ` starting ${escapeHtml(stretch.startTime)}` : ""}</li>`).join("");
+    return `
+      <section class="open-time" aria-label="Time the course was open">
+        <strong class="open-time__total numeric">${escapeHtml(open.totalText)}</strong>
+        <span class="open-time__caption">TIME THE COURSE HAS BEEN OPEN</span>
+        <span class="quiet">across ${open.dayCount} days, ${formatDay(open.firstDay)} to ${formatDay(open.lastDay)}</span>
+        <p class="open-time__note quiet">
+          This is what the LMS actually measures: how long the course page was open.
+          It is not a measure of how hard you worked, and it is never divided by rows.
+        </p>
+        ${marked ? `
+        <details class="open-time__marked">
+          <summary>${open.stretches.length} long stretch${open.stretches.length === 1 ? "" : "es"} counted in that total</summary>
+          <p class="quiet">Nothing logs you out, so a tab left open keeps counting.
+            These are still inside the ${escapeHtml(open.totalText)} above — nothing has been removed:</p>
+          <ul>${marked}</ul>
+        </details>` : ""}
+        ${open.asOf ? `<span class="quiet open-time__asof">Activity report read ${formatDay(open.asOf)}.</span>` : ""}
+      </section>`;
   }
 
   function renderEffort(data) {
@@ -576,6 +608,8 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
           <span class="gauge__label">days the engine ran</span>
         </article>
       </div>
+
+      ${openTimePanel(currentActivity, today)}
 
       <p class="effort-copy">
         You have submitted <strong>${s.odometer} rows across ${s.activeDays} days</strong>.
@@ -1081,6 +1115,21 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
     }
   }
 
+  // The Activity report is a separate scrape from the gradebook and refreshes on
+  // its own schedule, so it is a separate file and the panel names the date it
+  // was taken. Missing or malformed leaves the open-time panel out entirely
+  // rather than showing a zero that reads as "you did nothing".
+  async function loadActivity() {
+    try {
+      const response = await fetch("activity.json");
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const parsed = await response.json();
+      currentActivity = Array.isArray(parsed?.courses) ? parsed : null;
+    } catch {
+      currentActivity = null;
+    }
+  }
+
   async function loadGames() {
     try {
       const response = await fetch("games.json");
@@ -1382,5 +1431,5 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
 
   // finally, not then: if the data load fails the page still renders its last known
   // good state, and the controls have to come with it.
-  Promise.all([loadManifest(), loadGames()]).then(loadData).finally(initSectionControls);
+  Promise.all([loadManifest(), loadGames(), loadActivity()]).then(loadData).finally(initSectionControls);
 })();
