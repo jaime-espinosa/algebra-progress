@@ -1,4 +1,4 @@
-import { effortStats as questEffort, computePace, dashboard } from "./js/quest.mjs";
+import { effortStats as questEffort, computePace, dashboard, planTrack } from "./js/quest.mjs";
 
 (() => {
   "use strict";
@@ -576,52 +576,135 @@ import { effortStats as questEffort, computePace, dashboard } from "./js/quest.m
       ${effortGraph(perDay, today, s.requiredPerDay)}`;
   }
 
-  // Nothing past Aug 15 is drawn. Showing ten dead days after the deadline made the
-  // grid read as a wall of time rather than a plan. The calendar now runs from his
-  // first working day to the deadline and nowhere further.
+  function calendarReward(track) {
+    if (track.comeback) {
+      const { from, to, gain, days } = track.comeback;
+      return `You clawed back ${gain} rows in ${days} days — ${formatDay(from)} to ${formatDay(to)}.`;
+    }
+    const biggestPush = track.bestDays[0];
+    if (biggestPush) {
+      return `Your biggest push: ${biggestPush.done} rows on ${formatDay(biggestPush.date)}.`;
+    }
+    return "Every row you finish moves the route forward.";
+  }
+
+  function calendarChart(track) {
+    const width = 760;
+    const height = 220;
+    const left = 58;
+    const right = 18;
+    const top = 24;
+    const bottom = 38;
+    const plotWidth = width - left - right;
+    const plotHeight = height - top - bottom;
+    const lastIndex = Math.max(1, track.points.length - 1);
+    const yMax = Math.max(1, track.totalRows);
+    const xAt = index => left + (index / lastIndex) * plotWidth;
+    const yAt = value => top + (1 - value / yMax) * plotHeight;
+    const pointList = (points, valueFor) => points
+      .map(({ point, index }) => `${xAt(index).toFixed(1)},${yAt(valueFor(point)).toFixed(1)}`)
+      .join(" ");
+    const indexed = track.points.map((point, index) => ({ point, index }));
+    const past = indexed.filter(({ point }) => !point.future);
+    const adjusted = indexed.filter(({ point }) => point.adjusted !== null);
+    const actualPoints = pointList(past, point => point.cumDone);
+    const steadyPoints = pointList(past, point => point.steady);
+    const adjustedPoints = pointList(adjusted, point => point.adjusted);
+    const ticks = [...new Set([0, Math.round(track.totalRows / 2), track.totalRows])];
+    const grid = ticks.map(value => {
+      const y = yAt(value).toFixed(1);
+      return `
+        <line class="calendar-chart__grid" x1="${left}" y1="${y}" x2="${width - right}" y2="${y}"></line>
+        <text class="calendar-chart__label" x="${left - 8}" y="${Number(y) + 5}" text-anchor="end">${escapeHtml(value)}</text>`;
+    }).join("");
+    const todayIndex = track.points.findIndex(point => point.date === track.today);
+    const todayX = xAt(Math.max(0, todayIndex)).toFixed(1);
+    const markers = past.filter(({ point }) => point.beatPlan).map(({ point, index }) => {
+      const x = xAt(index);
+      const y = yAt(point.cumDone);
+      const surplus = Math.round(point.surplus);
+      const title = `${formatDay(point.date)}: ${point.done} rows, ${surplus} more than the steady route asked for`;
+      return `<polygon class="calendar-chart__marker" points="${x.toFixed(1)},${(y - 8).toFixed(1)} ${(x - 7).toFixed(1)},${(y + 5).toFixed(1)} ${(x + 7).toFixed(1)},${(y + 5).toFixed(1)}" shape-rendering="crispEdges"><title>${escapeHtml(title)}</title></polygon>`;
+    }).join("");
+    const ariaLabel = `Cumulative rows done from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}. The actual work line is compared with the steady route and the adjusted route finishing all ${track.totalRows} rows by ${formatDay(track.finishesOn)}. Triangles mark days that beat the steady route.`;
+
+    return `
+      <div class="calendar-chart">
+        <div class="calendar-chart__key numeric" aria-hidden="true">
+          <span><b class="calendar-chart__swatch is-actual"></b>actual</span>
+          <span><b class="calendar-chart__swatch is-steady"></b>steady route</span>
+          <span><b class="calendar-chart__swatch is-adjusted"></b>adjusted route — all ${escapeHtml(track.totalRows)} done by ${escapeHtml(formatDay(track.finishesOn))}</span>
+        </div>
+        <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${escapeHtml(ariaLabel)}">
+          ${grid}
+          <line class="calendar-chart__axis" x1="${left}" y1="${top}" x2="${left}" y2="${height - bottom}"></line>
+          <line class="calendar-chart__axis" x1="${left}" y1="${height - bottom}" x2="${width - right}" y2="${height - bottom}"></line>
+          <text class="calendar-chart__axis-title" x="18" y="${top + plotHeight / 2}" text-anchor="middle" transform="rotate(-90 18 ${top + plotHeight / 2})">rows done</text>
+          <text class="calendar-chart__label" x="${left}" y="${height - 10}">${escapeHtml(formatDay(track.firstDay))}</text>
+          <text class="calendar-chart__label" x="${width - right}" y="${height - 10}" text-anchor="end">${escapeHtml(formatDay(track.deadline))}</text>
+          <line class="calendar-chart__today" x1="${todayX}" y1="${top}" x2="${todayX}" y2="${height - bottom}"></line>
+          <text class="calendar-chart__today-label" x="${todayX}" y="17" text-anchor="middle">today</text>
+          <polyline class="calendar-chart__steady" points="${steadyPoints}"></polyline>
+          <polyline class="calendar-chart__adjusted" points="${adjustedPoints}"></polyline>
+          <polyline class="calendar-chart__actual" points="${actualPoints}"></polyline>
+          ${markers}
+        </svg>
+      </div>`;
+  }
+
+  function calendarCell(point, track) {
+    const classes = ["cal-cell"];
+    const isToday = point.date === track.today;
+    if (point.date === track.deadline) classes.push("is-deadline");
+    if (isToday) classes.push("is-today");
+    if (point.done > 0) {
+      classes.push("is-done");
+      if (point.beatPlan) classes.push("is-pushing");
+    } else if (point.planned > 0 && (point.future || isToday)) {
+      classes.push("is-planned");
+    } else if (!point.future) {
+      classes.push("is-idle");
+    }
+
+    const roundedSurplus = Math.round(point.surplus);
+    let tooltip = "nothing logged";
+    if (point.done > 0 && roundedSurplus >= 1) {
+      tooltip = `${formatDay(point.date)}: ${point.done} rows — ${roundedSurplus} more than the steady route asked for`;
+    } else if (point.done > 0) {
+      tooltip = `${formatDay(point.date)}: ${point.done} ${point.done === 1 ? "row" : "rows"}`;
+    } else if (point.planned > 0 && (point.future || isToday)) {
+      tooltip = `planned: ${point.planned} ${point.planned === 1 ? "row" : "rows"}`;
+    }
+
+    if (point.date === track.deadline) {
+      return `<div class="${classes.join(" ")}" title="${escapeHtml(tooltip)}"><strong>AUG 15</strong></div>`;
+    }
+    const count = point.done > 0 ? point.done : (point.planned > 0 && (point.future || isToday) ? point.planned : "");
+    const marker = point.beatPlan ? `<span class="cal-cell__push" aria-hidden="true">&#9650;</span>` : "";
+    return `<div class="${classes.join(" ")}" title="${escapeHtml(tooltip)}"><span class="cal-cell__d">${escapeHtml(Number(point.date.slice(8)))}</span><span class="cal-cell__n numeric">${escapeHtml(count)}</span>${marker}</div>`;
+  }
+
+  // planTrack owns every rate and route. This renderer only turns its bounded
+  // first-day-through-deadline points into the chart and strip.
   function renderCalendar(data) {
     const today = localIsoDate();
     const daysLeft = Math.max(0, dateDiff(today, data.deadline.date));
-    const stats = effortStats(data, today);
-    const planned = new Map();
-    for (const item of remainingActivities(data)) {
-      if (item.ourTarget) planned.set(item.ourTarget, (planned.get(item.ourTarget) || 0) + 1);
-    }
-    const dates = [...stats.perDay.keys()].sort();
-    const start = dates.length ? dates[Math.max(0, dates.length - 10)] : today;
-    const cells = [];
-    for (let cursor = start; cursor <= data.deadline.date; cursor = addDays(cursor, 1)) {
-      const done = stats.perDay.get(cursor) || 0;
-      const plan = planned.get(cursor) || 0;
-      const isPast = cursor < today;
-      const isToday = cursor === today;
-      const target = Math.max(1, Math.round(stats.activePace || 3));
-      const classes = ["cal-cell"];
-      let mark = "";
-      if (cursor === data.deadline.date) classes.push("is-deadline");
-      if (isToday) classes.push("is-today");
-      if (done > 0) {
-        classes.push("is-done");
-        if (done >= target) { classes.push("is-pushing"); mark = "&#9650;"; }   // ahead
-      } else if (isPast) {
-        classes.push("is-idle");
-      } else if (plan > 0) {
-        classes.push("is-planned");
-      }
-      const count = done > 0 ? done : (isPast ? "" : plan || "");
-      const label = cursor === data.deadline.date
-        ? `<strong>AUG 15</strong>`
-        : `<span class="cal-cell__d">${Number(cursor.slice(8))}</span><span class="cal-cell__n numeric">${count}</span>${mark}`;
-      cells.push(`<div class="${classes.join(" ")}" title="${formatDay(cursor)}: ${done ? `${done} done` : plan ? `${plan} planned` : "nothing logged"}">${label}</div>`);
-    }
-    const pushDays = [...stats.perDay.entries()].filter(([, n]) => n >= Math.max(1, Math.round(stats.activePace))).length;
+    const track = planTrack(data, today);
+    const cells = track.points.map(point => calendarCell(point, track));
+    const rowsLeft = track.totalRows - track.submitted;
+    const plannedDaily = Math.max(0, ...track.points.map(point => point.planned));
+    const daysInside = Math.max(0, dateDiff(track.finishesOn, track.deadline));
+    const caption = `steady route: all ${track.totalRows} rows spread evenly from ${formatDay(track.firstDay)} to ${formatDay(track.deadline)}, about ${track.steadyRate.toFixed(1)} a day. adjusted route: the ${rowsLeft} rows still to do, ${plannedDaily} a day from today, finished ${formatDay(track.finishesOn)} — ${daysInside} days inside the deadline.`;
     document.querySelector("#calendar-content").innerHTML = `
       <div class="big-number numeric">${daysLeft} days</div>
       <div class="quiet">${escapeHtml(data.deadline.label)}</div>
+      <div class="calendar-comeback">${escapeHtml(calendarReward(track))}</div>
+      ${calendarChart(track)}
+      <p class="calendar-chart__caption quiet numeric">${escapeHtml(caption)}</p>
       <div class="cal-strip" aria-label="Working days through Aug 15">${cells.join("")}</div>
       <div class="cal-key quiet numeric">
         <span><b class="k k--done"></b> worked</span>
-        <span><b class="k k--push"></b> &#9650; big day (${pushDays} so far)</span>
+        <span><b class="k k--push"></b> &#9650; beat the plan (${track.bestDays.length} days)</span>
         <span><b class="k k--plan"></b> planned</span>
         <span><b class="k k--idle"></b> nothing logged</span>
       </div>`;
@@ -838,7 +921,7 @@ import { effortStats as questEffort, computePace, dashboard } from "./js/quest.m
       const items = section.items.map(item => `
         <li>
           <strong><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a></strong><br>
-          <span class="meta">${escapeHtml(item.kind)}${item.source === true ? " · source you can read" : ""}</span>
+          <span class="meta">${escapeHtml(item.kind)}${item.sourceAvailable === true && item.remixable === true ? " · source you can read" : ""}</span>
           <p class="why">${escapeHtml(item.why)}</p>
         </li>`).join("");
       return `<article class="quest-card">
