@@ -122,10 +122,54 @@ meter,
 
 .panel {
   contain: layout paint;
+  position: relative;
   margin: 0 0 16px;
   border: 1px solid var(--line);
   padding: 16px;
   background: var(--panel);
+}
+
+/* Fold and reorder controls. Absolutely positioned so they can be prepended to every
+   panel with one markup path, without the heading having to know they exist. */
+.sec-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 2px;
+}
+
+.sec-controls button {
+  min-width: 26px;
+  padding: 2px 5px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--dim);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.sec-controls button:hover,
+.sec-controls button:focus-visible {
+  color: var(--fg);
+  border-color: var(--fg);
+}
+
+/* Keep the heading and the controls; drop everything else. The heading stays a full
+   target for unfolding, so a collapsed section is never a dead end. */
+.panel[data-collapsed="1"] > *:not(.sec-controls):not(.section-heading) {
+  display: none;
+}
+
+.panel[data-collapsed="1"] .section-heading {
+  margin-bottom: 0;
+}
+
+/* The heading is clickable, so say so on hover without moving anything. */
+.section-heading[style*="cursor"]:hover::before {
+  color: var(--fg);
 }
 
 .section-heading {
