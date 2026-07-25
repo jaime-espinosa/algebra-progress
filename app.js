@@ -772,47 +772,12 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
 
   async function loadGames() {
     try {
-      let data;
-      if (typeof Worker === "function" && typeof URL.createObjectURL === "function") {
-        // A missing optional fetch is harmless but Chromium still reports its 404 as
-        // a page-console error. Keep that expected miss inside a short-lived worker
-        // so the main page stays as quiet as the catch below promises.
-        const gamesUrl = new URL("games.json", window.location.href).href;
-        const source = `
-          fetch(${JSON.stringify(gamesUrl)})
-            .then(async response => {
-              if (!response.ok) {
-                await response.text();
-                throw new Error("HTTP " + response.status);
-              }
-              return response.json();
-            })
-            .then(data => postMessage({ ok: true, data }))
-            .catch(() => postMessage({ ok: false }));`;
-        const workerUrl = URL.createObjectURL(new Blob([source], { type: "text/javascript" }));
-        data = await new Promise((resolve, reject) => {
-          const worker = new Worker(workerUrl);
-          worker.addEventListener("message", event => {
-            worker.terminate();
-            URL.revokeObjectURL(workerUrl);
-            if (event.data?.ok) resolve(event.data.data);
-            else reject(new Error("Games unavailable"));
-          }, { once: true });
-          worker.addEventListener("error", event => {
-            event.preventDefault();
-            worker.terminate();
-            URL.revokeObjectURL(workerUrl);
-            reject(new Error("Games unavailable"));
-          }, { once: true });
-        });
-      } else {
-        const response = await fetch("games.json");
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        data = await response.json();
-      }
-      renderGames(data);
+      const response = await fetch("games.json");
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      renderGames(await response.json());
     } catch {
-      // Games are optional; bad or missing data must not affect progress telemetry.
+      // Games are optional; missing or malformed data leaves the panel hidden and
+      // must never affect progress telemetry.
       renderGames(null);
     }
   }
