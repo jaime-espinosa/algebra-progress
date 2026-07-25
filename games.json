@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T23:50:00Z",
+  "generatedAt": "2026-07-25T23:30:36Z",
   "sections": [
     {
       "semester": "sem1",
@@ -40,6 +40,18 @@
           "sourceAvailable": false,
           "remixable": true,
           "hookForHim": "It is a sandbox with a save-and-share link, and it records — a screen capture of him dragging tiles to factor a quadratic is a legitimate 90-second explainer video."
+        },
+        {
+          "title": "Mathler",
+          "url": "https://www.mathler.com/",
+          "kind": "puzzle",
+          "why": "Wordle, but the hidden answer is an arithmetic expression equal to a given number, so you reason backwards about which operations could produce a target. That is the inverse-operation habit solving for x needs.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "One puzzle a day, sixty seconds, no account, no ads. Small enough to become a habit rather than a chore, and easy to play against friends by comparing guess counts."
         }
       ]
     },
@@ -128,18 +140,6 @@
           "hookForHim": "The Desmos art scene is people drawing entire animated characters out of nothing but restricted-domain equations and slider-driven animation — it is the closest thing to 'redstone contraption' that algebra has, and it screen-records into a YouTube video with no editing skill required."
         },
         {
-          "title": "Math is Fun: Function Grapher",
-          "url": "https://www.mathsisfun.com/data/function-grapher.html",
-          "kind": "tool",
-          "why": "Plots two functions at once and marks the intersection, which is exactly what solving a system graphically means and what most quick graphers will not do for you.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25",
-          "sourceAvailable": false,
-          "remixable": false,
-          "hookForHim": "Fastest way to sanity-check a systems-of-equations answer. Verified clean — no ad network scripts on the grapher page itself."
-        },
-        {
           "title": "algebra.js",
           "url": "https://algebra.js.org/",
           "kind": "tool",
@@ -151,6 +151,18 @@
           "remixable": true,
           "hookForHim": "This is how he writes a program that does his algebra rather than one that fakes it. Building a solver is a far better use of an afternoon than doing thirty problems by hand, and he learns the rules by having to encode them.",
           "source": true
+        },
+        {
+          "title": "MIT Mathlet: Linear Programming",
+          "url": "https://mathlets.org/mathlets/linear-programming/",
+          "kind": "tool",
+          "why": "Shows the feasible region carved out by a set of linear inequalities, and why the best answer always sits on one of its corners. This is the point of systems of inequalities, which nothing else here covers.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "This is the formal version of 'what mix of inputs maximises my output', which is the question every factory game he plays is secretly asking."
         }
       ]
     },
@@ -228,18 +240,6 @@
           "hookForHim": "Direct sim link, so it opens straight into the simulation with no site chrome, no ads, no account. Loads fine on a weak machine."
         },
         {
-          "title": "Shodor: Slope Slider",
-          "url": "https://appstate-math.github.io/interactivate/activities/SlopeSlider/",
-          "kind": "tool",
-          "why": "Two sliders, m and b, one line. The entire content of slope-intercept form on a single page with nothing else on it.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25",
-          "sourceAvailable": false,
-          "remixable": false,
-          "hookForHim": "Runs on a compiled-to-JavaScript engine from a 2000s university outreach lab and still works perfectly, which is a nice reminder that plain web stuff outlives every app store."
-        },
-        {
           "title": "js-graphy",
           "url": "https://laktak.github.io/js-graphy/",
           "kind": "tool",
@@ -264,6 +264,18 @@
           "remixable": true,
           "hookForHim": "Under 100 lines of the good stuff. He could wrap a Minecraft rate calculation in it in an evening and publish a page where anyone can drag the numbers. That is a genuinely shareable thing to have made.",
           "source": true
+        },
+        {
+          "title": "SineRider",
+          "url": "https://sinerider.com/",
+          "kind": "game",
+          "why": "You beat each level by typing an equation: the graph you write becomes the slope a sled rides down to collect stars, so a wrong coefficient visibly crashes the sled instead of returning a red X. Built by teenagers at Hack Club, entirely open source.",
+          "sourceAvailable": true,
+          "remixable": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "It was built by teenagers at Hack Club and the whole thing is open source, so it is simultaneously the best argument that graphing is fun and proof that kids his age ship real games. Equation input is a proper MathQuill field and levels share as URLs — trivially recordable."
         }
       ]
     },
@@ -316,19 +328,6 @@
       "name": "Exponential Functions",
       "items": [
         {
-          "title": "JSXGraph: Draggable Exponential Function",
-          "url": "https://jsxgraph.org/share/example/draggable-exponential-function",
-          "kind": "tool",
-          "why": "Drag a point and the exponential curve reshapes to pass through it, which is the clearest way to see why exponentials refuse to behave like lines. The source that draws it sits on the same page.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25",
-          "sourceAvailable": true,
-          "remixable": true,
-          "hookForHim": "Source is on the same page. Exponential growth is also the maths behind every idle-game and compound-resource curve he has ever ground through.",
-          "source": true
-        },
-        {
           "title": "LOOPY",
           "url": "https://ncase.me/loopy/",
           "kind": "tool",
@@ -362,6 +361,18 @@
           "verifiedAt": "2026-07-25",
           "sourceAvailable": false,
           "remixable": false
+        },
+        {
+          "title": "Graphtoy",
+          "url": "https://graphtoy.com/",
+          "kind": "tool",
+          "why": "Four function slots that plot the instant you type, with a shared time variable, so an exponential becomes something you tune by feel. Written by Inigo Quilez as his own scratchpad, and the source is one readable unminified file.",
+          "sourceAvailable": true,
+          "remixable": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "Written by Inigo Quilez, the demoscene/shader legend, as his own scratchpad. The animation variable makes an equation into a moving thing, which is the difference between a graph and something worth recording."
         }
       ]
     },
@@ -383,17 +394,6 @@
           "hookForHim": "It is the visual answer to 'why do we keep rewriting the same equation three different ways' — he can see all three change at once instead of taking it on faith."
         },
         {
-          "title": "PhET Projectile Motion",
-          "url": "https://phet.colorado.edu/en/simulations/projectile-motion",
-          "kind": "game",
-          "why": "Fire things at a target, turn air resistance on and off, and see for yourself how much drag bends the arc away from a clean parabola.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25",
-          "sourceAvailable": true,
-          "remixable": false
-        },
-        {
           "title": "Graph Playground",
           "url": "https://maninae.github.io/graph-playground/",
           "kind": "tool",
@@ -407,17 +407,28 @@
           "source": true
         },
         {
-          "title": "p5.js Web Editor",
-          "url": "https://editor.p5js.org/",
-          "kind": "tool",
-          "why": "A browser code editor with instant visual output where a loop and a quadratic draw a parabola on screen in about fifteen lines. Nothing to install, and it runs without an account.",
+          "title": "SineRider",
+          "url": "https://sinerider.com/",
+          "kind": "game",
+          "why": "Levels here are quadratics you have to author: change a and the sled's arc changes shape, change k and the whole parabola lifts. It is the only place on this page where getting vertex form right is how you win.",
+          "sourceAvailable": true,
+          "remixable": true,
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25",
-          "sourceAvailable": true,
-          "remixable": true,
-          "hookForHim": "Where he goes the moment he wants to make his own version of anything else on this list. Runs without an account (account only needed to save), and p5 sketches are the most-remixed creative-coding format there is.",
-          "source": true
+          "hookForHim": "It was built by teenagers at Hack Club and the whole thing is open source, so it is simultaneously the best argument that graphing is fun and proof that kids his age ship real games. Equation input is a proper MathQuill field and levels share as URLs — trivially recordable."
+        },
+        {
+          "title": "MIT Mathlet: Ballistic Trajectory",
+          "url": "https://mathlets.org/mathlets/ballistic-trajectory/",
+          "kind": "tool",
+          "why": "Launch angle and speed sliders draw the projectile's parabola in real time, which is the one context where a quadratic is obviously a quadratic. It is also the maths under every arrow shot you have ever aimed.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "Verified HTML5 canvas with zero Java left in it — these are MIT's course applets, rebuilt and still maintained. Also: this is the maths under every arrow shot and TNT cannon he has ever aimed."
         }
       ]
     },
@@ -516,6 +527,18 @@
           "remixable": true,
           "hookForHim": "Proof that a useful tool does not need a company behind it. One file, one author, still running. That is a template for the kind of thing he could publish himself.",
           "source": true
+        },
+        {
+          "title": "The Taxicab Problem",
+          "url": "https://galgreen.com/TaxiCabProblem/",
+          "kind": "tool",
+          "why": "An interactive walk through what distance means when you can only travel along a grid, next to the straight-line answer. It quietly makes the point that a distance formula is a choice about how you measure, not a fact handed down.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "Grid distance is how movement actually works in a blocky world. It quietly makes the point that a formula is a choice about how you measure, not a fact handed down."
         }
       ]
     },
@@ -558,6 +581,18 @@
           "verifiedAt": "2026-07-25",
           "sourceAvailable": false,
           "remixable": false
+        },
+        {
+          "title": "MIT Mathlet: Graphing Rational Functions",
+          "url": "https://mathlets.org/mathlets/graphing-rational-functions/",
+          "kind": "tool",
+          "why": "Drag the roots and poles and watch the asymptotes move with them, so an asymptote becomes a consequence of the expression rather than a sign chart to memorise.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "Rational expressions are the section most people quietly give up on. This is the only tool on the list that makes the asymptote feel like a consequence rather than a rule."
         }
       ]
     },
@@ -592,17 +627,6 @@
           "hookForHim": "If he ever records his own numbers (frame rates, deaths per session, video views per day), this is where they turn into a trend line and a prediction."
         },
         {
-          "title": "CODAP",
-          "url": "https://codap.concord.org/app/",
-          "kind": "tool",
-          "why": "Drop in your own numbers and drag attributes onto axes to build graphs in seconds, which is the tool to reach for after you have actually measured a farm rate.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25",
-          "sourceAvailable": false,
-          "remixable": false
-        },
-        {
           "title": "PhET Plinko Probability",
           "url": "https://phet.colorado.edu/en/simulations/plinko-probability",
           "kind": "game",
@@ -612,6 +636,18 @@
           "verifiedAt": "2026-07-25",
           "sourceAvailable": true,
           "remixable": false
+        },
+        {
+          "title": "Exploring Histograms",
+          "url": "https://tinlizzie.org/histograms/",
+          "kind": "tool",
+          "why": "A hands-on essay where you change the bin width and watch the same data tell a different story, which is the first honest lesson about any chart you will ever make.",
+          "sourceAvailable": true,
+          "remixable": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "Short, hands-on, and immediately practical if he ever charts his own numbers. Also a good inoculation against misleading graphs."
         }
       ]
     }
