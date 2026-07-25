@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Analysis</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: rgba(18, 21, 26, .86);
+      --panel-solid: #12151a;
+      --line: #242a33;
+      --text: #e9edf1;
+      --dim: #98a2ad;
+      --faint: #59636e;
+      --gap: #262c34;
+      --accent: #6fdc82;
+      --accent-dim: #2f6b3c;
+      --warn: #f2c14e;
+      --shadow: #000;
+      --tile: 24px;
+      --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono",
+        "DejaVu Sans Mono", Menlo, Consolas, monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell,
+        sans-serif;
+    }
+
+    [data-theme="nether"] {
+      --bg: #120a08;
+      --panel: rgba(28, 16, 13, .86);
+      --panel-solid: #1a100d;
+      --line: #3a201a;
+      --gap: #2e1c17;
+      --accent: #ff7a45;
+      --accent-dim: #7a3418;
+      --warn: #ffd166;
+    }
+
+    [data-theme="end"] {
+      --bg: #08070e;
+      --panel: rgba(18, 15, 28, .86);
+      --panel-solid: #100d1a;
+      --line: #2a2340;
+      --gap: #221d33;
+      --accent: #c4a2ff;
+      --accent-dim: #5a4488;
+      --warn: #ffe08a;
+    }
+
+    * {
+      box-sizing: border-box;
+      border-radius: 0;
+      text-shadow: 2px 2px 0 var(--shadow, #000);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text, #e9edf1);
+      background: var(--bg, #0b0d10);
+      font-family: var(--mono, monospace);
+      font-size: 15px;
+      line-height: 1.55;
+      transition: background-color 180ms;
+    }
+
+    main {
+      width: min(calc(100% - 32px), 920px);
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    header,
+    section,
+    aside {
+      contain: layout paint;
+      margin-bottom: 16px;
+      border: 1px solid var(--line, #242a33);
+      background: var(--panel, rgba(18, 21, 26, .86));
+      padding: 16px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    h2::before {
+      content: "> ";
+      color: var(--dim, #98a2ad);
+    }
+
+    .status,
+    .label {
+      color: var(--dim, #98a2ad);
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin: 0;
+    }
+
+    .prose {
+      font-family: var(--sans, system-ui, sans-serif);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .math {
+      overflow-x: auto;
+      border-left: 4px solid var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+      padding: 12px;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .math p:last-child,
+    section p:last-child {
+      margin-bottom: 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line, #242a33);
+      background: transparent;
+    }
+
+    .axis,
+    .guide {
+      stroke: var(--line, #242a33);
+      stroke-width: 2;
+    }
+
+    .graph {
+      fill: none;
+      stroke: var(--accent, #6fdc82);
+      stroke-width: 6;
+    }
+
+    .point {
+      fill: var(--accent, #6fdc82);
+    }
+
+    .svg-text {
+      fill: var(--text, #e9edf1);
+      font: 13px var(--mono, monospace);
+    }
+
+    .strategy {
+      border-width: 2px;
+      border-color: var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+    }
+
+    .strategy strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--accent, #6fdc82);
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 680px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S2 // SECTION 06 // EVIDENCE</p>
+      <h1>Data Analysis</h1>
+      <p class="prose">Measure a drop rate before trusting a wiki number.</p>
+    </header>
+
+    <section>
+      <h2>The Minecraft structure</h2>
+      <div class="prose">
+        <p>You kill mobs and write down what each one dropped.</p>
+        <p>Then you summarise the sample.</p>
+        <p>Mean, median, and mode answer different questions.</p>
+        <p>The spread shows whether one lucky run is fooling you.</p>
+        <p>This loop helps tune a farm or balance a scripted minigame.</p>
+        <p>Change one thing, re-measure, and compare the results.</p>
+        <p>A measured drop rate is an estimate, not the true rate.</p>
+        <p>Ten kills is far too small a sample to pin down a real drop chance.</p>
+        <p>Looting enchantments and mob variants change the distribution.</p>
+        <p>Samples taken under different conditions must not be pooled.</p>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>The algebra</h2>
+        <div class="math" aria-label="Measures of center and spread">
+          <p>mean = sum ÷ count</p>
+          <p>median = middle of the sorted list</p>
+          <p>range = maximum − minimum</p>
+        </div>
+        <div class="prose">
+          <p>The mean is the sum divided by the count.</p>
+          <p>The median is the middle value of the sorted list.</p>
+          <p>For an even count, average the two middle values.</p>
+          <p>The mode is the most frequent value.</p>
+          <p>The range is the maximum minus the minimum.</p>
+          <p>An outlier pulls the mean but does not pull the median as strongly.</p>
+          <p>The domain for these summaries is any finite, nonempty list of real values.</p>
+          <p>The mean, median, and mode lie between the sample minimum and maximum.</p>
+          <p>The range statistic has range [0, ∞).</p>
+          <p>A larger sample narrows how far the sample mean tends to sit from the true rate.</p>
+          <p>A small sample can look wildly off by chance.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>The frequency chart</h2>
+        <svg viewBox="0 0 400 250" role="img"
+          aria-labelledby="drops-title drops-desc"
+          shape-rendering="crispEdges">
+          <title id="drops-title">Histogram of rotten flesh counts with frequencies three, four, and three</title>
+          <desc id="drops-desc">
+            Three bars show zero drops three times, one drop four times, and two drops three times.
+          </desc>
+          <path class="axis" d="M48 210H370M48 220V25"/>
+          <path class="guide" d="M48 175H370M48 140H370M48 105H370M48 70H370"/>
+          <rect class="point" x="80" y="105" width="70" height="105"/>
+          <rect class="point" x="165" y="70" width="70" height="140"/>
+          <rect class="point" x="250" y="105" width="70" height="105"/>
+          <text class="svg-text" x="89" y="96">count 3</text>
+          <text class="svg-text" x="174" y="61">count 4</text>
+          <text class="svg-text" x="259" y="96">count 3</text>
+          <text class="svg-text" x="86" y="231">0 drops</text>
+          <text class="svg-text" x="171" y="231">1 drop</text>
+          <text class="svg-text" x="256" y="231">2 drops</text>
+        </svg>
+        <p class="prose">The bar heights are 3, 4, and 3.</p>
+        <p class="prose">The tallest bar marks the mode.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Worked example</h2>
+      <div class="prose">
+        <p>You kill ten zombies without a Looting enchantment.</p>
+        <p>Record the rotten flesh dropped by each zombie in order.</p>
+      </div>
+      <div class="math">
+        <p>Data: 2, 0, 1, 1, 2, 0, 1, 2, 1, 0</p>
+        <p>Count = 10</p>
+      </div>
+      <div class="prose">
+        <p>Add every recorded value, then divide by the count.</p>
+      </div>
+      <div class="math">
+        <p>Sum = 2 + 0 + 1 + 1 + 2 + 0 + 1 + 2 + 1 + 0</p>
+        <p>Sum = 10</p>
+        <p>Mean = 10 ÷ 10</p>
+        <p>Mean = 1.0 per kill</p>
+      </div>
+      <div class="prose">
+        <p>Sort the values before finding the median.</p>
+      </div>
+      <div class="math">
+        <p>Sorted: 0, 0, 0, 1, 1, 1, 1, 2, 2, 2</p>
+        <p>Count = 10, so the count is even.</p>
+        <p>5th value = 1</p>
+        <p>6th value = 1</p>
+        <p>Median = (1 + 1) ÷ 2</p>
+        <p>Median = 1</p>
+      </div>
+      <div class="prose">
+        <p>Count how often each value appears.</p>
+      </div>
+      <div class="math">
+        <p>The value 0 appears 3 times.</p>
+        <p>The value 1 appears 4 times.</p>
+        <p>The value 2 appears 3 times.</p>
+        <p>Mode = 1</p>
+      </div>
+      <div class="prose">
+        <p>Subtract the minimum from the maximum.</p>
+      </div>
+      <div class="math">
+        <p>Range = 2 − 0</p>
+        <p>Range = 2</p>
+      </div>
+    </section>
+
+    <aside class="strategy" aria-label="Strategy card">
+      <span class="label">STRATEGY // SCREENSHOT THIS</span>
+      <strong>Write the sample down before you look at it.<br>
+        Report the count alongside every average.</strong>
+    </aside>
+  </main>
+</body>
+</html>
