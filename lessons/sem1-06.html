@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Piecewise Functions and Absolute Value</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: rgba(18, 21, 26, .86);
+      --panel-solid: #12151a;
+      --line: #242a33;
+      --text: #e9edf1;
+      --dim: #98a2ad;
+      --faint: #59636e;
+      --gap: #262c34;
+      --accent: #6fdc82;
+      --accent-dim: #2f6b3c;
+      --warn: #f2c14e;
+      --shadow: #000;
+      --tile: 24px;
+      --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono",
+        "DejaVu Sans Mono", Menlo, Consolas, monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell,
+        sans-serif;
+    }
+
+    [data-theme="nether"] {
+      --bg: #120a08;
+      --panel: rgba(28, 16, 13, .86);
+      --panel-solid: #1a100d;
+      --line: #3a201a;
+      --gap: #2e1c17;
+      --accent: #ff7a45;
+      --accent-dim: #7a3418;
+      --warn: #ffd166;
+    }
+
+    [data-theme="end"] {
+      --bg: #08070e;
+      --panel: rgba(18, 15, 28, .86);
+      --panel-solid: #100d1a;
+      --line: #2a2340;
+      --gap: #221d33;
+      --accent: #c4a2ff;
+      --accent-dim: #5a4488;
+      --warn: #ffe08a;
+    }
+
+    * {
+      box-sizing: border-box;
+      border-radius: 0;
+      text-shadow: 2px 2px 0 var(--shadow, #000);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text, #e9edf1);
+      background: var(--bg, #0b0d10);
+      font-family: var(--mono, monospace);
+      font-size: 15px;
+      line-height: 1.55;
+      transition: background-color 180ms;
+    }
+
+    main {
+      width: min(calc(100% - 32px), 920px);
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    header,
+    section,
+    aside {
+      contain: layout paint;
+      margin-bottom: 16px;
+      border: 1px solid var(--line, #242a33);
+      background: var(--panel, rgba(18, 21, 26, .86));
+      padding: 16px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    h2::before {
+      content: "> ";
+      color: var(--dim, #98a2ad);
+    }
+
+    .status,
+    .label {
+      color: var(--dim, #98a2ad);
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin: 0;
+    }
+
+    .prose {
+      font-family: var(--sans, system-ui, sans-serif);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .math {
+      overflow-x: auto;
+      border-left: 4px solid var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+      padding: 12px;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .math p:last-child,
+    section p:last-child {
+      margin-bottom: 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line, #242a33);
+      background: transparent;
+    }
+
+    .axis {
+      stroke: var(--line, #242a33);
+      stroke-width: 2;
+    }
+
+    .graph {
+      fill: none;
+      stroke: var(--accent, #6fdc82);
+      stroke-width: 6;
+    }
+
+    .point {
+      fill: var(--accent, #6fdc82);
+    }
+
+    .svg-text {
+      fill: var(--text, #e9edf1);
+      font: 13px var(--mono, monospace);
+    }
+
+    .strategy {
+      border-width: 2px;
+      border-color: var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+    }
+
+    .strategy strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--accent, #6fdc82);
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 680px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S1 // SECTION 06 // CURRENT LESSON</p>
+      <h1>Piecewise Functions and Absolute Value</h1>
+      <p class="prose">Coordinates already contain this algebra.</p>
+    </header>
+
+    <section>
+      <h2>The Minecraft structure</h2>
+      <div class="prose">
+        <p>Spawn sits at a coordinate.</p>
+        <p>You can travel east or west.</p>
+        <p>Distance ignores the direction.</p>
+        <p>Teleport from x = 0 to x = −120.</p>
+        <p>Your x-distance is |−120| = 120 blocks.</p>
+        <p>Along the x-axis, that distance uses absolute value.</p>
+        <p>Biome rules can change across coordinate boundaries.</p>
+        <p>A redstone conditional chooses the matching branch.</p>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>The algebra</h2>
+        <div class="math" aria-label="Absolute value piecewise definition">
+          <p>|x| = −x when x &lt; 0</p>
+          <p>|x| = x when x ≥ 0</p>
+        </div>
+        <div class="prose">
+          <p>Absolute value measures distance from zero.</p>
+          <p>Its domain is all real numbers.</p>
+          <p>Its range is [0, ∞).</p>
+          <p>A piecewise function uses rules on defined domains.</p>
+          <p>Each input must select exactly one rule.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>The valley graph</h2>
+        <svg viewBox="0 0 400 250" role="img"
+          aria-labelledby="valley-title valley-desc"
+          shape-rendering="crispEdges">
+          <title id="valley-title">Graph of y equals absolute value of x</title>
+          <desc id="valley-desc">
+            Two straight rays meet at the origin, forming a V.
+          </desc>
+          <path class="axis" d="M40 210H370M200 230V20"/>
+          <path class="graph" d="M65 75L200 210L335 75"/>
+          <rect class="point" x="194" y="204" width="12" height="12"/>
+          <text class="svg-text" x="210" y="228">(0, 0)</text>
+          <text class="svg-text" x="286" y="58">y = |x|</text>
+          <text class="svg-text" x="355" y="228">x</text>
+          <text class="svg-text" x="210" y="32">y</text>
+        </svg>
+        <p class="prose">Both sides are straight rays.</p>
+        <p class="prose">This V is not a parabola.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Worked example</h2>
+      <div class="prose">
+        <p>Your valley floor follows y = |x|.</p>
+        <p>At x = −4, use the negative branch.</p>
+      </div>
+      <div class="math">
+        <p>y = −(−4) = 4</p>
+      </div>
+      <div class="prose">
+        <p>At x = 0, use the included branch.</p>
+      </div>
+      <div class="math">
+        <p>y = 0</p>
+      </div>
+      <div class="prose">
+        <p>The boundary belongs only to x ≥ 0.</p>
+        <p>So every coordinate gets one height.</p>
+      </div>
+    </section>
+
+    <aside class="strategy" aria-label="Strategy card">
+      <span class="label">STRATEGY // SCREENSHOT THIS</span>
+      <strong>Check the boundary first.<br>
+        Use the one rule containing your input.</strong>
+    </aside>
+  </main>
+</body>
+</html>

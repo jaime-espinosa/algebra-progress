@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exponential Functions</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: rgba(18, 21, 26, .86);
+      --panel-solid: #12151a;
+      --line: #242a33;
+      --text: #e9edf1;
+      --dim: #98a2ad;
+      --faint: #59636e;
+      --gap: #262c34;
+      --accent: #6fdc82;
+      --accent-dim: #2f6b3c;
+      --warn: #f2c14e;
+      --shadow: #000;
+      --tile: 24px;
+      --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono",
+        "DejaVu Sans Mono", Menlo, Consolas, monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell,
+        sans-serif;
+    }
+
+    [data-theme="nether"] {
+      --bg: #120a08;
+      --panel: rgba(28, 16, 13, .86);
+      --panel-solid: #1a100d;
+      --line: #3a201a;
+      --gap: #2e1c17;
+      --accent: #ff7a45;
+      --accent-dim: #7a3418;
+      --warn: #ffd166;
+    }
+
+    [data-theme="end"] {
+      --bg: #08070e;
+      --panel: rgba(18, 15, 28, .86);
+      --panel-solid: #100d1a;
+      --line: #2a2340;
+      --gap: #221d33;
+      --accent: #c4a2ff;
+      --accent-dim: #5a4488;
+      --warn: #ffe08a;
+    }
+
+    * {
+      box-sizing: border-box;
+      border-radius: 0;
+      text-shadow: 2px 2px 0 var(--shadow, #000);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text, #e9edf1);
+      background: var(--bg, #0b0d10);
+      font-family: var(--mono, monospace);
+      font-size: 15px;
+      line-height: 1.55;
+      transition: background-color 180ms;
+    }
+
+    main {
+      width: min(calc(100% - 32px), 920px);
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    header,
+    section,
+    aside {
+      contain: layout paint;
+      margin-bottom: 16px;
+      border: 1px solid var(--line, #242a33);
+      background: var(--panel, rgba(18, 21, 26, .86));
+      padding: 16px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    h2::before {
+      content: "> ";
+      color: var(--dim, #98a2ad);
+    }
+
+    .status,
+    .label {
+      color: var(--dim, #98a2ad);
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin: 0;
+    }
+
+    .prose {
+      font-family: var(--sans, system-ui, sans-serif);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .math {
+      overflow-x: auto;
+      border-left: 4px solid var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+      padding: 12px;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .math p:last-child,
+    section p:last-child {
+      margin-bottom: 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line, #242a33);
+      background: transparent;
+    }
+
+    .axis,
+    .guide {
+      stroke: var(--line, #242a33);
+      stroke-width: 2;
+    }
+
+    .graph {
+      fill: none;
+      stroke: var(--accent, #6fdc82);
+      stroke-width: 6;
+    }
+
+    .point {
+      fill: var(--accent, #6fdc82);
+    }
+
+    .svg-text {
+      fill: var(--text, #e9edf1);
+      font: 13px var(--mono, monospace);
+    }
+
+    .strategy {
+      border-width: 2px;
+      border-color: var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+    }
+
+    .strategy strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--accent, #6fdc82);
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 680px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S2 // SECTION 01 // FIRST CONTACT</p>
+      <h1>Exponential Functions</h1>
+      <p class="prose">Multiplication changes the growth pattern.</p>
+    </header>
+
+    <section>
+      <h2>The Minecraft structure</h2>
+      <div class="prose">
+        <p>A doubling farm multiplies every cycle.</p>
+        <p>One output becomes two, then four.</p>
+        <p>Ideal villager breeding can follow the same pattern.</p>
+        <p>Real villagers need beds, food, cooldowns, and time.</p>
+        <p>Those limits eventually break the simple model.</p>
+        <p>Java XP costs also grow with level.</p>
+        <p>Their ratios are not constant.</p>
+        <p>So level costs are not exponential.</p>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>The algebra</h2>
+        <div class="math" aria-label="General exponential function">
+          <p>f(x) = a · bˣ</p>
+          <p>a ≠ 0</p>
+          <p>b &gt; 0 and b ≠ 1</p>
+        </div>
+        <div class="prose">
+          <p>The variable appears in the exponent.</p>
+          <p>The domain is all real numbers.</p>
+          <p>For a &gt; 0, the range is (0, ∞).</p>
+          <p>For a &lt; 0, the range is (−∞, 0).</p>
+          <p>Growth uses b &gt; 1.</p>
+          <p>Decay uses 0 &lt; b &lt; 1.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>The doubling curve</h2>
+        <svg viewBox="0 0 400 250" role="img"
+          aria-labelledby="growth-title growth-desc"
+          shape-rendering="crispEdges">
+          <title id="growth-title">Graph of six times two to the n</title>
+          <desc id="growth-desc">
+            Points rise from six to ninety-six across four cycles.
+          </desc>
+          <path class="axis" d="M42 215H370M42 225V20"/>
+          <path class="guide" d="M42 173H358M42 131H358M42 89H358"/>
+          <path class="graph" d="M58 202L130 190L202 166L274 118L346 22"/>
+          <rect class="point" x="53" y="197" width="10" height="10"/>
+          <rect class="point" x="125" y="185" width="10" height="10"/>
+          <rect class="point" x="197" y="161" width="10" height="10"/>
+          <rect class="point" x="269" y="113" width="10" height="10"/>
+          <rect class="point" x="341" y="17" width="10" height="10"/>
+          <text class="svg-text" x="48" y="235">0</text>
+          <text class="svg-text" x="120" y="235">1</text>
+          <text class="svg-text" x="192" y="235">2</text>
+          <text class="svg-text" x="264" y="235">3</text>
+          <text class="svg-text" x="336" y="235">4</text>
+          <text class="svg-text" x="276" y="46">N(n) = 6 · 2ⁿ</text>
+        </svg>
+        <p class="prose">Equal cycles create equal ratios.</p>
+        <p class="prose">The graph is not a parabola.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Worked example</h2>
+      <div class="prose">
+        <p>Your scripted farm starts with six entities.</p>
+        <p>Each cycle creates one copy per entity.</p>
+        <p>The population doubles each completed cycle.</p>
+      </div>
+      <div class="math">
+        <p>N(n) = 6 · 2ⁿ</p>
+        <p>N(4) = 6 · 2⁴</p>
+        <p>N(4) = 96 entities</p>
+      </div>
+      <div class="prose">
+        <p>Here, n counts completed cycles.</p>
+        <p>Its domain is {0, 1, 2, …}.</p>
+        <p>Its range is {6 · 2ⁿ | n ∈ ℤ≥0}.</p>
+        <p>Constant differences suggest linear growth.</p>
+        <p>Constant ratios identify exponential growth.</p>
+        <p>Quadratics have constant second differences instead.</p>
+      </div>
+    </section>
+
+    <aside class="strategy" aria-label="Strategy card">
+      <span class="label">STRATEGY // SCREENSHOT THIS</span>
+      <strong>Check equal input steps.<br>
+        A positive constant ratio, not 1, means exponential.</strong>
+    </aside>
+  </main>
+</body>
+</html>

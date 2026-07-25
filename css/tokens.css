@@ -1,0 +1,40 @@
+:root {
+  --bg: #0b0d10;
+  --panel: rgba(18, 21, 26, .86);
+  --panel-solid: #12151a;
+  --line: #242a33;
+  --text: #e9edf1;
+  --dim: #98a2ad;
+  --faint: #59636e;
+  --gap: #262c34;
+  --accent: #6fdc82;
+  --accent-dim: #2f6b3c;
+  --warn: #f2c14e;
+  --shadow: #000;
+  --tile: 24px;
+  --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "DejaVu Sans Mono",
+    Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell, sans-serif;
+}
+
+[data-theme="nether"] {
+  --bg: #120a08;
+  --panel: rgba(28, 16, 13, .86);
+  --panel-solid: #1a100d;
+  --line: #3a201a;
+  --gap: #2e1c17;
+  --accent: #ff7a45;
+  --accent-dim: #7a3418;
+  --warn: #ffd166;
+}
+
+[data-theme="end"] {
+  --bg: #08070e;
+  --panel: rgba(18, 15, 28, .86);
+  --panel-solid: #100d1a;
+  --line: #2a2340;
+  --gap: #221d33;
+  --accent: #c4a2ff;
+  --accent-dim: #5a4488;
+  --warn: #ffe08a;
+}
