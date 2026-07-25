@@ -123,12 +123,24 @@
     return JSON.stringify(left) === JSON.stringify(right);
   }
 
+  // A scrape can fail while still reporting success — an expired LMS session returns
+  // HTTP 200 with an empty gradebook. Trusting scrapeOk alone would render zeros, tell
+  // him the semester is sealed, and overwrite the good snapshot with the bad one. So
+  // check for regression against what we last saw BEFORE trusting the flag.
   function staleSafeData(data) {
-    if (data.scrapeOk !== false) return data;
     const saved = storageGet("mc.lastSnapshot", null);
-    if (!saved) return data;
+    if (!saved) return data;                       // no baseline: fail open, render as-is
+    const regressed = data.semesters.some(semester => {
+      const prior = saved[semester.id];
+      if (!prior) return false;
+      return semester.allTotal === 0 ||
+        (semester.allDone === 0 && prior.allDone > 0) ||
+        semester.allDone < prior.allDone;
+    });
+    if (data.scrapeOk !== false && !regressed) return data;
     return {
       ...data,
+      scrapeOk: false,
       semesters: data.semesters.map(semester => {
         const prior = saved[semester.id];
         if (!prior) return semester;
@@ -218,8 +230,10 @@
     return { earned, newlyEarned: [...unlocked].filter(id => !safeStored.includes(id)) };
   }
 
-  function applyTheme(data) {
-    const unlocked = evaluateUnlocks(data);
+  // Derives from the authoritative earned set, not from a fresh evaluation. Otherwise a
+  // bad scrape revokes theme access he already unlocked.
+  function applyTheme(data, earned = null) {
+    const unlocked = earned ?? evaluateUnlocks(data);
     const allowed = new Set(["overworld"]);
     if (unlocked.has("nether-theme")) allowed.add("nether");
     if (unlocked.has("end-theme-final")) allowed.add("end");
@@ -276,7 +290,9 @@
       const reveal = isNewSnapshot && index < done ? " reveal-hidden" : "";
       return `<span class="chunk-tile${status}${reveal}" aria-hidden="true"></span>`;
     }).join("");
-    const completeCopy = done === total
+    // total > 0 guard: a zeroed payload makes done === total trivially true, which
+    // would tell him he sealed the semester while the page shows 0/0.
+    const completeCopy = total > 0 && done === total
       ? "Semester 1 sealed. Every activity is loaded."
       : `${total - done} activities remain in Semester 1.`;
     document.querySelector("#trophy-content").innerHTML = `
@@ -323,8 +339,10 @@
     return `<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="${dim}" d="M7 1h2v5h4v2h-2v2H9v5H7v-5H5V8H3V6h4z"/><path fill="${fill}" d="M7 2h2v6H7z"/></svg>`;
   }
 
-  function renderVault(data, newlyEarned, isNewSnapshot) {
-    const earned = new Set(storageGet("vault.earned", []));
+  // `earned` is passed in, never re-read from storage. Re-reading meant that when
+  // localStorage was blocked or full, storageSet silently no-opped and every artifact
+  // he had actually earned rendered as locked.
+  function renderVault(data, earned, newlyEarned, isNewSnapshot) {
     const version = storageGet("mc.version", null);
     const strongest = [...artifacts].reverse().find(item => earned.has(item.id));
     document.querySelector("#vault-status").textContent = earned.size
@@ -421,24 +439,46 @@
     const daysLeft = Math.max(1, dateDiff(today, data.deadline.date));
     const required = remaining.length / daysLeft;
     const todayDone = todayCompleted(data, today);
-    const dailyAsk = Math.min(4, Math.max(1, Math.ceil(required)));
-    const projectionDays = Math.ceil(remaining.length / Math.max(PROVEN_PER_DAY, .1));
+    // Derived from real submission dates. This was previously hardcoded to "7 (Jul 11)",
+    // a number that was never true — inventing a personal best he never set is exactly
+    // the kind of thing he could check and catch.
+    const perDay = new Map();
+    for (const item of data.semesters.flatMap(semester => semester.activities)) {
+      if (item.state === "not_started" || typeof item.submittedDate !== "string") continue;
+      perDay.set(item.submittedDate, (perDay.get(item.submittedDate) || 0) + 1);
+    }
+    const bestDay = [...perDay.entries()]
+      .map(([date, count]) => ({ date, count }))
+      .sort((left, right) => right.count - left.count || (left.date < right.date ? -1 : 1))[0] || null;
+    // His number, not ours. The projection is computed from the pace HE picks, so the
+    // finish date is the consequence of his own choice rather than a verdict handed
+    // down. Defaults to the honest requirement, capped at 4.
+    const suggested = Math.min(4, Math.max(1, Math.ceil(required)));
+    const storedTarget = storageGet("mc.dailyTarget", null);
+    const dailyAsk = Number.isFinite(storedTarget) && storedTarget >= 1 && storedTarget <= 8
+      ? storedTarget
+      : suggested;
+    const projectionDays = Math.ceil(remaining.length / Math.max(dailyAsk, .1));
     const projectedDate = addDays(today, projectionDays);
+    const provenDays = Math.ceil(remaining.length / Math.max(PROVEN_PER_DAY, .1));
+    const provenDate = addDays(today, provenDays);
     const closesGap = Math.min(4, required);
     const doneWidth = (submitted / totalWork) * 100;
     const projectedRows = Math.min(remaining.length, Math.floor(PROVEN_PER_DAY * daysLeft));
     const projectedWidth = (projectedRows / totalWork) * 100;
     const gapWidth = Math.max(0, 100 - doneWidth - projectedWidth);
+    // Describes the PLAN, not a claim about where he stands. Saying "you're 4 days
+    // ahead" because he typed 4 into a box would be a lie he can check.
     const ahead = dateDiff(projectedDate, data.deadline.date);
     const statusCopy = projectedDate <= data.deadline.date
-      ? `You're ${Math.max(0, ahead)} days ahead.`
-      : `${closesGap.toFixed(1)} a day closes this.`;
+      ? `That plan lands ${Math.max(0, ahead)} days before the deadline.`
+      : `That plan lands after Aug 15. ${closesGap.toFixed(1)} a day reaches it.`;
     const next = remaining[0];
 
     document.querySelector("#pace-content").innerHTML = `
       <div class="daily-readout numeric">
         <strong>TODAY&nbsp;&nbsp;${todayDone} / ${dailyAsk}</strong>
-        <span class="quiet">best day: 7 (Jul 11)</span>
+        <span class="quiet">${bestDay ? `best day: ${bestDay.count} (${formatDay(bestDay.date)})` : ""}</span>
       </div>
       <div class="bar daily-bar" aria-label="${todayDone} of ${dailyAsk} rows today">
         <span class="daily-bar__fill" style="width:${Math.min(100, todayDone / dailyAsk * 100)}%"></span>
@@ -449,11 +489,23 @@
         <span class="bar__gap" style="width:${gapWidth}%"></span>
       </div>
       <div class="pace-copy numeric">
-        <span>projected finish&nbsp;&nbsp; <strong>${formatDay(projectedDate)}</strong> &nbsp;(at ${PROVEN_PER_DAY.toFixed(1)}/day)</span>
-        <span>Aug 15 needs&nbsp;&nbsp; <strong>${required.toFixed(1)}/day</strong> &nbsp;(+${Math.max(0, required - PROVEN_PER_DAY).toFixed(1)})</span>
+        <label class="target-picker">
+          <span>my pace&nbsp;&nbsp;</span>
+          <input type="number" id="daily-target" min="1" max="8" step="1" value="${dailyAsk}"
+                 aria-label="rows I plan to do per day">
+          <span>&nbsp;a day &rarr; finishes <strong>${formatDay(projectedDate)}</strong></span>
+        </label>
+        <span>Aug 15 needs&nbsp;&nbsp; <strong>${required.toFixed(1)}/day</strong>. You have run ${PROVEN_PER_DAY.toFixed(1)}/day, which finishes ${formatDay(provenDate)}.</span>
         <span>${escapeHtml(statusCopy)}</span>
         <span>${next ? `Next action: ${escapeHtml(next.title)}` : "Every named row is submitted."}</span>
       </div>`;
+
+    const targetInput = document.querySelector("#daily-target");
+    targetInput?.addEventListener("change", () => {
+      const value = Math.min(8, Math.max(1, Math.round(Number(targetInput.value) || suggested)));
+      storageSet("mc.dailyTarget", value);
+      if (currentData) renderPace(currentData);
+    });
   }
 
   function renderRepairs(data) {
@@ -512,14 +564,14 @@
     const unchanged = previousSnapshot && snapshotsEqual(previousSnapshot, snapshot);
     const isNewSnapshot = !unchanged;
     const safeData = staleSafeData(data);
-    const { newlyEarned } = unionEarned(safeData);
+    const { earned, newlyEarned } = unionEarned(safeData);
 
     currentData = safeData;
-    applyTheme(safeData);
+    applyTheme(safeData, earned);
     renderHeader(safeData);
     renderStatus(safeData, previousSeen, Boolean(unchanged));
     renderTrophy(safeData, previousSnapshot, isNewSnapshot);
-    renderVault(safeData, newlyEarned, isNewSnapshot);
+    renderVault(safeData, earned, newlyEarned, isNewSnapshot);
     renderCalendar(safeData);
     renderQuests(safeData);
     renderPace(safeData);
@@ -532,7 +584,9 @@
       status.textContent = `${newlyEarned.length} earned artifact${newlyEarned.length === 1 ? "" : "s"} added.`;
     }
 
-    if (data.scrapeOk !== false) storageSet("mc.lastSnapshot", snapshot);
+    // Snapshot the post-fallback object. Writing the raw payload here was the line that
+    // could destroy a good baseline permanently.
+    if (safeData.scrapeOk !== false) storageSet("mc.lastSnapshot", summarySnapshot(safeData));
     storageSet("mc.lastSeen", new Date().toISOString());
     startDriver();
   }
@@ -559,6 +613,9 @@
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
       if (!Array.isArray(data.semesters) || !data.deadline?.date) throw new Error("Invalid data shape");
+      // Shape validity is not semantic validity: semesters:[] passes Array.isArray and
+      // then throws mid-render, leaving a half-mutated DOM.
+      if (!data.semesters.length || data.semesters.every(s => !(s.activities?.length > 0))) throw new Error("Empty payload");
       const oldSnapshot = currentData ? summarySnapshot(currentData) : null;
       refreshMessage = force && snapshotsEqual(oldSnapshot, summarySnapshot(data))
         ? `No new rows yet · last checked ${formatTime(data.generatedAt)} · next ${nextScrapeTime()}`
@@ -692,7 +749,7 @@
       const item = pendingArtifact;
       closeVersionGate();
       if (item) previewArtifact(item);
-      if (currentData) renderVault(currentData, [], false);
+      if (currentData) renderVault(currentData, unionEarned(currentData).earned, [], false);
     });
     document.querySelector("#request-form").addEventListener("submit", async event => {
       event.preventDefault();
