@@ -892,11 +892,16 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
         !Array.isArray(data.sections)) return;
 
     const sections = data.sections.flatMap(section => {
+      // A group is either pinned to a syllabus section (semester + number, both
+      // required together) or free-standing with neither. Half a pair is malformed
+      // data, not a third kind of group, so it is dropped.
+      const pinned = section && section.semester !== undefined && section.number !== undefined;
       if (!section || typeof section !== "object" || Array.isArray(section) ||
-          !/^sem[12]$/.test(section.semester) ||
-          !Number.isInteger(section.number) || section.number < 1 ||
           typeof section.name !== "string" || !section.name.trim() ||
           !Array.isArray(section.items)) return [];
+      if (pinned && (!/^sem[12]$/.test(section.semester) ||
+          !Number.isInteger(section.number) || section.number < 1)) return [];
+      if (!pinned && (section.semester !== undefined || section.number !== undefined)) return [];
 
       const items = section.items.flatMap(item => {
         if (!item || typeof item !== "object" || Array.isArray(item) ||
