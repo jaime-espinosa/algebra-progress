@@ -7,7 +7,7 @@
   const PROVEN_PER_DAY = 1.7;
   const VALID_THEMES = new Set(["overworld", "nether", "end"]);
   const VALID_LOADERS = new Set(["vanilla", "fabric", "forge", "neoforge", "unsure"]);
-  const sectionIds = ["trophy", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request"];
+  const sectionIds = ["trophy", "effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request"];
 
   // vault/manifest.json is the single source of truth for artifacts. Hardcoding a
   // second copy here drifted immediately: it advertised the victory pack as 1.21.x
@@ -177,6 +177,44 @@
       item.state !== "not_started" &&
       typeof item.submittedDate === "string" &&
       item.submittedDate > BASELINE_DATE);
+  }
+
+  // Rows submitted per calendar date, from real submission dates.
+  function submissionsByDay(data) {
+    const perDay = new Map();
+    for (const item of data.semesters.flatMap(semester => semester.activities)) {
+      if (item.state === "not_started" || typeof item.submittedDate !== "string") continue;
+      perDay.set(item.submittedDate, (perDay.get(item.submittedDate) || 0) + 1);
+    }
+    return perDay;
+  }
+
+  // The important distinction on this whole page. Averaging across days he never
+  // opened the course makes him look half as fast as he is: 1.8/day calendar vs
+  // 3.8/day on days he actually worked. His pace already clears the 3.3 he needs.
+  // The lever is how often he shows up, not how fast he goes.
+  function effortStats(data, today) {
+    const perDay = submissionsByDay(data);
+    const dates = [...perDay.keys()].sort();
+    const activeDays = dates.length;
+    const submitted = [...perDay.values()].reduce((sum, n) => sum + n, 0);
+    const activePace = activeDays ? submitted / activeDays : 0;
+    const spanDays = dates.length
+      ? Math.max(1, dateDiff(dates[0], today) + 1)
+      : 1;
+    const showUpRate = spanDays ? activeDays / spanDays : 0;
+    const remaining = remainingActivities(data).length;
+    const daysLeft = Math.max(1, dateDiff(today, data.deadline.date));
+    const daysNeeded = activePace > 0 ? Math.ceil(remaining / activePace) : Infinity;
+    // Fraction of the remaining calendar he must actually sit down on.
+    const showUpNeeded = Math.min(1, daysNeeded / daysLeft);
+    // Honest and deliberately simple: how his past consistency compares to what the
+    // remaining days demand. Not a real probability model, and never shown as one.
+    const likelihood = daysNeeded > daysLeft
+      ? 0
+      : Math.max(0, Math.min(1, showUpRate / Math.max(showUpNeeded, 0.01)));
+    return { perDay, activeDays, submitted, activePace, showUpRate, remaining,
+             daysLeft, daysNeeded, showUpNeeded, likelihood };
   }
 
   function todayCompleted(data, today) {
@@ -366,25 +404,109 @@
     }).join("");
   }
 
+  function bestDayOf(stats) {
+    return [...stats.perDay.entries()]
+      .map(([date, count]) => ({ date, count }))
+      .sort((left, right) => right.count - left.count)[0] || null;
+  }
+
+  function dial(percent, label, value, tone = "") {
+    const pct = Math.max(0, Math.min(100, percent));
+    // Conic gradient, no canvas, no images, one static paint.
+    return `
+      <div class="dial ${tone}">
+        <div class="dial__face" style="--pct:${pct}" role="img" aria-label="${label}: ${value}">
+          <span class="dial__val numeric">${value}</span>
+        </div>
+        <div class="dial__label quiet">${label}</div>
+      </div>`;
+  }
+
+  function renderEffort(data) {
+    const today = localIsoDate();
+    const s = effortStats(data, today);
+    const required = s.remaining / s.daysLeft;
+    const paceRatio = required > 0 ? (s.activePace / required) * 100 : 100;
+    const likelihoodPct = Math.round(s.likelihood * 100);
+    // Deliberately not called a probability. It compares how often he has shown up
+    // against how often the remaining days require it.
+    const oddsTone = likelihoodPct >= 70 ? "" : "dial--watch";
+    const bars = [...s.perDay.entries()].sort().slice(-14);
+    const peak = Math.max(...bars.map(([, n]) => n), 1);
+    const barMarkup = bars.map(([date, n]) => `
+      <span class="daybar" title="${formatDay(date)}: ${n} rows">
+        <span class="daybar__fill" style="height:${(n / peak) * 100}%"></span>
+        <span class="daybar__d quiet numeric">${Number(date.slice(8))}</span>
+      </span>`).join("");
+
+    document.querySelector("#effort-content").innerHTML = `
+      <div class="dials">
+        ${dial(Math.min(100, paceRatio), "your pace vs needed", `${s.activePace.toFixed(1)}/day`)}
+        ${dial(s.showUpRate * 100, "days you showed up", `${Math.round(s.showUpRate * 100)}%`)}
+        ${dial(likelihoodPct, "on track for Aug 15", `${likelihoodPct}%`, oddsTone)}
+      </div>
+      <p class="effort-copy">
+        You have submitted <strong>${s.submitted} rows across ${s.activeDays} days</strong>.
+        On the days you work you average <strong>${s.activePace.toFixed(1)} a day</strong>,
+        and Aug 15 needs <strong>${required.toFixed(1)}</strong>.
+        <strong>You are already fast enough.</strong>
+        ${s.daysNeeded <= s.daysLeft
+          ? `You need about <strong>${s.daysNeeded} working days</strong> out of the ${s.daysLeft} left. That is the whole game — show up, and the speed takes care of itself.${bestDayOf(s) ? ` And big days buy days off: your ${bestDayOf(s).count}-row day was worth ${Math.max(1, Math.round(bestDayOf(s).count / Math.max(s.activePace, 1)))} ordinary ones.` : ""}`
+          : `At this pace the remaining rows need more days than are left. Raising your daily number is the lever now.`}
+      </p>
+      <div class="daybars" aria-label="Rows submitted per day, last 14 active days">${barMarkup}</div>
+      <div class="quiet">rows per working day &middot; last ${bars.length} days you worked</div>`;
+  }
+
+  // Nothing past Aug 15 is drawn. Showing ten dead days after the deadline made the
+  // grid read as a wall of time rather than a plan. The calendar now runs from his
+  // first working day to the deadline and nowhere further.
   function renderCalendar(data) {
     const today = localIsoDate();
     const daysLeft = Math.max(0, dateDiff(today, data.deadline.date));
-    const days = Array.from({ length: 25 }, (_, index) => {
-      const day = index + 1;
-      const iso = `2026-08-${String(day).padStart(2, "0")}`;
-      const classes = [
-        "calendar-day",
-        iso === data.deadline.date ? "is-deadline" : "",
-        iso > data.deadline.date ? "is-reference" : ""
-      ].filter(Boolean).join(" ");
-      const label = iso === data.deadline.date ? `<strong>${day}<br>AUG 15</strong>` : day;
-      return `<div class="${classes}" aria-label="${formatDay(iso)}">${label}</div>`;
-    });
-    days.splice(15, 0, `<div class="calendar-rule">LMS says Aug 25. Ignore it.</div>`);
+    const stats = effortStats(data, today);
+    const planned = new Map();
+    for (const item of remainingActivities(data)) {
+      if (item.ourTarget) planned.set(item.ourTarget, (planned.get(item.ourTarget) || 0) + 1);
+    }
+    const dates = [...stats.perDay.keys()].sort();
+    const start = dates.length ? dates[Math.max(0, dates.length - 10)] : today;
+    const cells = [];
+    for (let cursor = start; cursor <= data.deadline.date; cursor = addDays(cursor, 1)) {
+      const done = stats.perDay.get(cursor) || 0;
+      const plan = planned.get(cursor) || 0;
+      const isPast = cursor < today;
+      const isToday = cursor === today;
+      const target = Math.max(1, Math.round(stats.activePace || 3));
+      const classes = ["cal-cell"];
+      let mark = "";
+      if (cursor === data.deadline.date) classes.push("is-deadline");
+      if (isToday) classes.push("is-today");
+      if (done > 0) {
+        classes.push("is-done");
+        if (done >= target) { classes.push("is-pushing"); mark = "&#9650;"; }   // ahead
+      } else if (isPast) {
+        classes.push("is-idle");
+      } else if (plan > 0) {
+        classes.push("is-planned");
+      }
+      const count = done > 0 ? done : (isPast ? "" : plan || "");
+      const label = cursor === data.deadline.date
+        ? `<strong>AUG 15</strong>`
+        : `<span class="cal-cell__d">${Number(cursor.slice(8))}</span><span class="cal-cell__n numeric">${count}</span>${mark}`;
+      cells.push(`<div class="${classes.join(" ")}" title="${formatDay(cursor)}: ${done ? `${done} done` : plan ? `${plan} planned` : "nothing logged"}">${label}</div>`);
+    }
+    const pushDays = [...stats.perDay.entries()].filter(([, n]) => n >= Math.max(1, Math.round(stats.activePace))).length;
     document.querySelector("#calendar-content").innerHTML = `
       <div class="big-number numeric">${daysLeft} days</div>
       <div class="quiet">${escapeHtml(data.deadline.label)}</div>
-      <div class="calendar-grid" aria-label="August 2026">${days.join("")}</div>`;
+      <div class="cal-strip" aria-label="Working days through Aug 15">${cells.join("")}</div>
+      <div class="cal-key quiet numeric">
+        <span><b class="k k--done"></b> worked</span>
+        <span><b class="k k--push"></b> &#9650; big day (${pushDays} so far)</span>
+        <span><b class="k k--plan"></b> planned</span>
+        <span><b class="k k--idle"></b> nothing logged</span>
+      </div>`;
   }
 
   function questDays(data) {
@@ -571,6 +693,7 @@
     renderHeader(safeData);
     renderStatus(safeData, previousSeen, Boolean(unchanged));
     renderTrophy(safeData, previousSnapshot, isNewSnapshot);
+    renderEffort(safeData);
     renderVault(safeData, earned, newlyEarned, isNewSnapshot);
     renderCalendar(safeData);
     renderQuests(safeData);
@@ -779,5 +902,42 @@
   });
 
   bindEvents();
+  // He is going to hit F12 and poke at this. That is the correct instinct for someone
+  // who wants to build software, so the console rewards it instead of hiding from it.
+  // There is nothing secret in this page: no keys, no tokens, no server. The unlock
+  // state lives in localStorage and he can absolutely edit it — and if he reads enough
+  // of this file to work out how, he has earned whatever he unlocks. Cheating here
+  // costs him only the thing he was trying to get.
+  const consoleStyle = "color:#6fdc82;font-family:ui-monospace,monospace";
+  console.log("%calgebra_quest 1.0 — you found the console. Good.", consoleStyle);
+  console.log("%cEverything here is yours to read. Try these:", consoleStyle);
+  console.log("%c  quest.data()      the raw scrape driving this page", consoleStyle);
+  console.log("%c  quest.pace()      how the projection is calculated", consoleStyle);
+  console.log("%c  quest.effort()    your real numbers, per day", consoleStyle);
+  console.log("%c  quest.vault()     what is unlocked and why", consoleStyle);
+  console.log("%c  quest.source()    where the code and the scraper live", consoleStyle);
+  window.quest = {
+    data: () => currentData,
+    pace: () => {
+      const today = localIsoDate();
+      const stats = effortStats(currentData, today);
+      console.log("required/day =", (stats.remaining / stats.daysLeft).toFixed(2),
+        "\nyour pace on working days =", stats.activePace.toFixed(2),
+        "\nworking days needed =", stats.daysNeeded, "of", stats.daysLeft, "left");
+      return stats;
+    },
+    effort: () => Object.fromEntries([...submissionsByDay(currentData).entries()].sort()),
+    vault: () => artifacts.map(item => ({
+      id: item.id, tier: item.tier,
+      earned: unionEarned(currentData).earned.has(item.id), files: item.files
+    })),
+    source: () => {
+      console.log("site + scraper: https://github.com/jaime-espinosa/algebra-progress");
+      console.log("the scraper is Playwright against Red Comet, run 3x a day by cron.");
+      console.log("found a bug or want a reward? the request box files a real issue.");
+      return "https://github.com/jaime-espinosa/algebra-progress";
+    }
+  };
+
   loadManifest().then(loadData);
 })();
