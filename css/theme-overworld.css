@@ -140,7 +140,11 @@ meter,
 }
 
 .sec-controls button {
-  min-width: 26px;
+  /* Overrides the global 44px touch target. These sit in the corner of every panel;
+     at 44px they would be the loudest thing on the page. */
+  min-width: 28px;
+  min-height: 28px;
+  height: 28px;
   padding: 2px 5px;
   border: 1px solid var(--line);
   background: transparent;
@@ -153,8 +157,8 @@ meter,
 
 .sec-controls button:hover,
 .sec-controls button:focus-visible {
-  color: var(--fg);
-  border-color: var(--fg);
+  color: var(--text);
+  border-color: var(--text);
 }
 
 /* Keep the heading and the controls; drop everything else. The heading stays a full
@@ -169,7 +173,7 @@ meter,
 
 /* The heading is clickable, so say so on hover without moving anything. */
 .section-heading[style*="cursor"]:hover::before {
-  color: var(--fg);
+  color: var(--text);
 }
 
 .section-heading {
