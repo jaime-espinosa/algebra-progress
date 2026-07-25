@@ -1,0 +1,619 @@
+{
+  "generatedAt": "2026-07-25T23:50:00Z",
+  "sections": [
+    {
+      "semester": "sem1",
+      "number": 1,
+      "name": "Algebra Basics",
+      "items": [
+        {
+          "title": "PhET Expression Exchange",
+          "url": "https://phet.colorado.edu/en/simulations/expression-exchange",
+          "kind": "game",
+          "why": "You drag coin tiles worth x, y and 1 into a pile and watch the expression collect its own like terms, so combining terms stops being a rule and becomes something you can see.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": false
+        },
+        {
+          "title": "Silent Teacher",
+          "url": "https://silentteacher.toxicode.fr/",
+          "kind": "puzzle",
+          "why": "Teaches expression evaluation and notation with zero words of instruction: you guess, it shows the answer, you adjust, and the rules assemble themselves in about five minutes.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false,
+          "hookForHim": "No reading, no lecture, no account. It respects him enough to just let him figure it out, which is the opposite of the coursework he is stuck in."
+        },
+        {
+          "title": "Polypad Algebra Tiles",
+          "url": "https://polypad.amplify.com/p/algebra",
+          "kind": "tool",
+          "why": "An infinite canvas of algebra tiles you can drag, duplicate and arrange, which is the fastest way to see why 3x plus 2x is 5x but 3x plus 2 is not.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": true,
+          "hookForHim": "It is a sandbox with a save-and-share link, and it records — a screen capture of him dragging tiles to factor a quadratic is a legitimate 90-second explainer video."
+        }
+      ]
+    },
+    {
+      "semester": "sem1",
+      "number": 2,
+      "name": "Linear Equations and Inequalities",
+      "items": [
+        {
+          "title": "SolveMe Mobiles",
+          "url": "https://solveme.edc.org/Mobiles.html",
+          "kind": "puzzle",
+          "why": "Hanging-mobile puzzles that are linear equations in disguise; you balance the shapes and only afterwards realise you just did the same-operation-to-both-sides move.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false
+        },
+        {
+          "title": "PhET Equality Explorer",
+          "url": "https://phet.colorado.edu/sims/html/equality-explorer/latest/equality-explorer_all.html",
+          "kind": "game",
+          "why": "A balance scale that tips unless you do the same thing to both sides, so an illegal step shows itself immediately instead of coming back later as a wrong answer.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": false,
+          "hookForHim": "Good for the ten minutes when he is stuck on why a step is illegal; the scale tipping tells him immediately, without a wrong-answer screen."
+        },
+        {
+          "title": "Find X",
+          "url": "https://leo-kramer.github.io/find-x/",
+          "kind": "game",
+          "why": "You solve for x by applying an operation to both sides and watching the equation rearrange, so the rule becomes a game move. The whole thing is a small open page you can read and add levels to.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "Weekend-project sized: the whole thing is a tiny open-source page, so he can read how the equation state machine works and build his own puzzle levels.",
+          "source": true
+        },
+        {
+          "title": "Elevator Saga",
+          "url": "https://play.elevatorsaga.com/",
+          "kind": "game",
+          "why": "You write real JavaScript to run a bank of elevators against targets like move 100 people in 90 seconds with average wait under 2 seconds, which is rate and inequality reasoning with a stopwatch on it.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "This is scripting, in a browser, with a visible simulation and a scoreboard — the exact thing he is already trying to do with his friends, except the feedback loop is thirty seconds long. A run-by-run 'can I beat challenge 18' series is a ready-made YouTube format.",
+          "source": true
+        }
+      ]
+    },
+    {
+      "semester": "sem1",
+      "number": 3,
+      "name": "Systems of Equations and Inequalities",
+      "items": [
+        {
+          "title": "PhET Equality Explorer: Two Variables",
+          "url": "https://phet.colorado.edu/en/simulations/equality-explorer-two-variables",
+          "kind": "game",
+          "why": "The same balance scale but with two unknowns at once, which is the clearest demonstration of why one equation is never enough to pin down two values.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": false
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "kind": "tool",
+          "why": "Type both equations, then click the crossing point and Desmos names its coordinates for you, so you can check an algebraic solution graphically in about ten seconds.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": true,
+          "hookForHim": "The Desmos art scene is people drawing entire animated characters out of nothing but restricted-domain equations and slider-driven animation — it is the closest thing to 'redstone contraption' that algebra has, and it screen-records into a YouTube video with no editing skill required."
+        },
+        {
+          "title": "Math is Fun: Function Grapher",
+          "url": "https://www.mathsisfun.com/data/function-grapher.html",
+          "kind": "tool",
+          "why": "Plots two functions at once and marks the intersection, which is exactly what solving a system graphically means and what most quick graphers will not do for you.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false,
+          "hookForHim": "Fastest way to sanity-check a systems-of-equations answer. Verified clean — no ad network scripts on the grapher page itself."
+        },
+        {
+          "title": "algebra.js",
+          "url": "https://algebra.js.org/",
+          "kind": "tool",
+          "why": "A JavaScript library where you build an equation as an object and ask it to solve for x, with a live editor on the homepage. This is how you write a program that does algebra instead of one that fakes it.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "This is how he writes a program that does his algebra rather than one that fakes it. Building a solver is a far better use of an afternoon than doing thirty problems by hand, and he learns the rules by having to encode them.",
+          "source": true
+        }
+      ]
+    },
+    {
+      "semester": "sem1",
+      "number": 4,
+      "name": "Introduction to Functions",
+      "items": [
+        {
+          "title": "PhET Function Builder",
+          "url": "https://phet.colorado.edu/sims/html/function-builder/latest/function-builder_all.html",
+          "kind": "game",
+          "why": "You wire function boxes into a pipeline and feed things through it, which is the same diagram as an item-processing chain and makes composition concrete instead of notational.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": false,
+          "hookForHim": "It is a machine you assemble from parts and then feed items into. If redstone or a modded item-processing chain makes sense to him, so does this — it is the same diagram."
+        },
+        {
+          "title": "Compute It",
+          "url": "https://compute-it.toxicode.fr/",
+          "kind": "puzzle",
+          "why": "You step through a program by hand and predict what each line does to the variables, which is exactly evaluating a function and exactly the skill that makes substitute x = 3 stop being mysterious.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false,
+          "hookForHim": "It is how you learn to read code without being taught syntax first. Directly useful for the scripting he already wants to do."
+        },
+        {
+          "title": "Untrusted",
+          "url": "https://untrustedgame.com/",
+          "kind": "game",
+          "why": "Every level is a map you escape by editing the level's own JavaScript in a panel on the right, so you are reading and rewriting the function that defines the world. Modding, framed as a game.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "It is modding, framed as a game. Same instinct as running a modded Minecraft server, but the mod loader is the game itself and the whole thing is open source on GitHub."
+        },
+        {
+          "title": "David Eck: Family of Functions",
+          "url": "https://math.hws.edu/eck/js/graphs/function-family.html",
+          "kind": "tool",
+          "why": "Sliders for every coefficient in a family of functions, on one hand-written page that loads instantly on a slow laptop. View-source is a complete, readable lesson in drawing a graph from nothing.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "View-source on this is a complete, readable lesson in how to draw a graph with <canvas> from nothing. This is exactly the '300-line HTML file that draws a parabola' he can actually finish reading.",
+          "source": true
+        }
+      ]
+    },
+    {
+      "semester": "sem1",
+      "number": 5,
+      "name": "Linear Functions",
+      "items": [
+        {
+          "title": "PhET Graphing Lines",
+          "url": "https://phet.colorado.edu/sims/html/graphing-lines/latest/graphing-lines_all.html",
+          "kind": "game",
+          "why": "Drag the line and the slope-intercept equation updates, or type the equation and the line moves. The Line Game mode then scores you on it, which is the only drill here that does not feel like drill.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": false,
+          "hookForHim": "Direct sim link, so it opens straight into the simulation with no site chrome, no ads, no account. Loads fine on a weak machine."
+        },
+        {
+          "title": "Shodor: Slope Slider",
+          "url": "https://appstate-math.github.io/interactivate/activities/SlopeSlider/",
+          "kind": "tool",
+          "why": "Two sliders, m and b, one line. The entire content of slope-intercept form on a single page with nothing else on it.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false,
+          "hookForHim": "Runs on a compiled-to-JavaScript engine from a 2000s university outreach lab and still works perfectly, which is a nice reminder that plain web stuff outlives every app store."
+        },
+        {
+          "title": "js-graphy",
+          "url": "https://laktak.github.io/js-graphy/",
+          "kind": "tool",
+          "why": "The function you plot is a JavaScript expression, not calculator syntax, so writing f(x) and writing code become the same act. Small enough to read the whole thing.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "It is the bridge between 'I am learning functions in algebra' and 'I am writing functions in a script'. Small, readable, and the repo is right there.",
+          "source": true
+        },
+        {
+          "title": "Bret Victor: Tangle",
+          "url": "https://worrydream.com/Tangle/",
+          "kind": "tool",
+          "why": "A tiny library that turns the numbers inside a sentence into draggable values, so a paragraph becomes a live model. Wrap a rate calculation in it and you have a page anyone can drag the numbers on.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "Under 100 lines of the good stuff. He could wrap a Minecraft rate calculation in it in an evening and publish a page where anyone can drag the numbers. That is a genuinely shareable thing to have made.",
+          "source": true
+        }
+      ]
+    },
+    {
+      "semester": "sem1",
+      "number": 6,
+      "name": "Piecewise Functions",
+      "items": [
+        {
+          "title": "Mathigon: Piecewise Functions",
+          "url": "https://mathigon.org/course/functions/piecewise",
+          "kind": "puzzle",
+          "why": "Interactive graphs where you move the boundary and watch which branch takes over, which is the whole point of a piecewise definition.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "kind": "tool",
+          "why": "Add a restriction in braces after an equation and the curve is cut to that interval, which is how every piecewise graph and every piece of Desmos art is actually built.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": true,
+          "hookForHim": "The Desmos art scene is people drawing entire animated characters out of nothing but restricted-domain equations and slider-driven animation — it is the closest thing to 'redstone contraption' that algebra has, and it screen-records into a YouTube video with no editing skill required."
+        },
+        {
+          "title": "Desmos Math Art Gallery",
+          "url": "https://www.desmos.com/art",
+          "kind": "tool",
+          "why": "Every entry is a picture built out of restricted-domain equations, and each one opens in the calculator, so you can read the exact equation list that made it and delete lines to find out what each one does.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": true,
+          "hookForHim": "This is the 'here is a build, now open the world file and take it apart' loop, applied to algebra. It is also an obvious YouTube video: recreate a gallery piece from scratch on camera.",
+          "source": true
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 1,
+      "name": "Exponential Functions",
+      "items": [
+        {
+          "title": "JSXGraph: Draggable Exponential Function",
+          "url": "https://jsxgraph.org/share/example/draggable-exponential-function",
+          "kind": "tool",
+          "why": "Drag a point and the exponential curve reshapes to pass through it, which is the clearest way to see why exponentials refuse to behave like lines. The source that draws it sits on the same page.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "Source is on the same page. Exponential growth is also the maths behind every idle-game and compound-resource curve he has ever ground through.",
+          "source": true
+        },
+        {
+          "title": "LOOPY",
+          "url": "https://ncase.me/loopy/",
+          "kind": "tool",
+          "why": "You draw circles and arrows and it simulates the feedback loops live, which is the fastest way to see why some quantities grow steadily and others explode. Every model saves as a shareable link.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "It is a sandbox for modelling systems — mob spawn rates, iron farm throughput, the economy on his friend's server — and every model saves as a shareable URL he can drop straight into a video description. Open source, MIT-ish, hackable.",
+          "source": true
+        },
+        {
+          "title": "Mathigon: Sequences and Growth",
+          "url": "https://mathigon.org/course/sequences/introduction",
+          "kind": "puzzle",
+          "why": "Starts with geometric sequences and constant ratios, which is the cleanest way to see why a doubling farm is exponential and a level cost is not.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false
+        },
+        {
+          "title": "Mathigon: Carbon Dating",
+          "url": "https://mathigon.org/course/exponentials/carbon-dating",
+          "kind": "puzzle",
+          "why": "A worked interactive on exponential decay with a half-life, which is the decay case you rarely get to play with in a textbook.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 2,
+      "name": "Quadratic Functions",
+      "items": [
+        {
+          "title": "PhET Graphing Quadratics",
+          "url": "https://phet.colorado.edu/sims/html/graphing-quadratics/latest/graphing-quadratics_all.html",
+          "kind": "game",
+          "why": "Shows standard form, vertex form and factored form of the same parabola side by side while you drag it, which is the one conversion that costs the most marks in this unit.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": false,
+          "hookForHim": "It is the visual answer to 'why do we keep rewriting the same equation three different ways' — he can see all three change at once instead of taking it on faith."
+        },
+        {
+          "title": "PhET Projectile Motion",
+          "url": "https://phet.colorado.edu/en/simulations/projectile-motion",
+          "kind": "game",
+          "why": "Fire things at a target, turn air resistance on and off, and see for yourself how much drag bends the arc away from a clean parabola.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": false
+        },
+        {
+          "title": "Graph Playground",
+          "url": "https://maninae.github.io/graph-playground/",
+          "kind": "tool",
+          "why": "One small page dedicated to exactly one hard idea: how a, h and k move a curve, with drag handles instead of a table of rules to memorise. The repo is one click away if you want it to do more.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "It is one readable HTML/JS project on GitHub Pages with the repo one click away, so 'I want mine to also flip on the y-axis' is a fork and about twenty lines, not a project.",
+          "source": true
+        },
+        {
+          "title": "p5.js Web Editor",
+          "url": "https://editor.p5js.org/",
+          "kind": "tool",
+          "why": "A browser code editor with instant visual output where a loop and a quadratic draw a parabola on screen in about fifteen lines. Nothing to install, and it runs without an account.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "Where he goes the moment he wants to make his own version of anything else on this list. Runs without an account (account only needed to save), and p5 sketches are the most-remixed creative-coding format there is.",
+          "source": true
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 3,
+      "name": "Solving Quadratic Equations",
+      "items": [
+        {
+          "title": "PhET Area Model Algebra",
+          "url": "https://phet.colorado.edu/en/simulations/area-model-algebra",
+          "kind": "game",
+          "why": "Builds a rectangle out of algebra pieces so factoring becomes finding the side lengths of a known area, which is the same move as sizing a farm plot.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": false
+        },
+        {
+          "title": "MathsBot Algebra Tiles",
+          "url": "https://mathsbot.com/manipulatives/tiles",
+          "kind": "tool",
+          "why": "Free-dragging algebra tiles with no lesson wrapped around them, so factoring a trinomial becomes make these tiles into a rectangle: a puzzle with one right shape. Loads instantly.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false,
+          "hookForHim": "Loads instantly, no account, no ads. Good for the specific half hour when factoring will not click."
+        },
+        {
+          "title": "Mathigon: Solving Quadratic Equations",
+          "url": "https://mathigon.org/course/quadratics/solving",
+          "kind": "puzzle",
+          "why": "Derives the quadratic formula from completing the square in front of you, so the formula stops being a random string to memorise.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false
+        },
+        {
+          "title": "Quadratic Solver, one file",
+          "url": "https://basemax.github.io/QuadraticEquationCalculator/quadratic.html",
+          "kind": "tool",
+          "why": "A page under 2 KB that solves any quadratic, small enough to read the entire quadratic formula in JavaScript in two minutes. The best first thing here to copy and rewrite yourself.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "The literal 'here is the whole thing, it is one file, now you write one' example. Best possible first fork.",
+          "source": true
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 4,
+      "name": "Radical Functions",
+      "items": [
+        {
+          "title": "Math is Fun: Distance Between 2 Points",
+          "url": "https://www.mathsisfun.com/algebra/distance-2-points.html",
+          "kind": "tool",
+          "why": "Drag either point and the right triangle, the two squared legs and the square root all update together, which is the F3 coordinate distance calculation made visible.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false
+        },
+        {
+          "title": "Red Blob Games: Hexagonal Grids",
+          "url": "https://www.redblobgames.com/grids/hexagons/",
+          "kind": "tool",
+          "why": "A game developer's reference on hex coordinates where every diagram is interactive and every distance is a root of a sum of squares. Coordinate algebra doing real work inside game code.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "This is the answer to 'when will I ever use this'. It is coordinate maths written for people making games, with the interactive figures and the source both available.",
+          "source": true
+        },
+        {
+          "title": "David Eck: Function Grapher",
+          "url": "https://math.hws.edu/eck/js/graphs/grapher.html",
+          "kind": "tool",
+          "why": "A 6 KB grapher that has quietly kept working for years: the fastest way to check that a radical function's graph stops exactly where its domain does.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "Proof that a useful tool does not need a company behind it. One file, one author, still running. That is a template for the kind of thing he could publish himself.",
+          "source": true
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 5,
+      "name": "Rational Expressions",
+      "items": [
+        {
+          "title": "Nerdamer",
+          "url": "https://nerdamer.com/demo.html",
+          "kind": "tool",
+          "why": "Symbolic algebra in the browser: it expands, factors and simplifies with steps, so you can find where a messy rational simplification went wrong instead of guessing. One JS file you can reuse.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "The whole engine is one open-source JS file he can drop into his own page. 'I built a calculator that does algebra' is a real project with a real repo behind it.",
+          "source": true
+        },
+        {
+          "title": "Graspable Math Canvas",
+          "url": "https://activities.graspablemath.com/canvas",
+          "kind": "tool",
+          "why": "You physically drag terms across the equals sign and the app refuses moves that break the equation, so you get instant feedback on every step of a solve.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false
+        },
+        {
+          "title": "GeoGebra CAS Calculator",
+          "url": "https://www.geogebra.org/cas",
+          "kind": "tool",
+          "why": "Factor and Simplify commands show the fully factored form of a messy rational expression, so you can find the excluded values before you cancel anything.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 6,
+      "name": "Data Analysis",
+      "items": [
+        {
+          "title": "Setosa: Least Squares, Explained Visually",
+          "url": "https://setosa.io/ev/ordinary-least-squares-regression/",
+          "kind": "tool",
+          "why": "Drag any data point and watch the best-fit line and the squared-error boxes react in real time, so you see what least squares is actually minimising instead of being told.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "Short, no ads, no signup, and it is the canonical example of an explorable explanation. If he ever wants to make an explainer video that is actually good, this is the standard.",
+          "source": true
+        },
+        {
+          "title": "PhET Curve Fitting",
+          "url": "https://phet.colorado.edu/sims/html/curve-fitting/latest/curve-fitting_all.html",
+          "kind": "game",
+          "why": "Drop in your own points and watch a best-fit line or curve snap to them with r squared updating live, so line of best fit becomes something you can feel rather than a formula.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": false,
+          "hookForHim": "If he ever records his own numbers (frame rates, deaths per session, video views per day), this is where they turn into a trend line and a prediction."
+        },
+        {
+          "title": "CODAP",
+          "url": "https://codap.concord.org/app/",
+          "kind": "tool",
+          "why": "Drop in your own numbers and drag attributes onto axes to build graphs in seconds, which is the tool to reach for after you have actually measured a farm rate.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false
+        },
+        {
+          "title": "PhET Plinko Probability",
+          "url": "https://phet.colorado.edu/en/simulations/plinko-probability",
+          "kind": "game",
+          "why": "Run ten balls, then ten thousand, and watch the sample distribution settle onto the theoretical one, which is the direct answer to whether ten kills is enough data.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": false
+        }
+      ]
+    }
+  ]
+}

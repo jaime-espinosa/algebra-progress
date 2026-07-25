@@ -489,8 +489,8 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
             text-anchor="middle" transform="rotate(90 746 ${(top + bottom) / 2})">hrs/day</text>
           <line class="effort-graph__reference" x1="${left}" y1="${requiredY.toFixed(2)}"
             x2="${right}" y2="${requiredY.toFixed(2)}"></line>
-          <text class="effort-graph__reference-label" x="${right - 5}" y="${(requiredY - 5).toFixed(2)}"
-            text-anchor="end">${requiredPerDay.toFixed(1)}/day — what Aug 15 needs</text>
+          <text class="effort-graph__reference-label" x="${left + 6}" y="${(requiredY - 5).toFixed(2)}"
+            text-anchor="start">${requiredPerDay.toFixed(1)}/day — what Aug 15 needs</text>
           <polyline class="effort-graph__series" points="${points}"></polyline>
           ${squares}
           ${xLabels}
