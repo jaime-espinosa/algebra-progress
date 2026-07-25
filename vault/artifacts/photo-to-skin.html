@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Photo to Minecraft Skin</title>
+<style>
+  :root{color-scheme:dark;--bg:#0b0d10;--panel:#12151a;--line:#2b333d;--text:#e9edf1;--dim:#98a2ad;--accent:#6fdc82;--gold:#f2c14e}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 ui-monospace,monospace}
+  main{max-width:980px;margin:32px auto;padding:24px;border:1px solid var(--line);background:var(--panel)}
+  h1,h2{font-size:20px}.note{color:var(--dim)}.privacy{padding:12px;border-left:4px solid var(--accent);background:#0e1115}
+  input,select,button{font:inherit;color:var(--text);background:#0e1115;border:1px solid var(--line);padding:10px}
+  button{border-color:var(--accent);cursor:pointer}.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:20px 0}
+  label{display:grid;gap:5px;color:var(--dim)}label.check{display:flex;align-items:center;gap:8px;padding-top:24px}
+  .previews{display:grid;grid-template-columns:minmax(280px,2fr) minmax(160px,1fr);gap:18px;align-items:start}
+  figure{margin:0;padding:14px;border:1px solid var(--line);background:#0e1115;text-align:center}figcaption{margin-bottom:10px;color:var(--dim)}
+  canvas{display:block;max-width:100%;height:auto;margin:auto;background-image:linear-gradient(45deg,#1a1e24 25%,transparent 25%),linear-gradient(-45deg,#1a1e24 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#1a1e24 75%),linear-gradient(-45deg,transparent 75%,#1a1e24 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;image-rendering:pixelated}
+  #sheet{width:320px;height:320px}#doll{width:192px;height:384px}.actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px}
+  #status{color:var(--gold)}@media(max-width:700px){main{margin:0;border-width:0;padding:16px}.previews{grid-template-columns:1fr}}
+</style>
+<main>
+  <h1>Photo → Minecraft Skin</h1>
+  <p class="privacy"><strong>Private:</strong> your photo is read into this page's own canvas and never sent anywhere. There is no network code in this file.</p>
+  <label>Choose a head-and-shoulders photo
+    <input id="photo" type="file" accept="image/*">
+  </label>
+  <p class="note">The page samples a few broad colour regions, builds a blocky appearance, and paints the standard 64×64 Minecraft skin layout.</p>
+
+  <section class="controls" aria-label="Skin controls">
+    <label>Geometry
+      <select id="geometry"><option value="classic">Classic</option><option value="slim">Slim</option></select>
+    </label>
+    <label class="check"><input id="outer-layers" type="checkbox" checked> Outer layers</label>
+    <label>Hair style
+      <select id="hair-style"><option>short</option><option>long</option><option>curl</option><option>sweep</option></select>
+    </label>
+    <label>Hair volume
+      <input id="hair-volume" type="range" min="1" max="4" value="2">
+    </label>
+    <label>Expression
+      <select id="expression"><option>neutral</option><option>smile</option><option>grin</option></select>
+    </label>
+    <label>Shading
+      <select id="shading"><option value="block">Block</option><option value="soft">Soft</option></select>
+    </label>
+    <label class="check"><input id="outline" type="checkbox"> Outline</label>
+  </section>
+
+  <section class="previews">
+    <figure><figcaption>64×64 skin sheet</figcaption><canvas id="sheet" width="64" height="64"></canvas></figure>
+    <figure><figcaption>Flat front paper doll</figcaption><canvas id="doll" width="16" height="32"></canvas></figure>
+  </section>
+
+  <div class="actions">
+    <button id="download" type="button">Download skin PNG</button>
+    <span id="status" role="status" aria-live="polite">Using the starter appearance.</span>
+  </div>
+  <p class="note">Upload the downloaded skin yourself at minecraft.net — this tool does not and cannot upload anything.</p>
+</main>
+<script type="module">
+  import {
+    SKIN_LAYOUT,
+    appearanceFromPhotoSamples,
+    defaultAppearance,
+    paintSkin,
+    sampleRegions,
+    skinToPng,
+  } from "../tools/skin-forge.mjs";
+
+  const photoInput = document.querySelector("#photo");
+  const geometryInput = document.querySelector("#geometry");
+  const outerLayersInput = document.querySelector("#outer-layers");
+  const hairStyleInput = document.querySelector("#hair-style");
+  const hairVolumeInput = document.querySelector("#hair-volume");
+  const expressionInput = document.querySelector("#expression");
+  const shadingInput = document.querySelector("#shading");
+  const outlineInput = document.querySelector("#outline");
+  const sheet = document.querySelector("#sheet");
+  const doll = document.querySelector("#doll");
+  const status = document.querySelector("#status");
+  const sheetContext = sheet.getContext("2d");
+  const dollContext = doll.getContext("2d");
+  let appearance = defaultAppearance();
+  let currentRgba;
+
+  const blitFront = (layout, partName, destination, outerPartName) => {
+    const source = layout.parts[partName].faces.front;
+    dollContext.drawImage(
+      sheet,
+      source.x,
+      source.y,
+      source.width,
+      source.height,
+      destination.x,
+      destination.y,
+      source.width,
+      source.height,
+    );
+    if (outerLayersInput.checked && outerPartName) {
+      const outer = layout.parts[outerPartName].faces.front;
+      dollContext.drawImage(
+        sheet,
+        outer.x,
+        outer.y,
+        outer.width,
+        outer.height,
+        destination.x,
+        destination.y,
+        outer.width,
+        outer.height,
+      );
+    }
+  };
+
+  const paintDoll = (layout) => {
+    dollContext.clearRect(0, 0, doll.width, doll.height);
+    const armWidth = layout.parts.rightArm.faces.front.width;
+    blitFront(layout, "head", { x: 4, y: 0 }, "hat");
+    blitFront(layout, "body", { x: 4, y: 8 }, "jacket");
+    blitFront(layout, "rightArm", { x: 4 - armWidth, y: 8 }, "rightSleeve");
+    blitFront(layout, "leftArm", { x: 12, y: 8 }, "leftSleeve");
+    blitFront(layout, "rightLeg", { x: 4, y: 20 }, "rightPants");
+    blitFront(layout, "leftLeg", { x: 8, y: 20 }, "leftPants");
+  };
+
+  const repaint = () => {
+    appearance.hair.style = hairStyleInput.value;
+    appearance.hair.volume = Number(hairVolumeInput.value);
+    appearance.face.expression = expressionInput.value;
+    appearance.style.shading = shadingInput.value;
+    appearance.style.outline = outlineInput.checked;
+    const profile = {
+      geometry: geometryInput.value,
+      outerLayers: outerLayersInput.checked,
+    };
+    currentRgba = paintSkin(appearance, profile);
+    sheetContext.putImageData(new ImageData(new Uint8ClampedArray(currentRgba), 64, 64), 0, 0);
+    paintDoll(SKIN_LAYOUT[profile.geometry]);
+  };
+
+  const readPhoto = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("The photo could not be read."));
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => reject(new Error("That file could not be decoded as an image."));
+      image.onload = () => resolve(image);
+      image.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  photoInput.addEventListener("change", async () => {
+    const [file] = photoInput.files;
+    if (!file) return;
+    status.textContent = "Reading the photo locally…";
+    try {
+      const image = await readPhoto(file);
+      const scale = Math.min(1, 256 / Math.max(image.naturalWidth, image.naturalHeight));
+      const width = Math.max(1, Math.round(image.naturalWidth * scale));
+      const height = Math.max(1, Math.round(image.naturalHeight * scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      context.drawImage(image, 0, 0, width, height);
+      const pixels = context.getImageData(0, 0, width, height).data;
+      appearance = appearanceFromPhotoSamples(sampleRegions(pixels, width, height));
+      hairStyleInput.value = appearance.hair.style;
+      hairVolumeInput.value = String(appearance.hair.volume);
+      expressionInput.value = appearance.face.expression;
+      shadingInput.value = appearance.style.shading;
+      outlineInput.checked = appearance.style.outline;
+      repaint();
+      status.textContent = "Photo sampled locally. Adjust anything you like.";
+    } catch (error) {
+      status.textContent = error.message;
+    }
+  });
+
+  for (const control of [
+    geometryInput,
+    outerLayersInput,
+    hairStyleInput,
+    hairVolumeInput,
+    expressionInput,
+    shadingInput,
+    outlineInput,
+  ]) {
+    control.addEventListener("input", repaint);
+  }
+
+  document.querySelector("#download").addEventListener("click", () => {
+    const png = skinToPng(currentRgba);
+    const objectUrl = URL.createObjectURL(new Blob([png], { type: "image/png" }));
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = "skin-64x64.png";
+    link.click();
+    URL.revokeObjectURL(objectUrl);
+  });
+
+  repaint();
+</script>
+</html>
