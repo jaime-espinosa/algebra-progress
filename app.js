@@ -240,6 +240,10 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
       "algebra-miner-skin": (sem1?.allDone ?? 0) >= 90,
       "momentum-cursor-pet": sem1SectionsSealed >= 4,
       "sem1-victory-pack": (sem1?.percent ?? 0) >= 80,
+      // Six rows from now. Checkable against the Semester 1 list itself: every row
+      // in it submitted, nothing modelled or estimated.
+      "photo-skin-studio": (sem1?.activities.length ?? 0) > 0
+        && sem1.activities.every(item => item.state !== "not_started"),
       "nether-theme": sem2Submitted.length >= 3,
       "auto-breeding-pen": sectionDone(1),
       "ballistics-workbench": sectionDone(2),
@@ -385,9 +389,16 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
       const gated = isEarned && item.minVersion && !version;
       const featured = strongest?.id === item.id;
       const reveal = isNewSnapshot && newlyEarned.includes(item.id) && !reducedMotion();
-      const action = isEarned
-        ? `<button type="button" data-artifact="${item.id}">${gated ? "Check version" : "Preview"}</button>`
-        : `<span class="quiet">${escapeHtml(item.tier)} · locked</span>`;
+      // An artifact that ships a page in this repo has to be reachable, or earning it
+      // buys him a status line and nothing else. Anchor, not window.open, so a popup
+      // blocker cannot swallow the reward.
+      const page = item.files.find(file => file.endsWith(".html"));
+      const openable = isEarned && !gated && page;
+      const action = openable
+        ? `<a class="action vault-slot__open" href="${escapeHtml(`vault/${page}`)}" target="_blank" rel="noopener noreferrer" data-artifact="${item.id}">Open</a>`
+        : isEarned
+          ? `<button type="button" data-artifact="${item.id}">${gated ? "Check version" : "Preview"}</button>`
+          : `<span class="quiet">${escapeHtml(item.tier)} · locked</span>`;
       return `
         <article class="vault-slot${isEarned ? " is-earned" : ""}${featured ? " is-featured" : ""}${reveal ? " reveal-hidden" : ""}"
           data-vault-id="${item.id}">

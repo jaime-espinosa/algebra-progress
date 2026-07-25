@@ -306,7 +306,8 @@ meter,
   text-align: center;
 }
 
-.vault-slot button {
+.vault-slot button,
+.vault-slot .vault-slot__open {
   width: 100%;
   margin-top: 8px;
 }

@@ -54,6 +54,24 @@
     "requiresMod": false
   },
   {
+    "id": "photo-skin-studio",
+    "name": "Photo to Skin Studio",
+    "tier": "Solo",
+    "minVersion": null,
+    "maxVersion": null,
+    "loader": "browser",
+    "files": [
+      "artifacts/photo-to-skin.html"
+    ],
+    "testedOn": "Chromium; runs entirely in the browser and the photo never leaves this laptop",
+    "milestoneId": 4,
+    "locked": false,
+    "untested": false,
+    "requiresServerAccess": false,
+    "requiresOperator": false,
+    "requiresMod": false
+  },
+  {
     "id": "nether-theme",
     "name": "Nether Theme",
     "tier": "Site",
@@ -62,7 +80,7 @@
     "loader": "site",
     "files": [],
     "testedOn": "site integration pending",
-    "milestoneId": 4,
+    "milestoneId": 5,
     "locked": false,
     "untested": false,
     "requiresServerAccess": false,
@@ -78,7 +96,7 @@
     "loader": "unknown",
     "files": [],
     "testedOn": null,
-    "milestoneId": 5,
+    "milestoneId": 6,
     "locked": true,
     "untested": true,
     "requiresServerAccess": true,
@@ -96,7 +114,7 @@
       "artifacts/ballistics-workbench.html"
     ],
     "testedOn": "standalone HTML source validation; in-game trajectory comparison pending",
-    "milestoneId": 6,
+    "milestoneId": 7,
     "locked": false,
     "untested": false,
     "requiresServerAccess": false,
@@ -112,7 +130,7 @@
     "loader": "unknown",
     "files": [],
     "testedOn": null,
-    "milestoneId": 7,
+    "milestoneId": 8,
     "locked": true,
     "untested": true,
     "requiresServerAccess": true,
@@ -130,7 +148,7 @@
       "artifacts/surveyor.html"
     ],
     "testedOn": "standalone HTML source validation; browser launch pending",
-    "milestoneId": 8,
+    "milestoneId": 9,
     "locked": false,
     "untested": false,
     "requiresServerAccess": false,
@@ -148,7 +166,7 @@
       "artifacts/farm-rate-optimizer.html"
     ],
     "testedOn": "standalone HTML source validation; browser launch pending",
-    "milestoneId": 9,
+    "milestoneId": 10,
     "locked": false,
     "untested": false,
     "requiresServerAccess": false,
@@ -166,7 +184,7 @@
       "artifacts/youtube-analytics-template.csv"
     ],
     "testedOn": "RFC 4180-compatible CSV structure; spreadsheet import pending",
-    "milestoneId": 10,
+    "milestoneId": 11,
     "locked": false,
     "untested": false,
     "requiresServerAccess": false,
@@ -182,7 +200,7 @@
     "loader": "site",
     "files": [],
     "testedOn": "site integration pending",
-    "milestoneId": 11,
+    "milestoneId": 12,
     "locked": false,
     "untested": false,
     "requiresServerAccess": false,
