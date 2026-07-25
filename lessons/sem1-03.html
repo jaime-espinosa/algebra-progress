@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Systems of Equations and Inequalities</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: rgba(18, 21, 26, .86);
+      --panel-solid: #12151a;
+      --line: #242a33;
+      --text: #e9edf1;
+      --dim: #98a2ad;
+      --faint: #59636e;
+      --gap: #262c34;
+      --accent: #6fdc82;
+      --accent-dim: #2f6b3c;
+      --warn: #f2c14e;
+      --shadow: #000;
+      --tile: 24px;
+      --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono",
+        "DejaVu Sans Mono", Menlo, Consolas, monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell,
+        sans-serif;
+    }
+
+    [data-theme="nether"] {
+      --bg: #120a08;
+      --panel: rgba(28, 16, 13, .86);
+      --panel-solid: #1a100d;
+      --line: #3a201a;
+      --gap: #2e1c17;
+      --accent: #ff7a45;
+      --accent-dim: #7a3418;
+      --warn: #ffd166;
+    }
+
+    [data-theme="end"] {
+      --bg: #08070e;
+      --panel: rgba(18, 15, 28, .86);
+      --panel-solid: #100d1a;
+      --line: #2a2340;
+      --gap: #221d33;
+      --accent: #c4a2ff;
+      --accent-dim: #5a4488;
+      --warn: #ffe08a;
+    }
+
+    * {
+      box-sizing: border-box;
+      border-radius: 0;
+      text-shadow: 2px 2px 0 var(--shadow, #000);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text, #e9edf1);
+      background: var(--bg, #0b0d10);
+      font-family: var(--mono, monospace);
+      font-size: 15px;
+      line-height: 1.55;
+      transition: background-color 180ms;
+    }
+
+    main {
+      width: min(calc(100% - 32px), 920px);
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    header,
+    section,
+    aside {
+      contain: layout paint;
+      margin-bottom: 16px;
+      border: 1px solid var(--line, #242a33);
+      background: var(--panel, rgba(18, 21, 26, .86));
+      padding: 16px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    h2::before {
+      content: "> ";
+      color: var(--dim, #98a2ad);
+    }
+
+    .status,
+    .label {
+      color: var(--dim, #98a2ad);
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin: 0;
+    }
+
+    .prose {
+      font-family: var(--sans, system-ui, sans-serif);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .math {
+      overflow-x: auto;
+      border-left: 4px solid var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+      padding: 12px;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .math p:last-child,
+    section p:last-child {
+      margin-bottom: 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line, #242a33);
+      background: transparent;
+    }
+
+    .axis,
+    .guide {
+      stroke: var(--line, #242a33);
+      stroke-width: 2;
+    }
+
+    .graph {
+      fill: none;
+      stroke: var(--accent, #6fdc82);
+      stroke-width: 6;
+    }
+
+    .point {
+      fill: var(--accent, #6fdc82);
+    }
+
+    .svg-text {
+      fill: var(--text, #e9edf1);
+      font: 13px var(--mono, monospace);
+    }
+
+    .strategy {
+      border-width: 2px;
+      border-color: var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+    }
+
+    .strategy strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--accent, #6fdc82);
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 680px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S1 // SECTION 03 // TWO UNKNOWNS</p>
+      <h1>Systems of Equations and Inequalities</h1>
+      <p class="prose">Two timed runs can reveal two hidden farm rates.</p>
+    </header>
+
+    <section>
+      <h2>The Minecraft structure</h2>
+      <div class="prose">
+        <p>Two mob farms feed one collection hopper.</p>
+        <p>The chest shows the combined total but hides each farm's share.</p>
+        <p>One timed run gives one equation about both rates.</p>
+        <p>A different timed run gives a second equation.</p>
+        <p>Two independent equations can recover both individual rates.</p>
+        <p>This model only works when each farm's rate is genuinely constant.</p>
+        <p>Real spawn rates drift with chunk loading, mob caps, and light level.</p>
+        <p>The constant-rate model is only an approximation.</p>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>The algebra</h2>
+        <div class="math" aria-label="General system of two linear equations">
+          <p>A₁x + B₁y = C₁</p>
+          <p>A₂x + B₂y = C₂</p>
+        </div>
+        <div class="prose">
+          <p>Substitution replaces one variable with an equal expression.</p>
+          <p>Elimination adds or subtracts equations to cancel a variable.</p>
+          <p>Crossing lines give one solution.</p>
+          <p>Parallel lines give no solution.</p>
+          <p>The same line gives infinitely many solutions.</p>
+          <p>A linear inequality system has a solution region, not one point.</p>
+          <p>A system's domain is the set of x-values in its solution set.</p>
+          <p>Its range is the set of y-values in its solution set.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>The crossing lines</h2>
+        <svg viewBox="0 0 400 250" role="img"
+          aria-labelledby="system-title system-desc"
+          shape-rendering="crispEdges">
+          <title id="system-title">Graphs of b equals 8 minus a and b equals 49 minus 8a divided by 3</title>
+          <desc id="system-desc">
+            Two straight lines cross at the labelled point a equals 5, b equals 3 on a first-quadrant grid.
+          </desc>
+          <path class="guide" d="M85 20V220M120 20V220M155 20V220M190 20V220M225 20V220M260 20V220M295 20V220M330 20V220M50 198H365M50 176H365M50 154H365M50 132H365M50 110H365M50 88H365M50 66H365M50 44H365"/>
+          <path class="axis" d="M50 220H365M50 220V20"/>
+          <path class="graph" d="M50 44L330 220"/>
+          <path class="graph" d="M145 20L264 220"/>
+          <rect class="point" x="219" y="148" width="12" height="12"/>
+          <text class="svg-text" x="234" y="148">(5, 3)</text>
+          <text class="svg-text" x="72" y="54">a + b = 8</text>
+          <text class="svg-text" x="185" y="40">8a + 3b = 49</text>
+          <text class="svg-text" x="355" y="238">a</text>
+          <text class="svg-text" x="35" y="30">b</text>
+        </svg>
+        <p class="prose">The crossing point satisfies both equations.</p>
+        <p class="prose">Its coordinates are the two farm rates.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Worked example</h2>
+      <div class="prose">
+        <p>Let a be farm A's rate in items per minute.</p>
+        <p>Let b be farm B's rate in items per minute.</p>
+        <p>Run 1 uses both farms for 5 minutes and produces 40 items.</p>
+      </div>
+      <div class="math">
+        <p>5a + 5b = 40</p>
+        <p>a + b = 8</p>
+      </div>
+      <div class="prose">
+        <p>Run 2 uses farm A for 8 minutes and farm B for 3 minutes.</p>
+        <p>Together they produce 49 items.</p>
+      </div>
+      <div class="math">
+        <p>8a + 3b = 49</p>
+      </div>
+      <div class="prose">
+        <p>Solve the first equation for b and substitute it into the second.</p>
+      </div>
+      <div class="math">
+        <p>b = 8 − a</p>
+        <p>8a + 3(8 − a) = 49</p>
+        <p>8a + 24 − 3a = 49</p>
+        <p>5a + 24 = 49</p>
+        <p>5a = 25</p>
+        <p>a = 5</p>
+        <p>b = 8 − 5</p>
+        <p>b = 3</p>
+      </div>
+      <div class="prose">
+        <p>Substitute both rates back into both original equations.</p>
+      </div>
+      <div class="math">
+        <p>5(5) + 5(3) = 25 + 15 = 40</p>
+        <p>8(5) + 3(3) = 40 + 9 = 49</p>
+      </div>
+      <div class="prose">
+        <p>Both checks match the recorded totals.</p>
+      </div>
+    </section>
+
+    <aside class="strategy" aria-label="Strategy card">
+      <span class="label">STRATEGY // SCREENSHOT THIS</span>
+      <strong>Get as many independent equations as unknowns.<br>
+        Always substitute the solution back to check.</strong>
+    </aside>
+  </main>
+</body>
+</html>

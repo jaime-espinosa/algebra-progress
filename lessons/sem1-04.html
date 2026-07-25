@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Introduction to Functions</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: rgba(18, 21, 26, .86);
+      --panel-solid: #12151a;
+      --line: #242a33;
+      --text: #e9edf1;
+      --dim: #98a2ad;
+      --faint: #59636e;
+      --gap: #262c34;
+      --accent: #6fdc82;
+      --accent-dim: #2f6b3c;
+      --warn: #f2c14e;
+      --shadow: #000;
+      --tile: 24px;
+      --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono",
+        "DejaVu Sans Mono", Menlo, Consolas, monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell,
+        sans-serif;
+    }
+
+    [data-theme="nether"] {
+      --bg: #120a08;
+      --panel: rgba(28, 16, 13, .86);
+      --panel-solid: #1a100d;
+      --line: #3a201a;
+      --gap: #2e1c17;
+      --accent: #ff7a45;
+      --accent-dim: #7a3418;
+      --warn: #ffd166;
+    }
+
+    [data-theme="end"] {
+      --bg: #08070e;
+      --panel: rgba(18, 15, 28, .86);
+      --panel-solid: #100d1a;
+      --line: #2a2340;
+      --gap: #221d33;
+      --accent: #c4a2ff;
+      --accent-dim: #5a4488;
+      --warn: #ffe08a;
+    }
+
+    * {
+      box-sizing: border-box;
+      border-radius: 0;
+      text-shadow: 2px 2px 0 var(--shadow, #000);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text, #e9edf1);
+      background: var(--bg, #0b0d10);
+      font-family: var(--mono, monospace);
+      font-size: 15px;
+      line-height: 1.55;
+      transition: background-color 180ms;
+    }
+
+    main {
+      width: min(calc(100% - 32px), 920px);
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    header,
+    section,
+    aside {
+      contain: layout paint;
+      margin-bottom: 16px;
+      border: 1px solid var(--line, #242a33);
+      background: var(--panel, rgba(18, 21, 26, .86));
+      padding: 16px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    h2::before {
+      content: "> ";
+      color: var(--dim, #98a2ad);
+    }
+
+    .status,
+    .label {
+      color: var(--dim, #98a2ad);
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin: 0;
+    }
+
+    .prose {
+      font-family: var(--sans, system-ui, sans-serif);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .math {
+      overflow-x: auto;
+      border-left: 4px solid var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+      padding: 12px;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .math p:last-child,
+    section p:last-child {
+      margin-bottom: 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line, #242a33);
+      background: transparent;
+    }
+
+    .axis,
+    .guide {
+      stroke: var(--line, #242a33);
+      stroke-width: 2;
+    }
+
+    .graph {
+      fill: none;
+      stroke: var(--accent, #6fdc82);
+      stroke-width: 6;
+    }
+
+    .point {
+      fill: var(--accent, #6fdc82);
+    }
+
+    .svg-text {
+      fill: var(--text, #e9edf1);
+      font: 13px var(--mono, monospace);
+    }
+
+    .strategy {
+      border-width: 2px;
+      border-color: var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+    }
+
+    .strategy strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--accent, #6fdc82);
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 680px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S1 // SECTION 04 // INPUT AND OUTPUT</p>
+      <h1>Introduction to Functions</h1>
+      <p class="prose">A furnace gives each accepted input one predictable output.</p>
+    </header>
+
+    <section>
+      <h2>The Minecraft structure</h2>
+      <div class="prose">
+        <p>A furnace is a function.</p>
+        <p>Put raw iron in, and an iron ingot comes out every time.</p>
+        <p>The input set contains what the furnace accepts.</p>
+        <p>The output set contains what the furnace can produce.</p>
+        <p>Raw iron and an iron sword can both smelt to an iron ingot.</p>
+        <p>Two inputs sharing one output still make a function.</p>
+        <p>A function forbids one input from giving two different outputs.</p>
+        <p>Ore drops are not a function of the ore block alone.</p>
+        <p>Fortune III can give the same block different drop counts.</p>
+        <p>A hidden random roll is another input needed to make that rule a function.</p>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>The algebra</h2>
+        <div class="math" aria-label="Definition of a function">
+          <p>f: D → R</p>
+          <p>x → f(x)</p>
+          <p>Each x ∈ D has exactly one output f(x).</p>
+        </div>
+        <div class="prose">
+          <p>A function assigns every allowed input exactly one output.</p>
+          <p>Read f(x) as the rule f applied to x.</p>
+          <p>The domain is the set of allowed inputs.</p>
+          <p>The range is the set of outputs actually produced.</p>
+          <p>A graph is a function when every vertical line hits it at most once.</p>
+          <p>This check is the vertical line test.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>The furnace mapping</h2>
+        <svg viewBox="0 0 400 250" role="img"
+          aria-labelledby="mapping-title mapping-desc"
+          shape-rendering="crispEdges">
+          <title id="mapping-title">Mapping from two furnace inputs to one output</title>
+          <desc id="mapping-desc">
+            Raw iron and an iron sword each point to the same iron ingot, while neither input points to two outputs.
+          </desc>
+          <text class="svg-text" x="40" y="30">input</text>
+          <text class="svg-text" x="290" y="30">output</text>
+          <rect class="point" x="55" y="65" width="14" height="14"/>
+          <rect class="point" x="55" y="165" width="14" height="14"/>
+          <rect class="point" x="305" y="115" width="14" height="14"/>
+          <path class="graph" d="M75 72L293 119M278 108L293 119L275 125"/>
+          <path class="graph" d="M75 172L293 125M275 119L293 125L278 136"/>
+          <text class="svg-text" x="78" y="76">raw iron</text>
+          <text class="svg-text" x="78" y="176">iron sword</text>
+          <text class="svg-text" x="245" y="154">iron ingot</text>
+        </svg>
+        <p class="prose">Each input square has one arrow.</p>
+        <p class="prose">Both arrows may end at the same output.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Worked example</h2>
+      <div class="prose">
+        <p>Define f(x) = 8x as the items smelted from x pieces of coal.</p>
+        <p>Evaluate the rule at zero pieces of coal.</p>
+      </div>
+      <div class="math">
+        <p>f(0) = 8(0)</p>
+        <p>f(0) = 0</p>
+      </div>
+      <div class="prose">
+        <p>Evaluate the rule at three pieces of coal.</p>
+      </div>
+      <div class="math">
+        <p>f(3) = 8(3)</p>
+        <p>f(3) = 24</p>
+      </div>
+      <div class="prose">
+        <p>Evaluate the rule at twelve pieces of coal.</p>
+      </div>
+      <div class="math">
+        <p>f(12) = 8(12)</p>
+        <p>f(12) = 96</p>
+      </div>
+      <div class="prose">
+        <p>Now solve f(x) = 64.</p>
+      </div>
+      <div class="math">
+        <p>f(x) = 64</p>
+        <p>8x = 64</p>
+        <p>x = 64 ÷ 8</p>
+        <p>x = 8</p>
+        <p>f(8) = 8(8) = 64</p>
+      </div>
+      <div class="prose">
+        <p>The domain here is the whole numbers {0, 1, 2, ...}.</p>
+        <p>The range is the multiples of 8, {0, 8, 16, ...}.</p>
+      </div>
+    </section>
+
+    <aside class="strategy" aria-label="Strategy card">
+      <span class="label">STRATEGY // SCREENSHOT THIS</span>
+      <strong>One input must give exactly one output.<br>
+        Read f(x) as the rule applied to x.</strong>
+    </aside>
+  </main>
+</body>
+</html>
