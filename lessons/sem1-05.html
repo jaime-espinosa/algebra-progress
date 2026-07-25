@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Linear Functions</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: rgba(18, 21, 26, .86);
+      --panel-solid: #12151a;
+      --line: #242a33;
+      --text: #e9edf1;
+      --dim: #98a2ad;
+      --faint: #59636e;
+      --gap: #262c34;
+      --accent: #6fdc82;
+      --accent-dim: #2f6b3c;
+      --warn: #f2c14e;
+      --shadow: #000;
+      --tile: 24px;
+      --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono",
+        "DejaVu Sans Mono", Menlo, Consolas, monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell,
+        sans-serif;
+    }
+
+    [data-theme="nether"] {
+      --bg: #120a08;
+      --panel: rgba(28, 16, 13, .86);
+      --panel-solid: #1a100d;
+      --line: #3a201a;
+      --gap: #2e1c17;
+      --accent: #ff7a45;
+      --accent-dim: #7a3418;
+      --warn: #ffd166;
+    }
+
+    [data-theme="end"] {
+      --bg: #08070e;
+      --panel: rgba(18, 15, 28, .86);
+      --panel-solid: #100d1a;
+      --line: #2a2340;
+      --gap: #221d33;
+      --accent: #c4a2ff;
+      --accent-dim: #5a4488;
+      --warn: #ffe08a;
+    }
+
+    * {
+      box-sizing: border-box;
+      border-radius: 0;
+      text-shadow: 2px 2px 0 var(--shadow, #000);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text, #e9edf1);
+      background: var(--bg, #0b0d10);
+      font-family: var(--mono, monospace);
+      font-size: 15px;
+      line-height: 1.55;
+      transition: background-color 180ms;
+    }
+
+    main {
+      width: min(calc(100% - 32px), 920px);
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    header,
+    section,
+    aside {
+      contain: layout paint;
+      margin-bottom: 16px;
+      border: 1px solid var(--line, #242a33);
+      background: var(--panel, rgba(18, 21, 26, .86));
+      padding: 16px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    h2::before {
+      content: "> ";
+      color: var(--dim, #98a2ad);
+    }
+
+    .status,
+    .label {
+      color: var(--dim, #98a2ad);
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin: 0;
+    }
+
+    .prose {
+      font-family: var(--sans, system-ui, sans-serif);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .math {
+      overflow-x: auto;
+      border-left: 4px solid var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+      padding: 12px;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .math p:last-child,
+    section p:last-child {
+      margin-bottom: 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line, #242a33);
+      background: transparent;
+    }
+
+    .axis,
+    .guide {
+      stroke: var(--line, #242a33);
+      stroke-width: 2;
+    }
+
+    .graph {
+      fill: none;
+      stroke: var(--accent, #6fdc82);
+      stroke-width: 6;
+    }
+
+    .point {
+      fill: var(--accent, #6fdc82);
+    }
+
+    .svg-text {
+      fill: var(--text, #e9edf1);
+      font: 13px var(--mono, monospace);
+    }
+
+    .strategy {
+      border-width: 2px;
+      border-color: var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+    }
+
+    .strategy strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--accent, #6fdc82);
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 680px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S1 // SECTION 05 // CONSTANT RATE</p>
+      <h1>Linear Functions</h1>
+      <p class="prose">A Nether shortcut turns one block into eight.</p>
+    </header>
+
+    <section>
+      <h2>The Minecraft structure</h2>
+      <div class="prose">
+        <p>Nether portals connect coordinates between dimensions.</p>
+        <p>One Nether block corresponds to eight Overworld blocks on the horizontal axes.</p>
+        <p>Every extra Nether block buys exactly eight more Overworld blocks.</p>
+        <p>That constant rate of change makes the coordinate rule linear.</p>
+        <p>The ratio applies only to the x and z axes.</p>
+        <p>The y coordinate is not scaled and maps 1:1.</p>
+        <p>The portal rule has slope 8 on two axes and slope 1 on the height axis.</p>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>The algebra</h2>
+        <div class="math" aria-label="Slope-intercept form">
+          <p>y = mx + b</p>
+          <p>m = rise ÷ run = change in y ÷ change in x</p>
+        </div>
+        <div class="prose">
+          <p>The slope m is the constant rate of change.</p>
+          <p>The intercept b is the value of y when x = 0.</p>
+          <p>A proportional function has b = 0 and passes through the origin.</p>
+          <p>A general linear function can have b ≠ 0.</p>
+          <p>The domain of a linear function is all real numbers.</p>
+          <p>When m ≠ 0, the range is all real numbers.</p>
+          <p>When m = 0, the range is the single value {b}.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>The portal line</h2>
+        <svg viewBox="0 0 400 250" role="img"
+          aria-labelledby="portal-title portal-desc"
+          shape-rendering="crispEdges">
+          <title id="portal-title">Graph of O equals eight N</title>
+          <desc id="portal-desc">
+            A straight line plots O = 8N through the origin, with horizontal Nether-block and vertical Overworld-block axes drawn at different scales.
+          </desc>
+          <path class="guide" d="M130 25V215M210 25V215M290 25V215M50 155H365M50 95H365M50 35H365"/>
+          <path class="axis" d="M50 215H370M50 225V20"/>
+          <path class="graph" d="M50 215L290 35"/>
+          <rect class="point" x="45" y="210" width="10" height="10"/>
+          <rect class="point" x="125" y="150" width="10" height="10"/>
+          <rect class="point" x="205" y="90" width="10" height="10"/>
+          <text class="svg-text" x="58" y="231">(0, 0)</text>
+          <text class="svg-text" x="134" y="148">(10, 80)</text>
+          <text class="svg-text" x="214" y="88">(20, 160)</text>
+          <text class="svg-text" x="250" y="55">O = 8N</text>
+          <text class="svg-text" x="350" y="231">N</text>
+          <text class="svg-text" x="58" y="32">O</text>
+        </svg>
+        <p class="prose">The axes use different visual scales.</p>
+        <p class="prose">Each plotted pair still satisfies O = 8N.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Worked example</h2>
+      <div class="prose">
+        <p>You stand in the Nether at x = −125 and z = 40.</p>
+        <p>Multiply each horizontal coordinate by 8.</p>
+      </div>
+      <div class="math">
+        <p>x = 8 × (−125)</p>
+        <p>x = −1000</p>
+        <p>z = 8 × 40</p>
+        <p>z = 320</p>
+      </div>
+      <div class="prose">
+        <p>The matching Overworld coordinates are x = −1000 and z = 320.</p>
+        <p>Now place a Nether hub for an Overworld base at x = 2400.</p>
+      </div>
+      <div class="math">
+        <p>Nether x = Overworld x ÷ 8</p>
+        <p>Nether x = 2400 ÷ 8</p>
+        <p>Nether x = 300</p>
+      </div>
+      <div class="prose">
+        <p>The points (0, 0) and (300, 2400) reveal the same rate.</p>
+      </div>
+      <div class="math">
+        <p>m = (2400 − 0) ÷ (300 − 0)</p>
+        <p>m = 2400 ÷ 300</p>
+        <p>m = 8</p>
+      </div>
+    </section>
+
+    <aside class="strategy" aria-label="Strategy card">
+      <span class="label">STRATEGY // SCREENSHOT THIS</span>
+      <strong>Slope is how much y changes per single step in x.<br>
+        The intercept is the value of y when x = 0.</strong>
+    </aside>
+  </main>
+</body>
+</html>
