@@ -1000,5 +1000,7 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
     for (const section of sections) if (collapsed.has(section.id)) setCollapsed(section, true);
   }
 
-  loadManifest().then(loadData).then(initSectionControls);
+  // finally, not then: if the data load fails the page still renders its last known
+  // good state, and the controls have to come with it.
+  loadManifest().then(loadData).finally(initSectionControls);
 })();
