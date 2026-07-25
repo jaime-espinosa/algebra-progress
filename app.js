@@ -578,8 +578,11 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
 
   function calendarReward(track) {
     if (track.comeback) {
-      const { from, to, gain, days } = track.comeback;
-      return `You clawed back ${gain} rows in ${days} days — ${formatDay(from)} to ${formatDay(to)}.`;
+      const { from, to, gain, days, rows } = track.comeback;
+      // Lead with the plain count he can verify by adding up his own calendar
+      // tiles, then the comparison. Showing only the difference invites him to
+      // count 25, see 15, and stop trusting the page.
+      return `${rows} rows in ${days} days, ${formatDay(from)} to ${formatDay(to)} — ${gain} more than the route asked for.`;
     }
     const biggestPush = track.bestDays[0];
     if (biggestPush) {
