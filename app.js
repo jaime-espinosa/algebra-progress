@@ -950,12 +950,13 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
     function setCollapsed(section, want) {
       // hidden would take the section out of the flow entirely, controls and all. The
       // heading has to stay reachable or there is no way back.
-      section.dataset.collapsed = want ? "1" : "";
       section.querySelector(".sec-fold")?.setAttribute("aria-expanded", String(!want));
-      // Repairs is already a <details>. Driving its own open state keeps one control
-      // doing one thing rather than two mechanisms fighting over the same section.
+      // Repairs is already a <details>, and its heading is the <summary> inside it.
+      // Hiding the panel's children would take that summary with it and leave no way
+      // back, so that section collapses through its own open state instead.
       const details = section.querySelector("details");
       if (details) details.open = !want;
+      else section.dataset.collapsed = want ? "1" : "";
       if (want) collapsed.add(section.id); else collapsed.delete(section.id);
       storageSet(COLLAPSED_KEY, [...collapsed]);
     }
