@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T23:20:00Z",
+  "generatedAt": "2026-07-25T23:50:00Z",
   "sections": [
     {
       "semester": "sem1",
@@ -16,19 +16,19 @@
           "verifiedAt": "2026-07-25"
         },
         {
-          "title": "Polypad Algebra Tiles",
-          "url": "https://polypad.amplify.com/p/algebra",
-          "kind": "tool",
-          "why": "An infinite canvas of algebra tiles you can drag, duplicate and arrange, which is the fastest way to see why 3x plus 2x is 5x but 3x plus 2 is not.",
+          "title": "Silent Teacher",
+          "url": "https://silentteacher.toxicode.fr/",
+          "kind": "puzzle",
+          "why": "Teaches expression evaluation and notation with zero words of instruction: you guess, it shows the answer, you adjust, and the rules assemble themselves in about five minutes.",
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
         },
         {
-          "title": "NRICH Algebra for Secondary Students",
-          "url": "https://nrich.maths.org/algebra-secondary-students",
-          "kind": "puzzle",
-          "why": "Cambridge University's problem index, ad-free, where the questions are genuine puzzles with a hidden trick rather than twenty of the same exercise in a row.",
+          "title": "Polypad Algebra Tiles",
+          "url": "https://polypad.amplify.com/p/algebra",
+          "kind": "tool",
+          "why": "An infinite canvas of algebra tiles you can drag, duplicate and arrange, which is the fastest way to see why 3x plus 2x is 5x but 3x plus 2 is not.",
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
@@ -51,18 +51,29 @@
         },
         {
           "title": "PhET Equality Explorer",
-          "url": "https://phet.colorado.edu/en/simulations/equality-explorer",
+          "url": "https://phet.colorado.edu/sims/html/equality-explorer/latest/equality-explorer_all.html",
           "kind": "game",
-          "why": "A balance scale that tips the moment you do something to one side and not the other, which makes the reason for the rule obvious instead of memorised.",
+          "why": "A balance scale that tips unless you do the same thing to both sides, so an illegal step shows itself immediately instead of coming back later as a wrong answer.",
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
         },
         {
-          "title": "Graspable Math Canvas",
-          "url": "https://activities.graspablemath.com/canvas",
-          "kind": "tool",
-          "why": "You physically drag terms across the equals sign and the app refuses moves that break the equation, so you get instant feedback on every step of a solve.",
+          "title": "Find X",
+          "url": "https://leo-kramer.github.io/find-x/",
+          "kind": "game",
+          "why": "You solve for x by applying an operation to both sides and watching the equation rearrange, so the rule becomes a game move. The whole thing is a small open page you can read and add levels to.",
+          "source": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Elevator Saga",
+          "url": "https://play.elevatorsaga.com/",
+          "kind": "game",
+          "why": "You write real JavaScript to run a bank of elevators against targets like move 100 people in 90 seconds with average wait under 2 seconds, which is rate and inequality reasoning with a stopwatch on it.",
+          "source": true,
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
@@ -93,10 +104,20 @@
           "verifiedAt": "2026-07-25"
         },
         {
-          "title": "GeoGebra Calculator Suite",
-          "url": "https://www.geogebra.org/calculator",
+          "title": "Math is Fun: Function Grapher",
+          "url": "https://www.mathsisfun.com/data/function-grapher.php",
           "kind": "tool",
-          "why": "Its algebra view solves a system symbolically and shows the lines at the same time, so you can compare substitution, elimination and the graph side by side.",
+          "why": "Plots two functions at once and marks the intersection, which is exactly what solving a system graphically means and what most quick graphers will not do for you.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "algebra.js",
+          "url": "https://algebra.js.org/",
+          "kind": "tool",
+          "why": "A JavaScript library where you build an equation as an object and ask it to solve for x, with a live editor on the homepage. This is how you write a program that does algebra instead of one that fakes it.",
+          "source": true,
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
@@ -110,27 +131,38 @@
       "items": [
         {
           "title": "PhET Function Builder",
-          "url": "https://phet.colorado.edu/en/simulations/function-builder",
+          "url": "https://phet.colorado.edu/sims/html/function-builder/latest/function-builder_all.html",
           "kind": "game",
-          "why": "You literally build a machine out of chained function blocks and feed cards through it, which is the same mental model as writing a function in a script.",
+          "why": "You wire function boxes into a pipeline and feed things through it, which is the same diagram as an item-processing chain and makes composition concrete instead of notational.",
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
         },
         {
-          "title": "Mathigon: Relations and Functions",
-          "url": "https://mathigon.org/course/functions/relations",
+          "title": "Compute It",
+          "url": "https://compute-it.toxicode.fr/",
           "kind": "puzzle",
-          "why": "An interactive chapter that makes you drag the mapping arrows yourself, so the one-input-one-output rule is something you test rather than read.",
+          "why": "You step through a program by hand and predict what each line does to the variables, which is exactly evaluating a function and exactly the skill that makes substitute x = 3 stop being mysterious.",
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
         },
         {
-          "title": "GeoGebra Graphing Calculator",
-          "url": "https://www.geogebra.org/graphing",
+          "title": "Untrusted",
+          "url": "https://alexnisnevich.github.io/untrusted/",
+          "kind": "game",
+          "why": "Every level is a map you escape by editing the level's own JavaScript in a panel on the right, so you are reading and rewriting the function that defines the world. Modding, framed as a game.",
+          "source": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "David Eck: Family of Functions",
+          "url": "https://math.hws.edu/eck/js/graphs/function-family.html",
           "kind": "tool",
-          "why": "Plot a relation and drag a vertical line across it to run the vertical line test by hand, which is faster than arguing about it on paper.",
+          "why": "Sliders for every coefficient in a family of functions, on one hand-written page that loads instantly on a slow laptop. View-source is a complete, readable lesson in drawing a graph from nothing.",
+          "source": true,
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
@@ -144,27 +176,38 @@
       "items": [
         {
           "title": "PhET Graphing Lines",
-          "url": "https://phet.colorado.edu/en/simulations/graphing-lines",
+          "url": "https://phet.colorado.edu/sims/html/graphing-lines/latest/graphing-lines_all.html",
           "kind": "game",
-          "why": "Its Line Game mode scores you on turning an equation into a graph and back again under time pressure, which is exactly the skill a slope question tests.",
+          "why": "Drag the line and the slope-intercept equation updates, or type the equation and the line moves. The Line Game mode then scores you on it, which is the only drill here that does not feel like drill.",
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
         },
         {
-          "title": "Mathigon: Rates of Change",
-          "url": "https://mathigon.org/course/functions/rates-of-change",
-          "kind": "puzzle",
-          "why": "Builds slope up from real rate-of-change scenarios rather than from the rise-over-run formula, which is why the Nether portal ratio and slope turn out to be the same idea.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25"
-        },
-        {
-          "title": "Desmos Graphing Calculator",
-          "url": "https://www.desmos.com/calculator",
+          "title": "Shodor: Slope Slider",
+          "url": "https://www.shodor.org/interactivate/activities/SlopeSlider/",
           "kind": "tool",
-          "why": "Type y = mx + b and Desmos offers you sliders for m and b, so you can watch the line tilt and shift and connect each number to what it does.",
+          "why": "Two sliders, m and b, one line. The entire content of slope-intercept form on a single page with nothing else on it.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "js-graphy",
+          "url": "https://laktak.github.io/js-graphy/",
+          "kind": "tool",
+          "why": "The function you plot is a JavaScript expression, not calculator syntax, so writing f(x) and writing code become the same act. Small enough to read the whole thing.",
+          "source": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Bret Victor: Tangle",
+          "url": "https://worrydream.com/Tangle/",
+          "kind": "tool",
+          "why": "A tiny library that turns the numbers inside a sentence into draggable values, so a paragraph becomes a live model. Wrap a rate calculation in it and you have a page anyone can drag the numbers on.",
+          "source": true,
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
@@ -189,7 +232,16 @@
           "title": "Desmos Graphing Calculator",
           "url": "https://www.desmos.com/calculator",
           "kind": "tool",
-          "why": "Desmos takes restriction syntax directly, so typing y = -x {x < 0} and y = x {x >= 0} draws the two branches separately and shows exactly where they meet.",
+          "why": "Add a restriction in braces after an equation and the curve is cut to that interval, which is how every piecewise graph and every piece of Desmos art is actually built.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Desmos Math Art Gallery",
+          "url": "https://www.desmos.com/art",
+          "kind": "tool",
+          "why": "Every entry is a picture built out of restricted-domain equations, and each one opens in the calculator, so you can read the exact equation list that made it and delete lines to find out what each one does.",
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
@@ -201,6 +253,26 @@
       "number": 1,
       "name": "Exponential Functions",
       "items": [
+        {
+          "title": "JSXGraph: Draggable Exponential Function",
+          "url": "https://jsxgraph.org/share/example/draggable-exponential-function",
+          "kind": "tool",
+          "why": "Drag a point and the exponential curve reshapes to pass through it, which is the clearest way to see why exponentials refuse to behave like lines. The source that draws it sits on the same page.",
+          "source": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "LOOPY",
+          "url": "https://ncase.me/loopy/",
+          "kind": "tool",
+          "why": "You draw circles and arrows and it simulates the feedback loops live, which is the fastest way to see why some quantities grow steadily and others explode. Every model saves as a shareable link.",
+          "source": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
         {
           "title": "Mathigon: Sequences and Growth",
           "url": "https://mathigon.org/course/sequences/introduction",
@@ -218,15 +290,6 @@
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
-        },
-        {
-          "title": "GeoGebra Graphing Calculator",
-          "url": "https://www.geogebra.org/graphing",
-          "kind": "tool",
-          "why": "Put a slider on b in y = a * b^x and drag it through 1 to see growth flip to decay at the exact moment the base crosses one.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25"
         }
       ]
     },
@@ -235,6 +298,15 @@
       "number": 2,
       "name": "Quadratic Functions",
       "items": [
+        {
+          "title": "PhET Graphing Quadratics",
+          "url": "https://phet.colorado.edu/sims/html/graphing-quadratics/latest/graphing-quadratics_all.html",
+          "kind": "game",
+          "why": "Shows standard form, vertex form and factored form of the same parabola side by side while you drag it, which is the one conversion that costs the most marks in this unit.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
         {
           "title": "PhET Projectile Motion",
           "url": "https://phet.colorado.edu/en/simulations/projectile-motion",
@@ -245,28 +317,21 @@
           "verifiedAt": "2026-07-25"
         },
         {
-          "title": "PhET Graphing Quadratics",
-          "url": "https://phet.colorado.edu/en/simulations/graphing-quadratics",
-          "kind": "game",
-          "why": "Drag a, b and c and watch the vertex and axis of symmetry move, so the minus-b-over-2a formula becomes a thing you have already seen happen.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25"
-        },
-        {
-          "title": "Mathigon: Graphs of Quadratics",
-          "url": "https://mathigon.org/course/quadratics/graphs",
-          "kind": "puzzle",
-          "why": "Connects standard form and vertex form with graphs you manipulate, which makes converting between them feel like a purpose rather than busywork.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25"
-        },
-        {
-          "title": "Desmos Graphing Calculator",
-          "url": "https://www.desmos.com/calculator",
+          "title": "Graph Playground",
+          "url": "https://maninae.github.io/graph-playground/",
           "kind": "tool",
-          "why": "Graph your own trajectory model, and Desmos will label the vertex and the intercepts when you click them, so you can check a hand calculation instantly.",
+          "why": "One small page dedicated to exactly one hard idea: how a, h and k move a curve, with drag handles instead of a table of rules to memorise. The repo is one click away if you want it to do more.",
+          "source": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "p5.js Web Editor",
+          "url": "https://editor.p5js.org/",
+          "kind": "tool",
+          "why": "A browser code editor with instant visual output where a loop and a quadratic draw a parabola on screen in about fifteen lines. Nothing to install, and it runs without an account.",
+          "source": true,
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
@@ -288,6 +353,15 @@
           "verifiedAt": "2026-07-25"
         },
         {
+          "title": "MathsBot Algebra Tiles",
+          "url": "https://mathsbot.com/manipulatives/tiles",
+          "kind": "tool",
+          "why": "Free-dragging algebra tiles with no lesson wrapped around them, so factoring a trinomial becomes make these tiles into a rectangle: a puzzle with one right shape. Loads instantly.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
           "title": "Mathigon: Solving Quadratic Equations",
           "url": "https://mathigon.org/course/quadratics/solving",
           "kind": "puzzle",
@@ -297,10 +371,11 @@
           "verifiedAt": "2026-07-25"
         },
         {
-          "title": "Didax Algebra Tiles",
-          "url": "https://www.didax.com/apps/algebra-tiles/",
+          "title": "Quadratic Solver, one file",
+          "url": "https://basemax.github.io/QuadraticEquationCalculator/quadratic.html",
           "kind": "tool",
-          "why": "Completing the square with physical tiles: you actually run out of pieces and have to add the missing corner, which is where the name comes from.",
+          "why": "A page under 2 KB that solves any quadratic, small enough to read the entire quadratic formula in JavaScript in two minutes. The best first thing here to copy and rewrite yourself.",
+          "source": true,
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
@@ -322,19 +397,21 @@
           "verifiedAt": "2026-07-25"
         },
         {
-          "title": "GeoGebra Graphing Calculator",
-          "url": "https://www.geogebra.org/graphing",
+          "title": "Red Blob Games: Hexagonal Grids",
+          "url": "https://www.redblobgames.com/grids/hexagons/",
           "kind": "tool",
-          "why": "Plot y = sqrt(x) and try to trace left of zero: the curve simply stops, which is what a domain of zero to infinity looks like rather than what it sounds like.",
+          "why": "A game developer's reference on hex coordinates where every diagram is interactive and every distance is a root of a sum of squares. Coordinate algebra doing real work inside game code.",
+          "source": true,
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
         },
         {
-          "title": "Math is Fun: Squares and Square Roots in Algebra",
-          "url": "https://www.mathsisfun.com/algebra/square-root.html",
+          "title": "David Eck: Function Grapher",
+          "url": "https://math.hws.edu/eck/js/graphs/grapher.html",
           "kind": "tool",
-          "why": "Covers the exact trap in radical equations, that squaring both sides can invent a solution that was never there, and shows how to catch it.",
+          "why": "A 6 KB grapher that has quietly kept working for years: the fastest way to check that a radical function's graph stops exactly where its domain does.",
+          "source": true,
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
@@ -347,10 +424,20 @@
       "name": "Rational Expressions",
       "items": [
         {
+          "title": "Nerdamer",
+          "url": "https://nerdamer.com/demo.html",
+          "kind": "tool",
+          "why": "Symbolic algebra in the browser: it expands, factors and simplifies with steps, so you can find where a messy rational simplification went wrong instead of guessing. One JS file you can reuse.",
+          "source": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
           "title": "Graspable Math Canvas",
           "url": "https://activities.graspablemath.com/canvas",
           "kind": "tool",
-          "why": "You drag a common factor out of the numerator and denominator and it cancels under your finger, which makes simplifying a physical action instead of a guess.",
+          "why": "You physically drag terms across the equals sign and the app refuses moves that break the equation, so you get instant feedback on every step of a solve.",
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
@@ -363,15 +450,6 @@
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
-        },
-        {
-          "title": "Math is Fun: Rational Expressions",
-          "url": "https://www.mathsisfun.com/algebra/rational-expression.html",
-          "kind": "tool",
-          "why": "A short, ad-light walkthrough that is unusually clear about why a cancelled factor still leaves a hole in the original expression's domain.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25"
         }
       ]
     },
@@ -380,6 +458,25 @@
       "number": 6,
       "name": "Data Analysis",
       "items": [
+        {
+          "title": "Setosa: Least Squares, Explained Visually",
+          "url": "https://setosa.io/ev/ordinary-least-squares-regression/",
+          "kind": "tool",
+          "why": "Drag any data point and watch the best-fit line and the squared-error boxes react in real time, so you see what least squares is actually minimising instead of being told.",
+          "source": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "PhET Curve Fitting",
+          "url": "https://phet.colorado.edu/sims/html/curve-fitting/latest/curve-fitting_all.html",
+          "kind": "game",
+          "why": "Drop in your own points and watch a best-fit line or curve snap to them with r squared updating live, so line of best fit becomes something you can feel rather than a formula.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
         {
           "title": "CODAP",
           "url": "https://codap.concord.org/app/",
@@ -394,24 +491,6 @@
           "url": "https://phet.colorado.edu/en/simulations/plinko-probability",
           "kind": "game",
           "why": "Run ten balls, then ten thousand, and watch the sample distribution settle onto the theoretical one, which is the direct answer to whether ten kills is enough data.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25"
-        },
-        {
-          "title": "Seeing Theory: Basic Probability",
-          "url": "https://seeing-theory.brown.edu/basic-probability/index.html",
-          "kind": "tool",
-          "why": "Brown University's animated visual course where every idea is a simulation you can run, and it is fast and text-light on a slow laptop.",
-          "free": true,
-          "account": false,
-          "verifiedAt": "2026-07-25"
-        },
-        {
-          "title": "PhET Least-Squares Regression",
-          "url": "https://phet.colorado.edu/en/simulations/least-squares-regression",
-          "kind": "game",
-          "why": "Place your own data points, drag a line through them, and see your error scored against the true best fit, which is line-of-best-fit as a game you can lose.",
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25"
