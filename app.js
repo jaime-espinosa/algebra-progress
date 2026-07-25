@@ -952,6 +952,10 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
       // heading has to stay reachable or there is no way back.
       section.dataset.collapsed = want ? "1" : "";
       section.querySelector(".sec-fold")?.setAttribute("aria-expanded", String(!want));
+      // Repairs is already a <details>. Driving its own open state keeps one control
+      // doing one thing rather than two mechanisms fighting over the same section.
+      const details = section.querySelector("details");
+      if (details) details.open = !want;
       if (want) collapsed.add(section.id); else collapsed.delete(section.id);
       storageSet(COLLAPSED_KEY, [...collapsed]);
     }
