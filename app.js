@@ -923,5 +923,77 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
     }
   };
 
-  loadManifest().then(loadData);
+  // Sections collapse and reorder, and both stick. This is his page: if he never wants
+  // to see the calendar again, or wants the vault at the top because that is the part
+  // he cares about, the layout should obey him rather than the order we happened to
+  // pick. Order lives in storage as a list of ids, so a section added later simply
+  // lands at the bottom instead of breaking the saved layout.
+  const ORDER_KEY = "mc.sectionOrder";
+  const COLLAPSED_KEY = "mc.collapsed";
+
+  function initSectionControls() {
+    const page = document.querySelector("#main");
+    const sections = [...page.querySelectorAll("section.panel")];
+    const byId = new Map(sections.map(section => [section.id, section]));
+    const collapsed = new Set(storageGet(COLLAPSED_KEY, []));
+
+    function applyOrder() {
+      const saved = storageGet(ORDER_KEY, []).filter(id => byId.has(id));
+      const rest = sections.filter(section => !saved.includes(section.id)).map(s => s.id);
+      for (const id of [...saved, ...rest]) page.append(byId.get(id));
+    }
+
+    function saveOrder() {
+      storageSet(ORDER_KEY, [...page.querySelectorAll("section.panel")].map(s => s.id));
+    }
+
+    function setCollapsed(section, want) {
+      // hidden would take the section out of the flow entirely, controls and all. The
+      // heading has to stay reachable or there is no way back.
+      section.dataset.collapsed = want ? "1" : "";
+      section.querySelector(".sec-fold")?.setAttribute("aria-expanded", String(!want));
+      if (want) collapsed.add(section.id); else collapsed.delete(section.id);
+      storageSet(COLLAPSED_KEY, [...collapsed]);
+    }
+
+    for (const section of sections) {
+      const heading = section.querySelector(".section-heading");
+      if (!heading) continue;
+      const bar = document.createElement("div");
+      bar.className = "sec-controls";
+      bar.innerHTML = `
+        <button type="button" class="sec-fold" aria-expanded="true" title="Collapse">&#9662;</button>
+        <button type="button" class="sec-up" title="Move up">&#9650;</button>
+        <button type="button" class="sec-down" title="Move down">&#9660;</button>`;
+      // The repairs section's heading is a <summary> inside a <details>; putting the
+      // controls next to the panel edge rather than inside the heading keeps one
+      // markup path for every section.
+      section.prepend(bar);
+
+      bar.querySelector(".sec-fold").addEventListener("click", () => {
+        setCollapsed(section, section.dataset.collapsed !== "1");
+      });
+      bar.querySelector(".sec-up").addEventListener("click", () => {
+        const previous = section.previousElementSibling;
+        if (previous?.matches("section.panel")) { previous.before(section); saveOrder(); }
+      });
+      bar.querySelector(".sec-down").addEventListener("click", () => {
+        const next = section.nextElementSibling;
+        if (next?.matches("section.panel")) { next.after(section); saveOrder(); }
+      });
+      // Clicking the heading itself folds too — the buttons are small on a laptop
+      // trackpad and the heading is a big obvious target.
+      if (heading.tagName !== "SUMMARY") {
+        heading.style.cursor = "pointer";
+        heading.addEventListener("click", () => {
+          setCollapsed(section, section.dataset.collapsed !== "1");
+        });
+      }
+    }
+
+    applyOrder();
+    for (const section of sections) if (collapsed.has(section.id)) setCollapsed(section, true);
+  }
+
+  loadManifest().then(loadData).then(initSectionControls);
 })();
