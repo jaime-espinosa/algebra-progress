@@ -1080,3 +1080,77 @@ html.motion-paused *::after {
   width: 56px; min-height: 44px; background: var(--panel-solid); color: var(--text);
   border: 1px solid var(--border-lit, var(--accent-dim)); font: inherit; text-align: center;
 }
+
+/* Lesson library: twelve sections, most of them already behind him. Cleared sections
+   carry the accent because they are an achievement; sections he has not reached yet
+   carry nothing at all — no colour, no count, no language of lateness. */
+.lesson-library__heading {
+  margin: 20px 0 8px;
+  font-family: var(--sans);
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.lesson-library {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lesson-library__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  border: 1px solid transparent;
+  padding: 6px 8px;
+  background: var(--panel);
+}
+
+.lesson-library__id {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--faint);
+}
+
+.lesson-library__name {
+  font-family: var(--sans);
+  font-size: 14px;
+}
+
+.lesson-library__mark {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.lesson-library__item--done .lesson-library__id {
+  color: var(--accent-dim);
+}
+
+.lesson-library__item--current {
+  border-color: var(--accent);
+}
+
+.lesson-library__item--current .lesson-library__id {
+  color: var(--accent);
+}
+
+.lesson-library__link {
+  min-height: 0;
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lesson-library__link:hover,
+.lesson-library__link:focus-visible {
+  color: var(--accent);
+}
