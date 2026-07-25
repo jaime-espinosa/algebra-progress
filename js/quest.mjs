@@ -456,6 +456,13 @@ export function planTrack(data, today) {
   if (comeback) {
     comeback.gain = Math.floor(comeback.rawGain);
     comeback.days = dayDifference(comeback.from, comeback.to) + 1;
+    // The plain count of rows inside the window. `gain` is a DIFFERENCE against
+    // the steady route, and he can and will add up the tiles on his own
+    // calendar; any view that shows the difference must show this count too, or
+    // he arrives at a different number and concludes the page is lying.
+    comeback.rows = past
+      .filter((point) => point.date >= comeback.from && point.date <= comeback.to)
+      .reduce((total, point) => total + point.done, 0);
     if (comeback.gain < 1) comeback = null;
   }
 
