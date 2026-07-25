@@ -8,6 +8,11 @@ import { effortStats as questEffort, computePace, dashboard } from "./js/quest.m
   const VALID_THEMES = new Set(["overworld", "nether", "end"]);
   const VALID_LOADERS = new Set(["vanilla", "fabric", "forge", "neoforge", "unsure"]);
   const VALID_GAME_KINDS = new Set(["game", "puzzle", "tool", "video"]);
+  // Mini-lesson files that exist under lessons/. Keep in sync when adding one.
+  const LESSON_FILES = new Set([
+    "sem1-01", "sem1-02", "sem1-03", "sem1-04", "sem1-05", "sem1-06",
+    "sem2-01", "sem2-02", "sem2-03", "sem2-04", "sem2-05", "sem2-06"
+  ]);
   const sectionIds = ["trophy", "effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request", "games"];
 
   // vault/manifest.json is the single source of truth for artifacts. Hardcoding a
@@ -775,13 +780,19 @@ import { effortStats as questEffort, computePace, dashboard } from "./js/quest.m
         `<p>Every lesson is submitted. The route is clear.</p>`;
       return;
     }
-    const lessonPath = next.semesterId === "sem1" ? "lessons/sem1-06.html" : "lessons/sem2-01.html";
+    // Link the lesson that matches the next section. LESSON_FILES is the list of
+    // files that actually exist on disk, so an unexpected section number drops the
+    // link rather than shipping a 404 — a dead reward link is worse than none.
+    const slug = `${next.semesterId}-${String(next.sectionNumber).padStart(2, "0")}`;
     const section = data.semesters.find(item => item.id === next.semesterId)
       ?.sections.find(item => item.number === next.sectionNumber);
+    const link = LESSON_FILES.has(slug)
+      ? `<a class="action" href="lessons/${slug}.html">Open mini-lesson</a>`
+      : "";
     document.querySelector("#lesson-content").innerHTML = `
       <span class="eyebrow">${escapeHtml(next.semesterId.toUpperCase())} // SECTION ${next.sectionNumber}</span>
       <h3>${escapeHtml(section?.name || next.sectionName || "Course orientation")}</h3>
-      <a class="action" href="${lessonPath}">Open mini-lesson</a>`;
+      ${link}`;
   }
 
   function renderGames(data) {
