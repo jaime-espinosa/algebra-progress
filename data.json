@@ -1,0 +1,2028 @@
+{
+  "generatedAt": "2026-07-24T16:51:22-07:00",
+  "scrapeOk": true,
+  "deadline": {
+    "date": "2026-08-15",
+    "label": "Deadline to submit grades to HIMS"
+  },
+  "semesters": [
+    {
+      "id": "sem1",
+      "courseId": "264459140",
+      "name": "Algebra I Semester 1",
+      "percent": 86.31,
+      "letter": "B",
+      "pointsEarned": 864.91,
+      "pointsPossible": 1002,
+      "gradableDone": 35,
+      "gradableTotal": 41,
+      "allDone": 97,
+      "allTotal": 105,
+      "lmsStart": "2026-05-19",
+      "lmsEnd": "2026-08-25",
+      "sections": [
+        {
+          "number": 1,
+          "name": "Algebra Basics",
+          "percent": 82.01,
+          "letter": "B",
+          "complete": true
+        },
+        {
+          "number": 2,
+          "name": "Linear Equations and Inequalities",
+          "percent": 89.01,
+          "letter": "B",
+          "complete": true
+        },
+        {
+          "number": 3,
+          "name": "Systems of Equations and Inequalities",
+          "percent": 86.68,
+          "letter": "B",
+          "complete": true
+        },
+        {
+          "number": 4,
+          "name": "Introduction to Functions",
+          "percent": 81.19,
+          "letter": "B",
+          "complete": true
+        },
+        {
+          "number": 5,
+          "name": "Linear Functions",
+          "percent": 93.13,
+          "letter": "A",
+          "complete": false
+        },
+        {
+          "number": 6,
+          "name": "Piecewise Functions",
+          "percent": null,
+          "letter": null,
+          "complete": false
+        }
+      ],
+      "activities": [
+        {
+          "id": "sem1:section-0:contacting-your-teacher",
+          "title": "Contacting your Teacher",
+          "sectionNumber": 0,
+          "sectionName": null,
+          "state": "graded",
+          "score": {
+            "earned": 1,
+            "possible": 1,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-06-22",
+          "lmsDue": "2026-05-23",
+          "rowIndex": 0,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-0:orientation-quiz-are-you-ready-to-take-this-course-online",
+          "title": "Orientation Quiz: Are you ready to take this course online?",
+          "sectionNumber": 0,
+          "sectionName": null,
+          "state": "graded",
+          "score": {
+            "earned": 90.9,
+            "possible": 100,
+            "percent": 90.9,
+            "letter": "A"
+          },
+          "submittedDate": "2026-06-22",
+          "lmsDue": "2026-05-23",
+          "rowIndex": 1,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-1:practice-quiz-algebra-past-and-present",
+          "title": "Practice Quiz: Algebra Past and Present",
+          "sectionNumber": 1,
+          "sectionName": "Algebra Basics",
+          "state": "graded",
+          "score": {
+            "earned": 5,
+            "possible": 5,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-06-22",
+          "lmsDue": "2026-05-24",
+          "rowIndex": 2,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-1:practice-quiz-essential-vocabulary",
+          "title": "Practice Quiz: Essential Vocabulary",
+          "sectionNumber": 1,
+          "sectionName": "Algebra Basics",
+          "state": "graded",
+          "score": {
+            "earned": 9,
+            "possible": 10,
+            "percent": 90,
+            "letter": "A"
+          },
+          "submittedDate": "2026-06-22",
+          "lmsDue": "2026-05-25",
+          "rowIndex": 3,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-1:assignment-section-1-lesson-2",
+          "title": "Assignment Section 1 Lesson 2",
+          "sectionNumber": 1,
+          "sectionName": "Algebra Basics",
+          "state": "graded",
+          "score": {
+            "earned": 10,
+            "possible": 10,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-06-22",
+          "lmsDue": "2026-05-25",
+          "rowIndex": 4,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-1:practice-quiz-expressions-and-equations",
+          "title": "Practice Quiz: Expressions and Equations",
+          "sectionNumber": 1,
+          "sectionName": "Algebra Basics",
+          "state": "graded",
+          "score": {
+            "earned": 9,
+            "possible": 10,
+            "percent": 90,
+            "letter": "A"
+          },
+          "submittedDate": "2026-06-24",
+          "lmsDue": "2026-05-26",
+          "rowIndex": 5,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-1:assignment-section-1-lesson-3",
+          "title": "Assignment Section 1 Lesson 3",
+          "sectionNumber": 1,
+          "sectionName": "Algebra Basics",
+          "state": "graded",
+          "score": {
+            "earned": 9.75,
+            "possible": 13,
+            "percent": 75,
+            "letter": "C"
+          },
+          "submittedDate": "2026-06-25",
+          "lmsDue": "2026-05-27",
+          "rowIndex": 6,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-1:activity-equality-explorer",
+          "title": "Activity: Equality Explorer",
+          "sectionNumber": 1,
+          "sectionName": "Algebra Basics",
+          "state": "graded",
+          "score": {
+            "earned": 2,
+            "possible": 5,
+            "percent": 40,
+            "letter": "F"
+          },
+          "submittedDate": "2026-06-26",
+          "lmsDue": "2026-05-28",
+          "rowIndex": 7,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-1:practice-quiz-solving-equations-and-inequalities",
+          "title": "Practice Quiz: Solving Equations and Inequalities",
+          "sectionNumber": 1,
+          "sectionName": "Algebra Basics",
+          "state": "graded",
+          "score": {
+            "earned": 9,
+            "possible": 10,
+            "percent": 90,
+            "letter": "A"
+          },
+          "submittedDate": "2026-06-29",
+          "lmsDue": "2026-05-28",
+          "rowIndex": 8,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-1:assignment-section-1-lesson-4",
+          "title": "Assignment Section 1 Lesson 4",
+          "sectionNumber": 1,
+          "sectionName": "Algebra Basics",
+          "state": "graded",
+          "score": {
+            "earned": 18.5,
+            "possible": 23,
+            "percent": 80.43,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-08",
+          "lmsDue": "2026-05-29",
+          "rowIndex": 9,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-1:section-1-final-test",
+          "title": "Section 1 Final Test",
+          "sectionNumber": 1,
+          "sectionName": "Algebra Basics",
+          "state": "graded",
+          "score": {
+            "earned": 80,
+            "possible": 100,
+            "percent": 80,
+            "letter": "B"
+          },
+          "submittedDate": "2026-06-29",
+          "lmsDue": "2026-05-30",
+          "rowIndex": 10,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-1:end-of-section-assignment-section-1",
+          "title": "End of Section Assignment: Section 1",
+          "sectionNumber": 1,
+          "sectionName": "Algebra Basics",
+          "state": "graded",
+          "score": {
+            "earned": 20,
+            "possible": 20,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-08",
+          "lmsDue": "2026-05-31",
+          "rowIndex": 11,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:practice-quiz-multi-step-solutions",
+          "title": "Practice Quiz: Multi-Step Solutions",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 8,
+            "possible": 10,
+            "percent": 80,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-04",
+          "lmsDue": "2026-06-01",
+          "rowIndex": 12,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:assignment-section-2-lesson-1",
+          "title": "Assignment Section 2 Lesson 1",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 17.5,
+            "possible": 21,
+            "percent": 83.33,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-08",
+          "lmsDue": "2026-06-02",
+          "rowIndex": 13,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:practice-quiz-solve-compound-inequalities",
+          "title": "Practice Quiz: Solve Compound Inequalities",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 6,
+            "possible": 7,
+            "percent": 85.71,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-08",
+          "lmsDue": "2026-06-02",
+          "rowIndex": 14,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:assignment-section-2-lesson-2",
+          "title": "Assignment Section 2 Lesson 2",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 15,
+            "possible": 15,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-08",
+          "lmsDue": "2026-06-03",
+          "rowIndex": 15,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:practice-quiz-literal-equations",
+          "title": "Practice Quiz: Literal Equations",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 5,
+            "possible": 7,
+            "percent": 71.42,
+            "letter": "C"
+          },
+          "submittedDate": "2026-07-08",
+          "lmsDue": "2026-06-04",
+          "rowIndex": 16,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:assignment-section-2-lesson-3",
+          "title": "Assignment Section 2 Lesson 3",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 22,
+            "possible": 22,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-08",
+          "lmsDue": "2026-06-04",
+          "rowIndex": 17,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:activity-graphing-lines",
+          "title": "Activity: Graphing Lines",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 7,
+            "possible": 7,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-08",
+          "lmsDue": "2026-06-05",
+          "rowIndex": 18,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:practice-quiz-two-variable-linear-equations",
+          "title": "Practice Quiz: Two Variable Linear Equations",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 6,
+            "possible": 10,
+            "percent": 60,
+            "letter": "D"
+          },
+          "submittedDate": "2026-07-09",
+          "lmsDue": "2026-06-06",
+          "rowIndex": 19,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:assignment-section-2-lesson-4",
+          "title": "Assignment Section 2 Lesson 4",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 28,
+            "possible": 28,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-09",
+          "lmsDue": "2026-06-06",
+          "rowIndex": 20,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:practice-quiz-two-variable-inequalities",
+          "title": "Practice Quiz: Two Variable Inequalities",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 9,
+            "possible": 10,
+            "percent": 90,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-09",
+          "lmsDue": "2026-06-07",
+          "rowIndex": 21,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:assignment-section-2-lesson-5",
+          "title": "Assignment Section 2 Lesson 5",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 14,
+            "possible": 20,
+            "percent": 70,
+            "letter": "C"
+          },
+          "submittedDate": "2026-07-09",
+          "lmsDue": "2026-06-08",
+          "rowIndex": 22,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:section-2-final-test",
+          "title": "Section 2 Final Test",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 86.66,
+            "possible": 100,
+            "percent": 86.66,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-23",
+          "lmsDue": "2026-06-09",
+          "rowIndex": 23,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-2:end-of-section-assignment-section-2",
+          "title": "End of Section Assignment: Section 2",
+          "sectionNumber": 2,
+          "sectionName": "Linear Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 8.33,
+            "possible": 10,
+            "percent": 83.33,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-09",
+          "lmsDue": "2026-06-10",
+          "rowIndex": 24,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:practice-quiz-solutions-to-systems-of-equations",
+          "title": "Practice Quiz: Solutions to Systems Of Equations",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 10,
+            "possible": 10,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-09",
+          "lmsDue": "2026-06-11",
+          "rowIndex": 25,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:assignment-section-3-lesson-1",
+          "title": "Assignment Section 3 Lesson 1",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 10,
+            "possible": 14,
+            "percent": 71.42,
+            "letter": "C"
+          },
+          "submittedDate": "2026-07-10",
+          "lmsDue": "2026-06-12",
+          "rowIndex": 26,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:practice-quiz-solve-by-graphing",
+          "title": "Practice Quiz: Solve by Graphing",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 7,
+            "possible": 7,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-10",
+          "lmsDue": "2026-06-12",
+          "rowIndex": 27,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:assignment-section-3-lesson-2",
+          "title": "Assignment Section 3 Lesson 2",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 13.5,
+            "possible": 18,
+            "percent": 75,
+            "letter": "C"
+          },
+          "submittedDate": "2026-07-10",
+          "lmsDue": "2026-06-13",
+          "rowIndex": 28,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:practice-quiz-solve-by-substitution",
+          "title": "Practice Quiz: Solve by Substitution",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 9,
+            "possible": 9,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-10",
+          "lmsDue": "2026-06-14",
+          "rowIndex": 29,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:assignment-section-3-lesson-3",
+          "title": "Assignment Section 3 Lesson 3",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 13.5,
+            "possible": 17,
+            "percent": 79.41,
+            "letter": "C"
+          },
+          "submittedDate": "2026-07-10",
+          "lmsDue": "2026-06-14",
+          "rowIndex": 30,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:practice-quiz-solve-by-elimination",
+          "title": "Practice Quiz: Solve by Elimination",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 7,
+            "possible": 7,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-10",
+          "lmsDue": "2026-06-15",
+          "rowIndex": 31,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:assignment-section-3-lesson-4",
+          "title": "Assignment Section 3 Lesson 4",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 19.5,
+            "possible": 23,
+            "percent": 84.78,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-10",
+          "lmsDue": "2026-06-16",
+          "rowIndex": 32,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:practice-quiz-systems-of-inequalities",
+          "title": "Practice Quiz: Systems of Inequalities",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 8,
+            "possible": 10,
+            "percent": 80,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-14",
+          "lmsDue": "2026-06-17",
+          "rowIndex": 33,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:assignment-section-3-lesson-5",
+          "title": "Assignment Section 3 Lesson 5",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 16,
+            "possible": 19,
+            "percent": 84.21,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-17",
+          "rowIndex": 34,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:section-3-final-test",
+          "title": "Section 3 Final Test",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 93.33,
+            "possible": 100,
+            "percent": 93.33,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-19",
+          "rowIndex": 35,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-3:end-of-section-assignment-section-3",
+          "title": "End of Section Assignment: Section 3",
+          "sectionNumber": 3,
+          "sectionName": "Systems of Equations and Inequalities",
+          "state": "graded",
+          "score": {
+            "earned": 24,
+            "possible": 28,
+            "percent": 85.71,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-19",
+          "rowIndex": 36,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:activity-function-builder",
+          "title": "Activity: Function Builder",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 5,
+            "possible": 5,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-20",
+          "rowIndex": 37,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:practice-quiz-relations-and-functions",
+          "title": "Practice Quiz: Relations and Functions",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 8,
+            "possible": 10,
+            "percent": 80,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-18",
+          "lmsDue": "2026-06-21",
+          "rowIndex": 38,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:assignment-section-4-lesson-1",
+          "title": "Assignment Section 4 Lesson 1",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 18,
+            "possible": 23,
+            "percent": 78.26,
+            "letter": "C"
+          },
+          "submittedDate": "2026-07-18",
+          "lmsDue": "2026-06-22",
+          "rowIndex": 39,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:practice-quiz-analyzing-functions",
+          "title": "Practice Quiz: Analyzing Functions",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 9,
+            "possible": 10,
+            "percent": 90,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-23",
+          "rowIndex": 40,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:assignment-section-4-lesson-2",
+          "title": "Assignment Section 4 Lesson 2",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 7.5,
+            "possible": 8,
+            "percent": 93.75,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-23",
+          "rowIndex": 41,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:activity-area-model-algebra",
+          "title": "Activity: Area Model Algebra",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 4,
+            "possible": 5,
+            "percent": 80,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-21",
+          "lmsDue": "2026-06-24",
+          "rowIndex": 42,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:practice-quiz-operations-on-functions",
+          "title": "Practice Quiz: Operations on Functions",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 10,
+            "possible": 10,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-24",
+          "rowIndex": 43,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:assignment-section-4-lesson-3",
+          "title": "Assignment Section 4 Lesson 3",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 19.5,
+            "possible": 20,
+            "percent": 97.5,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-25",
+          "rowIndex": 44,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:practice-quiz-modeling-with-functions",
+          "title": "Practice Quiz: Modeling with Functions",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 9,
+            "possible": 10,
+            "percent": 90,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-26",
+          "rowIndex": 45,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:assignment-section-4-lesson-4",
+          "title": "Assignment Section 4 Lesson 4",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 6,
+            "possible": 20,
+            "percent": 30,
+            "letter": "F"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-26",
+          "rowIndex": 46,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:section-4-final-test",
+          "title": "Section 4 Final Test",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 90,
+            "possible": 100,
+            "percent": 90,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-28",
+          "rowIndex": 47,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-4:end-of-section-assignment-section-4",
+          "title": "End of Section Assignment: Section 4",
+          "sectionNumber": 4,
+          "sectionName": "Introduction to Functions",
+          "state": "graded",
+          "score": {
+            "earned": 27,
+            "possible": 37,
+            "percent": 72.97,
+            "letter": "C"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-29",
+          "rowIndex": 48,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-5:practice-quiz-modeling-linear-functions",
+          "title": "Practice Quiz: Modeling Linear Functions",
+          "sectionNumber": 5,
+          "sectionName": "Linear Functions",
+          "state": "graded",
+          "score": {
+            "earned": 5,
+            "possible": 9,
+            "percent": 55.55,
+            "letter": "F"
+          },
+          "submittedDate": "2026-07-20",
+          "lmsDue": "2026-06-30",
+          "rowIndex": 49,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-5:assignment-section-5-lesson-1",
+          "title": "Assignment Section 5 Lesson 1",
+          "sectionNumber": 5,
+          "sectionName": "Linear Functions",
+          "state": "graded",
+          "score": {
+            "earned": 25,
+            "possible": 25,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-21",
+          "lmsDue": "2026-07-01",
+          "rowIndex": 50,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-5:practice-quiz-writing-linear-functions",
+          "title": "Practice Quiz: Writing Linear Functions",
+          "sectionNumber": 5,
+          "sectionName": "Linear Functions",
+          "state": "graded",
+          "score": {
+            "earned": 10,
+            "possible": 10,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-21",
+          "lmsDue": "2026-07-01",
+          "rowIndex": 51,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-5:assignment-section-5-lesson-2",
+          "title": "Assignment Section 5 Lesson 2",
+          "sectionNumber": 5,
+          "sectionName": "Linear Functions",
+          "state": "graded",
+          "score": {
+            "earned": 19,
+            "possible": 23,
+            "percent": 82.6,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-21",
+          "lmsDue": "2026-07-02",
+          "rowIndex": 52,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-5:practice-quiz-transformations-of-linear-functions",
+          "title": "Practice Quiz: Transformations of Linear Functions",
+          "sectionNumber": 5,
+          "sectionName": "Linear Functions",
+          "state": "graded",
+          "score": {
+            "earned": 11,
+            "possible": 11,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-21",
+          "lmsDue": "2026-07-03",
+          "rowIndex": 53,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-5:assignment-section-5-lesson-3",
+          "title": "Assignment Section 5 Lesson 3",
+          "sectionNumber": 5,
+          "sectionName": "Linear Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-03",
+          "rowIndex": 54,
+          "ourTarget": "2026-07-24"
+        },
+        {
+          "id": "sem1:section-5:practice-quiz-arithmetic-sequences",
+          "title": "Practice Quiz: Arithmetic Sequences",
+          "sectionNumber": 5,
+          "sectionName": "Linear Functions",
+          "state": "graded",
+          "score": {
+            "earned": 7,
+            "possible": 11,
+            "percent": 63.63,
+            "letter": "D"
+          },
+          "submittedDate": "2026-07-22",
+          "lmsDue": "2026-07-04",
+          "rowIndex": 55,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-5:assignment-section-5-lesson-4",
+          "title": "Assignment Section 5 Lesson 4",
+          "sectionNumber": 5,
+          "sectionName": "Linear Functions",
+          "state": "graded",
+          "score": {
+            "earned": 21,
+            "possible": 22,
+            "percent": 95.45,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-22",
+          "lmsDue": "2026-07-05",
+          "rowIndex": 56,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-5:section-5-final-test",
+          "title": "Section 5 Final Test",
+          "sectionNumber": 5,
+          "sectionName": "Linear Functions",
+          "state": "graded",
+          "score": {
+            "earned": 93.33,
+            "possible": 100,
+            "percent": 93.33,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-23",
+          "lmsDue": "2026-07-06",
+          "rowIndex": 57,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-5:end-of-section-assignment-section-5",
+          "title": "End of Section Assignment: Section 5",
+          "sectionNumber": 5,
+          "sectionName": "Linear Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-07",
+          "rowIndex": 58,
+          "ourTarget": "2026-07-24"
+        },
+        {
+          "id": "sem1:section-6:practice-quiz-absolute-value-graphs",
+          "title": "Practice Quiz: Absolute Value Graphs",
+          "sectionNumber": 6,
+          "sectionName": "Piecewise Functions",
+          "state": "graded",
+          "score": {
+            "earned": 8,
+            "possible": 8,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-23",
+          "lmsDue": "2026-07-08",
+          "rowIndex": 60,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-6:assignment-section-6-lesson-1",
+          "title": "Assignment Section 6 Lesson 1",
+          "sectionNumber": 6,
+          "sectionName": "Piecewise Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-09",
+          "rowIndex": 61,
+          "ourTarget": "2026-07-24"
+        },
+        {
+          "id": "sem1:section-6:practice-quiz-modeling-linear-functions",
+          "title": "Practice Quiz: Modeling Linear Functions",
+          "sectionNumber": 6,
+          "sectionName": "Piecewise Functions",
+          "state": "graded",
+          "score": {
+            "earned": 9,
+            "possible": 10,
+            "percent": 90,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-23",
+          "lmsDue": "2026-07-10",
+          "rowIndex": 62,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-6:assignment-section-6-lesson-2",
+          "title": "Assignment Section 6 Lesson 2",
+          "sectionNumber": 6,
+          "sectionName": "Piecewise Functions",
+          "state": "submitted_ungraded",
+          "score": null,
+          "submittedDate": "2026-07-23",
+          "lmsDue": "2026-07-10",
+          "rowIndex": 63,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-6:practice-quiz-more-piecewise-functions",
+          "title": "Practice Quiz: More Piecewise Functions",
+          "sectionNumber": 6,
+          "sectionName": "Piecewise Functions",
+          "state": "graded",
+          "score": {
+            "earned": 12,
+            "possible": 14,
+            "percent": 85.71,
+            "letter": "B"
+          },
+          "submittedDate": "2026-07-24",
+          "lmsDue": "2026-07-11",
+          "rowIndex": 64,
+          "ourTarget": null
+        },
+        {
+          "id": "sem1:section-6:assignment-section-6-lesson-3",
+          "title": "Assignment Section 6 Lesson 3",
+          "sectionNumber": 6,
+          "sectionName": "Piecewise Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-12",
+          "rowIndex": 65,
+          "ourTarget": "2026-07-24"
+        },
+        {
+          "id": "sem1:section-6:section-6-final-test",
+          "title": "Section 6 Final Test",
+          "sectionNumber": 6,
+          "sectionName": "Piecewise Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-13",
+          "rowIndex": 66,
+          "ourTarget": "2026-07-25"
+        },
+        {
+          "id": "sem1:section-6:end-of-section-assignment-section-6",
+          "title": "End of Section Assignment: Section 6",
+          "sectionNumber": 6,
+          "sectionName": "Piecewise Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-14",
+          "rowIndex": 67,
+          "ourTarget": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "id": "sem2",
+      "courseId": "264459139",
+      "name": "Algebra I Semester 2",
+      "percent": null,
+      "letter": null,
+      "pointsEarned": null,
+      "pointsPossible": null,
+      "gradableDone": 0,
+      "gradableTotal": 41,
+      "allDone": 0,
+      "allTotal": 103,
+      "lmsStart": "2026-06-30",
+      "lmsEnd": "2026-08-25",
+      "sections": [
+        {
+          "number": 1,
+          "name": "Exponential Functions",
+          "percent": null,
+          "letter": null,
+          "complete": false
+        },
+        {
+          "number": 2,
+          "name": "Quadratic Functions",
+          "percent": null,
+          "letter": null,
+          "complete": false
+        },
+        {
+          "number": 3,
+          "name": "Solving Quadratic Equations",
+          "percent": null,
+          "letter": null,
+          "complete": false
+        },
+        {
+          "number": 4,
+          "name": "Radical Functions",
+          "percent": null,
+          "letter": null,
+          "complete": false
+        },
+        {
+          "number": 5,
+          "name": "Rational Expressions",
+          "percent": null,
+          "letter": null,
+          "complete": false
+        },
+        {
+          "number": 6,
+          "name": "Data Analysis",
+          "percent": null,
+          "letter": null,
+          "complete": false
+        }
+      ],
+      "activities": [
+        {
+          "id": "sem2:section-0:contacting-your-teacher",
+          "title": "Contacting your Teacher",
+          "sectionNumber": 0,
+          "sectionName": null,
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-02",
+          "rowIndex": 1,
+          "ourTarget": "2026-07-25"
+        },
+        {
+          "id": "sem2:section-0:orientation-quiz-are-you-ready-to-take-this-course-online",
+          "title": "Orientation Quiz: Are you ready to take this course online?",
+          "sectionNumber": 0,
+          "sectionName": null,
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-03",
+          "rowIndex": 2,
+          "ourTarget": "2026-07-25"
+        },
+        {
+          "id": "sem2:section-6:activity-curve-fitting",
+          "title": "Activity: Curve Fitting",
+          "sectionNumber": 6,
+          "sectionName": "Data Analysis",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-08-01",
+          "rowIndex": 4,
+          "ourTarget": "2026-08-08"
+        },
+        {
+          "id": "sem2:section-1:properties-of-exponents-practice-quiz",
+          "title": "Properties of Exponents: Practice Quiz",
+          "sectionNumber": 1,
+          "sectionName": "Exponential Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-03",
+          "rowIndex": 6,
+          "ourTarget": "2026-07-26"
+        },
+        {
+          "id": "sem2:section-1:assignment-properties-of-exponents",
+          "title": "Assignment: Properties of Exponents",
+          "sectionNumber": 1,
+          "sectionName": "Exponential Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-04",
+          "rowIndex": 7,
+          "ourTarget": "2026-07-26"
+        },
+        {
+          "id": "sem2:section-1:graphing-exponential-functions-practice-quiz",
+          "title": "Graphing Exponential Functions: Practice Quiz",
+          "sectionNumber": 1,
+          "sectionName": "Exponential Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-04",
+          "rowIndex": 8,
+          "ourTarget": "2026-07-26"
+        },
+        {
+          "id": "sem2:section-1:assignment-graphing-exponential-functions",
+          "title": "Assignment: Graphing Exponential Functions",
+          "sectionNumber": 1,
+          "sectionName": "Exponential Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-05",
+          "rowIndex": 9,
+          "ourTarget": "2026-07-26"
+        },
+        {
+          "id": "sem2:section-1:writing-exponential-functions-practice-quiz",
+          "title": "Writing Exponential Functions: Practice Quiz",
+          "sectionNumber": 1,
+          "sectionName": "Exponential Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-05",
+          "rowIndex": 10,
+          "ourTarget": "2026-07-27"
+        },
+        {
+          "id": "sem2:section-1:assignment-writing-exponential-functions",
+          "title": "Assignment: Writing Exponential Functions",
+          "sectionNumber": 1,
+          "sectionName": "Exponential Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-05",
+          "rowIndex": 11,
+          "ourTarget": "2026-07-27"
+        },
+        {
+          "id": "sem2:section-1:geometric-sequences-practice-quiz",
+          "title": "Geometric Sequences: Practice Quiz",
+          "sectionNumber": 1,
+          "sectionName": "Exponential Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-06",
+          "rowIndex": 12,
+          "ourTarget": "2026-07-27"
+        },
+        {
+          "id": "sem2:section-1:assignment-geometric-sequences",
+          "title": "Assignment: Geometric Sequences",
+          "sectionNumber": 1,
+          "sectionName": "Exponential Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-06",
+          "rowIndex": 13,
+          "ourTarget": "2026-07-27"
+        },
+        {
+          "id": "sem2:section-1:section-1-final-test",
+          "title": "Section 1 Final Test",
+          "sectionNumber": 1,
+          "sectionName": "Exponential Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-07",
+          "rowIndex": 14,
+          "ourTarget": "2026-07-28"
+        },
+        {
+          "id": "sem2:section-1:end-of-section-assignment-exponential-functions",
+          "title": "End of Section Assignment: Exponential Functions",
+          "sectionNumber": 1,
+          "sectionName": "Exponential Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-08",
+          "rowIndex": 15,
+          "ourTarget": "2026-07-28"
+        },
+        {
+          "id": "sem2:section-2:quadratic-functions-introduction-practice-quiz",
+          "title": "Quadratic Functions (Introduction): Practice Quiz",
+          "sectionNumber": 2,
+          "sectionName": "Quadratic Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-08",
+          "rowIndex": 17,
+          "ourTarget": "2026-07-28"
+        },
+        {
+          "id": "sem2:section-2:assignment-quadratic-functions-introduction",
+          "title": "Assignment: Quadratic functions (Introduction)",
+          "sectionNumber": 2,
+          "sectionName": "Quadratic Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-09",
+          "rowIndex": 18,
+          "ourTarget": "2026-07-28"
+        },
+        {
+          "id": "sem2:section-2:quadratic-functions-transformations-practice-quiz",
+          "title": "Quadratic Functions (Transformations): Practice Quiz",
+          "sectionNumber": 2,
+          "sectionName": "Quadratic Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-09",
+          "rowIndex": 19,
+          "ourTarget": "2026-07-29"
+        },
+        {
+          "id": "sem2:section-2:activity-graphing-quadratics",
+          "title": "Activity: Graphing Quadratics",
+          "sectionNumber": 2,
+          "sectionName": "Quadratic Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-09",
+          "rowIndex": 20,
+          "ourTarget": "2026-07-29"
+        },
+        {
+          "id": "sem2:section-2:assignment-quadratic-functions-transformations",
+          "title": "Assignment: Quadratic functions (Transformations)",
+          "sectionNumber": 2,
+          "sectionName": "Quadratic Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-10",
+          "rowIndex": 21,
+          "ourTarget": "2026-07-29"
+        },
+        {
+          "id": "sem2:section-2:writing-quadratic-functions-practice-quiz",
+          "title": "Writing Quadratic Functions: Practice Quiz",
+          "sectionNumber": 2,
+          "sectionName": "Quadratic Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-10",
+          "rowIndex": 22,
+          "ourTarget": "2026-07-29"
+        },
+        {
+          "id": "sem2:section-2:assignment-writing-quadratic-functions",
+          "title": "Assignment: Writing Quadratic functions",
+          "sectionNumber": 2,
+          "sectionName": "Quadratic Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-11",
+          "rowIndex": 23,
+          "ourTarget": "2026-07-30"
+        },
+        {
+          "id": "sem2:section-2:modeling-with-quadratic-functions-practice-quiz",
+          "title": "Modeling with Quadratic Functions: Practice Quiz",
+          "sectionNumber": 2,
+          "sectionName": "Quadratic Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-11",
+          "rowIndex": 24,
+          "ourTarget": "2026-07-30"
+        },
+        {
+          "id": "sem2:section-2:assignment-modeling-with-quadratic-functions",
+          "title": "Assignment: Modeling with Quadratic functions",
+          "sectionNumber": 2,
+          "sectionName": "Quadratic Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-11",
+          "rowIndex": 25,
+          "ourTarget": "2026-07-30"
+        },
+        {
+          "id": "sem2:section-2:section-2-final-test",
+          "title": "Section 2 Final Test",
+          "sectionNumber": 2,
+          "sectionName": "Quadratic Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-12",
+          "rowIndex": 26,
+          "ourTarget": "2026-07-30"
+        },
+        {
+          "id": "sem2:section-2:end-of-section-assignment-quadratic-functions",
+          "title": "End of Section Assignment: Quadratic Functions",
+          "sectionNumber": 2,
+          "sectionName": "Quadratic Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-13",
+          "rowIndex": 27,
+          "ourTarget": "2026-07-31"
+        },
+        {
+          "id": "sem2:section-3:solve-by-graphing-practice-quiz",
+          "title": "Solve by Graphing: Practice Quiz",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-14",
+          "rowIndex": 29,
+          "ourTarget": "2026-07-31"
+        },
+        {
+          "id": "sem2:section-3:activity-solve-quadratics-by-graphing",
+          "title": "Activity: Solve Quadratics by Graphing",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-14",
+          "rowIndex": 30,
+          "ourTarget": "2026-07-31"
+        },
+        {
+          "id": "sem2:section-3:assignment-solve-by-graphing",
+          "title": "Assignment: Solve by Graphing",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-14",
+          "rowIndex": 31,
+          "ourTarget": "2026-07-31"
+        },
+        {
+          "id": "sem2:section-3:activity-algebra-tiles-factoring",
+          "title": "Activity: Algebra Tiles - Factoring",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-15",
+          "rowIndex": 32,
+          "ourTarget": "2026-08-01"
+        },
+        {
+          "id": "sem2:section-3:solve-by-factoring-practice-quiz",
+          "title": "Solve by Factoring: Practice Quiz",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-15",
+          "rowIndex": 33,
+          "ourTarget": "2026-08-01"
+        },
+        {
+          "id": "sem2:section-3:assignment-solve-by-factoring",
+          "title": "Assignment: Solve by Factoring",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-15",
+          "rowIndex": 34,
+          "ourTarget": "2026-08-01"
+        },
+        {
+          "id": "sem2:section-3:solve-by-square-root-method-practice-quiz",
+          "title": "Solve by Square Root Method: Practice Quiz",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-16",
+          "rowIndex": 35,
+          "ourTarget": "2026-08-01"
+        },
+        {
+          "id": "sem2:section-3:assignment-solve-by-square-root-method",
+          "title": "Assignment: Solve by Square Root Method",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-16",
+          "rowIndex": 36,
+          "ourTarget": "2026-08-02"
+        },
+        {
+          "id": "sem2:section-3:solve-using-quadratic-formula-practice-quiz",
+          "title": "Solve using Quadratic Formula: Practice Quiz",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-17",
+          "rowIndex": 37,
+          "ourTarget": "2026-08-02"
+        },
+        {
+          "id": "sem2:section-3:assignment-solve-using-quadratic-formula",
+          "title": "Assignment: Solve using Quadratic Formula",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-17",
+          "rowIndex": 38,
+          "ourTarget": "2026-08-02"
+        },
+        {
+          "id": "sem2:section-3:solve-non-linear-systems-practice-quiz",
+          "title": "Solve Non-Linear Systems: Practice Quiz",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-17",
+          "rowIndex": 39,
+          "ourTarget": "2026-08-02"
+        },
+        {
+          "id": "sem2:section-3:assignment-solve-non-linear-systems",
+          "title": "Assignment: Solve Non-Linear Systems",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-18",
+          "rowIndex": 40,
+          "ourTarget": "2026-08-03"
+        },
+        {
+          "id": "sem2:section-3:section-3-final-test",
+          "title": "Section 3 Final Test",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-19",
+          "rowIndex": 41,
+          "ourTarget": "2026-08-03"
+        },
+        {
+          "id": "sem2:section-3:end-of-section-assignment-solve-quadratic-equations",
+          "title": "End Of Section Assignment: Solve Quadratic Equations",
+          "sectionNumber": 3,
+          "sectionName": "Solving Quadratic Equations",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-19",
+          "rowIndex": 42,
+          "ourTarget": "2026-08-03"
+        },
+        {
+          "id": "sem2:section-4:graphing-radical-functions-practice-quiz",
+          "title": "Graphing Radical Functions: Practice Quiz",
+          "sectionNumber": 4,
+          "sectionName": "Radical Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-20",
+          "rowIndex": 44,
+          "ourTarget": "2026-08-03"
+        },
+        {
+          "id": "sem2:section-4:assignment-graphing-radical-functions",
+          "title": "Assignment: Graphing Radical Functions",
+          "sectionNumber": 4,
+          "sectionName": "Radical Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-20",
+          "rowIndex": 45,
+          "ourTarget": "2026-08-04"
+        },
+        {
+          "id": "sem2:section-4:combining-radical-expressions-practice-quiz",
+          "title": "Combining Radical Expressions: Practice Quiz",
+          "sectionNumber": 4,
+          "sectionName": "Radical Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-20",
+          "rowIndex": 46,
+          "ourTarget": "2026-08-04"
+        },
+        {
+          "id": "sem2:section-4:assignment-combining-radical-expressions",
+          "title": "Assignment: Combining Radical Expressions",
+          "sectionNumber": 4,
+          "sectionName": "Radical Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-21",
+          "rowIndex": 47,
+          "ourTarget": "2026-08-04"
+        },
+        {
+          "id": "sem2:section-4:multiply-and-divide-radical-expressions-practice-quiz",
+          "title": "Multiply and Divide Radical Expressions: Practice Quiz",
+          "sectionNumber": 4,
+          "sectionName": "Radical Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-21",
+          "rowIndex": 48,
+          "ourTarget": "2026-08-04"
+        },
+        {
+          "id": "sem2:section-4:assignment-multiply-and-divide-radical-expressions",
+          "title": "Assignment: Multiply and Divide Radical Expressions",
+          "sectionNumber": 4,
+          "sectionName": "Radical Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-22",
+          "rowIndex": 49,
+          "ourTarget": "2026-08-05"
+        },
+        {
+          "id": "sem2:section-4:solve-radical-equations-practice-quiz",
+          "title": "Solve Radical Equations: Practice Quiz",
+          "sectionNumber": 4,
+          "sectionName": "Radical Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-22",
+          "rowIndex": 50,
+          "ourTarget": "2026-08-05"
+        },
+        {
+          "id": "sem2:section-4:assignment-solve-radical-equations",
+          "title": "Assignment: Solve Radical Equations",
+          "sectionNumber": 4,
+          "sectionName": "Radical Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-22",
+          "rowIndex": 51,
+          "ourTarget": "2026-08-05"
+        },
+        {
+          "id": "sem2:section-4:section-4-final-test",
+          "title": "Section 4 Final Test",
+          "sectionNumber": 4,
+          "sectionName": "Radical Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-23",
+          "rowIndex": 52,
+          "ourTarget": "2026-08-05"
+        },
+        {
+          "id": "sem2:section-4:end-of-section-assignment-radical-functions",
+          "title": "End of Section Assignment: Radical Functions",
+          "sectionNumber": 4,
+          "sectionName": "Radical Functions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-24",
+          "rowIndex": 53,
+          "ourTarget": "2026-08-06"
+        },
+        {
+          "id": "sem2:section-5:simplify-rational-expressions-practice-test",
+          "title": "Simplify Rational Expressions: Practice Test",
+          "sectionNumber": 5,
+          "sectionName": "Rational Expressions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-24",
+          "rowIndex": 55,
+          "ourTarget": "2026-08-06"
+        },
+        {
+          "id": "sem2:section-5:assignment-solve-rational-expressions",
+          "title": "Assignment: Solve Rational Expressions",
+          "sectionNumber": 5,
+          "sectionName": "Rational Expressions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-25",
+          "rowIndex": 56,
+          "ourTarget": "2026-08-06"
+        },
+        {
+          "id": "sem2:section-5:multiply-and-divide-rational-expressions-practice-test",
+          "title": "Multiply and Divide Rational Expressions: Practice Test",
+          "sectionNumber": 5,
+          "sectionName": "Rational Expressions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-25",
+          "rowIndex": 57,
+          "ourTarget": "2026-08-06"
+        },
+        {
+          "id": "sem2:section-5:assignment-multiply-and-divide-rational-expressions",
+          "title": "Assignment: Multiply and Divide Rational Expressions",
+          "sectionNumber": 5,
+          "sectionName": "Rational Expressions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-26",
+          "rowIndex": 58,
+          "ourTarget": "2026-08-07"
+        },
+        {
+          "id": "sem2:section-5:add-and-subtract-rational-expressions-practice-test",
+          "title": "Add and Subtract Rational Expressions: Practice Test",
+          "sectionNumber": 5,
+          "sectionName": "Rational Expressions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-26",
+          "rowIndex": 59,
+          "ourTarget": "2026-08-07"
+        },
+        {
+          "id": "sem2:section-5:assignment-add-and-subtract-rational-expressions",
+          "title": "Assignment: Add and Subtract Rational Expressions",
+          "sectionNumber": 5,
+          "sectionName": "Rational Expressions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-27",
+          "rowIndex": 60,
+          "ourTarget": "2026-08-07"
+        },
+        {
+          "id": "sem2:section-5:solve-rational-equations-practice-test",
+          "title": "Solve Rational Equations: Practice Test",
+          "sectionNumber": 5,
+          "sectionName": "Rational Expressions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-27",
+          "rowIndex": 61,
+          "ourTarget": "2026-08-07"
+        },
+        {
+          "id": "sem2:section-5:assignment-solve-rational-equations",
+          "title": "Assignment: Solve Rational Equations",
+          "sectionNumber": 5,
+          "sectionName": "Rational Expressions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-27",
+          "rowIndex": 62,
+          "ourTarget": "2026-08-08"
+        },
+        {
+          "id": "sem2:section-5:section-5-final-test",
+          "title": "Section 5 Final Test",
+          "sectionNumber": 5,
+          "sectionName": "Rational Expressions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-28",
+          "rowIndex": 63,
+          "ourTarget": "2026-08-08"
+        },
+        {
+          "id": "sem2:section-5:end-of-section-assignment-rational-expressions",
+          "title": "End of Section Assignment: Rational Expressions",
+          "sectionNumber": 5,
+          "sectionName": "Rational Expressions",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-29",
+          "rowIndex": 64,
+          "ourTarget": "2026-08-08"
+        },
+        {
+          "id": "sem2:section-6:categorical-data-practice-quiz",
+          "title": "Categorical Data: Practice Quiz",
+          "sectionNumber": 6,
+          "sectionName": "Data Analysis",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-30",
+          "rowIndex": 66,
+          "ourTarget": "2026-08-09"
+        },
+        {
+          "id": "sem2:section-6:assignment-categorical-data",
+          "title": "Assignment: Categorical Data",
+          "sectionNumber": 6,
+          "sectionName": "Data Analysis",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-30",
+          "rowIndex": 67,
+          "ourTarget": "2026-08-09"
+        },
+        {
+          "id": "sem2:section-6:univariate-statistics-practice-quiz",
+          "title": "Univariate Statistics: Practice Quiz",
+          "sectionNumber": 6,
+          "sectionName": "Data Analysis",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-30",
+          "rowIndex": 68,
+          "ourTarget": "2026-08-09"
+        },
+        {
+          "id": "sem2:section-6:assignment-univariate-statistics",
+          "title": "Assignment: Univariate Statistics",
+          "sectionNumber": 6,
+          "sectionName": "Data Analysis",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-31",
+          "rowIndex": 69,
+          "ourTarget": "2026-08-09"
+        },
+        {
+          "id": "sem2:section-6:bivariate-data-practice-quiz",
+          "title": "Bivariate Data: Practice Quiz",
+          "sectionNumber": 6,
+          "sectionName": "Data Analysis",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-07-31",
+          "rowIndex": 70,
+          "ourTarget": "2026-08-10"
+        },
+        {
+          "id": "sem2:section-6:assignment-bivariate-data",
+          "title": "Assignment: Bivariate Data",
+          "sectionNumber": 6,
+          "sectionName": "Data Analysis",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-08-01",
+          "rowIndex": 71,
+          "ourTarget": "2026-08-10"
+        },
+        {
+          "id": "sem2:section-6:section-6-final-test",
+          "title": "Section 6 Final Test",
+          "sectionNumber": 6,
+          "sectionName": "Data Analysis",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-08-02",
+          "rowIndex": 72,
+          "ourTarget": "2026-08-10"
+        },
+        {
+          "id": "sem2:section-6:end-of-section-assignment-data-analysis",
+          "title": "End of Section Assignment: Data Analysis",
+          "sectionNumber": 6,
+          "sectionName": "Data Analysis",
+          "state": "not_started",
+          "score": null,
+          "submittedDate": null,
+          "lmsDue": "2026-08-02",
+          "rowIndex": 73,
+          "ourTarget": "2026-08-10"
+        }
+      ]
+    }
+  ]
+}

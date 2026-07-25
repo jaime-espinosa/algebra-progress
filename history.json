@@ -1,0 +1,17 @@
+{
+  "snapshots": [
+    {
+      "date": "2026-07-24",
+      "sem1": {
+        "gradableDone": 35,
+        "allDone": 97,
+        "percent": 86.31
+      },
+      "sem2": {
+        "gradableDone": 0,
+        "allDone": 0,
+        "percent": null
+      }
+    }
+  ]
+}
