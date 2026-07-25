@@ -8,11 +8,12 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
   const VALID_THEMES = new Set(["overworld", "nether", "end"]);
   const VALID_LOADERS = new Set(["vanilla", "fabric", "forge", "neoforge", "unsure"]);
   const VALID_GAME_KINDS = new Set(["game", "puzzle", "tool", "video"]);
-  // Mini-lesson files that exist under lessons/. Keep in sync when adding one.
-  const LESSON_FILES = new Set([
-    "sem1-01", "sem1-02", "sem1-03", "sem1-04", "sem1-05", "sem1-06",
-    "sem2-01", "sem2-02", "sem2-03", "sem2-04", "sem2-05", "sem2-06"
-  ]);
+  // Which mini-lessons exist is asked of the server, not kept in a list here. A second
+  // catalog has drifted twice on this project (the artifact list shipped a wrong
+  // Minecraft version), and a hand-maintained list of filenames is the same trap: the
+  // lesson slugs come from data.json, and lessonExists() checks the file is really there
+  // before anything becomes a link.
+  const lessonFileCache = new Map();
   const sectionIds = ["trophy", "effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request", "games"];
 
   // vault/manifest.json is the single source of truth for artifacts. Hardcoding a
@@ -859,26 +860,90 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
       : `<p class="quiet">No scored repairs are available.</p>`;
   }
 
+  function lessonSlug(semesterId, number) {
+    return `${semesterId}-${String(number).padStart(2, "0")}`;
+  }
+
+  // Ask the server whether a lesson file is there. Three answers, not two:
+  //   true  — it is there, safe to link.
+  //   false — the server said 404. Never link it; a dead link is worse than no link.
+  //   null  — the request itself failed (offline, opened from a file:// path). That is
+  //           not proof of absence, so the link stays: hiding every lesson because the
+  //           network blinked is a bigger failure than a link that will not open while
+  //           he has no connection anyway.
+  async function lessonExists(slug) {
+    if (lessonFileCache.has(slug)) return lessonFileCache.get(slug);
+    let answer;
+    try {
+      const response = await fetch(`lessons/${slug}.html`, { method: "HEAD" });
+      answer = response.ok ? true : (response.status === 404 ? false : null);
+    } catch {
+      answer = null;
+    }
+    lessonFileCache.set(slug, answer);
+    return answer;
+  }
+
+  // Every section in the syllabus, in order, whether or not a lesson file exists for it.
+  function lessonCatalog(data) {
+    return (Array.isArray(data?.semesters) ? data.semesters : [])
+      .flatMap(semester => (Array.isArray(semester.sections) ? semester.sections : [])
+        .filter(section => Number.isInteger(section.number) && section.number > 0)
+        .slice()
+        .sort((left, right) => left.number - right.number)
+        .map(section => ({
+          slug: lessonSlug(semester.id, section.number),
+          semesterId: semester.id,
+          number: section.number,
+          name: section.name || "",
+          complete: section.complete === true,
+        })));
+  }
+
   function renderLesson(data) {
     const next = remainingActivities(data)[0];
-    if (!next) {
-      document.querySelector("#lesson-content").innerHTML =
-        `<p>Every lesson is submitted. The route is clear.</p>`;
-      return;
-    }
-    // Link the lesson that matches the next section. LESSON_FILES is the list of
-    // files that actually exist on disk, so an unexpected section number drops the
-    // link rather than shipping a 404 — a dead reward link is worse than none.
-    const slug = `${next.semesterId}-${String(next.sectionNumber).padStart(2, "0")}`;
-    const section = data.semesters.find(item => item.id === next.semesterId)
+    const section = next && data.semesters.find(item => item.id === next.semesterId)
       ?.sections.find(item => item.number === next.sectionNumber);
-    const link = LESSON_FILES.has(slug)
-      ? `<a class="action" href="lessons/${slug}.html">Open mini-lesson</a>`
-      : "";
+    const currentSlug = next ? lessonSlug(next.semesterId, next.sectionNumber) : null;
+    const head = next
+      ? `<span class="eyebrow">${escapeHtml(next.semesterId.toUpperCase())} // SECTION ${next.sectionNumber}</span>
+         <h3>${escapeHtml(section?.name || next.sectionName || "Course orientation")}</h3>
+         <span class="lesson-current-link" data-slug="${escapeHtml(currentSlug)}"></span>`
+      : `<p>Every lesson is submitted. The route is clear.</p>`;
+    // The library is a record of ground already covered as much as a way in to the next
+    // lesson. Nothing here counts what is left, and a section he has not reached yet is
+    // simply unmarked — no colour, no label, nothing that reads as a warning.
     document.querySelector("#lesson-content").innerHTML = `
-      <span class="eyebrow">${escapeHtml(next.semesterId.toUpperCase())} // SECTION ${next.sectionNumber}</span>
-      <h3>${escapeHtml(section?.name || next.sectionName || "Course orientation")}</h3>
-      ${link}`;
+      ${head}
+      <h4 class="lesson-library__heading">All twelve mini-lessons</h4>
+      <ol class="lesson-library">${lessonCatalog(data).map(entry => {
+        const state = entry.slug === currentSlug ? "current" : (entry.complete ? "done" : "ahead");
+        const mark = state === "done" ? "cleared" : (state === "current" ? "you are here" : "");
+        return `<li class="lesson-library__item lesson-library__item--${state}">
+          <span class="lesson-library__id">${escapeHtml(entry.semesterId.toUpperCase())} ${String(entry.number).padStart(2, "0")}</span>
+          <span class="lesson-library__name" data-slug="${escapeHtml(entry.slug)}">${escapeHtml(entry.name)}</span>
+          ${mark ? `<span class="lesson-library__mark">${mark}</span>` : ""}
+        </li>`;
+      }).join("")}</ol>`;
+    linkExistingLessons();
+  }
+
+  // Links are added only after the file has been confirmed, so a missing lesson stays
+  // plain text and never becomes a 404 he clicks on.
+  async function linkExistingLessons() {
+    const targets = [...document.querySelectorAll("#lesson-content [data-slug]")];
+    await Promise.all(targets.map(async node => {
+      const slug = node.dataset.slug;
+      if (!/^sem[12]-\d{2}$/.test(slug)) return;
+      if (await lessonExists(slug) === false) return;
+      const link = document.createElement("a");
+      link.href = `lessons/${slug}.html`;
+      const current = node.classList.contains("lesson-current-link");
+      link.className = current ? "action" : "lesson-library__link";
+      link.textContent = current ? "Open mini-lesson" : node.textContent;
+      node.textContent = "";
+      node.append(link);
+    }));
   }
 
   function renderGames(data) {
