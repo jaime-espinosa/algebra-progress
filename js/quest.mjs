@@ -146,9 +146,11 @@ export function effortStats(data, today) {
   const onTrack = daysNeeded > daysLeft
     ? 0
     : Math.max(0, Math.min(1, showUpRate / Math.max(showUpNeeded, 0.01)));
+  // Ties break to the EARLIEST date so the personal best is stable: a later day
+  // that merely matches it must not quietly replace a record he remembers setting.
   const best = [...perDay.entries()]
     .map(([date, count]) => ({ date, count }))
-    .sort((left, right) => right.count - left.count)[0] || null;
+    .sort((left, right) => right.count - left.count || left.date.localeCompare(right.date))[0] || null;
   return { perDay, activeDays, submitted, activePace, showUpRate, rowsLeft,
            daysLeft, requiredPerDay, daysNeeded, showUpNeeded, onTrack, best,
            fastEnough: activePace >= requiredPerDay };

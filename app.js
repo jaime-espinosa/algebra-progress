@@ -390,12 +390,6 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
     }).join("");
   }
 
-  function bestDayOf(stats) {
-    return [...stats.perDay.entries()]
-      .map(([date, count]) => ({ date, count }))
-      .sort((left, right) => right.count - left.count)[0] || null;
-  }
-
   function dial(percent, label, value, tone = "") {
     const pct = Math.max(0, Math.min(100, percent));
     // Conic gradient, no canvas, no images, one static paint.
@@ -437,7 +431,7 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
         and Aug 15 needs <strong>${required.toFixed(1)}</strong>.
         <strong>You are already fast enough.</strong>
         ${s.daysNeeded <= s.daysLeft
-          ? `You need about <strong>${s.daysNeeded} working days</strong> out of the ${s.daysLeft} left. That is the whole game — show up, and the speed takes care of itself.${bestDayOf(s) ? ` And big days buy days off: your ${bestDayOf(s).count}-row day was worth ${Math.max(1, Math.round(bestDayOf(s).count / Math.max(s.activePace, 1)))} ordinary ones.` : ""}`
+          ? `You need about <strong>${s.daysNeeded} working days</strong> out of the ${s.daysLeft} left. That is the whole game — show up, and the speed takes care of itself.`
           : `At this pace the remaining rows need more days than are left. Raising your daily number is the lever now.`}
       </p>
       <div class="daybars" aria-label="Rows submitted per day, last 14 active days">${barMarkup}</div>
@@ -547,17 +541,12 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
     const daysLeft = Math.max(1, dateDiff(today, data.deadline.date));
     const required = remaining.length / daysLeft;
     const todayDone = todayCompleted(data, today);
-    // Derived from real submission dates. This was previously hardcoded to "7 (Jul 11)",
-    // a number that was never true — inventing a personal best he never set is exactly
-    // the kind of thing he could check and catch.
-    const perDay = new Map();
-    for (const item of data.semesters.flatMap(semester => semester.activities)) {
-      if (item.state === "not_started" || typeof item.submittedDate !== "string") continue;
-      perDay.set(item.submittedDate, (perDay.get(item.submittedDate) || 0) + 1);
-    }
-    const bestDay = [...perDay.entries()]
-      .map(([date, count]) => ({ date, count }))
-      .sort((left, right) => right.count - left.count || (left.date < right.date ? -1 : 1))[0] || null;
+    const stats = effortStats(data, today);
+    // Derived from real submission dates, by the same code the effort panel uses.
+    // It was previously hardcoded to "7 (Jul 11)", a number that was never true, and
+    // then recomputed here a second time — inventing or drifting a personal best he
+    // never set is exactly the kind of thing he could check and catch.
+    const bestDay = stats.best;
     // His number, not ours. The projection is computed from the pace HE picks, so the
     // finish date is the consequence of his own choice rather than a verdict handed
     // down. Defaults to the honest requirement, capped at 4.
@@ -568,7 +557,6 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
       : suggested;
     const projectionDays = Math.ceil(remaining.length / Math.max(dailyAsk, .1));
     const projectedDate = addDays(today, projectionDays);
-    const stats = effortStats(data, today);
     const provenDays = Math.ceil(remaining.length / Math.max(stats.activePace, .1));
     const provenDate = addDays(today, provenDays);
     const closesGap = Math.min(4, required);
@@ -583,6 +571,16 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
       ? `That plan lands ${Math.max(0, ahead)} days before the deadline.`
       : `That plan lands after Aug 15. ${closesGap.toFixed(1)} a day reaches it.`;
     const next = remaining[0];
+
+    // The heading used to say REROUTING permanently, including when his own plan
+    // landed early — a header that never changes is a header that stops being read,
+    // and this one was quietly calling every good plan a course correction.
+    const heading = remaining.length === 0
+      ? "ROUTE CLEAR"
+      : projectedDate <= data.deadline.date
+        ? `ROUTE LOCKED&nbsp;&nbsp;//&nbsp;&nbsp;${Math.max(0, ahead)} days of slack`
+        : "REROUTING";
+    document.querySelector("#pace-heading").innerHTML = heading;
 
     document.querySelector("#pace-content").innerHTML = `
       <div class="daily-readout numeric">
