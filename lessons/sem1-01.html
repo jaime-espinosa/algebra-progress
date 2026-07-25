@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Algebra Basics</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: rgba(18, 21, 26, .86);
+      --panel-solid: #12151a;
+      --line: #242a33;
+      --text: #e9edf1;
+      --dim: #98a2ad;
+      --faint: #59636e;
+      --gap: #262c34;
+      --accent: #6fdc82;
+      --accent-dim: #2f6b3c;
+      --warn: #f2c14e;
+      --shadow: #000;
+      --tile: 24px;
+      --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono",
+        "DejaVu Sans Mono", Menlo, Consolas, monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell,
+        sans-serif;
+    }
+
+    [data-theme="nether"] {
+      --bg: #120a08;
+      --panel: rgba(28, 16, 13, .86);
+      --panel-solid: #1a100d;
+      --line: #3a201a;
+      --gap: #2e1c17;
+      --accent: #ff7a45;
+      --accent-dim: #7a3418;
+      --warn: #ffd166;
+    }
+
+    [data-theme="end"] {
+      --bg: #08070e;
+      --panel: rgba(18, 15, 28, .86);
+      --panel-solid: #100d1a;
+      --line: #2a2340;
+      --gap: #221d33;
+      --accent: #c4a2ff;
+      --accent-dim: #5a4488;
+      --warn: #ffe08a;
+    }
+
+    * {
+      box-sizing: border-box;
+      border-radius: 0;
+      text-shadow: 2px 2px 0 var(--shadow, #000);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text, #e9edf1);
+      background: var(--bg, #0b0d10);
+      font-family: var(--mono, monospace);
+      font-size: 15px;
+      line-height: 1.55;
+      transition: background-color 180ms;
+    }
+
+    main {
+      width: min(calc(100% - 32px), 920px);
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    header,
+    section,
+    aside {
+      contain: layout paint;
+      margin-bottom: 16px;
+      border: 1px solid var(--line, #242a33);
+      background: var(--panel, rgba(18, 21, 26, .86));
+      padding: 16px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    h2::before {
+      content: "> ";
+      color: var(--dim, #98a2ad);
+    }
+
+    .status,
+    .label {
+      color: var(--dim, #98a2ad);
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin: 0;
+    }
+
+    .prose {
+      font-family: var(--sans, system-ui, sans-serif);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .math {
+      overflow-x: auto;
+      border-left: 4px solid var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+      padding: 12px;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .math p:last-child,
+    section p:last-child {
+      margin-bottom: 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line, #242a33);
+      background: transparent;
+    }
+
+    .axis,
+    .guide {
+      stroke: var(--line, #242a33);
+      stroke-width: 2;
+    }
+
+    .graph {
+      fill: none;
+      stroke: var(--accent, #6fdc82);
+      stroke-width: 6;
+    }
+
+    .point {
+      fill: var(--accent, #6fdc82);
+    }
+
+    .svg-text {
+      fill: var(--text, #e9edf1);
+      font: 13px var(--mono, monospace);
+    }
+
+    .strategy {
+      border-width: 2px;
+      border-color: var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+    }
+
+    .strategy strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--accent, #6fdc82);
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 680px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S1 // SECTION 01 // FOUNDATION</p>
+      <h1>Algebra Basics</h1>
+      <p class="prose">A crafting recipe turns a count into an expression.</p>
+    </header>
+
+    <section>
+      <h2>The Minecraft structure</h2>
+      <div class="prose">
+        <p>One log crafts into four planks.</p>
+        <p>One chest costs eight planks.</p>
+        <p>A variable is the unknown count you have not mined yet.</p>
+        <p>The recipe P = 4L converts L logs into P planks.</p>
+        <p>Multiply then add because the recipe tree converts logs before totaling planks.</p>
+        <p>Crafting is not reversible because planks cannot be uncrafted into a log.</p>
+        <p>An algebraic equation can still be read in either direction.</p>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>The algebra</h2>
+        <div class="math" aria-label="Expressions and order of operations">
+          <p>P = 4L</p>
+          <p>3x + 2x = 5x</p>
+          <p>4L + 8</p>
+        </div>
+        <div class="prose">
+          <p>Evaluating means substituting a value and calculating the result.</p>
+          <p>Like terms have the same variable part and can be combined.</p>
+          <p>Multiplication happens before addition in 4L + 8.</p>
+          <p>As algebra, 4L has domain ℝ and range ℝ.</p>
+          <p>In this crafting model, L has domain {0, 1, 2, …}.</p>
+          <p>Its practical range for P is {0, 4, 8, 12, …}.</p>
+          <p>The real-number expression and the whole-number model are different claims.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>The plank chart</h2>
+        <svg viewBox="0 0 400 250" role="img"
+          aria-labelledby="planks-title planks-desc"
+          shape-rendering="crispEdges">
+          <title id="planks-title">Bar chart of P equals four L from zero through four logs</title>
+          <desc id="planks-desc">
+            Five bars show zero, four, eight, twelve, and sixteen planks for zero through four logs.
+          </desc>
+          <path class="axis" d="M55 210H370M55 210V25"/>
+          <path class="guide" d="M55 170H360M55 130H360M55 90H360M55 50H360"/>
+          <path class="graph" d="M75 210V210M140 210V170M205 210V130M270 210V90M335 210V50"/>
+          <rect class="point" x="70" y="205" width="10" height="10"/>
+          <rect class="point" x="135" y="165" width="10" height="10"/>
+          <rect class="point" x="200" y="125" width="10" height="10"/>
+          <rect class="point" x="265" y="85" width="10" height="10"/>
+          <rect class="point" x="330" y="45" width="10" height="10"/>
+          <text class="svg-text" x="20" y="215">0</text>
+          <text class="svg-text" x="20" y="175">4</text>
+          <text class="svg-text" x="20" y="135">8</text>
+          <text class="svg-text" x="12" y="95">12</text>
+          <text class="svg-text" x="12" y="55">16</text>
+          <text class="svg-text" x="70" y="232">0</text>
+          <text class="svg-text" x="135" y="232">1</text>
+          <text class="svg-text" x="200" y="232">2</text>
+          <text class="svg-text" x="265" y="232">3</text>
+          <text class="svg-text" x="330" y="232">4</text>
+          <text class="svg-text" x="365" y="232">L</text>
+          <text class="svg-text" x="35" y="25">P</text>
+        </svg>
+        <p class="prose">Each additional log adds four planks.</p>
+        <p class="prose">Only whole-number log counts appear in this chart.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Worked example</h2>
+      <div class="prose">
+        <p>You want three chests.</p>
+        <p>Each chest costs eight planks.</p>
+      </div>
+      <div class="math">
+        <p>Planks needed = 3 × 8</p>
+        <p>Planks needed = 24</p>
+      </div>
+      <div class="prose">
+        <p>Now solve for the logs that craft those planks.</p>
+      </div>
+      <div class="math">
+        <p>4L = 24</p>
+        <p>L = 24 ÷ 4</p>
+        <p>L = 6</p>
+      </div>
+      <div class="prose">
+        <p>Then add one crafting table that costs four planks.</p>
+      </div>
+      <div class="math">
+        <p>Total planks = 24 + 4</p>
+        <p>Total planks = 28</p>
+        <p>4L = 28</p>
+        <p>L = 28 ÷ 4</p>
+        <p>L = 7</p>
+      </div>
+      <div class="prose">
+        <p>Six logs cover the chests.</p>
+        <p>Seven logs cover the chests and crafting table.</p>
+      </div>
+    </section>
+
+    <aside class="strategy" aria-label="Strategy card">
+      <span class="label">STRATEGY // SCREENSHOT THIS</span>
+      <strong>Evaluate inside-out through each operation.<br>
+        Substitute the number for the letter last.</strong>
+    </aside>
+  </main>
+</body>
+</html>

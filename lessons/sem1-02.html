@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Linear Equations and Inequalities</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: rgba(18, 21, 26, .86);
+      --panel-solid: #12151a;
+      --line: #242a33;
+      --text: #e9edf1;
+      --dim: #98a2ad;
+      --faint: #59636e;
+      --gap: #262c34;
+      --accent: #6fdc82;
+      --accent-dim: #2f6b3c;
+      --warn: #f2c14e;
+      --shadow: #000;
+      --tile: 24px;
+      --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono",
+        "DejaVu Sans Mono", Menlo, Consolas, monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell,
+        sans-serif;
+    }
+
+    [data-theme="nether"] {
+      --bg: #120a08;
+      --panel: rgba(28, 16, 13, .86);
+      --panel-solid: #1a100d;
+      --line: #3a201a;
+      --gap: #2e1c17;
+      --accent: #ff7a45;
+      --accent-dim: #7a3418;
+      --warn: #ffd166;
+    }
+
+    [data-theme="end"] {
+      --bg: #08070e;
+      --panel: rgba(18, 15, 28, .86);
+      --panel-solid: #100d1a;
+      --line: #2a2340;
+      --gap: #221d33;
+      --accent: #c4a2ff;
+      --accent-dim: #5a4488;
+      --warn: #ffe08a;
+    }
+
+    * {
+      box-sizing: border-box;
+      border-radius: 0;
+      text-shadow: 2px 2px 0 var(--shadow, #000);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text, #e9edf1);
+      background: var(--bg, #0b0d10);
+      font-family: var(--mono, monospace);
+      font-size: 15px;
+      line-height: 1.55;
+      transition: background-color 180ms;
+    }
+
+    main {
+      width: min(calc(100% - 32px), 920px);
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    header,
+    section,
+    aside {
+      contain: layout paint;
+      margin-bottom: 16px;
+      border: 1px solid var(--line, #242a33);
+      background: var(--panel, rgba(18, 21, 26, .86));
+      padding: 16px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    h2::before {
+      content: "> ";
+      color: var(--dim, #98a2ad);
+    }
+
+    .status,
+    .label {
+      color: var(--dim, #98a2ad);
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin: 0;
+    }
+
+    .prose {
+      font-family: var(--sans, system-ui, sans-serif);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .math {
+      overflow-x: auto;
+      border-left: 4px solid var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+      padding: 12px;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .math p:last-child,
+    section p:last-child {
+      margin-bottom: 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line, #242a33);
+      background: transparent;
+    }
+
+    .axis,
+    .guide {
+      stroke: var(--line, #242a33);
+      stroke-width: 2;
+    }
+
+    .graph {
+      fill: none;
+      stroke: var(--accent, #6fdc82);
+      stroke-width: 6;
+    }
+
+    .point {
+      fill: var(--accent, #6fdc82);
+    }
+
+    .svg-text {
+      fill: var(--text, #e9edf1);
+      font: 13px var(--mono, monospace);
+    }
+
+    .strategy {
+      border-width: 2px;
+      border-color: var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+    }
+
+    .strategy strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--accent, #6fdc82);
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 680px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S1 // SECTION 02 // SOLVING</p>
+      <h1>Linear Equations and Inequalities</h1>
+      <p class="prose">Furnace fuel turns a target into a boundary.</p>
+    </header>
+
+    <section>
+      <h2>The Minecraft structure</h2>
+      <div class="prose">
+        <p>One piece of coal smelts eight items.</p>
+        <p>A pile of raw iron sets the number of items to smelt.</p>
+        <p>An equation finds the exact coal count for a full batch.</p>
+        <p>An inequality allows more coal than the minimum but never less.</p>
+        <p>Coal comes in whole pieces.</p>
+        <p>The algebra can give a fraction, but the practical answer must round up.</p>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>The algebra</h2>
+        <div class="math" aria-label="Linear equation forms and inverse operations">
+          <p>ax = b → x = b ÷ a</p>
+          <p>ax + c = b</p>
+          <p>ax = b − c</p>
+          <p>x = (b − c) ÷ a</p>
+          <p>a ≠ 0</p>
+        </div>
+        <div class="prose">
+          <p>Inverse operations undo addition and multiplication.</p>
+          <p>The function f(x) = ax + c has domain ℝ and range ℝ when a ≠ 0.</p>
+          <p>A linear equation with a nonzero coefficient has exactly one real solution.</p>
+          <p>Its solution set is the single value {(b − c) ÷ a}.</p>
+          <p>A linear inequality has an interval of real solutions.</p>
+          <p>Multiplying or dividing both sides by a negative flips the inequality sign.</p>
+          <p>For example, −2x ≥ 6 becomes x ≤ −3.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>The coal boundary</h2>
+        <svg viewBox="0 0 400 250" role="img"
+          aria-labelledby="coal-title coal-desc"
+          shape-rendering="crispEdges">
+          <title id="coal-title">Number line showing c greater than or equal to thirteen</title>
+          <desc id="coal-desc">
+            A filled point at thirteen starts a ray extending right through larger coal counts.
+          </desc>
+          <path class="axis" d="M45 125H370M60 115V135M110 115V135M160 115V135M210 112V138M260 115V135M310 115V135M360 115V135"/>
+          <path class="graph" d="M210 125H355M343 113L355 125L343 137"/>
+          <circle class="point" cx="210" cy="125" r="8"/>
+          <text class="svg-text" x="52" y="158">10</text>
+          <text class="svg-text" x="102" y="158">11</text>
+          <text class="svg-text" x="152" y="158">12</text>
+          <text class="svg-text" x="202" y="158">13</text>
+          <text class="svg-text" x="252" y="158">14</text>
+          <text class="svg-text" x="302" y="158">15</text>
+          <text class="svg-text" x="352" y="158">16</text>
+          <text class="svg-text" x="188" y="92">c ≥ 13</text>
+          <text class="svg-text" x="365" y="112">c</text>
+        </svg>
+        <p class="prose">The filled point includes thirteen.</p>
+        <p class="prose">The ray includes every greater value.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Worked example</h2>
+      <div class="prose">
+        <p>First, smelt ninety-six raw iron.</p>
+        <p>Each coal smelts eight items.</p>
+      </div>
+      <div class="math">
+        <p>8c = 96</p>
+        <p>c = 96 ÷ 8</p>
+        <p>c = 12 coal</p>
+      </div>
+      <div class="prose">
+        <p>Next, smelt one hundred raw iron.</p>
+        <p>You need enough fuel for at least one hundred items.</p>
+      </div>
+      <div class="math">
+        <p>8c ≥ 100</p>
+        <p>c ≥ 100 ÷ 8</p>
+        <p>c ≥ 12.5</p>
+      </div>
+      <div class="prose">
+        <p>The algebraic solution is the real interval [12.5, ∞).</p>
+        <p>The practical domain is whole pieces of coal.</p>
+        <p>Round up from 12.5 and bring 13 coal.</p>
+      </div>
+      <div class="math">
+        <p>8 × 13 = 104</p>
+        <p>104 ≥ 100</p>
+      </div>
+    </section>
+
+    <aside class="strategy" aria-label="Strategy card">
+      <span class="label">STRATEGY // SCREENSHOT THIS</span>
+      <strong>Do the same operation to both sides.<br>
+        Flip the inequality when dividing by a negative.</strong>
+    </aside>
+  </main>
+</body>
+</html>
