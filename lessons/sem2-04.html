@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Radical Functions</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: rgba(18, 21, 26, .86);
+      --panel-solid: #12151a;
+      --line: #242a33;
+      --text: #e9edf1;
+      --dim: #98a2ad;
+      --faint: #59636e;
+      --gap: #262c34;
+      --accent: #6fdc82;
+      --accent-dim: #2f6b3c;
+      --warn: #f2c14e;
+      --shadow: #000;
+      --tile: 24px;
+      --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono",
+        "DejaVu Sans Mono", Menlo, Consolas, monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell,
+        sans-serif;
+    }
+
+    [data-theme="nether"] {
+      --bg: #120a08;
+      --panel: rgba(28, 16, 13, .86);
+      --panel-solid: #1a100d;
+      --line: #3a201a;
+      --gap: #2e1c17;
+      --accent: #ff7a45;
+      --accent-dim: #7a3418;
+      --warn: #ffd166;
+    }
+
+    [data-theme="end"] {
+      --bg: #08070e;
+      --panel: rgba(18, 15, 28, .86);
+      --panel-solid: #100d1a;
+      --line: #2a2340;
+      --gap: #221d33;
+      --accent: #c4a2ff;
+      --accent-dim: #5a4488;
+      --warn: #ffe08a;
+    }
+
+    * {
+      box-sizing: border-box;
+      border-radius: 0;
+      text-shadow: 2px 2px 0 var(--shadow, #000);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text, #e9edf1);
+      background: var(--bg, #0b0d10);
+      font-family: var(--mono, monospace);
+      font-size: 15px;
+      line-height: 1.55;
+      transition: background-color 180ms;
+    }
+
+    main {
+      width: min(calc(100% - 32px), 920px);
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    header,
+    section,
+    aside {
+      contain: layout paint;
+      margin-bottom: 16px;
+      border: 1px solid var(--line, #242a33);
+      background: var(--panel, rgba(18, 21, 26, .86));
+      padding: 16px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    h2::before {
+      content: "> ";
+      color: var(--dim, #98a2ad);
+    }
+
+    .status,
+    .label {
+      color: var(--dim, #98a2ad);
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin: 0;
+    }
+
+    .prose {
+      font-family: var(--sans, system-ui, sans-serif);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .math {
+      overflow-x: auto;
+      border-left: 4px solid var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+      padding: 12px;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .math p:last-child,
+    section p:last-child {
+      margin-bottom: 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line, #242a33);
+      background: transparent;
+    }
+
+    .axis,
+    .guide {
+      stroke: var(--line, #242a33);
+      stroke-width: 2;
+    }
+
+    .graph {
+      fill: none;
+      stroke: var(--accent, #6fdc82);
+      stroke-width: 6;
+    }
+
+    .point {
+      fill: var(--accent, #6fdc82);
+    }
+
+    .svg-text {
+      fill: var(--text, #e9edf1);
+      font: 13px var(--mono, monospace);
+    }
+
+    .strategy {
+      border-width: 2px;
+      border-color: var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+    }
+
+    .strategy strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--accent, #6fdc82);
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 680px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S2 // SECTION 04 // DISTANCE</p>
+      <h1>Radical Functions</h1>
+      <p class="prose">A square root turns coordinate changes into straight-line distance.</p>
+    </header>
+
+    <section>
+      <h2>The Minecraft structure</h2>
+      <div class="prose">
+        <p>The F3 screen gives your x, y, and z coordinates.</p>
+        <p>Moving from a base to a stronghold marker changes x and z.</p>
+        <p>Square the two horizontal differences, add them, and take the square root.</p>
+        <p>That square root is a radical function.</p>
+        <p>The principal square root never returns a negative distance.</p>
+        <p>Straight-line distance is almost never the distance you actually walk.</p>
+        <p>Terrain, water, and changes in y make the real travel distance longer.</p>
+        <p>A three-dimensional distance also includes the y difference.</p>
+        <p>The two-coordinate version only measures how far across the map.</p>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>The algebra</h2>
+        <div class="math" aria-label="Square root function and distance formula">
+          <p>f(x) = √x</p>
+          <p>d = √((x₂ − x₁)² + (z₂ − z₁)²)</p>
+          <p>√72 = √(36 · 2) = 6√2</p>
+        </div>
+        <div class="prose">
+          <p>The domain of f(x) = √x is [0, ∞).</p>
+          <p>The range of f(x) = √x is [0, ∞).</p>
+          <p>The principal square root is defined only for non-negative inputs.</p>
+          <p>It never returns a negative value.</p>
+          <p>The expression under the distance radical is a sum of squares.</p>
+          <p>A sum of squares cannot be negative, so the distance is always defined.</p>
+          <p>Simplify a radical by removing perfect-square factors.</p>
+          <p>Squaring both sides can introduce extraneous solutions.</p>
+          <p>Check every proposed solution in the original radical equation.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Distance triangle</h2>
+        <svg viewBox="0 0 400 250" role="img"
+          aria-labelledby="distance-title distance-desc"
+          shape-rendering="crispEdges">
+          <title id="distance-title">A coordinate triangle with legs 156 and 65 and hypotenuse 169</title>
+          <desc id="distance-desc">
+            A right triangle on a coordinate grid has a horizontal leg of 156, a vertical leg of 65, and a straight-line hypotenuse of 169.
+          </desc>
+          <path class="guide" d="M80 20V220M119 20V220M158 20V220M197 20V220M236 20V220M275 20V220M314 20V220M40 44H360M40 83H360M40 122H360M40 161H360M40 200H360"/>
+          <path class="axis" d="M40 220H370M40 230V20"/>
+          <path class="guide" d="M80 190H314V92.5"/>
+          <path class="graph" d="M80 190L314 92.5"/>
+          <rect class="point" x="74" y="184" width="12" height="12"/>
+          <rect class="point" x="308" y="86.5" width="12" height="12"/>
+          <text class="svg-text" x="161" y="210">Δx = 156</text>
+          <text class="svg-text" x="318" y="147">|Δz| = 65</text>
+          <text class="svg-text" x="154" y="124">d = 169</text>
+        </svg>
+        <p class="prose">The legs use one scale, so 156² + 65² = 169².</p>
+        <p class="prose">The hypotenuse is the horizontal map distance.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Worked example</h2>
+      <div class="prose">
+        <p>Your base is at x = 120, z = −45.</p>
+        <p>The stronghold marker is at x = −36, z = 20.</p>
+      </div>
+      <div class="math">
+        <p>Δx = 120 − (−36)</p>
+        <p>Δx = 120 + 36</p>
+        <p>Δx = 156</p>
+        <p>Δz = −45 − 20</p>
+        <p>Δz = −65</p>
+        <p>(−65)² = 65²</p>
+      </div>
+      <div class="prose">
+        <p>Square each difference before adding.</p>
+      </div>
+      <div class="math">
+        <p>d = √((120 − (−36))² + (−45 − 20)²)</p>
+        <p>d = √(156² + (−65)²)</p>
+        <p>d = √(156² + 65²)</p>
+        <p>156² = 156 × 156</p>
+        <p>156² = 24336</p>
+        <p>65² = 65 × 65</p>
+        <p>65² = 4225</p>
+        <p>d = √(24336 + 4225)</p>
+        <p>d = √28561</p>
+        <p>d = 169</p>
+      </div>
+      <div class="prose">
+        <p>The horizontal distance is exactly 169 blocks.</p>
+        <p>Check the square root by multiplying 169 by itself.</p>
+      </div>
+      <div class="math">
+        <p>169 × 169 = 28561</p>
+        <p>169² = 28561</p>
+        <p>√28561 = 169</p>
+      </div>
+      <div class="prose">
+        <p>The check matches the number under the radical.</p>
+      </div>
+    </section>
+
+    <aside class="strategy" aria-label="Strategy card">
+      <span class="label">STRATEGY // SCREENSHOT THIS</span>
+      <strong>Square the differences before adding, never after.<br>
+        Check any answer produced by squaring both sides.</strong>
+    </aside>
+  </main>
+</body>
+</html>

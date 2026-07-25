@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solving Quadratic Equations</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: rgba(18, 21, 26, .86);
+      --panel-solid: #12151a;
+      --line: #242a33;
+      --text: #e9edf1;
+      --dim: #98a2ad;
+      --faint: #59636e;
+      --gap: #262c34;
+      --accent: #6fdc82;
+      --accent-dim: #2f6b3c;
+      --warn: #f2c14e;
+      --shadow: #000;
+      --tile: 24px;
+      --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono",
+        "DejaVu Sans Mono", Menlo, Consolas, monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell,
+        sans-serif;
+    }
+
+    [data-theme="nether"] {
+      --bg: #120a08;
+      --panel: rgba(28, 16, 13, .86);
+      --panel-solid: #1a100d;
+      --line: #3a201a;
+      --gap: #2e1c17;
+      --accent: #ff7a45;
+      --accent-dim: #7a3418;
+      --warn: #ffd166;
+    }
+
+    [data-theme="end"] {
+      --bg: #08070e;
+      --panel: rgba(18, 15, 28, .86);
+      --panel-solid: #100d1a;
+      --line: #2a2340;
+      --gap: #221d33;
+      --accent: #c4a2ff;
+      --accent-dim: #5a4488;
+      --warn: #ffe08a;
+    }
+
+    * {
+      box-sizing: border-box;
+      border-radius: 0;
+      text-shadow: 2px 2px 0 var(--shadow, #000);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text, #e9edf1);
+      background: var(--bg, #0b0d10);
+      font-family: var(--mono, monospace);
+      font-size: 15px;
+      line-height: 1.55;
+      transition: background-color 180ms;
+    }
+
+    main {
+      width: min(calc(100% - 32px), 920px);
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    header,
+    section,
+    aside {
+      contain: layout paint;
+      margin-bottom: 16px;
+      border: 1px solid var(--line, #242a33);
+      background: var(--panel, rgba(18, 21, 26, .86));
+      padding: 16px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    h2::before {
+      content: "> ";
+      color: var(--dim, #98a2ad);
+    }
+
+    .status,
+    .label {
+      color: var(--dim, #98a2ad);
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin: 0;
+    }
+
+    .prose {
+      font-family: var(--sans, system-ui, sans-serif);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .math {
+      overflow-x: auto;
+      border-left: 4px solid var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+      padding: 12px;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .math p:last-child,
+    section p:last-child {
+      margin-bottom: 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line, #242a33);
+      background: transparent;
+    }
+
+    .axis,
+    .guide {
+      stroke: var(--line, #242a33);
+      stroke-width: 2;
+    }
+
+    .graph {
+      fill: none;
+      stroke: var(--accent, #6fdc82);
+      stroke-width: 6;
+    }
+
+    .point {
+      fill: var(--accent, #6fdc82);
+    }
+
+    .svg-text {
+      fill: var(--text, #e9edf1);
+      font: 13px var(--mono, monospace);
+    }
+
+    .strategy {
+      border-width: 2px;
+      border-color: var(--accent, #6fdc82);
+      background: var(--panel-solid, #12151a);
+    }
+
+    .strategy strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--accent, #6fdc82);
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 680px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S2 // SECTION 03 // ROOTS</p>
+      <h1>Solving Quadratic Equations</h1>
+      <p class="prose">A known area can reveal the side lengths of a farm plot.</p>
+    </header>
+
+    <section>
+      <h2>The Minecraft structure</h2>
+      <div class="prose">
+        <p>A square farm with side length s has area s².</p>
+        <p>Taking a square root recovers its side length from its area.</p>
+        <p>A rectangular plot can be four blocks longer than it is wide.</p>
+        <p>If its width is w, its area is w(w + 4).</p>
+        <p>Setting that area equal to your tilled-soil count creates a quadratic equation.</p>
+        <p>A negative root can solve the equation but cannot describe a buildable width.</p>
+        <p>Block counts are whole numbers, so only whole-number roots give exact buildable dimensions.</p>
+        <p>Most real block counts produce irrational roots, and rounding a root changes the area.</p>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>The algebra</h2>
+        <div class="math" aria-label="Quadratic equation forms and methods">
+          <p>ax² + bx + c = 0, a ≠ 0</p>
+          <p>x² = k gives x = ±√k when k ≥ 0</p>
+          <p>x = (−b ± √(b² − 4ac)) ÷ (2a)</p>
+        </div>
+        <div class="prose">
+          <p>Write a quadratic equation in standard form before solving it.</p>
+          <p>Factoring uses the zero-product property.</p>
+          <p>The square root property isolates a squared expression.</p>
+          <p>The quadratic formula works for every quadratic equation.</p>
+          <p>The discriminant is b² − 4ac.</p>
+          <p>A positive discriminant gives two distinct real roots.</p>
+          <p>A zero discriminant gives one repeated real root.</p>
+          <p>A negative discriminant gives no real roots.</p>
+          <p>A quadratic has at most two real solutions.</p>
+          <p>For f(x) = ax² + bx + c, the domain is all real numbers.</p>
+          <p>If the vertex height is k, the range is [k, ∞) when a &gt; 0.</p>
+          <p>If the vertex height is k, the range is (−∞, k] when a &lt; 0.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Two real roots</h2>
+        <svg viewBox="0 0 400 250" role="img"
+          aria-labelledby="roots-title roots-desc"
+          shape-rendering="crispEdges">
+          <title id="roots-title">Graph of y equals x squared plus x minus six</title>
+          <desc id="roots-desc">
+            An upward-opening parabola crosses the horizontal axis at negative three and two, with its axis of symmetry at negative one half.
+          </desc>
+          <path class="guide" d="M80 20V230M180 20V230M280 20V230M40 75H370M40 225H370"/>
+          <path class="axis" d="M40 150H370M200 230V20"/>
+          <path class="graph" d="M40 78Q200 414 360 -18"/>
+          <rect class="point" x="74" y="144" width="12" height="12"/>
+          <rect class="point" x="274" y="144" width="12" height="12"/>
+          <text class="svg-text" x="48" y="140">root −3</text>
+          <text class="svg-text" x="286" y="140">root 2</text>
+          <text class="svg-text" x="119" y="244">symmetry x = −0.5</text>
+          <text class="svg-text" x="302" y="32">y = x² + x − 6</text>
+        </svg>
+        <p class="prose">The roots are the x-intercepts.</p>
+        <p class="prose">They sit on opposite sides of x = −0.5, not opposite sides of zero.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Worked example</h2>
+      <div class="prose">
+        <p>A plot is four blocks longer than it is wide.</p>
+        <p>Its total area is 96 blocks.</p>
+      </div>
+      <div class="math">
+        <p>w(w + 4) = 96</p>
+        <p>w² + 4w = 96</p>
+        <p>w² + 4w − 96 = 0</p>
+      </div>
+      <div class="prose">
+        <p>Find two numbers multiplying to −96 and adding to 4.</p>
+        <p>Those numbers are 12 and −8.</p>
+      </div>
+      <div class="math">
+        <p>12 · (−8) = −96</p>
+        <p>12 + (−8) = 4</p>
+        <p>w² + 12w − 8w − 96 = 0</p>
+        <p>(w + 12)(w − 8) = 0</p>
+        <p>w + 12 = 0 or w − 8 = 0</p>
+        <p>w = −12 or w = 8</p>
+      </div>
+      <div class="prose">
+        <p>Discard w = −12 because a plot cannot have a negative width.</p>
+        <p>The width is 8 blocks, so the length is 8 + 4 = 12 blocks.</p>
+      </div>
+      <div class="math">
+        <p>8 × 12 = 96</p>
+      </div>
+      <div class="prose">
+        <p>Now verify the same roots with the quadratic formula.</p>
+      </div>
+      <div class="math">
+        <p>a = 1, b = 4, c = −96</p>
+        <p>b² − 4ac = 4² − 4(1)(−96)</p>
+        <p>b² − 4ac = 16 + 384</p>
+        <p>b² − 4ac = 400</p>
+        <p>√400 = 20</p>
+        <p>w = (−4 ± √400) ÷ (2 · 1)</p>
+        <p>w = (−4 ± 20) ÷ 2</p>
+        <p>w = (−4 + 20) ÷ 2 or w = (−4 − 20) ÷ 2</p>
+        <p>w = 16 ÷ 2 or w = −24 ÷ 2</p>
+        <p>w = 8 or w = −12</p>
+      </div>
+      <div class="prose">
+        <p>Both methods give the same roots.</p>
+        <p>Only w = 8 fits the build.</p>
+      </div>
+    </section>
+
+    <aside class="strategy" aria-label="Strategy card">
+      <span class="label">STRATEGY // SCREENSHOT THIS</span>
+      <strong>Write the quadratic as equals zero first.<br>
+        Check each root against the build before accepting it.</strong>
+    </aside>
+  </main>
+</body>
+</html>
