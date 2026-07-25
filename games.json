@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T23:30:36Z",
+  "generatedAt": "2026-07-25T23:33:03Z",
   "sections": [
     {
       "semester": "sem1",
@@ -648,6 +648,107 @@
           "account": false,
           "verifiedAt": "2026-07-25",
           "hookForHim": "Short, hands-on, and immediately practical if he ever charts his own numbers. Also a good inoculation against misleading graphs."
+        }
+      ]
+    },
+    {
+      "name": "Just because it's good",
+      "items": [
+        {
+          "title": "Abstract Logistics",
+          "url": "https://elimarable.itch.io/abstract-logistics",
+          "kind": "game",
+          "why": "A factory game whose whole job is working out the ratios that keep everything moving. The algebra is the win condition rather than the subject, and it downloads as a folder you can run offline.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "The developer ships an offline zip that is just index.html plus assets, so he can download it, open the source, and see exactly how a belt-and-ratio simulation is built. That is a modded-Minecraft brain's ideal object."
+        },
+        {
+          "title": "Color Fractory",
+          "url": "https://lisyarus.itch.io/color-fractory",
+          "kind": "game",
+          "why": "Conveyor-belt puzzles where you plan a production line and get the input ratios right across ten levels. Same lineage as Factorio and Shapez, and small enough to run properly on a slow laptop.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "Explicitly in the Factorio / SpaceChem / Shapez lineage he already likes, at 3 MB so it actually runs on his laptop, by a developer with a real track record. Ratio reasoning is the whole game."
+        },
+        {
+          "title": "Automaton",
+          "url": "https://mestiez.itch.io/automaton",
+          "kind": "puzzle",
+          "why": "Each level hands you a target and asks you to invent the rule that produces it, where every cell reacts to how many neighbours it has. Defining a rule and watching consequences propagate is redstone thinking exactly.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "Rule-based systems that run themselves is exactly redstone thinking. Defining a rule and watching the consequences propagate is the most transferable idea on this whole list."
+        },
+        {
+          "title": "Mafs",
+          "url": "https://mafs.dev/",
+          "kind": "tool",
+          "why": "Components for building interactive maths figures, where every page of the docs is a live draggable graph next to the handful of lines that made it. Your own graph with your own draggable points is about ten lines.",
+          "sourceAvailable": true,
+          "remixable": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "If he wants his own graph on his own page with points he can drag, this is about ten lines. Modern, actively maintained, and the examples are copy-paste sized."
+        },
+        {
+          "title": "g9.js gallery",
+          "url": "https://omrelli.ug/g9/gallery/",
+          "kind": "tool",
+          "why": "A gallery of drawings you can grab and drag, where the library works out backwards which numbers you must have meant. Change the picture and the variables change with it.",
+          "sourceAvailable": true,
+          "remixable": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "This is the shortest path from 'I wrote a function' to 'I made a thing people can play with'. Every gallery example is editable in place. If he wants to build his own explorable, this is the cheat code."
+        },
+        {
+          "title": "Apparatus",
+          "url": "https://aprt.us/",
+          "kind": "tool",
+          "why": "You draw a shape, then attach variables and expressions to its properties and it becomes an interactive diagram. Turning fixed numbers into variables is the exact mental move algebra keeps asking for, except here you watch it happen.",
+          "sourceAvailable": true,
+          "remixable": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "Toby Schachman's tool, straight out of the Bret Victor lineage. Drawing something and then making its numbers into variables is exactly the mental move algebra is asking for, except here you can see it happen."
+        },
+        {
+          "title": "p5.js Web Editor",
+          "url": "https://editor.p5js.org/",
+          "kind": "tool",
+          "why": "A code editor in the browser with instant visual output, where a loop and an equation put a curve on screen in about fifteen lines. Nothing to install, and it runs without an account.",
+          "sourceAvailable": true,
+          "remixable": true,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "Where he goes the moment he wants to make his own version of anything else on this list. Runs without an account (account only needed to save), and p5 sketches are the most-remixed creative-coding format there is."
+        },
+        {
+          "title": "Animated Factorisation Diagrams",
+          "url": "https://www.datapointed.net/visualizations/math/factorization/animated-diagrams/",
+          "kind": "tool",
+          "why": "Every whole number in turn arranges itself into groups that show its prime factors, so you watch 12 become three groups of two groups of two. Hypnotic, and about ten seconds from opening it to understanding factoring differently.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "hookForHim": "Genuinely hypnotic and about ten seconds to understand. Factoring is the skill his whole quadratics unit rests on, and this is the only thing here that makes the idea of a factor visually obvious."
         }
       ]
     }

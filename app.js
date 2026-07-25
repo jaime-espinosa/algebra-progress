@@ -924,8 +924,10 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
     if (!sections.length) return;
 
     content.innerHTML = `<div class="quest-days">${sections.map(section => {
-      const semester = section.semester === "sem1" ? "S1" : "S2";
-      const number = String(section.number).padStart(2, "0");
+      // Free-standing groups have no section number; the heading is just their name.
+      const heading = section.number === undefined
+        ? escapeHtml(section.name)
+        : `${section.semester === "sem1" ? "S1" : "S2"} // SECTION ${String(section.number).padStart(2, "0")} · ${escapeHtml(section.name)}`;
       const items = section.items.map(item => `
         <li>
           <strong><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a></strong><br>
@@ -933,7 +935,7 @@ import { effortStats as questEffort, computePace, dashboard, planTrack } from ".
           <p class="why">${escapeHtml(item.why)}</p>
         </li>`).join("");
       return `<article class="quest-card">
-        <h3>${semester} // SECTION ${number} · ${escapeHtml(section.name)}</h3>
+        <h3>${heading}</h3>
         <ol class="quest-list">${items}</ol>
       </article>`;
     }).join("")}</div>`;
