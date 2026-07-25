@@ -1,4 +1,4 @@
-import { effortStats as questEffort, computePace } from "./js/quest.mjs";
+import { effortStats as questEffort, computePace, dashboard } from "./js/quest.mjs";
 
 (() => {
   "use strict";
@@ -392,52 +392,183 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
     }).join("");
   }
 
-  function dial(percent, label, value, tone = "") {
-    const pct = Math.max(0, Math.min(100, percent));
-    // Conic gradient, no canvas, no images, one static paint.
+  function gaugePoint(fraction, radius) {
+    const angle = (135 + Math.max(0, Math.min(1, fraction)) * 270) * Math.PI / 180;
+    return {
+      x: 50 + Math.cos(angle) * radius,
+      y: 50 + Math.sin(angle) * radius
+    };
+  }
+
+  function gaugeArc(from, to, radius = 38) {
+    const start = gaugePoint(from, radius);
+    const end = gaugePoint(to, radius);
+    const largeArc = (to - from) * 270 > 180 ? 1 : 0;
+    return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${radius} ${radius} 0 ${largeArc} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
+  }
+
+  function gaugeSvg({ ariaLabel, fraction, targetFrom = null, fillArc = false }) {
+    const clamped = Math.max(0, Math.min(1, fraction));
+    const ticks = Array.from({ length: 11 }, (_, index) => {
+      const outer = gaugePoint(index / 10, 42);
+      const inner = gaugePoint(index / 10, index % 5 === 0 ? 35 : 38);
+      return `<line x1="${inner.x.toFixed(2)}" y1="${inner.y.toFixed(2)}" x2="${outer.x.toFixed(2)}" y2="${outer.y.toFixed(2)}"></line>`;
+    }).join("");
+    const needle = gaugePoint(clamped, 31);
+    const target = targetFrom === null ? "" : `
+      <path class="gauge__target" d="${gaugeArc(Math.max(0, Math.min(1, targetFrom)), 1, 34)}"></path>`;
+    const progress = fillArc && clamped > 0 ? `
+      <path class="gauge__progress" d="${gaugeArc(0, clamped)}"></path>` : "";
     return `
-      <div class="dial ${tone}">
-        <div class="dial__face" style="--pct:${pct}" role="img" aria-label="${label}: ${value}">
-          <span class="dial__val numeric">${value}</span>
-        </div>
-        <div class="dial__label quiet">${label}</div>
+      <svg class="gauge__svg" viewBox="0 0 100 100" role="img"
+        aria-label="${escapeHtml(ariaLabel)}">
+        <path class="gauge__track" d="${gaugeArc(0, 1)}"></path>
+        ${target}
+        ${progress}
+        <g class="gauge__ticks" shape-rendering="crispEdges">${ticks}</g>
+        <line class="gauge__needle" x1="50" y1="50"
+          x2="${needle.x.toFixed(2)}" y2="${needle.y.toFixed(2)}"
+          shape-rendering="crispEdges"></line>
+        <rect class="gauge__hub" x="47" y="47" width="6" height="6"></rect>
+      </svg>`;
+  }
+
+  function effortGraph(perDay, today, requiredPerDay) {
+    const activeDates = [...perDay.keys()].sort();
+    const firstDate = activeDates[0] ?? today;
+    const dayCount = Math.max(1, dateDiff(firstDate, today) + 1);
+    const days = Array.from({ length: dayCount }, (_, index) => addDays(firstDate, index));
+    const values = days.map(date => perDay.get(date) ?? 0);
+    const maxDaily = Math.max(...values, 0);
+    const yDivisor = Math.max(1, maxDaily);
+    const left = 54;
+    const right = 700;
+    const top = 18;
+    const bottom = 135;
+    const width = right - left;
+    const height = bottom - top;
+    const xAt = index => left + (days.length === 1 ? 0 : index / (days.length - 1)) * width;
+    const yAt = value => bottom - (value / yDivisor) * height;
+    const points = values.map((value, index) =>
+      `${xAt(index).toFixed(2)},${yAt(value).toFixed(2)}`).join(" ");
+    const squares = values.map((value, index) => value > 0
+      ? `<rect class="effort-graph__point" x="${(xAt(index) - 2).toFixed(2)}" y="${(yAt(value) - 2).toFixed(2)}" width="4" height="4">
+          <title>${escapeHtml(formatDay(days[index]))}: ${value} rows</title>
+        </rect>`
+      : "").join("");
+    const yTicks = Array.from({ length: 4 }, (_, index) => {
+      const value = index === 3 ? maxDaily : Math.round(maxDaily * index / 3);
+      const y = yAt(value);
+      return `
+        <line class="effort-graph__grid" x1="${left}" y1="${y.toFixed(2)}" x2="${right}" y2="${y.toFixed(2)}"></line>
+        <text class="effort-graph__label" x="${left - 8}" y="${(y + 3).toFixed(2)}" text-anchor="end">${value}</text>`;
+    }).join("");
+    const xLabels = days.map((date, index) => {
+      if (index % 7 !== 0 && index !== days.length - 1) return "";
+      return `<text class="effort-graph__label" x="${xAt(index).toFixed(2)}" y="153"
+        text-anchor="${index === 0 ? "start" : index === days.length - 1 ? "end" : "middle"}">${escapeHtml(formatDay(date))}</text>`;
+    }).join("");
+    const requiredY = yAt(Math.min(requiredPerDay, yDivisor));
+
+    return `
+      <div class="effort-graph">
+        <svg viewBox="0 0 760 172" preserveAspectRatio="xMidYMid meet" role="img"
+          aria-label="${escapeHtml(`Rows submitted per calendar day from ${formatDay(firstDate)} through ${formatDay(today)}. Zero-work days are plotted as zero. A reference line marks ${requiredPerDay.toFixed(1)} rows per day. The hours axis has no data.`)}">
+          ${yTicks}
+          <line class="effort-graph__axis" x1="${left}" y1="${top}" x2="${left}" y2="${bottom}"></line>
+          <line class="effort-graph__axis" x1="${right}" y1="${top}" x2="${right}" y2="${bottom}"></line>
+          <line class="effort-graph__axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"></line>
+          <text class="effort-graph__axis-title" x="14" y="${(top + bottom) / 2}"
+            text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">rows/day</text>
+          <text class="effort-graph__axis-title" x="746" y="${(top + bottom) / 2}"
+            text-anchor="middle" transform="rotate(90 746 ${(top + bottom) / 2})">hrs/day</text>
+          <line class="effort-graph__reference" x1="${left}" y1="${requiredY.toFixed(2)}"
+            x2="${right}" y2="${requiredY.toFixed(2)}"></line>
+          <text class="effort-graph__reference-label" x="${right - 5}" y="${(requiredY - 5).toFixed(2)}"
+            text-anchor="end">${requiredPerDay.toFixed(1)}/day — what Aug 15 needs</text>
+          <polyline class="effort-graph__series" points="${points}"></polyline>
+          ${squares}
+          ${xLabels}
+        </svg>
+        <div class="effort-graph__caption quiet">hrs/day is not measured yet — it needs the LMS Activity tab, which has not been scraped.</div>
       </div>`;
   }
 
   function renderEffort(data) {
     const today = localIsoDate();
-    const s = effortStats(data, today);
-    const required = s.remaining / s.daysLeft;
-    const paceRatio = required > 0 ? (s.activePace / required) * 100 : 100;
-    const likelihoodPct = Math.round(s.likelihood * 100);
-    // Deliberately not called a probability. It compares how often he has shown up
-    // against how often the remaining days require it.
-    const oddsTone = likelihoodPct >= 70 ? "" : "dial--watch";
-    const bars = [...s.perDay.entries()].sort().slice(-14);
-    const peak = Math.max(...bars.map(([, n]) => n), 1);
-    const barMarkup = bars.map(([date, n]) => `
-      <span class="daybar" title="${formatDay(date)}: ${n} rows">
-        <span class="daybar__fill" style="height:${(n / peak) * 100}%"></span>
-        <span class="daybar__d quiet numeric">${Number(date.slice(8))}</span>
-      </span>`).join("");
+    const s = dashboard(data, today);
+    const perDay = effortStats(data, today).perDay;
+    const odometerDigits = String(s.odometer).split("").map(digit =>
+      `<span class="effort-odometer__digit">${digit}</span>`).join("");
+    const tachMax = Math.max(28, s.recent7);
 
     document.querySelector("#effort-content").innerHTML = `
-      <div class="dials">
-        ${dial(Math.min(100, paceRatio), "your pace vs needed", `${s.activePace.toFixed(1)}/day`)}
-        ${dial(s.showUpRate * 100, "days you showed up", `${Math.round(s.showUpRate * 100)}%`)}
-        ${dial(likelihoodPct, "on track for Aug 15", `${likelihoodPct}%`, oddsTone)}
+      <section class="effort-odometer" aria-label="${s.odometer} rows submitted all time">
+        <div class="effort-odometer__digits numeric">${odometerDigits}</div>
+        <strong class="effort-odometer__caption">ROWS SUBMITTED — ALL TIME</strong>
+        <span class="quiet">across ${s.activeDays} days you sat down</span>
+        <span class="effort-odometer__promise">This number only ever goes up.</span>
+      </section>
+
+      <div class="effort-gauges">
+        <article class="gauge">
+          <h3>SPEEDOMETER</h3>
+          ${gaugeSvg({
+            ariaLabel: `Speedometer: ${s.activePace.toFixed(1)} rows per working day on a scale from 0 to 6. Aug 15 needs ${s.requiredPerDay.toFixed(1)} per day.`,
+            fraction: s.activePace / 6,
+            targetFrom: s.requiredPerDay / 6
+          })}
+          <div class="gauge__scale" aria-hidden="true"><span>0</span><span>3</span><span>6</span></div>
+          <strong class="gauge__readout numeric">${s.activePace.toFixed(1)} /day</strong>
+          <span class="gauge__label">rows per day, on days you work</span>
+          <span class="gauge__note quiet">Aug 15 needs ${s.requiredPerDay.toFixed(1)}/day</span>
+        </article>
+
+        <article class="gauge">
+          <h3>TACHOMETER</h3>
+          ${gaugeSvg({
+            ariaLabel: `Tachometer: ${s.recent7} raw rows from ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}, on a scale from 0 to ${tachMax}.`,
+            fraction: s.recent7 / tachMax
+          })}
+          <div class="gauge__scale" aria-hidden="true"><span>0</span><span>${Math.round(tachMax / 2)}</span><span>${tachMax}</span></div>
+          <strong class="gauge__readout numeric">${s.recent7} rows · last 7 days</strong>
+          <span class="gauge__label quiet">the 7 days before that: ${s.prior7}</span>
+        </article>
+
+        <article class="gauge">
+          <h3>TRIP</h3>
+          ${gaugeSvg({
+            ariaLabel: `Trip progress: ${Math.round(s.tripDone * 100)} percent of the course, with ${s.rowsLeft} rows to go and ${s.daysLeft} days left.`,
+            fraction: s.tripDone,
+            fillArc: true
+          })}
+          <div class="gauge__scale" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
+          <strong class="gauge__readout numeric">${Math.round(s.tripDone * 100)}% of the course</strong>
+          <span class="gauge__label quiet">${s.rowsLeft} rows to go · ${s.daysLeft} days left</span>
+        </article>
+
+        <article class="gauge">
+          <h3>SHOW-UP</h3>
+          ${gaugeSvg({
+            ariaLabel: `Show-up gauge: ${s.activeDays} working days, ${Math.round(s.showUpRate * 100)} percent of calendar days since work began.`,
+            fraction: s.showUpRate,
+            fillArc: true
+          })}
+          <div class="gauge__scale" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
+          <strong class="gauge__readout numeric">${s.activeDays} working days</strong>
+          <span class="gauge__label">days the engine ran</span>
+        </article>
       </div>
+
       <p class="effort-copy">
-        You have submitted <strong>${s.submitted} rows across ${s.activeDays} days</strong>.
+        You have submitted <strong>${s.odometer} rows across ${s.activeDays} days</strong>.
         On the days you work you average <strong>${s.activePace.toFixed(1)} a day</strong>,
-        and Aug 15 needs <strong>${required.toFixed(1)}</strong>.
-        <strong>You are already fast enough.</strong>
-        ${s.daysNeeded <= s.daysLeft
-          ? `You need about <strong>${s.daysNeeded} working days</strong> out of the ${s.daysLeft} left. That is the whole game — show up, and the speed takes care of itself.`
-          : `At this pace the remaining rows need more days than are left. Raising your daily number is the lever now.`}
+        and Aug 15 needs <strong>${s.requiredPerDay.toFixed(1)}</strong>.
+        ${s.fastEnough ? "<strong>You are already fast enough.</strong>" : ""}
+        You need about <strong>${s.daysNeeded} working days</strong> out of the ${s.daysLeft} left.
+        That is the whole game — show up, and the speed takes care of itself.
       </p>
-      <div class="daybars" aria-label="Rows submitted per day, last 14 active days">${barMarkup}</div>
-      <div class="quiet">rows per working day &middot; last ${bars.length} days you worked</div>`;
+      ${effortGraph(perDay, today, s.requiredPerDay)}`;
   }
 
   // Nothing past Aug 15 is drawn. Showing ten dead days after the deadline made the
