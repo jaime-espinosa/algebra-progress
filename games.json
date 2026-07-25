@@ -1,0 +1,422 @@
+{
+  "generatedAt": "2026-07-25T23:20:00Z",
+  "sections": [
+    {
+      "semester": "sem1",
+      "number": 1,
+      "name": "Algebra Basics",
+      "items": [
+        {
+          "title": "PhET Expression Exchange",
+          "url": "https://phet.colorado.edu/en/simulations/expression-exchange",
+          "kind": "game",
+          "why": "You drag coin tiles worth x, y and 1 into a pile and watch the expression collect its own like terms, so combining terms stops being a rule and becomes something you can see.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Polypad Algebra Tiles",
+          "url": "https://polypad.amplify.com/p/algebra",
+          "kind": "tool",
+          "why": "An infinite canvas of algebra tiles you can drag, duplicate and arrange, which is the fastest way to see why 3x plus 2x is 5x but 3x plus 2 is not.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "NRICH Algebra for Secondary Students",
+          "url": "https://nrich.maths.org/algebra-secondary-students",
+          "kind": "puzzle",
+          "why": "Cambridge University's problem index, ad-free, where the questions are genuine puzzles with a hidden trick rather than twenty of the same exercise in a row.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "semester": "sem1",
+      "number": 2,
+      "name": "Linear Equations and Inequalities",
+      "items": [
+        {
+          "title": "SolveMe Mobiles",
+          "url": "https://solveme.edc.org/Mobiles.html",
+          "kind": "puzzle",
+          "why": "Hanging-mobile puzzles that are linear equations in disguise; you balance the shapes and only afterwards realise you just did the same-operation-to-both-sides move.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "PhET Equality Explorer",
+          "url": "https://phet.colorado.edu/en/simulations/equality-explorer",
+          "kind": "game",
+          "why": "A balance scale that tips the moment you do something to one side and not the other, which makes the reason for the rule obvious instead of memorised.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Graspable Math Canvas",
+          "url": "https://activities.graspablemath.com/canvas",
+          "kind": "tool",
+          "why": "You physically drag terms across the equals sign and the app refuses moves that break the equation, so you get instant feedback on every step of a solve.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "semester": "sem1",
+      "number": 3,
+      "name": "Systems of Equations and Inequalities",
+      "items": [
+        {
+          "title": "PhET Equality Explorer: Two Variables",
+          "url": "https://phet.colorado.edu/en/simulations/equality-explorer-two-variables",
+          "kind": "game",
+          "why": "The same balance scale but with two unknowns at once, which is the clearest demonstration of why one equation is never enough to pin down two values.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "kind": "tool",
+          "why": "Type both equations, then click the crossing point and Desmos names its coordinates for you, so you can check an algebraic solution graphically in about ten seconds.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "GeoGebra Calculator Suite",
+          "url": "https://www.geogebra.org/calculator",
+          "kind": "tool",
+          "why": "Its algebra view solves a system symbolically and shows the lines at the same time, so you can compare substitution, elimination and the graph side by side.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "semester": "sem1",
+      "number": 4,
+      "name": "Introduction to Functions",
+      "items": [
+        {
+          "title": "PhET Function Builder",
+          "url": "https://phet.colorado.edu/en/simulations/function-builder",
+          "kind": "game",
+          "why": "You literally build a machine out of chained function blocks and feed cards through it, which is the same mental model as writing a function in a script.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Mathigon: Relations and Functions",
+          "url": "https://mathigon.org/course/functions/relations",
+          "kind": "puzzle",
+          "why": "An interactive chapter that makes you drag the mapping arrows yourself, so the one-input-one-output rule is something you test rather than read.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "GeoGebra Graphing Calculator",
+          "url": "https://www.geogebra.org/graphing",
+          "kind": "tool",
+          "why": "Plot a relation and drag a vertical line across it to run the vertical line test by hand, which is faster than arguing about it on paper.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "semester": "sem1",
+      "number": 5,
+      "name": "Linear Functions",
+      "items": [
+        {
+          "title": "PhET Graphing Lines",
+          "url": "https://phet.colorado.edu/en/simulations/graphing-lines",
+          "kind": "game",
+          "why": "Its Line Game mode scores you on turning an equation into a graph and back again under time pressure, which is exactly the skill a slope question tests.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Mathigon: Rates of Change",
+          "url": "https://mathigon.org/course/functions/rates-of-change",
+          "kind": "puzzle",
+          "why": "Builds slope up from real rate-of-change scenarios rather than from the rise-over-run formula, which is why the Nether portal ratio and slope turn out to be the same idea.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "kind": "tool",
+          "why": "Type y = mx + b and Desmos offers you sliders for m and b, so you can watch the line tilt and shift and connect each number to what it does.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "semester": "sem1",
+      "number": 6,
+      "name": "Piecewise Functions",
+      "items": [
+        {
+          "title": "Mathigon: Piecewise Functions",
+          "url": "https://mathigon.org/course/functions/piecewise",
+          "kind": "puzzle",
+          "why": "Interactive graphs where you move the boundary and watch which branch takes over, which is the whole point of a piecewise definition.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "kind": "tool",
+          "why": "Desmos takes restriction syntax directly, so typing y = -x {x < 0} and y = x {x >= 0} draws the two branches separately and shows exactly where they meet.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 1,
+      "name": "Exponential Functions",
+      "items": [
+        {
+          "title": "Mathigon: Sequences and Growth",
+          "url": "https://mathigon.org/course/sequences/introduction",
+          "kind": "puzzle",
+          "why": "Starts with geometric sequences and constant ratios, which is the cleanest way to see why a doubling farm is exponential and a level cost is not.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Mathigon: Carbon Dating",
+          "url": "https://mathigon.org/course/exponentials/carbon-dating",
+          "kind": "puzzle",
+          "why": "A worked interactive on exponential decay with a half-life, which is the decay case you rarely get to play with in a textbook.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "GeoGebra Graphing Calculator",
+          "url": "https://www.geogebra.org/graphing",
+          "kind": "tool",
+          "why": "Put a slider on b in y = a * b^x and drag it through 1 to see growth flip to decay at the exact moment the base crosses one.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 2,
+      "name": "Quadratic Functions",
+      "items": [
+        {
+          "title": "PhET Projectile Motion",
+          "url": "https://phet.colorado.edu/en/simulations/projectile-motion",
+          "kind": "game",
+          "why": "Fire things at a target, turn air resistance on and off, and see for yourself how much drag bends the arc away from a clean parabola.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "PhET Graphing Quadratics",
+          "url": "https://phet.colorado.edu/en/simulations/graphing-quadratics",
+          "kind": "game",
+          "why": "Drag a, b and c and watch the vertex and axis of symmetry move, so the minus-b-over-2a formula becomes a thing you have already seen happen.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Mathigon: Graphs of Quadratics",
+          "url": "https://mathigon.org/course/quadratics/graphs",
+          "kind": "puzzle",
+          "why": "Connects standard form and vertex form with graphs you manipulate, which makes converting between them feel like a purpose rather than busywork.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "kind": "tool",
+          "why": "Graph your own trajectory model, and Desmos will label the vertex and the intercepts when you click them, so you can check a hand calculation instantly.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 3,
+      "name": "Solving Quadratic Equations",
+      "items": [
+        {
+          "title": "PhET Area Model Algebra",
+          "url": "https://phet.colorado.edu/en/simulations/area-model-algebra",
+          "kind": "game",
+          "why": "Builds a rectangle out of algebra pieces so factoring becomes finding the side lengths of a known area, which is the same move as sizing a farm plot.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Mathigon: Solving Quadratic Equations",
+          "url": "https://mathigon.org/course/quadratics/solving",
+          "kind": "puzzle",
+          "why": "Derives the quadratic formula from completing the square in front of you, so the formula stops being a random string to memorise.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Didax Algebra Tiles",
+          "url": "https://www.didax.com/apps/algebra-tiles/",
+          "kind": "tool",
+          "why": "Completing the square with physical tiles: you actually run out of pieces and have to add the missing corner, which is where the name comes from.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 4,
+      "name": "Radical Functions",
+      "items": [
+        {
+          "title": "Math is Fun: Distance Between 2 Points",
+          "url": "https://www.mathsisfun.com/algebra/distance-2-points.html",
+          "kind": "tool",
+          "why": "Drag either point and the right triangle, the two squared legs and the square root all update together, which is the F3 coordinate distance calculation made visible.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "GeoGebra Graphing Calculator",
+          "url": "https://www.geogebra.org/graphing",
+          "kind": "tool",
+          "why": "Plot y = sqrt(x) and try to trace left of zero: the curve simply stops, which is what a domain of zero to infinity looks like rather than what it sounds like.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Math is Fun: Squares and Square Roots in Algebra",
+          "url": "https://www.mathsisfun.com/algebra/square-root.html",
+          "kind": "tool",
+          "why": "Covers the exact trap in radical equations, that squaring both sides can invent a solution that was never there, and shows how to catch it.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 5,
+      "name": "Rational Expressions",
+      "items": [
+        {
+          "title": "Graspable Math Canvas",
+          "url": "https://activities.graspablemath.com/canvas",
+          "kind": "tool",
+          "why": "You drag a common factor out of the numerator and denominator and it cancels under your finger, which makes simplifying a physical action instead of a guess.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "GeoGebra CAS Calculator",
+          "url": "https://www.geogebra.org/cas",
+          "kind": "tool",
+          "why": "Factor and Simplify commands show the fully factored form of a messy rational expression, so you can find the excluded values before you cancel anything.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Math is Fun: Rational Expressions",
+          "url": "https://www.mathsisfun.com/algebra/rational-expression.html",
+          "kind": "tool",
+          "why": "A short, ad-light walkthrough that is unusually clear about why a cancelled factor still leaves a hole in the original expression's domain.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "semester": "sem2",
+      "number": 6,
+      "name": "Data Analysis",
+      "items": [
+        {
+          "title": "CODAP",
+          "url": "https://codap.concord.org/app/",
+          "kind": "tool",
+          "why": "Drop in your own numbers and drag attributes onto axes to build graphs in seconds, which is the tool to reach for after you have actually measured a farm rate.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "PhET Plinko Probability",
+          "url": "https://phet.colorado.edu/en/simulations/plinko-probability",
+          "kind": "game",
+          "why": "Run ten balls, then ten thousand, and watch the sample distribution settle onto the theoretical one, which is the direct answer to whether ten kills is enough data.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "Seeing Theory: Basic Probability",
+          "url": "https://seeing-theory.brown.edu/basic-probability/index.html",
+          "kind": "tool",
+          "why": "Brown University's animated visual course where every idea is a simulation you can run, and it is fast and text-light on a slow laptop.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        },
+        {
+          "title": "PhET Least-Squares Regression",
+          "url": "https://phet.colorado.edu/en/simulations/least-squares-regression",
+          "kind": "game",
+          "why": "Place your own data points, drag a line through them, and see your error scored against the true best fit, which is line-of-best-fit as a game you can lose.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25"
+        }
+      ]
+    }
+  ]
+}

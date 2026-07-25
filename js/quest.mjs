@@ -313,3 +313,166 @@ export function evaluateUnlocks(data, earnedSet) {
 
   return unlocked;
 }
+
+// --- Dashboard instruments -------------------------------------------------
+// Every quantity below is a count he can check against his own gradebook. No
+// modelled, smoothed or projected values. In particular there is no hours
+// figure anywhere: hours/day would need the LMS Activity tab, which has never
+// been scraped, and inventing one would repeat the "best day: 7" mistake.
+
+// Rows submitted inside a trailing window of CALENDAR days, inclusive of today.
+// This is the only instantaneous reading we have: it is a raw count, not a rate,
+// and it says how warm the last week has been.
+export function recentVolume(data, today, days = 7) {
+  const perDay = submissionsByDay(data);
+  const to = parseDateKey(today);
+  const from = addDays(to, -(days - 1));
+  let total = 0;
+  for (const [date, count] of perDay) {
+    if (date >= from && date <= to) total += count;
+  }
+  return { days, total, from, to };
+}
+
+// One call for the whole instrument cluster, so app.js never recomputes pace.
+export function dashboard(data, today) {
+  const stats = effortStats(data, today);
+  const totalRows = stats.submitted + stats.rowsLeft;
+  const week = recentVolume(data, today, 7);
+  const priorWeek = recentVolume(data, addDays(parseDateKey(today), -7), 7);
+  return {
+    // Odometer: rows submitted, all time. Only ever goes up.
+    odometer: stats.submitted,
+    totalRows,
+    tripDone: totalRows > 0 ? stats.submitted / totalRows : 0,
+    // Speedometer: rows per day on days he actually works, against the pace
+    // the deadline needs.
+    activePace: stats.activePace,
+    requiredPerDay: stats.requiredPerDay,
+    fastEnough: stats.fastEnough,
+    // Tachometer: raw rows in the last seven calendar days, and the seven
+    // before that, so "hot or cold" is a comparison of two counts.
+    recent7: week.total,
+    recent7From: week.from,
+    recent7To: week.to,
+    prior7: priorWeek.total,
+    // Trip / distance to go.
+    rowsLeft: stats.rowsLeft,
+    daysLeft: stats.daysLeft,
+    daysNeeded: stats.daysNeeded,
+    activeDays: stats.activeDays,
+    showUpRate: stats.showUpRate,
+    showUpNeeded: stats.showUpNeeded,
+    best: stats.best,
+  };
+}
+
+// --- Actual versus adjusted plan -------------------------------------------
+// Two plan segments, both derived, never a deficit count:
+//   * the steady route  — totalRows spread evenly from his first working day to
+//     the deadline. Drawn behind the past only, as context for slope.
+//   * the adjusted route — the real ourTarget dates the pipeline schedules,
+//     anchored at where he actually stands today. This is the live plan.
+// Nothing here returns "days behind" or any negative quantity: surplus is
+// clamped at zero on the way out, so no caller can render a deficit.
+export function planTrack(data, today) {
+  const perDay = submissionsByDay(data);
+  const todayKey = parseDateKey(today);
+  const deadline = parseDateKey(data.deadline.date);
+  const dates = [...perDay.keys()].sort();
+  const firstDay = dates[0] ?? todayKey;
+  const submitted = [...perDay.values()].reduce((sum, n) => sum + n, 0);
+  const rows = remainingRows(data);
+  const totalRows = submitted + rows.length;
+
+  // The adjusted plan is buildSchedule's own output, re-anchored on today, not
+  // the ourTarget dates frozen into data.json at scrape time. One scheduler.
+  const plannedByDay = new Map();
+  for (const item of buildSchedule(data, today)) {
+    if (typeof item.ourTarget !== "string") continue;
+    plannedByDay.set(item.ourTarget, (plannedByDay.get(item.ourTarget) || 0) + 1);
+  }
+
+  const spanDays = Math.max(1, dayDifference(firstDay, deadline));
+  const steadyRate = totalRows / spanDays;
+
+  const previousDay = addDays(todayKey, -1);
+  const anchorDay = previousDay < firstDay ? firstDay : previousDay;
+  const points = [];
+  let cumDone = 0;
+  let cumAdjusted = null;
+  let index = 0;
+  for (let cursor = firstDay; cursor <= deadline; cursor = addDays(cursor, 1)) {
+    const done = perDay.get(cursor) || 0;
+    const future = cursor > todayKey;
+    if (!future) cumDone += done;
+    const steady = Math.min(totalRows, steadyRate * (index + 1));
+    // The adjusted route is anchored on where he really stands at the end of
+    // yesterday, then follows the dates the scheduler actually assigned, so the
+    // two lines meet rather than jumping.
+    if (cursor === anchorDay) cumAdjusted = cumDone;
+    else if (cursor >= todayKey && cumAdjusted !== null) {
+      cumAdjusted = Math.min(totalRows, cumAdjusted + (plannedByDay.get(cursor) || 0));
+    }
+    points.push({
+      date: cursor,
+      done,
+      future,
+      cumDone: future ? null : cumDone,
+      steady,
+      steadyDaily: steadyRate,
+      adjusted: cumAdjusted !== null && cursor >= anchorDay ? cumAdjusted : null,
+      planned: plannedByDay.get(cursor) || 0,
+      // A day he beat the steady route. This is the quantity the view should
+      // shout about; there is deliberately no "fell short" counterpart.
+      surplus: future ? 0 : Math.max(0, done - steadyRate),
+      beatPlan: !future && done > steadyRate,
+    });
+    index += 1;
+  }
+
+  // Best comeback: the window in which his cumulative surplus over the steady
+  // route grew the most. It is a gain, so it can only ever be reported as
+  // ground made up, never as ground lost.
+  let comeback = null;
+  let minRelative = 0;
+  let minAt = null;
+  let running = 0;
+  const past = points.filter((point) => !point.future);
+  for (const point of past) {
+    running += point.done - steadyRate;
+    if (running - minRelative > (comeback?.rawGain ?? 0)) {
+      comeback = {
+        from: minAt ?? point.date,
+        to: point.date,
+        rawGain: running - minRelative,
+      };
+    }
+    if (running < minRelative) {
+      minRelative = running;
+      minAt = addDays(point.date, 1);   // the climb starts the day after the trough
+    }
+  }
+  if (comeback) {
+    comeback.gain = Math.floor(comeback.rawGain);
+    comeback.days = dayDifference(comeback.from, comeback.to) + 1;
+    if (comeback.gain < 1) comeback = null;
+  }
+
+  const finishesOn = [...plannedByDay.keys()].sort().at(-1) ?? todayKey;
+
+  return {
+    points,
+    steadyRate,
+    totalRows,
+    submitted,
+    firstDay,
+    today: todayKey,
+    deadline,
+    finishesOn,
+    bestDays: past
+      .filter((point) => point.beatPlan)
+      .sort((left, right) => right.done - left.done || left.date.localeCompare(right.date)),
+    comeback,
+  };
+}

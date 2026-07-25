@@ -7,7 +7,8 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
   const ZONE = "America/Los_Angeles";
   const VALID_THEMES = new Set(["overworld", "nether", "end"]);
   const VALID_LOADERS = new Set(["vanilla", "fabric", "forge", "neoforge", "unsure"]);
-  const sectionIds = ["trophy", "effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request"];
+  const VALID_GAME_KINDS = new Set(["game", "puzzle", "tool", "video"]);
+  const sectionIds = ["trophy", "effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request", "games"];
 
   // vault/manifest.json is the single source of truth for artifacts. Hardcoding a
   // second copy here drifted immediately: it advertised the victory pack as 1.21.x
@@ -21,6 +22,7 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
   let revealCounter = null;
   let pendingArtifact = null;
   let refreshMessage = "";
+  let gamesRendered = false;
 
   function artifact(id, name, tier, minVersion, maxVersion, loader, files, testedOn) {
     return { id, name, tier, minVersion, maxVersion, loader, files, testedOn };
@@ -651,9 +653,64 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
       <a class="action" href="${lessonPath}">Open mini-lesson</a>`;
   }
 
+  function renderGames(data) {
+    const content = document.querySelector("#games-content");
+    gamesRendered = false;
+    content.textContent = "";
+    if (!data || typeof data !== "object" || Array.isArray(data) ||
+        typeof data.generatedAt !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(data.generatedAt) ||
+        Number.isNaN(new Date(data.generatedAt).valueOf()) ||
+        !Array.isArray(data.sections)) return;
+
+    const sections = data.sections.flatMap(section => {
+      if (!section || typeof section !== "object" || Array.isArray(section) ||
+          !/^sem[12]$/.test(section.semester) ||
+          !Number.isInteger(section.number) || section.number < 1 ||
+          typeof section.name !== "string" || !section.name.trim() ||
+          !Array.isArray(section.items)) return [];
+
+      const items = section.items.flatMap(item => {
+        if (!item || typeof item !== "object" || Array.isArray(item) ||
+            typeof item.title !== "string" || !item.title.trim() ||
+            typeof item.url !== "string" ||
+            typeof item.kind !== "string" || !VALID_GAME_KINDS.has(item.kind) ||
+            typeof item.why !== "string" || !item.why.trim() ||
+            typeof item.free !== "boolean" || typeof item.account !== "boolean" ||
+            typeof item.verifiedAt !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(item.verifiedAt)) return [];
+        try {
+          const url = new URL(item.url);
+          if (url.protocol !== "https:") return [];
+          return [{ ...item, url: url.href }];
+        } catch {
+          return [];
+        }
+      });
+      return items.length ? [{ ...section, items }] : [];
+    });
+    if (!sections.length) return;
+
+    content.innerHTML = `<div class="quest-days">${sections.map(section => {
+      const semester = section.semester === "sem1" ? "S1" : "S2";
+      const number = String(section.number).padStart(2, "0");
+      const items = section.items.map(item => `
+        <li>
+          <strong><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a></strong><br>
+          <span class="meta">${escapeHtml(item.kind)}</span>
+          <p class="why">${escapeHtml(item.why)}</p>
+        </li>`).join("");
+      return `<article class="quest-card">
+        <h3>${semester} // SECTION ${number} · ${escapeHtml(section.name)}</h3>
+        <ol class="quest-list">${items}</ol>
+      </article>`;
+    }).join("")}</div>`;
+    gamesRendered = true;
+  }
+
   function showSections() {
     document.querySelector("#loading").hidden = true;
     sectionIds.forEach(id => {
+      if (id === "games" && !gamesRendered) return;
       document.querySelector(`#${id}`).hidden = false;
     });
     document.querySelector("#main").setAttribute("aria-busy", "false");
@@ -710,6 +767,53 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
     } catch {
       // Vault stays empty rather than showing rewards we cannot actually deliver.
       artifacts = [];
+    }
+  }
+
+  async function loadGames() {
+    try {
+      let data;
+      if (typeof Worker === "function" && typeof URL.createObjectURL === "function") {
+        // A missing optional fetch is harmless but Chromium still reports its 404 as
+        // a page-console error. Keep that expected miss inside a short-lived worker
+        // so the main page stays as quiet as the catch below promises.
+        const gamesUrl = new URL("games.json", window.location.href).href;
+        const source = `
+          fetch(${JSON.stringify(gamesUrl)})
+            .then(async response => {
+              if (!response.ok) {
+                await response.text();
+                throw new Error("HTTP " + response.status);
+              }
+              return response.json();
+            })
+            .then(data => postMessage({ ok: true, data }))
+            .catch(() => postMessage({ ok: false }));`;
+        const workerUrl = URL.createObjectURL(new Blob([source], { type: "text/javascript" }));
+        data = await new Promise((resolve, reject) => {
+          const worker = new Worker(workerUrl);
+          worker.addEventListener("message", event => {
+            worker.terminate();
+            URL.revokeObjectURL(workerUrl);
+            if (event.data?.ok) resolve(event.data.data);
+            else reject(new Error("Games unavailable"));
+          }, { once: true });
+          worker.addEventListener("error", event => {
+            event.preventDefault();
+            worker.terminate();
+            URL.revokeObjectURL(workerUrl);
+            reject(new Error("Games unavailable"));
+          }, { once: true });
+        });
+      } else {
+        const response = await fetch("games.json");
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        data = await response.json();
+      }
+      renderGames(data);
+    } catch {
+      // Games are optional; bad or missing data must not affect progress telemetry.
+      renderGames(null);
     }
   }
 
@@ -1002,5 +1106,5 @@ import { effortStats as questEffort, computePace } from "./js/quest.mjs";
 
   // finally, not then: if the data load fails the page still renders its last known
   // good state, and the controls have to come with it.
-  loadManifest().then(loadData).finally(initSectionControls);
+  Promise.all([loadManifest(), loadGames()]).then(loadData).finally(initSectionControls);
 })();
