@@ -105,7 +105,7 @@
         },
         {
           "title": "Math is Fun: Function Grapher",
-          "url": "https://www.mathsisfun.com/data/function-grapher.php",
+          "url": "https://www.mathsisfun.com/data/function-grapher.html",
           "kind": "tool",
           "why": "Plots two functions at once and marks the intersection, which is exactly what solving a system graphically means and what most quick graphers will not do for you.",
           "free": true,
@@ -149,7 +149,7 @@
         },
         {
           "title": "Untrusted",
-          "url": "https://alexnisnevich.github.io/untrusted/",
+          "url": "https://untrustedgame.com/",
           "kind": "game",
           "why": "Every level is a map you escape by editing the level's own JavaScript in a panel on the right, so you are reading and rewriting the function that defines the world. Modding, framed as a game.",
           "source": true,
@@ -185,7 +185,7 @@
         },
         {
           "title": "Shodor: Slope Slider",
-          "url": "https://www.shodor.org/interactivate/activities/SlopeSlider/",
+          "url": "https://appstate-math.github.io/interactivate/activities/SlopeSlider/",
           "kind": "tool",
           "why": "Two sliders, m and b, one line. The entire content of slope-intercept form on a single page with nothing else on it.",
           "free": true,

@@ -838,7 +838,7 @@ import { effortStats as questEffort, computePace, dashboard } from "./js/quest.m
       const items = section.items.map(item => `
         <li>
           <strong><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a></strong><br>
-          <span class="meta">${escapeHtml(item.kind)}</span>
+          <span class="meta">${escapeHtml(item.kind)}${item.source === true ? " · source you can read" : ""}</span>
           <p class="why">${escapeHtml(item.why)}</p>
         </li>`).join("");
       return `<article class="quest-card">
