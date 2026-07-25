@@ -1,10 +1,10 @@
+import { effortStats as questEffort, computePace } from "./js/quest.mjs";
+
 (() => {
   "use strict";
 
   const DAY_MS = 86_400_000;
   const ZONE = "America/Los_Angeles";
-  const BASELINE_DATE = "2026-07-24";
-  const PROVEN_PER_DAY = 1.7;
   const VALID_THEMES = new Set(["overworld", "nether", "end"]);
   const VALID_LOADERS = new Set(["vanilla", "fabric", "forge", "neoforge", "unsure"]);
   const sectionIds = ["trophy", "effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request"];
@@ -98,14 +98,18 @@
     }).format(date);
   }
 
+  // Must match the crontab entry in _redcomet/cron-refresh.sh (0 8,15,21 * * *).
+  // This previously returned 14:00/06:00, which was simply not when the scraper runs,
+  // so the header told him a time that was never true.
+  const SCRAPE_HOURS = [8, 15, 21];
+
   function nextScrapeTime(now = new Date()) {
     const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone: ZONE,
-      hour: "numeric",
-      hour12: false
+      timeZone: ZONE, hour: "numeric", hour12: false
     }).formatToParts(now);
     const hour = Number(parts.find(item => item.type === "hour")?.value ?? 0);
-    return hour < 14 ? "14:00" : "06:00";
+    const next = SCRAPE_HOURS.find(h => h > hour) ?? SCRAPE_HOURS[0];
+    return `${String(next).padStart(2, "0")}:00`;
   }
 
   function summarySnapshot(data) {
@@ -172,49 +176,31 @@
         left.rowIndex - right.rowIndex);
   }
 
+  // "Since we started tracking" comes from the data itself rather than a hardcoded
+  // date pasted into the source, which would silently rot.
+  function rewardBaseline(data) {
+    return data.rewardBaseline || data.generatedAt?.slice(0, 10) || localIsoDate();
+  }
+
   function submittedAfterBaseline(data) {
+    const baseline = rewardBaseline(data);
     return data.semesters.flatMap(semester => semester.activities).filter(item =>
       item.state !== "not_started" &&
       typeof item.submittedDate === "string" &&
-      item.submittedDate > BASELINE_DATE);
+      item.submittedDate > baseline);
   }
 
-  // Rows submitted per calendar date, from real submission dates.
+  // Both of these delegate to js/quest.mjs, which is the tested single source of
+  // truth. app.js previously carried its own divergent copy, so the effort panel
+  // rendered 3.8/day while the pace panel directly below it rendered 1.7/day.
   function submissionsByDay(data) {
-    const perDay = new Map();
-    for (const item of data.semesters.flatMap(semester => semester.activities)) {
-      if (item.state === "not_started" || typeof item.submittedDate !== "string") continue;
-      perDay.set(item.submittedDate, (perDay.get(item.submittedDate) || 0) + 1);
-    }
-    return perDay;
+    const stats = questEffort(data, localIsoDate());
+    return stats.perDay;
   }
 
-  // The important distinction on this whole page. Averaging across days he never
-  // opened the course makes him look half as fast as he is: 1.8/day calendar vs
-  // 3.8/day on days he actually worked. His pace already clears the 3.3 he needs.
-  // The lever is how often he shows up, not how fast he goes.
   function effortStats(data, today) {
-    const perDay = submissionsByDay(data);
-    const dates = [...perDay.keys()].sort();
-    const activeDays = dates.length;
-    const submitted = [...perDay.values()].reduce((sum, n) => sum + n, 0);
-    const activePace = activeDays ? submitted / activeDays : 0;
-    const spanDays = dates.length
-      ? Math.max(1, dateDiff(dates[0], today) + 1)
-      : 1;
-    const showUpRate = spanDays ? activeDays / spanDays : 0;
-    const remaining = remainingActivities(data).length;
-    const daysLeft = Math.max(1, dateDiff(today, data.deadline.date));
-    const daysNeeded = activePace > 0 ? Math.ceil(remaining / activePace) : Infinity;
-    // Fraction of the remaining calendar he must actually sit down on.
-    const showUpNeeded = Math.min(1, daysNeeded / daysLeft);
-    // Honest and deliberately simple: how his past consistency compares to what the
-    // remaining days demand. Not a real probability model, and never shown as one.
-    const likelihood = daysNeeded > daysLeft
-      ? 0
-      : Math.max(0, Math.min(1, showUpRate / Math.max(showUpNeeded, 0.01)));
-    return { perDay, activeDays, submitted, activePace, showUpRate, remaining,
-             daysLeft, daysNeeded, showUpNeeded, likelihood };
+    const stats = questEffort(data, today);
+    return { ...stats, remaining: stats.rowsLeft, likelihood: stats.onTrack };
   }
 
   function todayCompleted(data, today) {
@@ -582,11 +568,12 @@
       : suggested;
     const projectionDays = Math.ceil(remaining.length / Math.max(dailyAsk, .1));
     const projectedDate = addDays(today, projectionDays);
-    const provenDays = Math.ceil(remaining.length / Math.max(PROVEN_PER_DAY, .1));
+    const stats = effortStats(data, today);
+    const provenDays = Math.ceil(remaining.length / Math.max(stats.activePace, .1));
     const provenDate = addDays(today, provenDays);
     const closesGap = Math.min(4, required);
     const doneWidth = (submitted / totalWork) * 100;
-    const projectedRows = Math.min(remaining.length, Math.floor(PROVEN_PER_DAY * daysLeft));
+    const projectedRows = Math.min(remaining.length, Math.floor(stats.activePace * daysLeft));
     const projectedWidth = (projectedRows / totalWork) * 100;
     const gapWidth = Math.max(0, 100 - doneWidth - projectedWidth);
     // Describes the PLAN, not a claim about where he stands. Saying "you're 4 days
@@ -617,7 +604,7 @@
                  aria-label="rows I plan to do per day">
           <span>&nbsp;a day &rarr; finishes <strong>${formatDay(projectedDate)}</strong></span>
         </label>
-        <span>Aug 15 needs&nbsp;&nbsp; <strong>${required.toFixed(1)}/day</strong>. You have run ${PROVEN_PER_DAY.toFixed(1)}/day, which finishes ${formatDay(provenDate)}.</span>
+        <span>Aug 15 needs&nbsp;&nbsp; <strong>${required.toFixed(1)}/day</strong>. On the days you work you do <strong>${stats.activePace.toFixed(1)}</strong>${stats.fastEnough ? " — more than enough" : ""}.</span>
         <span>${escapeHtml(statusCopy)}</span>
         <span>${next ? `Next action: ${escapeHtml(next.title)}` : "Every named row is submitted."}</span>
       </div>`;
@@ -663,7 +650,6 @@
     document.querySelector("#lesson-content").innerHTML = `
       <span class="eyebrow">${escapeHtml(next.semesterId.toUpperCase())} // SECTION ${next.sectionNumber}</span>
       <h3>${escapeHtml(section?.name || next.sectionName || "Course orientation")}</h3>
-      <p>You can open the strategy card before the next row.</p>
       <a class="action" href="${lessonPath}">Open mini-lesson</a>`;
   }
 

@@ -7,7 +7,7 @@
   <title>Algebra Quest</title>
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/theme-overworld.css">
-  <script src="app.js" defer></script>
+  <script type="module" src="app.js"></script>
 </head>
 <body>
   <header class="f3-header" aria-label="Algebra quest telemetry">
@@ -60,8 +60,10 @@
     </section>
 
     <section id="repairs" class="panel" aria-labelledby="repairs-heading" hidden>
-      <h2 id="repairs-heading" class="section-heading">Repairs</h2>
-      <div id="repairs-content" class="repairs-grid"></div>
+      <details>
+        <summary id="repairs-heading" class="section-heading">Repairs // anything else I can do?</summary>
+        <div id="repairs-content" class="repairs-grid"></div>
+      </details>
     </section>
 
     <section id="lesson" class="panel" aria-labelledby="lesson-heading" hidden>

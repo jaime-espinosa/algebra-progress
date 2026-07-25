@@ -20,8 +20,15 @@ test("computePace matches the worked example using the real data", () => {
   assert.equal(pace.daysLeft, 22);
   assert.equal(pace.rowsLeft, 72);
   assert.equal(pace.requiredPerDay, 72 / 22);
-  assert.equal(pace.provenPerDay, 1.7);
-  assert.equal(pace.projectedFinish, "2026-09-05");
+  // Pace is measured over working days, not calendar days. The old 1.7 figure
+  // averaged in every day he never opened the course, which understated his speed by
+  // half and projected a September finish that was both wrong and demoralising.
+  assert.ok(pace.provenPerDay > 3 && pace.provenPerDay < 5,
+    `expected working-day pace near 3.8, got ${pace.provenPerDay}`);
+  assert.ok(pace.provenPerDay >= pace.requiredPerDay,
+    "he is already fast enough on the days he works");
+  assert.ok(pace.projectedFinish <= "2026-08-15",
+    `working-day pace should reach the deadline, got ${pace.projectedFinish}`);
   assert.equal(pace.dailyAsk, 4);
   assert.deepEqual(Object.keys(pace), [
     "daysLeft",

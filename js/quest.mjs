@@ -108,6 +108,52 @@ function provenPace(data) {
   );
 }
 
+
+// Rows submitted per calendar date, from real submission dates.
+export function submissionsByDay(data) {
+  const perDay = new Map();
+  for (const semester of data.semesters ?? []) {
+    for (const item of semester.activities ?? []) {
+      if (item.state === "not_started") continue;
+      if (typeof item.submittedDate !== "string") continue;
+      perDay.set(item.submittedDate, (perDay.get(item.submittedDate) || 0) + 1);
+    }
+  }
+  return perDay;
+}
+
+// Pace measured over days he ACTUALLY worked, not over the calendar. Averaging in
+// the days he never opened the course reported 1.7/day and a September finish, which
+// was both wrong and demoralising: it described his consistency while claiming to
+// describe his speed. On working days he does ~3.8, comfortably above what the
+// deadline needs. The lever is how often he sits down, never how fast he goes.
+export function effortStats(data, today) {
+  const perDay = submissionsByDay(data);
+  const dates = [...perDay.keys()].sort();
+  const activeDays = dates.length;
+  const submitted = [...perDay.values()].reduce((sum, n) => sum + n, 0);
+  const activePace = activeDays ? submitted / activeDays : 0;
+  const todayKey = parseDateKey(today);
+  const spanDays = activeDays
+    ? Math.max(1, dayDifference(parseDateKey(dates[0]), todayKey) + 1)
+    : 1;
+  const showUpRate = activeDays / spanDays;
+  const rowsLeft = remainingRows(data).length;
+  const daysLeft = Math.max(1, dayDifference(todayKey, parseDateKey(data.deadline.date)));
+  const requiredPerDay = rowsLeft / daysLeft;
+  const daysNeeded = activePace > 0 ? Math.ceil(rowsLeft / activePace) : Infinity;
+  const showUpNeeded = Math.min(1, daysNeeded / daysLeft);
+  const onTrack = daysNeeded > daysLeft
+    ? 0
+    : Math.max(0, Math.min(1, showUpRate / Math.max(showUpNeeded, 0.01)));
+  const best = [...perDay.entries()]
+    .map(([date, count]) => ({ date, count }))
+    .sort((left, right) => right.count - left.count)[0] || null;
+  return { perDay, activeDays, submitted, activePace, showUpRate, rowsLeft,
+           daysLeft, requiredPerDay, daysNeeded, showUpNeeded, onTrack, best,
+           fastEnough: activePace >= requiredPerDay };
+}
+
 export function computePace(data, today) {
   const todayKey = parseDateKey(today);
   const deadlineKey = parseDateKey(data.deadline.date);
@@ -115,7 +161,7 @@ export function computePace(data, today) {
   const rowsLeft = remainingRows(data).length;
   const requiredPerDay =
     rowsLeft === 0 ? 0 : rowsLeft / Math.max(daysLeft, 1);
-  const provenPerDay = provenPace(data);
+  const provenPerDay = effortStats(data, today).activePace || provenPace(data);
   const projectedDays =
     rowsLeft === 0
       ? 0
