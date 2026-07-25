@@ -1,0 +1,5 @@
+# Build tooling and tests: run locally, never fetched by a browser, no reason to
+# publish them to a public repo.
+js/*.test.mjs
+vault/tools/
+vault/artifacts/*.test.mjs
