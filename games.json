@@ -740,19 +740,19 @@
       "items": [
         {
           "title": "Abstract Logistics",
-          "url": "https://elimarable.itch.io/abstract-logistics",
+          "url": "https://html-classic.itch.zone/html/7759183/index.html",
           "kind": "game",
-          "why": "A factory game whose whole job is working out the ratios that keep everything moving. The algebra is the win condition rather than the subject, and it downloads as a folder you can run offline.",
+          "why": "A factory game whose whole job is working out the ratios that keep everything moving. The algebra is the win condition rather than the subject, and it plays in the page with nothing to install.",
           "sourceAvailable": false,
           "remixable": false,
           "free": true,
           "account": false,
           "verifiedAt": "2026-07-25",
-          "hookForHim": "The developer ships an offline zip that is just index.html plus assets, so he can download it, open the source, and see exactly how a belt-and-ratio simulation is built. That is a modded-Minecraft brain's ideal object."
+          "hookForHim": "It is a belt-and-ratio simulation running as plain index.html plus assets, so view-source is right there and he can see how one is built. That is a modded-Minecraft brain's ideal object."
         },
         {
           "title": "Color Fractory",
-          "url": "https://lisyarus.itch.io/color-fractory",
+          "url": "https://html-classic.itch.zone/html/18239893/index.html",
           "kind": "game",
           "why": "Conveyor-belt puzzles where you plan a production line and get the input ratios right across ten levels. Same lineage as Factorio and Shapez, and small enough to run properly on a slow laptop.",
           "sourceAvailable": false,
@@ -764,7 +764,7 @@
         },
         {
           "title": "Automaton",
-          "url": "https://mestiez.itch.io/automaton",
+          "url": "https://html-classic.itch.zone/html/4773072/index.html",
           "kind": "puzzle",
           "why": "Each level hands you a target and asks you to invent the rule that produces it, where every cell reacts to how many neighbours it has. Defining a rule and watching consequences propagate is redstone thinking exactly.",
           "sourceAvailable": false,
@@ -868,6 +868,28 @@
           "verifiedAt": "2026-07-25",
           "sourceAvailable": false,
           "remixable": false
+        },
+        {
+          "title": "SolveMe MysteryGrid",
+          "url": "https://solveme.edc.org/mysterygrid/",
+          "kind": "puzzle",
+          "why": "You fill grid cages marked with target operations while keeping row and column numbers unique, using overlapping constraints to narrow down what unseen quantities must be.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-26"
+        },
+        {
+          "title": "SolveMe Who Am I?",
+          "url": "https://solveme.edc.org/whoami/",
+          "kind": "puzzle",
+          "why": "You test clue cards about a secret number's digits and properties, narrowing down candidates until only one value fits every rule. That builds the habit of constraint reasoning about unknown quantities.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-26"
         }
       ]
     }

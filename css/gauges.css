@@ -193,15 +193,12 @@
   text-shadow: none;
 }
 
-/* The unit, named large on the face, exactly where the reference says MPH. */
-.gauge__face-unit {
-  fill: var(--text);
-  font-family: var(--mono);
-  font-size: 5.8px;
-  font-weight: 700;
-  letter-spacing: .08em;
-  text-shadow: none;
-}
+/* .gauge__face-unit — the unit named large on the face, where the reference dial
+   says MPH — was deleted 2026-07-26: "All the dials repeat the title in some way
+   (white text). remove that so we can move the box just above it down." The
+   window's `top` below is the space it vacated. .gauge__scale2-unit above is a
+   DIFFERENT element and stays: it names the inner amber scale, and nothing else
+   on the dial does. */
 
 /* ---- Needle and hub ------------------------------------------------------ */
 .gauge__needle {
@@ -222,10 +219,18 @@
 
 /* ---- Inset digital window ------------------------------------------------ */
 /* Sits in the gap at the bottom of the arc, where the reference puts its
-   odometer window. The needle sweeps 135deg to 405deg and never crosses it. */
+   odometer window.
+   58% -> 64% on 2026-07-26: 58% existed to leave room for .gauge__face-unit
+   beneath it, and that text is gone, so the window drops into the space it
+   vacated and the face reads balanced again. 64% is the floor, not a taste:
+   the tallest window is 19.7% of the face, so its bottom edge lands at 83.7%,
+   which is the last stop that still clears .gauge__scale2-unit at 89.6%.
+   Dropping it also moves its top corners AWAY from the needle's swept annulus
+   (radius 42, 135deg to 405deg, free wedge 45deg to 135deg): at 58% the corners
+   sat 22.9deg off the horizontal, at 64% they sit 36.5deg off it. */
 .gauge__window {
   position: absolute;
-  top: 58%;
+  top: 64%;
   left: 50%;
   transform: translateX(-50%);
   display: grid;

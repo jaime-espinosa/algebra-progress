@@ -1,5 +1,5 @@
 import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, sectionMilestones, overallGrade, worldMap, mapLandmarks, worldTerrain, worldRoute, regionHorizon, headerSegments, questBoard, pointWeights, UNIT_TYPE_LABELS, UNIT_TYPE_PLURALS } from "./js/quest.mjs";
-import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, formatDay, formatTime, nextScrapeTime, summarySnapshot, snapshotsEqual, remainingActivities, submittedAfterBaseline, submissionsByDay, effortStats, todayCompleted, landmarkGlyph, terrainSvg, landmarkStructure, hereMarker, compassRose, mapLegend, territoryPlaque, routePaths, landmassBanner, renderWorldPopup, renderTerritoryTable, unitNode, spriteSvg, validSkinCache, skinPlaceholderSvg, blobDataUrl, gaugePoint, gaugeArc, tip, gaugeText, chartX, chartLegend, perDayChart, cumulativeChart, openTimeCounter, calendarReward, calendarCell, questDays, lessonSlug, lessonCatalog, gameKindIcon, DAY_MS, CHART, DAY_PLOT, CUM_PLOT } from "./js/render/shared.mjs";
+import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, formatDay, formatTime, nextScrapeTime, summarySnapshot, snapshotsEqual, remainingActivities, submittedAfterBaseline, submissionsByDay, effortStats, todayCompleted, landmarkGlyph, terrainSvg, landmarkStructure, hereMarker, compassRose, mapLegend, territoryPlaque, routePaths, landmassBanner, renderWorldPopup, renderTerritoryTable, unitNode, spriteSvg, validSkinCache, skinPlaceholderSvg, blobDataUrl, gaugePoint, gaugeArc, tip, gaugeText, perDayChart, cumulativeChart, openTimeCounter, questDays, lessonSlug, lessonCatalog, gameKindIcon, DAY_MS } from "./js/render/shared.mjs";
 
 (() => {
   "use strict";
@@ -25,7 +25,9 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
   // lesson slugs come from data.json, and lessonExists() checks the file is really there
   // before anything becomes a link.
   const lessonFileCache = new Map();
-  const sectionIds = ["worldmap", "effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "insights", "request", "games"];
+  // "calendar" (#54, Full calendar route) left this list 2026-07-26 with the section
+  // itself. "quests" is the calendar he kept.
+  const sectionIds = ["worldmap", "effort", "vault", "quests", "pace", "repairs", "lesson", "insights", "request", "games"];
 
   // vault/manifest.json is the single source of truth for artifacts. Hardcoding a
   // second copy here drifted immediately: it advertised the victory pack as 1.21.x
@@ -868,7 +870,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
 
 
   function gaugeDial({
-    label, scale, secondary, faceUnit, readout, readoutSub, ariaText,
+    label, scale, secondary, readout, readoutSub, ariaText,
     bandTo = 1, outOfRangeFrom = null, thresholdBands = [],
   }) {
     const clamped = Math.max(0, Math.min(1, scale.fraction));
@@ -920,8 +922,16 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     const angle = (135 + clamped * 270).toFixed(2);
 
     // The title sits ABOVE the face, not on it: naming the dial inside the glass crowded
-    // the numerals and the window, and he asked for it out here where a car puts it. The
-    // face keeps only its unit, which is what a speedometer actually prints.
+    // the numerals and the window, and he asked for it out here where a car puts it.
+    //
+    // The face used to ALSO print the unit in large white type at y=87 (UNITS / DAY
+    // WORKED and so on), the way a speedometer prints MPH. Gone 2026-07-26: "All the
+    // dials repeat the title in some way (white text). remove that so we can move the
+    // box just above it down." The readout window moved down into the space it left.
+    // Nothing was lost to a screen reader — that <text> lived inside an aria-hidden
+    // SVG and was never read; gauge__sr carries the numerator and the divisor, which
+    // is the part that mattered and is the only thing keeping 3.65 per DAY WORKED and
+    // 0.67 per CALENDAR DAY from looking like a contradiction.
     return `
       <article class="gauge">
         <h3 class="gauge__title">${escapeHtml(label)}</h3>
@@ -937,7 +947,6 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
             <g class="gauge__majors" shape-rendering="crispEdges">${majors}</g>
             <g class="gauge__numbers">${numbers}</g>
             ${scale2}
-            <text class="gauge__face-unit" x="50" y="87" text-anchor="middle">${escapeHtml(faceUnit)}</text>
             <g class="gauge__needle" style="transform: rotate(${angle}deg)">
               <polygon points="42,48.3 92,50 42,51.7 40,50"></polygon>
             </g>
@@ -1017,6 +1026,17 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     // verdict. Nothing here calls a reading good or bad.
     const BAND_TEXT = "The thick band on the rim covers what you have done; the thin dashed band past the needle is just the rest of the dial, not a target.";
 
+    // Asked for below the effort line 2026-07-26. Derived, never typed: it is the
+    // SAME total openTimeSeries hands the TIME ON COURSE counter above, floored to
+    // whole hours so it can only ever agree with the "93h 43m" that counter shows
+    // rather than rounding past it. If there is no open-time series there is no
+    // line — an invented 0 would read as a day he did nothing.
+    const openHours = series?.totalSeconds ? Math.floor(series.totalSeconds / 3600) : null;
+    const hoursLine = openHours === null ? "" : `
+      <p class="effort-line effort-line--hours numeric">
+        You've spent ${openHours} ${openHours === 1 ? "hour" : "hours"} total.
+      </p>`;
+
     document.querySelector("#effort-content").innerHTML = `
       <div class="effort-gauges">
         ${gaugeDial({
@@ -1024,7 +1044,6 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
           hint: `Units submitted divided by the number of days you actually submitted something. Days you never opened the course are not in the divisor: ${s.odometer} units over ${s.activeDays} days. The inner amber scale is the same needle as a percentage of the ${s.requiredPerDay.toFixed(2)} a day Aug 15 needs.`,
           scale: paceScale,
           secondary: { unit: "% OF NEEDED", ticks: percentTicks(paceScale.max, s.requiredPerDay) },
-          faceUnit: "UNITS / DAY WORKED",
           readout: s.activePace.toFixed(2),
           readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)} TO FINISH ON TIME`,
           bandTo: 1,
@@ -1046,11 +1065,12 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
         })}
 
         ${gaugeDial({
-          label: `LAST ${s.windowDays} DAYS`,
+          // "average of last N days" verbatim, 2026-07-26: the dial is a mean over the
+          // window, and "LAST 3 DAYS" alone read like a count of something.
+          label: `AVERAGE OF LAST ${s.windowDays} DAYS`,
           hint: `Units a day over the last ${s.windowDays} days: the ${s.recent3} units you submitted ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}, divided by all ${s.windowDays} of those calendar days — days you did not open the course included. That is why it reads lower than UNITS PER DAY, which only divides by the days you sat down. Because it is a rate, moving the day stepper changes the horizon and not the meaning. The face always reads 0 to ${RECENT_DIAL_MAX} a day, so the same rate is always the same needle. The inner amber scale is that same needle as a percentage of the ${RECENT_DIAL_MAX} a day the face holds.`,
           scale: recentScale,
           secondary: { unit: `% OF ${RECENT_DIAL_MAX} A DAY`, ticks: percentTicks(recentScale.max, RECENT_DIAL_MAX) },
-          faceUnit: `UNITS / CALENDAR DAY`,
           readout: s.recentPerDay.toFixed(2),
           readoutSub: `PREV ${s.windowDays}: ${s.priorPerDay.toFixed(2)} / DAY`,
           bandTo: 1,
@@ -1062,7 +1082,6 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
           hint: `Every unit you have submitted, out of ${totalUnits} across both semesters. It only ever goes up. The inner amber scale is the same needle as a percentage of all ${totalUnits}.`,
           scale: doneScale,
           secondary: { unit: "% COMPLETE", ticks: percentTicks(doneScale.max, totalUnits) },
-          faceUnit: "UNITS SUBMITTED",
           readout: String(s.odometer),
           readoutSub: "KEEPS CLIMBING",
           bandTo: totalUnits / doneScale.max,
@@ -1075,7 +1094,6 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
           hint: `Calendar days since your first submission on which you submitted at least one unit — ${s.activeDays} out of ${calendarSpan}. The inner amber scale is the same needle as a percentage of those ${calendarSpan} days.`,
           scale: daysScale,
           secondary: { unit: `% OF ${calendarSpan} DAYS`, ticks: percentTicks(daysScale.max, calendarSpan) },
-          faceUnit: "DAYS WORKED",
           readout: String(s.activeDays),
           readoutSub: `OF ${calendarSpan} DAYS`,
           bandTo: calendarSpan / daysScale.max,
@@ -1087,11 +1105,10 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       <p class="effort-line numeric">
         ${s.odometer} units in ${s.activeDays} days · ${s.activePace.toFixed(2)} a day when you sit down · Aug 15 needs ${s.requiredPerDay.toFixed(2)}${s.fastEnough ? " — <strong>you have proven that you can be fast enough</strong>" : ""}.
       </p>
+      ${hoursLine}
 
       <div class="chart-pair">
-        ${chartLegend(s, series, track)}
-        <div class="chart-pair__plots" style="--today-left: ${(chartX(track, Math.max(0, track.points.findIndex(point => point.date === track.today))) / CHART.width).toFixed(6)}; --today-top: ${(DAY_PLOT.top / CHART.width).toFixed(6)}; --today-bottom: ${((CUM_PLOT.height - CUM_PLOT.bottom) / CHART.width).toFixed(6)}">
-          <div class="chart-today-span" aria-hidden="true"><span>today</span></div>
+        <div class="chart-pair__plots">
           ${perDayChart(track, perDay, s.requiredPerDay, series)}
           ${cumulativeChart(track, sectionMilestones(data), overallGrade(data))}
         </div>
@@ -1100,29 +1117,11 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
 
 
 
-  // planTrack owns every rate and route. This renderer only turns its bounded
-  // first-day-through-deadline points into the chart and strip.
-  function renderCalendar(data) {
-    const today = localIsoDate();
-    const daysLeft = Math.max(0, dateDiff(today, data.deadline.date));
-    const track = planTrack(data, today);
-    const cells = track.points.map(point => calendarCell(point, track));
-    // The cumulative chart used to live here. It moved into the effort panel, under
-    // the dials, so it shares an x-scale with the per-day chart and the two read as
-    // one picture. The strip below is the day-by-day view and stays.
-    document.querySelector("#calendar-content").innerHTML = `
-      <div class="big-number numeric">${daysLeft} days</div>
-      <div class="quiet">${escapeHtml(data.deadline.label)}</div>
-      <div class="calendar-comeback">${escapeHtml(calendarReward(track))}</div>
-      <div class="cal-strip" aria-label="Working days through Aug 15">${cells.join("")}</div>
-      <div class="cal-key quiet numeric">
-        <span><b class="k k--done"></b> worked</span>
-        <span><b class="k k--push"></b> &#9650; beat the plan (${track.bestDays.length} days)</span>
-        ${track.comeback ? `<span><b class="k k--run"></b> best run (${track.comeback.days} days)</span>` : ""}
-        <span><b class="k k--plan"></b> planned</span>
-        <span><b class="k k--idle"></b> nothing logged</span>
-      </div>`;
-  }
+  // #54 "Full calendar route" was deleted 2026-07-26 by request, and renderCalendar
+  // with it: the whole section, its ~170 .cal-cell strip, its key, and its entry in
+  // the default section order. "Quest board calendar" (#quests) is the calendar he
+  // kept and is untouched. calendarCell / calendarReward went out of
+  // js/render/shared.mjs at the same time — nothing else called either.
 
 
   function renderQuests(data) {
@@ -1628,7 +1627,6 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     renderVault(safeData, earned, newlyEarned, isNewSnapshot);
     updateMomentumCursor(earned.has(MOMENTUM_CURSOR_ID));
     renderSkinCard();
-    renderCalendar(safeData);
     renderQuests(safeData);
     renderPace(safeData);
     renderRepairs(safeData);

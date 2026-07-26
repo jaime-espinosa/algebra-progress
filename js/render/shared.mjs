@@ -101,14 +101,13 @@ export const ICON_GLYPH = {
 // number here it changes in both charts or in neither.
 export const CHART = { width: 760, left: 58, right: 46 };
 
-// The plot box of each chart, in viewBox units, exported because the today
-// marker outside the SVGs has to land on the GRID and not on the label gutters
-// above and below it. Both SVGs are drawn `width: 100%; height: auto` off these
-// viewBoxes, so an inset of `top` viewBox units is always `top / CHART.width`
-// of the SVG's rendered WIDTH — which is what lets CSS place the marker exactly
-// at any viewport size without measuring anything.
-export const DAY_PLOT = { height: 196, top: 20, bottom: 148 };
-export const CUM_PLOT = { height: 200, top: 36, bottom: 150 };
+// The plot box of each chart, in viewBox units. These used to be exported so CSS
+// could place a single today marker sitting OUTSIDE both SVGs on the GRID rather
+// than on the label gutters. As of 2026-07-26 there are two markers and each is
+// drawn INSIDE its own SVG (see chartToday), so this is local geometry again —
+// each chart hands its own box to chartToday and nothing outside this file needs it.
+const DAY_PLOT = { height: 196, top: 20, bottom: 148 };
+const CUM_PLOT = { height: 200, top: 36, bottom: 150 };
 
 export const GAME_KIND_FACES = {
   game: {
@@ -771,6 +770,53 @@ export const GAME_KIND_FACES = {
     return CHART.left + (index / last) * (CHART.width - CHART.left - CHART.right);
   }
 
+  // One day, in viewBox units, on the shared x-scale. chartX spreads
+  // track.points.length - 1 gaps across the plot width, so one gap IS one day.
+  export function chartDay(track) {
+    const last = Math.max(1, track.points.length - 1);
+    return (CHART.width - CHART.left - CHART.right) / last;
+  }
+
+  // ---- Today ----------------------------------------------------------------
+  // TWO markers, one per chart, each confined to its own plot box. This REVERSES
+  // the earlier one-continuous-line-across-both-graphs design, which was itself an
+  // explicit request; superseded 2026-07-26 ("there should be 2 lines, one per
+  // graph, and only inside the graph"). If you are about to restore the single
+  // spanning line, this is the sentence saying not to.
+  //
+  // Drawn INSIDE the SVG in viewBox units rather than as HTML positioned over it,
+  // because the width has to be the thickness of an actual day rather than a fixed
+  // number of pixels. One day is chartDay(track) viewBox units, so a rect of that
+  // width scales with the SVG for free and stays exactly one day wide at every
+  // viewport with nothing measured in JS and no resize listener. The HTML overlay
+  // could only have said "3px". Being inside the SVG is also what clips it to the
+  // plot: y runs top..bottom, so it never reaches the date-label gutter, the
+  // units/hours label gutters, or the seam between the two charts.
+  //
+  // x is the CENTRE of today's column, so both charts put their marker on the same
+  // x — they share chartX and the same track.
+  export function chartToday(track, top, bottom, label = "") {
+    const index = track.points.findIndex(point => point.date === track.today);
+    if (index < 0) return "";
+    const day = chartDay(track);
+    const centre = chartX(track, index);
+    // Clamped so a today at either end of the span cannot bleed past the axis.
+    const left = Math.min(
+      Math.max(CHART.left, centre - day / 2),
+      CHART.width - CHART.right - day,
+    );
+    const caption = label
+      ? `
+          <text class="chart-today__label" x="${(left + day / 2).toFixed(1)}" y="${top + 10}"
+            text-anchor="middle">${escapeHtml(label)}</text>`
+      : "";
+    return `
+        <g class="chart-today-mark">
+          <rect class="chart-today" x="${left.toFixed(1)}" y="${top}"
+            width="${day.toFixed(2)}" height="${bottom - top}"></rect>${caption}
+        </g>`;
+  }
+
   export function chartDayTicks(track) {
     const last = track.points.length - 1;
     const ticks = [];
@@ -801,19 +847,14 @@ export const GAME_KIND_FACES = {
     }).join("");
   }
 
-  export function chartLegend(stats, series, track) {
-    return `
-      <div class="chart-legend numeric" role="group" aria-label="Chart legend and totals">
-        <strong class="chart-legend__total">${stats.odometer} units submitted</strong>
-        <span class="chart-legend__secondary">${stats.rowsLeft} remaining · ${stats.totalRows} total units</span>
-        ${series?.totalSeconds ? `<strong class="chart-legend__total">${escapeHtml(series.totalText)} total · time the course page was open</strong>` : ""}
-        <span><b class="chart-key__swatch is-units"></b>units/day and ${stats.requiredPerDay.toFixed(2)}/day reference</span>
-        <span><b class="chart-key__swatch is-open"></b>hours open</span>
-        <span><b class="chart-key__swatch is-actual"></b>cumulative units submitted</span>
-        <span><b class="chart-key__swatch is-steady"></b>steady route</span>
-        <span><b class="chart-key__swatch is-adjusted"></b>same line dotted past today: plan to ${escapeHtml(formatDay(track.finishesOn))}</span>
-      </div>`;
-  }
+  // chartLegend was deleted 2026-07-26. It sat above the two charts carrying the
+  // submitted-units total, the remaining/total counts, the open-time total and a
+  // key for all five series. This REVERSES request #24, which asked for exactly
+  // that legend with exactly those totals; later instruction wins, and this is the
+  // sentence saying so, so nobody restores it as a regression. Every series it
+  // keyed is still named: each chart's own axis titles carry units/day, hours open
+  // and units done, the section marks carry their own <title>s, and both charts'
+  // aria-labels describe every line in words.
 
   // ---- Per-day chart --------------------------------------------------------
   // Two series on one x-axis, and they are deliberately NOT combined into a
@@ -868,9 +909,15 @@ export const GAME_KIND_FACES = {
           ? `${formatDay(point.date)}: the course page was open ${day.text}${stretch
             ? `, including one unbroken ${stretch.text}${stretch.startTime ? ` from ${stretch.startTime}` : ""}` : ""}`
           : `${formatDay(point.date)}: the course page was open ${day.text}`;
-        const shape = day.marked
-          ? `<polygon class="chart-open__flag" points="${x.toFixed(1)},${(y - 5).toFixed(1)} ${(x + 5).toFixed(1)},${y.toFixed(1)} ${x.toFixed(1)},${(y + 5).toFixed(1)} ${(x - 5).toFixed(1)},${y.toFixed(1)}"></polygon>`
-          : `<circle class="chart-open__dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2"></circle>`;
+        // The diamonds that used to mark a flagged day are gone by request
+        // (2026-07-26, #31: "delete the triangles"). day.marked did NOT become
+        // dead with them — it still picks the tooltip that names the unbroken
+        // stretch, still feeds `markedDays` in this chart's aria-label, and still
+        // draws a flagged day hollow. Only the diamond shape went: a flagged day
+        // is now a hollow dot on the same line as every other day, so the chart
+        // has no polygon markers on it and still says which days were flagged.
+        const shape = `<circle class="chart-open__dot${day.marked ? " is-marked" : ""}"
+          cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2"></circle>`;
         return `<g>${shape}<title>${escapeHtml(why)}</title></g>`;
       }).join("");
       const right = CHART.width - CHART.right;
@@ -886,9 +933,10 @@ export const GAME_KIND_FACES = {
     return `
       <div class="chart-block">
         <svg viewBox="0 0 ${CHART.width} ${height}" preserveAspectRatio="xMidYMid meet" role="img"
-          aria-label="${escapeHtml(`Units submitted per calendar day from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, with a reference line at ${requiredPerDay.toFixed(2)} units per day. A second line on the right axis shows how long the course page was open each day, in hours; ${series ? series.markedDays : 0} days are flagged as a tab left open.`)}">
+          aria-label="${escapeHtml(`Units submitted per calendar day from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, with a reference line at ${requiredPerDay.toFixed(2)} units per day. A second line on the right axis shows how long the course page was open each day, in hours; ${series ? series.markedDays : 0} days are flagged as a tab left open and drawn hollow. A band one day wide marks today, ${formatDay(track.today)}.`)}">
           ${yTicks}
           ${chartFridayGrid(track, top, bottom)}
+          ${chartToday(track, top, bottom, "today")}
           <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
           <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
           ${openAxis}
@@ -997,13 +1045,14 @@ export const GAME_KIND_FACES = {
       marks.filter(({ milestone }) => milestone.grade !== null)
         .map(({ milestone }) => `${milestone.name} finished ${formatDay(milestone.finishedOn)} at ${milestone.grade.toFixed(1)}%`)
         .join("; ")}${overall === null ? "" : `. Across everything graded so far: ${overall.toFixed(1)}%`}.`;
-    const ariaLabel = `Cumulative units done from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, on the same Friday-at-5-PM day scale as the chart above. The solid line is what you have actually submitted; past today the same line continues dotted as the plan, which finishes all ${track.totalRows} units by ${formatDay(track.finishesOn)}; a separate long-dashed line is the steady route.${gradeSaid}`;
+    const ariaLabel = `Cumulative units done from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, on the same Friday-at-5-PM day scale as the chart above. The solid line is what you have actually submitted; past today the same line continues dotted as the plan, which finishes all ${track.totalRows} units by ${formatDay(track.finishesOn)}; a separate long-dashed line is the steady route. A band one day wide marks today, ${formatDay(track.today)}, in this plot; the chart above carries the same band on the same day.${gradeSaid}`;
 
     return `
       <div class="chart-block">
         <svg viewBox="0 0 ${CHART.width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${escapeHtml(ariaLabel)}">
           ${grid}
           ${chartFridayGrid(track, top, bottom)}
+          ${chartToday(track, top, bottom)}
           <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
           <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
           <text class="chart-axis-title chart-axis-title--done" x="14" y="${(top + bottom) / 2}" text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">units done</text>
@@ -1039,60 +1088,9 @@ export const GAME_KIND_FACES = {
       </article>`;
   }
 
-  export function calendarReward(track) {
-    if (track.comeback) {
-      const { from, to, gain, days, rows } = track.comeback;
-      // Lead with the plain count he can verify by adding up his own calendar
-      // tiles, then the comparison. Showing only the difference invites him to
-      // count 25, see 15, and stop trusting the page.
-      return `${rows} units in ${days} days, ${formatDay(from)} to ${formatDay(to)} — ${gain} more than the route asked for.`;
-    }
-    const biggestPush = track.bestDays[0];
-    if (biggestPush) {
-      return `Your biggest push: ${biggestPush.done} units on ${formatDay(biggestPush.date)}.`;
-    }
-    return "Every unit you finish moves the route forward.";
-  }
-
-  export function calendarCell(point, track) {
-    const classes = ["cal-cell"];
-    const isToday = point.date === track.today;
-    if (point.date === track.deadline) classes.push("is-deadline");
-    if (isToday) classes.push("is-today");
-    if (point.done > 0) {
-      classes.push("is-done");
-      if (point.beatPlan) classes.push("is-pushing");
-    } else if (point.planned > 0 && (point.future || isToday)) {
-      classes.push("is-planned");
-    } else if (!point.future) {
-      classes.push("is-idle");
-    }
-    // Drawn on top of whatever the day itself was, never instead of it: the run
-    // is the achievement, so a blank day inside it keeps the bar and loses
-    // nothing. There is no class for the opposite kind of stretch.
-    if (point.inComeback) classes.push("is-comeback");
-
-    // A worked day now reads back only the count he logged. The old surplus wording
-    // ("N more than the steady route asked for") measured his day against our plan;
-    // he asked for it gone. The is-pushing class and the ▲ marker stay — those flag
-    // the day, they don't lecture about it.
-    let tooltip = "nothing logged";
-    if (point.done > 0) {
-      tooltip = `${formatDay(point.date)}: ${point.done} ${point.done === 1 ? "unit" : "units"}`;
-    } else if (point.planned > 0 && (point.future || isToday)) {
-      tooltip = `planned: ${point.planned} ${point.planned === 1 ? "unit" : "units"}`;
-    }
-    // Two words, not a sentence. The bar under the run is the thing that says it;
-    // this only makes the same fact reachable by a screen reader and on hover.
-    if (point.inComeback) tooltip = `${tooltip} · best run`;
-
-    if (point.date === track.deadline) {
-      return `<div class="${classes.join(" ")}" title="${escapeHtml(tooltip)}"><strong>AUG 15</strong></div>`;
-    }
-    const count = point.done > 0 ? point.done : (point.planned > 0 && (point.future || isToday) ? point.planned : "");
-    const marker = point.beatPlan ? `<span class="cal-cell__push" aria-hidden="true">&#9650;</span>` : "";
-    return `<div class="${classes.join(" ")}" title="${escapeHtml(tooltip)}"><span class="cal-cell__d">${escapeHtml(Number(point.date.slice(8)))}</span><span class="cal-cell__n numeric">${escapeHtml(count)}</span>${marker}</div>`;
-  }
+  // calendarReward / calendarCell were deleted 2026-07-26 with #calendar, the
+  // "Full calendar route" section they were the render path for. Nothing else
+  // called them. The quest board (#quests) builds its own cards in questDays.
 
   export function questDays(data) {
     const remaining = remainingActivities(data);

@@ -1621,54 +1621,37 @@ html.motion-paused *::after {
   gap: 0;
 }
 
-/* The today marker: ONE line across both graphs, clipped to the grids.
+/* The today marker: TWO of them, one per graph, each drawn INSIDE its own SVG.
  *
- * It used to be `top: 0; bottom: 0`, which spanned the whole plots container —
- * so it ran up through the day chart's top margin and down through the date
- * labels under the cumulative chart, into gutters where there is no grid to
- * mark. It now starts at the top of the upper grid and stops at the bottom of
- * the lower one.
+ * 2026-07-26 — this REVERSES the previous design, a single 3px-wide HTML line
+ * positioned over `.chart-pair__plots` and spanning both grids, which was itself
+ * an explicit earlier request. Superseded: "there should be 2 lines, one per
+ * graph, and only inside the graph... make it the thickness of an actual day".
+ * If you are about to restore the one-line version, this is the note saying the
+ * later instruction won. The old machinery went with it: the `--today-*` custom
+ * properties, `--chart-frame`, and the DAY_PLOT / CUM_PLOT exports that existed
+ * only so CSS could do the geometry.
  *
- * It stays a single element on purpose. Clipping it per-plot would leave two
- * marks ~150px apart with the date-label row between them, and reading as one
- * continuous line across both graphs was an explicit earlier request. The only
- * region it crosses that is not grid is the seam BETWEEN the two grids — which
- * is what makes it one line rather than two.
- *
- * The geometry is exact rather than eyeballed. Both SVGs are `width: 100%;
- * height: auto` off a viewBox of CHART.width, so an inset of N viewBox units is
- * always N / CHART.width of the SVG's rendered WIDTH — and percentage margins
- * resolve against the containing block's WIDTH. So the fractions app.js hands in
- * (--today-top, --today-bottom, straight out of DAY_PLOT / CUM_PLOT) place it
- * correctly at any viewport with nothing measured in JS. --chart-frame is the
- * chart-block's own border + padding, which the SVG sits inside. */
-.chart-pair__plots {
-  --chart-frame: 9px;
+ * Nothing here does geometry any more. The marker is a <rect> in viewBox units
+ * (see chartToday in js/render/shared.mjs) whose width is one day on the x-scale,
+ * so it scales with the SVG and stays one day wide at every viewport. This file
+ * only says what colour it is. */
+.chart-today {
+  fill: var(--text);
+  /* Under the series, not over them: at one day wide this is a band, and an
+     opaque band would hide the very lines it is dating. Kept high enough to read
+     as deliberate rather than as another gridline. */
+  opacity: .32;
 }
 
-.chart-today-span {
-  position: absolute;
-  z-index: 3;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--chart-frame) + (100% - 2 * var(--chart-frame)) * var(--today-left));
-  width: 3px;
-  margin-top: calc(var(--chart-frame) + (100% - 2 * var(--chart-frame)) * var(--today-top));
-  margin-bottom: calc(var(--chart-frame) + (100% - 2 * var(--chart-frame)) * var(--today-bottom));
-  background: var(--text);
-  box-shadow: 0 0 0 1px var(--panel-solid);
-  pointer-events: none;
-  transform: translateX(-1px);
-}
-
-.chart-today-span span {
-  position: absolute;
-  top: 4px;
-  left: 5px;
-  padding: 1px 3px;
-  background: var(--panel-solid);
-  color: var(--text);
-  font-size: 11px;
+/* Inside the SVG now, so it scales with the drawing instead of being the largest
+   thing on the chart at phone width, which is what the old HTML label did. One
+   label, on the upper chart only: the lower marker is on the same x and needs no
+   second caption. */
+.chart-today__label {
+  fill: var(--text);
+  font-family: var(--mono);
+  font-size: 10px;
   font-weight: 700;
   text-shadow: none;
 }
@@ -1684,55 +1667,11 @@ html.motion-paused *::after {
   overflow: visible;
 }
 
-.chart-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 16px;
-  align-items: center;
-  margin-bottom: 8px;
-  border: 2px solid var(--line);
-  padding: 8px 10px;
-  background: var(--bg);
-  color: var(--dim);
-  font-size: 11px;
-}
-
-.chart-legend__total {
-  color: var(--text);
-}
-
-.chart-legend__secondary {
-  color: var(--faint);
-  font-size: 10px;
-}
-
-.chart-key__swatch {
-  display: inline-block;
-  width: 14px;
-  height: 4px;
-  margin-right: 6px;
-  vertical-align: middle;
-  background: var(--accent);
-}
-
-.chart-key__swatch.is-open {
-  height: 2px;
-  background: var(--warn);
-}
-
-/* The swatches draw what the chart draws, dashes included. A solid block next to
- * "steady route" described a line that has not been solid in a long time. */
-.chart-key__swatch.is-steady {
-  height: 2px;
-  background: repeating-linear-gradient(to right,
-    var(--faint) 0 5px, transparent 5px 9px);
-}
-
-.chart-key__swatch.is-adjusted {
-  height: 2px;
-  background: repeating-linear-gradient(to right,
-    var(--accent) 0 2px, transparent 2px 7px);
-}
+/* .chart-legend and .chart-key__swatch were deleted 2026-07-26 with the legend
+ * above the graphs. This REVERSES request #24, which asked for that legend and
+ * for the hours and unit totals it carried; the later instruction wins. Do not
+ * restore it from #24. .chart-key (the map legend) is a different block and is
+ * still in use. */
 
 .chart-axis,
 .chart-axis__tick,
@@ -1823,10 +1762,13 @@ html.motion-paused *::after {
   fill: var(--warn);
 }
 
-.chart-open__flag {
+/* A day flagged as a tab left open. It was a diamond until 2026-07-26 (#31,
+   "delete the triangles"); it is the same dot as every other day now, drawn
+   hollow, which is what keeps the flag readable without a polygon on the line. */
+.chart-open__dot.is-marked {
   fill: var(--panel-solid);
   stroke: var(--warn);
-  stroke-width: 1.5;
+  stroke-width: 1.2;
 }
 
 .chart-reference {
@@ -1928,184 +1870,32 @@ html.motion-paused *::after {
     grid-template-columns: 1fr;
   }
 
-  .chart-legend {
-    display: grid;
-    grid-template-columns: 1fr;
-    font-size: 10px;
-  }
-
   .chart-friday-tick--minor .chart-axis__tick,
   .chart-friday-tick--minor .chart-label {
     display: none;
   }
 }
 
-/* ---- Calendar strip ------------------------------------------------------ */
-.calendar-comeback {
-  margin: 16px 0;
-  border: 2px solid var(--accent);
-  padding: 12px 14px;
-  background: var(--accent-dim);
-  color: var(--text);
-  font-size: clamp(16px, 2.2vw, 22px);
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.cal-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin: 12px 0 8px;
-}
-
-.cal-cell {
-  position: relative;
-  display: flex;
-  width: 42px;
-  min-height: 40px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--line);
-  padding: 2px;
-  background: var(--panel-solid);
-  color: var(--dim);
-  font-size: 11px;
-}
-
-.cal-cell__n {
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cal-cell__push {
-  position: absolute;
-  top: 1px;
-  right: 2px;
-  color: var(--accent);
-  font-size: 9px;
-  line-height: 1;
-}
-
-.cal-cell.is-done {
-  border-color: var(--accent-dim);
-  background: var(--accent-dim);
-}
-
-.cal-cell.is-done .cal-cell__n {
-  color: var(--text);
-}
-
-.cal-cell.is-pushing {
-  border-color: var(--accent);
-  box-shadow: inset 0 0 0 1px var(--accent);
-}
-
-/* The run he climbed out on. It is drawn as one unbroken bar under a stretch of
-   days rather than as a mark on each day, because catching up happened across
-   the stretch and no single tile in it earned or lost anything. Quiet days
-   inside the run keep the bar for the same reason. */
-.cal-cell.is-comeback::after {
-  position: absolute;
-  right: -3px;
-  bottom: -1px;
-  left: -3px;
-  height: 3px;
-  background: var(--accent);
-  content: "";
-}
-
-.cal-cell.is-planned {
-  border-style: dashed;
-}
-
-.cal-cell.is-idle {
-  background: var(--bg);
-  color: var(--faint);
-}
-
-.cal-cell.is-today {
-  border-color: var(--text);
-}
-
-.cal-cell.is-deadline {
-  width: auto;
-  padding: 2px 10px;
-  border-color: var(--warn);
-  color: var(--warn);
-}
-
-.cal-key {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 14px;
-  align-items: center;
-  font-size: 11px;
-}
-
-.cal-key .k {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  margin-right: 4px;
-  border: 1px solid var(--line);
-  vertical-align: middle;
-}
-
-.cal-key .k--done {
-  border-color: var(--accent-dim);
-  background: var(--accent-dim);
-}
-
-.cal-key .k--push {
-  border-color: var(--accent);
-  background: var(--accent);
-}
-
-.cal-key .k--run {
-  width: 18px;
-  height: 4px;
-  border: 0;
-  background: var(--accent);
-}
-
-.cal-key .k--plan {
-  border-style: dashed;
-}
-
-.cal-key .k--idle {
-  background: var(--bg);
-}
+/* ---- Calendar strip ------------------------------------------------------
+   Deleted 2026-07-26 with #calendar, the "Full calendar route" section. Every
+   rule here (.calendar-comeback, .cal-strip, the ~170 .cal-cell tiles and their
+   is-done / is-pushing / is-comeback / is-planned / is-idle / is-today /
+   is-deadline states, .cal-key and its swatches) had exactly one render path and
+   it is gone. The calendar he kept, #quests, uses .quest-day / .quest-list. */
 
 @media (max-width: 480px) {
   .chart-block {
     padding: 6px;
   }
 
-  /* --chart-frame follows the padding, or the today marker misses the grid by
-     the difference. It missed by 5px at 390 until this was here. */
-  .chart-pair__plots {
-    --chart-frame: 7px;
-  }
-
-  /* The marker's label is HTML at a fixed size while everything in the SVG
-     scales with the viewBox, so at phone width it was the largest thing on the
-     chart it was annotating. */
-  .chart-today-span span {
-    top: 2px;
-    left: 4px;
-    font-size: 9px;
-  }
+  /* The --chart-frame override and the today label's phone-width shrink both used
+     to live here. Both are gone with the HTML marker (2026-07-26): the marker is
+     inside the SVG now, so the chart-block's padding cannot make it miss the grid
+     and its label scales with the viewBox on its own. */
 
   .chart-key {
     display: grid;
     grid-template-columns: 1fr;
-  }
-
-  .cal-cell {
-    width: 38px;
   }
 }
 
