@@ -235,59 +235,6 @@ export function questBoard(data, today) {
   }];
 }
 
-function completionEvents(history) {
-  const records = Array.isArray(history)
-    ? history
-    : Array.isArray(history?.events)
-      ? history.events
-      : [];
-
-  const eventDates = records
-    .filter(
-      (record) =>
-        record.state === "graded" ||
-        record.state === "submitted_ungraded" ||
-        record.completed === true,
-    )
-    .map((record) =>
-      parseDateKey(
-        record.timestamp ??
-          record.submittedAt ??
-          record.submittedDate ??
-          record.date,
-      ),
-    );
-
-  const snapshots = Array.isArray(history?.snapshots)
-    ? [...history.snapshots].sort((left, right) =>
-        left.date.localeCompare(right.date),
-      )
-    : [];
-  for (let index = 1; index < snapshots.length; index += 1) {
-    if (snapshotTotal(snapshots[index]) > snapshotTotal(snapshots[index - 1])) {
-      eventDates.push(snapshots[index].date);
-    }
-  }
-
-  return new Set(eventDates);
-}
-
-export function computeStreak(history, now) {
-  const completedDays = completionEvents(history);
-  const currentDay = parseDateKey(now);
-  let cursor = completedDays.has(currentDay)
-    ? currentDay
-    : addDays(currentDay, -1);
-  let streak = 0;
-
-  while (completedDays.has(cursor)) {
-    streak += 1;
-    cursor = addDays(cursor, -1);
-  }
-
-  return streak;
-}
-
 // The unlock gate. This lived in app.js while quest.mjs exported a DIFFERENT
 // implementation keyed on ids that existed nowhere in vault/manifest.json — the two
 // sets shared exactly one id, so wiring the exported one up would have unlocked one
