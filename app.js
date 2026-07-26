@@ -29,6 +29,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   let currentGames = null;
   let currentMap = null;
   let currentLandmarks = [];
+  let currentTerrain = null;
   let intervalId = null;
   let revealQueue = [];
   // Set when a batch of tiles is queued to reveal; cleared once the vault slots
@@ -346,6 +347,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   let panX = 0;
   let panY = 0;
   let zoomedRegion = null;
+  // First paint centres the viewport on the territory holding his next unit.
+  // Only the first: a later redraw must not yank the map out from under a pan
+  // he is in the middle of.
+  let panInitialised = false;
 
   function landmarkGlyph(item, earned) {
     return `<span class="wm-landmark${earned ? " is-earned" : ""}" title="${escapeHtml(
@@ -355,48 +360,94 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     </span>`;
   }
 
-  function renderRegionCard(region, landmarksHere, isNewSnapshot, previousDone) {
-    // Only blocks beyond what he had last time are held back to reveal, so the
-    // map never animates in from empty on a page he has already seen.
-    const revealFrom = isNewSnapshot && !reducedMotion()
-      ? Math.min(previousDone, region.unitsDone)
-      : null;
+  // ---- Drawing the world ----------------------------------------------------
+  // The terrain is inline SVG: DOM nodes, no canvas, no WebGL, no image files.
+  // worldTerrain() in quest.mjs hands back one <path> per colour — the whole
+  // 150x105 cell world arrives as a few dozen nodes rather than fifteen
+  // thousand, which is the only reason a 2018 machine can pan it.
+  //
+  // Nothing in this function computes a fact. Every number that reaches the
+  // screen comes off the region objects worldMap() built. The terrain decides
+  // where the green goes; it never decides how much is done.
+  function terrainSvg(terrain) {
+    const layers = terrain.layers.map(layer =>
+      `<path fill="${layer.fill}"${layer.opacity < 1 ? ` opacity="${layer.opacity}"` : ""} d="${layer.d}"/>`
+    ).join("");
+    return `<svg class="wm-terrain" viewBox="0 0 ${terrain.width} ${terrain.height}"
+      width="${terrain.width}" height="${terrain.height}" aria-hidden="true" focusable="false"
+      shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+      <rect width="${terrain.width}" height="${terrain.height}" fill="${terrain.ocean}"/>
+      ${layers}</svg>`;
+  }
+
+  // A landmark is a little structure standing on the ground where the unlock
+  // gate says it lands. Earned ones get a lit roof; the rest are outposts
+  // waiting to be built. Multiple landmarks in one territory are fanned out so
+  // they read as a settlement rather than one building drawn three times.
+  function landmarkStructure(x, y, earned, index) {
+    const dx = x + (index - 0.5) * 22;
+    const roof = earned ? "#d7b45c" : "#7e8892";
+    const wall = earned ? "#b9a37e" : "#6d757d";
+    return `<g class="wm-mark${earned ? " is-earned" : ""}">
+      <path fill="#1d2830" opacity=".45" d="M${dx - 9} ${y + 2}h18v4h-18z"/>
+      <path fill="${wall}" d="M${dx - 6} ${y - 12}h12v14h-12z"/>
+      <path fill="${roof}" d="M${dx - 8} ${y - 18}h16v6h-16z"/>
+      <path fill="#2c3a44" d="M${dx - 2} ${y - 6}h4v8h-4z"/>
+    </g>`;
+  }
+
+  // "You are here": a beacon column and a small figure standing on the ground of
+  // the territory that holds his next unit. It is a position, not a score.
+  function hereMarker(x, y) {
+    return `<g class="wm-you">
+      <path class="wm-you__beam" fill="#ffd67a" opacity=".28" d="M${x - 5} ${y - 190}h10v190h-10z"/>
+      <path fill="#1d2830" opacity=".5" d="M${x - 10} ${y + 2}h20v5h-20z"/>
+      <path fill="#3b6ea8" d="M${x - 6} ${y - 12}h12v14h-12z"/>
+      <path fill="#d9a066" d="M${x - 6} ${y - 22}h12v10h-12z"/>
+      <path fill="#22303a" d="M${x - 4} ${y - 19}h3v3h-3zm5 0h3v3h-3z"/>
+    </g>`;
+  }
+
+  // The name plaque on a territory. This is the focusable control — a real
+  // <button> in the DOM over the SVG, carrying the region's own counts in its
+  // accessible name, so the map is never a picture a screen reader cannot read.
+  function territoryPlaque(region, spot) {
     const state = REGION_STATE_COPY[region.status] ?? "";
-    // Always rendered, empty when the section has no grade yet, so every chunk
-    // has the same number of rows and a row of chunks lines up as one landscape.
-    // An empty span, never a 0% — a zero would read as a score he was given.
-    const grade = `<span class="wm-region__grade quiet numeric">${region.grade === null ? ""
-      : `${region.grade.toFixed(1)}%${region.letter ? ` · ${escapeHtml(region.letter)}` : ""}`}</span>`;
-    const marker = region.status === "here"
-      ? `<span class="wm-here" aria-hidden="true"><span class="wm-here__body"></span><span class="wm-here__head"></span></span>`
-      : "";
-    const flags = landmarksHere.length
-      ? `<span class="wm-region__landmarks">${landmarksHere
-          .map(entry => landmarkGlyph(entry.artifact, false)).join("")}</span>`
-      : "";
-    // Training and battles are the two halves of the same row list, so they add
-    // back up to the unit count printed beside them. Nothing new is counted.
-    const split = `${region.trainingDone}/${region.trainingTotal} training · ${
-      region.battleCleared}/${region.battleTotal} battles`;
-    const label = `${region.name}, ${region.unitsDone} of ${region.unitsTotal} units placed, ${state}. Zoom in.`;
+    const split = `${region.trainingDone} of ${region.trainingTotal} training and ${
+      region.battleCleared} of ${region.battleTotal} battles`;
+    const grade = region.grade === null ? "" : `, section grade ${region.grade.toFixed(1)}%`;
+    const label = `${region.name}. ${region.unitsDone} of ${region.unitsTotal} units placed, ${
+      split}, ${state}${grade}. Zoom in.`;
     return `
       <button type="button" class="wm-region is-${region.status}" data-region="${escapeHtml(region.key)}"
-        style="grid-column:${region.col + 2};grid-row:${region.row + 1}"
-        aria-label="${escapeHtml(label)}">
-        <span class="wm-region__sky" aria-hidden="true">${marker}${flags}</span>
-        <span class="wm-region__id numeric" aria-hidden="true">${String(region.number).padStart(2, "0")}</span>
+        style="left:${spot.cx}px;top:${spot.cy}px" aria-label="${escapeHtml(label)}">
         <span class="wm-region__name">${escapeHtml(region.name)}</span>
-        <span class="wm-region__blocks" aria-hidden="true">${regionBlocks(region, revealFrom)}</span>
-        <span class="wm-region__count numeric" aria-hidden="true">${region.unitsDone}/${region.unitsTotal} units</span>
-        <span class="wm-region__split quiet numeric" aria-hidden="true">${escapeHtml(split)}</span>
-        <span class="wm-region__state" aria-hidden="true">${escapeHtml(state)}</span>
-        ${grade}
+        <span class="wm-region__count numeric" aria-hidden="true">${region.unitsDone}/${region.unitsTotal}</span>
       </button>`;
   }
 
-  // The band label for a semester, sitting in the left gutter of the map and
-  // spanning exactly the rows that semester's regions occupy.
-  function renderWorldBand(world, landmarks) {
+  // The banner naming a landmass, pinned above its northern coast.
+  function landmassBanner(world, mass) {
+    const numeral = WORLD_NUMERAL[world.index] ?? String(world.index);
+    const state = world.sealed
+      ? "SEALED"
+      : world.holdsNext
+        ? "YOU BUILT THIS"
+        : world.unitsDone > 0
+          ? "UNDER WAY"
+          : "NEWLY SIGHTED";
+    return `<div class="wm-banner" style="left:${mass.cx}px;top:${Math.max(10, mass.top - 46)}px"
+      aria-hidden="true">
+      <span class="eyebrow">WORLD ${numeral} // ${state}</span>
+      <span class="wm-banner__name">${escapeHtml(world.name)}</span>
+      <span class="numeric quiet">${world.unitsDone}/${world.unitsTotal} units placed</span>
+    </div>`;
+  }
+
+  // The summary that used to sit in the map's left gutter as a band. It is the
+  // same figures, above the map instead of inside it, because the map is now
+  // terrain and text laid over terrain is text nobody can read.
+  function renderWorldCard(world, landmarks) {
     const numeral = WORLD_NUMERAL[world.index] ?? String(world.index);
     const eyebrow = world.sealed
       ? `WORLD ${numeral} // SEALED`
@@ -404,7 +455,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         ? `WORLD ${numeral} // YOU BUILT THIS`
         : world.unitsDone > 0
           ? `WORLD ${numeral} // UNDER WAY`
-          : `WORLD ${numeral} // NEWLY OPENED TERRITORY`;
+          : `WORLD ${numeral} // NEWLY SIGHTED CONTINENT`;
     const near = world.sealed
       ? `${escapeHtml(world.name)} is sealed. Every unit in it is submitted.`
       : `${world.unitsLeft} unit${world.unitsLeft === 1 ? "" : "s"} from sealing ${escapeHtml(world.name)}.`;
@@ -414,7 +465,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           world.letter ? ` · ${escapeHtml(world.letter)}` : ""}</span>`;
     const standing = landmarks.filter(entry => entry.earned);
     return `
-      <div class="wm-band" style="grid-column:1;grid-row:${world.rowStart + 1} / span ${world.rowSpan}">
+      <div class="wm-band">
         <span class="eyebrow">${escapeHtml(eyebrow)}</span>
         <h3 class="wm-world__name">${escapeHtml(world.name)}</h3>
         <strong class="big-number numeric">${world.unitsDone}<span class="wm-world__of"> of ${world.unitsTotal} units placed</span></strong>
@@ -425,6 +476,31 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           standing.length === 1 ? "" : "s"} already standing here: ${escapeHtml(
             standing.map(entry => entry.artifact.name).join(", "))}</span>` : ""}
       </div>`;
+  }
+
+  // The text equivalent. The map is decoration over real counts, so the counts
+  // have to exist as text somewhere a screen reader and a keyboard can reach
+  // without hunting across a picture. Every row here is read straight off the
+  // region object — same source as the plaques, so the two cannot disagree.
+  function renderTerritoryTable(map) {
+    const rows = map.worlds.flatMap(world => world.regions.map(region => `
+      <tr>
+        <th scope="row">${escapeHtml(world.name)} · ${escapeHtml(region.name)}</th>
+        <td class="numeric">${region.unitsDone}/${region.unitsTotal}</td>
+        <td class="numeric">${region.trainingDone}/${region.trainingTotal}</td>
+        <td class="numeric">${region.battleCleared}/${region.battleTotal}</td>
+        <td>${escapeHtml(REGION_STATE_COPY[region.status] ?? "")}</td>
+      </tr>`).join("")).join("");
+    return `
+      <details class="wm-text">
+        <summary>Territory list, as text</summary>
+        <table class="wm-text__table">
+          <caption class="quiet">Every territory on the map, with the same counts the map draws.</caption>
+          <thead><tr><th scope="col">Territory</th><th scope="col">Units</th>
+            <th scope="col">Training</th><th scope="col">Battles</th><th scope="col">State</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </details>`;
   }
 
   // ---- Level 2: inside one region ------------------------------------------
@@ -660,20 +736,6 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       .map(entry => ({ ...entry, artifact: artifacts.find(item => item.id === entry.id) }))
       .filter(entry => entry.artifact);
 
-    // How many blocks in each region he had already seen, so only genuinely new
-    // ones animate. Falls back to none, which reveals nothing rather than
-    // replaying the whole map.
-    const previousDoneByRegion = new Map();
-    for (const world of map.worlds) {
-      const priorDone = previousSnapshot?.[world.id]?.rowsDone;
-      let budget = Number.isFinite(priorDone) ? priorDone : world.unitsDone;
-      for (const region of world.regions) {
-        const seen = Math.max(0, Math.min(region.unitsDone, budget));
-        previousDoneByRegion.set(region.key, seen);
-        budget -= seen;
-      }
-    }
-
     const openKey = zoomedRegion;
     const landmarksFor = worldId => currentLandmarks.filter(entry =>
       entry.worldId === worldId || (entry.earned && worldId === map.worlds[0]?.id));
@@ -685,41 +747,85 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       byRegion.get(entry.regionKey).push(entry);
     }
 
+    // The terrain. Generated here rather than shipped as data: it is a pure
+    // function of the map, so sending it over the wire would only be sending
+    // something the browser can rebuild in ~35ms, and it would go stale the
+    // moment a unit landed.
+    const terrain = worldTerrain(map);
+    currentTerrain = terrain;
+    const spotOf = new Map(terrain.territories.map(item => [item.key, item]));
+    const massOf = new Map(terrain.landmasses.map(item => [item.worldId, item]));
+
+    // Landmarks stand where mapLandmarks() puts them. The three he has already
+    // earned carry no region — they were unlocked by work spread across the
+    // whole of World I — so they are stood on World I's settled ground, in
+    // route order, rather than dropped in the sea.
+    const settled = map.worlds[0]?.regions.filter(region => region.status === "settled") ?? [];
+    const marks = [];
+    const perRegion = new Map();
+    currentLandmarks.forEach((entry, index) => {
+      const key = entry.regionKey
+        ?? (entry.earned ? settled[index % Math.max(1, settled.length)]?.key : null);
+      const spot = key ? spotOf.get(key) : null;
+      if (!spot) return;
+      const seen = perRegion.get(key) ?? 0;
+      perRegion.set(key, seen + 1);
+      marks.push(landmarkStructure(spot.cx, spot.cy - 14 + seen * 9, entry.earned, seen));
+    });
+    const hereSpot = map.next ? spotOf.get(map.next.regionKey) : null;
+    const overlaySvg = marks.length || hereSpot
+      ? `<svg class="wm-overlay" viewBox="0 0 ${terrain.width} ${terrain.height}"
+          width="${terrain.width}" height="${terrain.height}" aria-hidden="true" focusable="false"
+          shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+          ${marks.join("")}${hereSpot ? hereMarker(hereSpot.cx, hereSpot.cy - 4) : ""}</svg>`
+      : "";
+
     document.querySelector("#worldmap-content").innerHTML = map.worlds.length
       ? `
-      <p class="wm-intro">The whole of Algebra I as one place. Every block is one unit from the
-        gradebook — ${map.totalDone} of ${map.totalUnits} placed, the same ${map.totalDone} the
-        dials count. Drag the map, or use the arrow keys, to look around. Click a region to zoom in.</p>
+      <p class="wm-intro">The whole of Algebra I drawn as one world. Ground is bought with units —
+        a bigger section is a bigger territory — and the ground you have settled is the lit ground:
+        ${map.totalDone} of ${map.totalUnits} units placed, the same ${map.totalDone} the dials
+        count. The haze is territory you have not reached yet. Drag the map, or use the arrow keys,
+        to look around. Click a territory to zoom into it.</p>
+      <div class="wm-worlds">${map.worlds.map(world =>
+        renderWorldCard(world, landmarksFor(world.id))).join("")}</div>
       <div id="wm-viewport" class="wm-viewport" tabindex="0" role="group"
-        aria-label="World map. Drag or use the arrow keys to pan. Click a region to zoom in.">
-        <div id="wm-canvas" class="wm-canvas" style="--wm-cols:${map.grid.cols}">
-          ${map.worlds.map(world => renderWorldBand(world, landmarksFor(world.id))).join("")}
-          ${regions.map(region => renderRegionCard(
-            region,
-            byRegion.get(region.key) ?? [],
-            isNewSnapshot,
-            previousDoneByRegion.get(region.key) ?? 0
-          )).join("")}
+        aria-label="World map. Drag or use the arrow keys to pan. Click a territory to zoom in.">
+        <div id="wm-canvas" class="wm-canvas" style="width:${terrain.width}px;height:${terrain.height}px">
+          ${terrainSvg(terrain)}
+          ${overlaySvg}
+          ${map.worlds.map(world => {
+            const mass = massOf.get(world.id);
+            return mass ? landmassBanner(world, mass) : "";
+          }).join("")}
+          ${regions.map(region => {
+            const spot = spotOf.get(region.key);
+            return spot ? territoryPlaque(region, spot) : "";
+          }).join("")}
         </div>
       </div>
       <div class="wm-zoom" id="wm-zoom" role="group" aria-labelledby="wm-zoom-heading" hidden></div>
-      <div class="wm-key quiet numeric">
-        <span><b class="wm-key__block is-placed"></b> unit placed</span>
-        <span><b class="wm-key__block"></b> not built yet</span>
-        <span><b class="wm-key__block is-next"></b> your next unit</span>
-        <span><b class="wm-key__block is-battle"></b> a battle (quiz or test)</span>
-        <span><b class="wm-key__block is-landmark"></b> a landmark unlocks in that region</span>
-      </div>`
+      <div class="wm-key quiet">
+        <span><b class="wm-key__swatch is-settled"></b> settled ground</span>
+        <span><b class="wm-key__swatch is-haze"></b> unexplored — nothing lost, just not reached</span>
+        <span><b class="wm-key__swatch is-water"></b> ocean</span>
+        <span><b class="wm-key__swatch is-here"></b> you are here</span>
+        <span><b class="wm-key__swatch is-landmark"></b> a landmark stands or unlocks here</span>
+      </div>
+      ${renderTerritoryTable(map)}`
       : `<p class="quiet">Saved telemetry is thin right now — the map redraws on the next check.</p>`;
 
     wireViewport();
+    // Open on the ground he is standing on rather than the top-left corner of
+    // the ocean: on a first paint the viewport is centred on his next unit.
+    if (hereSpot && !panInitialised) {
+      panInitialised = true;
+      const viewport = document.querySelector("#wm-viewport");
+      panX = -(hereSpot.cx - (viewport?.clientWidth ?? 900) / 2);
+      panY = -(hereSpot.cy - (viewport?.clientHeight ?? 520) / 2);
+    }
     clampPan();
     if (openKey && findRegion(openKey)) openRegion(openKey);
-
-    if (isNewSnapshot && !reducedMotion()) {
-      revealQueue = [...document.querySelectorAll("#worldmap-content .wm-block.reveal-hidden")];
-      revealPending = true;
-    }
   }
 
   function spriteSvg(index, earned) {
@@ -2017,6 +2123,11 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   window.AlgebraQuest = Object.freeze({
     worldMap,
     mapLandmarks,
+    worldTerrain,
+    // The terrain as it was actually drawn, so `AlgebraQuest.terrain().layers.length`
+    // answers "how many nodes is this costing" from the page itself rather than
+    // from somebody's estimate of it.
+    terrain: () => currentTerrain,
     remainingActivities,
     evaluateUnlocks,
     questDays,
