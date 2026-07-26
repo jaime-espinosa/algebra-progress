@@ -1690,6 +1690,80 @@ function buildTerrain(map, options) {
   };
 }
 
+// ---------------------------------------------------------------- the route
+//
+// The dashed road that threads the curriculum, in the order he actually walks
+// it: Semester 1 section by section, then the crossing, then Semester 2. It is
+// the spine of the map — everything else is scenery hung off it.
+//
+// The order here is not a layout choice. It is `region.routeIndex`, which is
+// the same order the quest board and the zoom view already use, so the road
+// cannot imply he may skip ahead or that some sections are optional. The road
+// only decides where the same order BENDS.
+//
+// It is drawn as one cubic per hop, with the two control points pushed sideways
+// off the straight line by a seeded amount, which is what makes it wander like
+// a road round a hill instead of reading as a polyline on a chart. The seed is
+// the constant terrain seed plus the hop index, so the road is identical on
+// every load and does not re-route when he finishes a unit.
+//
+// Hops between landmasses are returned separately as `crossings`, so the map
+// can draw the sea leg differently — a longer, flatter dash for a voyage.
+export function worldRoute(terrain) {
+  const territories = terrain?.territories ?? [];
+  if (territories.length < 1) return { nodes: [], legs: [], crossings: [] };
+
+  const nodes = territories
+    .map((territory, index) => ({
+      key: territory.key,
+      index,
+      x: territory.cx,
+      y: territory.cy,
+      mass: territory.mass ?? 0,
+      status: territory.status,
+      ahead: territory.ahead ?? 0,
+    }))
+    .sort((left, right) => (territories[left.index].routeIndex ?? left.index)
+      - (territories[right.index].routeIndex ?? right.index));
+
+  const legs = [];
+  const crossings = [];
+  const seed = TERRAIN_SEED;
+  for (let i = 0; i + 1 < nodes.length; i += 1) {
+    const from = nodes[i];
+    const to = nodes[i + 1];
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const len = Math.hypot(dx, dy) || 1;
+    // Unit normal to the hop. Bending along this is what curves the road.
+    const nx = -dy / len;
+    const ny = dx / len;
+    const sea = from.mass !== to.mass;
+    // Two independent seeded bends, so the hop can be an S rather than only
+    // ever a symmetrical arc. Sea legs bow harder — a shipping lane, not a
+    // ruler line across the water.
+    const swing = (sea ? 0.42 : 0.26) * len;
+    const b1 = (hash2(i, 7, seed + 9001) - 0.5) * 2 * swing;
+    const b2 = (hash2(i, 23, seed + 9007) - 0.5) * 2 * swing;
+    const c1x = from.x + dx * 0.32 + nx * b1;
+    const c1y = from.y + dy * 0.32 + ny * b1;
+    const c2x = from.x + dx * 0.68 + nx * b2;
+    const c2y = from.y + dy * 0.68 + ny * b2;
+    const d = `M${round1(from.x)} ${round1(from.y)}C${round1(c1x)} ${round1(c1y)} ${
+      round1(c2x)} ${round1(c2y)} ${round1(to.x)} ${round1(to.y)}`;
+    // A leg is walked if he has already reached the far end of it. Walked road
+    // is drawn solid and settled; road ahead is drawn faint. Neither is ever
+    // drawn as barred.
+    const leg = { d, from: from.key, to: to.key, walked: to.ahead === 0, sea };
+    (sea ? crossings : legs).push(leg);
+  }
+  return { nodes, legs, crossings };
+}
+
+function round1(value) {
+  return Math.round(value * 10) / 10;
+}
+
 // A stable fingerprint of the generated world. Two runs on the same data must
 // produce the same string; that is the whole test for "the coastline does not
 // reshuffle". Deliberately cheap and order-sensitive.
