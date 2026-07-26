@@ -1,0 +1,247 @@
+/* ---- Effort dials -------------------------------------------------------- *
+ * Analog instrument faces, styled off the Stack speedometer Jaime pointed at:
+ * deep bezel, dark face, numbers around the arc, minor ticks between the
+ * numbered ones, a second scale on a tighter inner arc, the unit named on the
+ * face, and an inset window with the exact figure.
+ *
+ * The reference dial's inner scale is RED. There is no red anywhere on this
+ * site, in any theme or state, so the inner scale uses --warn — the site's
+ * existing amber accent, already used by the adjusted-route line, the calendar
+ * keys and the chart reference labels. It marks a second scale, never a
+ * warning: nothing on this panel warns about anything.
+ *
+ * Lives in its own file so the effort panel can be restyled without touching
+ * shared rules in theme-overworld.css. Only .gauge* selectors belong here.
+ * Overrides the older .gauge rules in theme-overworld.css by loading after it.
+ * Motion is transform-only, and stops entirely under prefers-reduced-motion.
+ */
+
+.effort-gauges {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+.gauge {
+  min-width: 0;
+  border: 1px solid var(--line);
+  padding: 10px 8px 12px;
+  background: var(--panel-solid);
+  text-align: center;
+}
+
+.gauge__title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin: 0 0 6px;
+  color: var(--text);
+  font-size: 12px;
+  letter-spacing: .08em;
+}
+
+/* The bezel: an outer ring of the panel colour with an inner shadow, so the
+   face reads as sunk into a housing rather than printed on the panel. */
+.gauge__face {
+  position: relative;
+  width: min(100%, 210px);
+  margin: 0 auto;
+  border-radius: 50%;
+  padding: 5%;
+  background:
+    radial-gradient(circle at 50% 8%, #2b3138 0%, #14181d 60%, #05070a 100%);
+  box-shadow:
+    inset 0 0 0 2px var(--line),
+    inset 0 3px 10px rgba(0, 0, 0, .9),
+    0 2px 6px rgba(0, 0, 0, .6);
+}
+
+.gauge__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.gauge__disc {
+  fill: #06080b;
+  stroke: #000;
+  stroke-width: 1;
+}
+
+.gauge__track,
+.gauge__progress,
+.gauge__majors,
+.gauge__minors,
+.gauge__scale2-arc,
+.gauge__scale2-ticks {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.gauge__track {
+  stroke: var(--gap);
+  stroke-width: 3;
+}
+
+.gauge__progress {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+/* High-contrast numerals and ticks, as on the reference face. */
+.gauge__majors {
+  stroke: var(--text);
+  stroke-width: 2;
+}
+
+.gauge__minors {
+  stroke: var(--dim);
+  stroke-width: 1;
+}
+
+.gauge__number {
+  fill: var(--text);
+  font-family: var(--mono);
+  font-size: 6.6px;
+  font-weight: 700;
+  text-shadow: none;
+}
+
+/* ---- The second scale (amber, never red) --------------------------------- */
+.gauge__scale2-arc {
+  stroke: var(--warn);
+  stroke-width: 1;
+  opacity: .55;
+}
+
+.gauge__scale2-ticks {
+  stroke: var(--warn);
+  stroke-width: 1.4;
+}
+
+.gauge__number2 {
+  fill: var(--warn);
+  font-family: var(--mono);
+  font-size: 4.6px;
+  text-shadow: none;
+}
+
+.gauge__scale2-unit {
+  fill: var(--warn);
+  font-family: var(--mono);
+  font-size: 4px;
+  letter-spacing: .06em;
+  text-shadow: none;
+}
+
+/* The unit, named large on the face, exactly where the reference says MPH. */
+.gauge__face-unit {
+  fill: var(--text);
+  font-family: var(--mono);
+  font-size: 6.4px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-shadow: none;
+}
+
+/* ---- Needle and hub ------------------------------------------------------ */
+.gauge__needle {
+  fill: var(--text);
+  transform-origin: 50px 50px;
+  transition: transform .9s cubic-bezier(.2, .8, .2, 1);
+}
+
+.gauge__hub {
+  fill: #1b2027;
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.gauge__hub-pin {
+  fill: var(--dim);
+}
+
+/* ---- Inset digital window ------------------------------------------------ */
+/* Sits in the gap at the bottom of the arc, where the reference puts its
+   odometer window. The needle sweeps 135deg to 405deg and never crosses it. */
+.gauge__window {
+  position: absolute;
+  top: 62%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  min-width: 46%;
+  border: 1px solid #0c1a12;
+  border-radius: 2px;
+  padding: 2px 6px 3px;
+  background: linear-gradient(180deg, #16241a 0%, #101a13 100%);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .8);
+  pointer-events: none;
+}
+
+.gauge__window .plate--dial {
+  line-height: 1;
+}
+
+.gauge__window-sub {
+  color: var(--dim);
+  font-size: 8px;
+  letter-spacing: .06em;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+/* Each dial's text equivalent. Present for a screen reader at all times; the
+   SVG itself is aria-hidden so the picture is never read twice. */
+.gauge__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+@media (max-width: 760px) {
+  .effort-gauges {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+}
+
+/* Below this width the minor ticks and the inner scale's own numbers turn to
+   mush, so they are dropped rather than shrunk under legible size. The inner
+   scale keeps its ticks and its name, and every number stays full size. */
+@media (max-width: 520px) {
+  .gauge__minors,
+  .gauge__number2 {
+    display: none;
+  }
+
+  .gauge__number {
+    font-size: 7.4px;
+  }
+}
+
+@media (max-width: 420px) {
+  .effort-gauges {
+    grid-template-columns: 1fr;
+  }
+
+  .gauge__face {
+    width: min(100%, 260px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gauge__needle {
+    transition: none;
+  }
+}
