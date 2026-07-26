@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code lab: Where Two Lines Cross</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S1 // SECTION 03 // SYSTEMS OF EQUATIONS // CODE LAB</p>
+      <h1>Where Two Lines Cross</h1>
+      <p class="prose">Solve the system with algebra, then let the picture check your answer.</p>
+    </header>
+
+    <section>
+      <h2>The idea</h2>
+      <div class="prose">
+        <p>A system of two linear equations asks: which pair (x, y) works in both at once?</p>
+        <p>On a graph that is the point where the lines cross.</p>
+        <p>In algebra you set the two right-hand sides equal:</p>
+      </div>
+      <div class="math">
+        <p>m₁x + b₁ = m₂x + b₂</p>
+        <p>x(m₁ − m₂) = b₂ − b₁</p>
+        <p>x = (b₂ − b₁) ÷ (m₁ − m₂)</p>
+      </div>
+      <p class="prose">The code does exactly that, then marks the point it found. If the mark sits on the crossing, the algebra was right.</p>
+      <p class="small-screen status">This lab wants a wide screen. It works here, but the editor and picture are stacked.</p>
+    </section>
+
+    <div class="bench">
+      <section aria-labelledby="editor-heading">
+        <h2 id="editor-heading">The code</h2>
+        <label class="label" for="code">JavaScript — edit freely</label>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+          aria-describedby="api"></textarea>
+        <div class="controls">
+          <button id="run" type="button">Run</button>
+          <button id="reset" type="button" class="secondary">Back to the start</button>
+          <span id="run-status" role="status" aria-live="polite"></span>
+        </div>
+        <p class="api" id="api">
+          Ctrl+Enter also runs it. This page gives you
+          <code>graph(xMin, xMax, yMin, yMax)</code>, then <code>.plot(f)</code> and
+          <code>.point(x, y, "label")</code>, plus <code>say(...)</code>.
+        </p>
+      </section>
+
+      <section aria-labelledby="output-heading">
+        <h2 id="output-heading">What it drew</h2>
+        <div id="picture"></div>
+        <div id="description" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <section>
+      <h2>Challenges</h2>
+      <ol class="challenges">
+        <li>Change <code>b2</code> to <code>5</code> and run. The crossing moves; the code finds it anyway.</li>
+        <li>Set <code>m2 = 2</code>, the same slope as line A. Read what the output says about x. Parallel lines never meet, and the division by <code>m1 - m2</code> divides by zero — the algebra tells you "no solution" in exactly the same breath as the picture does.</li>
+        <li>Now also set <code>b2 = -3</code>. Both lines are identical, x comes out as <code>NaN</code> (0 ÷ 0), and every point on the line is a solution. Three outcomes, one formula.</li>
+        <li>Put the lines back to <code>m1 = 2, b1 = -3, m2 = -1, b2 = 3</code> and change the last <code>say</code> to check line A instead: <code>say("check in line A:", lineA(x));</code></li>
+        <li>Solve one by hand first. Pick <code>m1 = 3, b1 = 1, m2 = 1, b2 = 7</code>, work out x on paper, then run it and see whether you agree with the machine.</li>
+      </ol>
+    </section>
+
+    <aside class="python">
+      <span class="label">Why JavaScript and not Python</span>
+      <div class="prose">
+        <p>Running Python in a browser means a ten-megabyte download before the first line executes. JavaScript is already loaded, so this page is instant and works with no connection at all.</p>
+        <p><code>let m1 = 2, b1 = -3;</code> declares two names at once. Python writes <code>m1, b1 = 2, -3</code>.</p>
+        <p>JS <code>const</code> means the name cannot be pointed at something else later. Python has no direct equivalent.</p>
+        <p>Division is <code>/</code> in both, but JS <code>6 / 4</code> gives <code>1.5</code> where Python 3 also gives <code>1.5</code> — it is Python's <code>//</code> that throws the fraction away.</p>
+      </div>
+    </aside>
+
+    <section>
+      <h2>Nearby</h2>
+      <p class="prose">
+        <a href="../lessons/sem1-03.html">Mini-lesson: Systems of Equations and Inequalities</a> ·
+        <a href="sem1-05-line.html">Code lab: Move the Line</a> ·
+        <a href="../index.html">Back to the quest board</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="text/plain" id="starter-code">
+// Two lines. One crossing point. Solve it, then check the picture.
+let m1 = 2;
+let b1 = -3;    // line A: y = 2x - 3
+let m2 = -1;
+let b2 = 3;     // line B: y = -x + 3
+
+function lineA(x) {
+  return m1 * x + b1;
+}
+
+function lineB(x) {
+  return m2 * x + b2;
+}
+
+// m1*x + b1 = m2*x + b2  ->  x = (b2 - b1) / (m1 - m2)
+const x = (b2 - b1) / (m1 - m2);
+const y = lineA(x);
+
+const g = graph(-6, 6, -6, 6);
+g.plot(lineA, "line A");
+g.plot(lineB, "line B");
+g.point(x, y, "solution");
+
+say("x =", x, "and y =", y);
+say("check in line B:", lineB(x), "which should equal", y);
+</script>
+  <script type="module">
+    import { mountLab } from "./lab-runtime.mjs";
+    mountLab();
+  </script>
+</body>
+</html>
