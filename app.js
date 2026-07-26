@@ -505,6 +505,12 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
         <p class="skin-card__status${failed ? " is-warning" : ""}" role="status">${escapeHtml(status)}</p>
       </div>`;
 
+    if (typed !== null) {
+      const restored = card.querySelector("#skin-name");
+      restored.focus();
+      restored.setSelectionRange(restored.value.length, restored.value.length);
+    }
+
     if (skin) {
       const backgroundImage = `url(${JSON.stringify(skin.dataUrl)})`;
       card.querySelector(".skin-card__head-base").style.backgroundImage = backgroundImage;
