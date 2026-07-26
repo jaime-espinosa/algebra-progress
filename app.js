@@ -900,12 +900,15 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       marks.push(landmarkStructure(spot.cx, spot.cy + 30 + seen * 10, entry.earned, seen));
     });
     const hereSpot = map.next ? spotOf.get(map.next.regionKey) : null;
-    const overlaySvg = marks.length || hereSpot
-      ? `<svg class="wm-overlay" viewBox="0 0 ${terrain.width} ${terrain.height}"
+    // The road, drawn under the markers. Its order is region route order and
+    // nothing else, so it can never suggest he may take the sections in some
+    // other order or leave one out.
+    const route = worldRoute(terrain);
+    const overlaySvg = `<svg class="wm-overlay" viewBox="0 0 ${terrain.width} ${terrain.height}"
           width="${terrain.width}" height="${terrain.height}" aria-hidden="true" focusable="false"
-          shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
-          ${marks.join("")}${hereSpot ? hereMarker(hereSpot.cx, hereSpot.cy + 26) : ""}</svg>`
-      : "";
+          shape-rendering="auto" xmlns="http://www.w3.org/2000/svg">
+          ${routePaths(route)}${compassRose(terrain.width - 92, 96)}
+          ${marks.join("")}${hereSpot ? hereMarker(hereSpot.cx, hereSpot.cy + 26) : ""}</svg>`;
 
     document.querySelector("#worldmap-content").innerHTML = map.worlds.length
       ? `
@@ -933,10 +936,17 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       </div>
       <div class="wm-zoom" id="wm-zoom" role="group" aria-labelledby="wm-zoom-heading" hidden></div>
       <div class="wm-key quiet">
+        <span><b class="wm-key__swatch is-route"></b> the road, in the order you do the sections</span>
+        <span><b class="wm-key__swatch is-lesson"></b> lessons done in a section</span>
+        <span><b class="wm-key__swatch is-quiz"></b> practice quizzes done</span>
+        <span><b class="wm-key__swatch is-activity"></b> activities done</span>
+        <span><b class="wm-key__swatch is-check"></b> chest — the end-of-section assignment</span>
+        <span><b class="wm-key__swatch is-test"></b> sword — the section test</span>
+        <span><b class="wm-key__swatch is-empty"></b> still to do in that section</span>
         <span><b class="wm-key__swatch is-settled"></b> settled ground</span>
-        <span><b class="wm-key__swatch is-haze"></b> unexplored — nothing lost, just not reached</span>
+        <span><b class="wm-key__swatch is-haze"></b> haze — not discovered yet, and worth going to see</span>
         <span><b class="wm-key__swatch is-water"></b> ocean</span>
-        <span><b class="wm-key__swatch is-here"></b> you are here</span>
+        <span><b class="wm-key__swatch is-here"></b> the flag — you are here</span>
         <span><b class="wm-key__swatch is-landmark"></b> a landmark stands or unlocks here</span>
       </div>
       ${renderTerritoryTable(map)}`
