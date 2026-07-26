@@ -478,30 +478,42 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     return Math.round(value * 10) / 10;
   }
 
-  // The single-row kinds, as small blocky icons sitting on the node's corners:
-  // a chest for the end-of-section assignment, a sword for the section test.
-  // Filled when done, hollow and quiet when not — never crossed out, never
-  // padlocked.
+  // The one-off kinds of work, as small blocky icons in a row along the top of
+  // the node. Jaime's rule, and it applies to ANY kind with exactly one row in
+  // the section rather than only to tests — in this curriculum that is reliably
+  // the end-of-section assignment and the section test, and occasionally a lone
+  // activity or quiz. One row would be a band two pixels tall, which is noise;
+  // as an icon it is a thing you can actually see the state of.
+  //
+  // Filled and bright when done, hollow and quiet when not. Never crossed out,
+  // never padlocked, never marked.
+  const ICON_GLYPH = {
+    // chest: lid band over a body
+    check: (x, y, ink) => `<path fill="${ink}" d="M${x - 5} ${y - 4}h10v3h-10zm0 4h10v5h-10z"/>`,
+    // sword: blade over a crossguard
+    test: (x, y, ink) => `<path fill="${ink}" d="M${x - 1} ${y - 5}h3v9h-3zm-3 6h9v3h-9z"/>`,
+    // scroll: two stacked bars
+    quiz: (x, y, ink) => `<path fill="${ink}" d="M${x - 5} ${y - 4}h10v3h-10zm0 5h10v3h-10z"/>`,
+    // block: a solid square
+    lesson: (x, y, ink) => `<path fill="${ink}" d="M${x - 4} ${y - 4}h9v9h-9z"/>`,
+    // diamond, stepped so it stays blocky
+    activity: (x, y, ink) => `<path fill="${ink}" d="M${x - 1} ${y - 5}h3v2h-3zm-3 2h9v3h-9zm-2 3h13v3h-13zm3 3h7v2h-7z"/>`,
+    orientation: (x, y, ink) => `<path fill="${ink}" d="M${x - 3} ${y - 3}h7v7h-7z"/>`,
+  };
+
   function nodeIcons(region, x, y, size) {
-    const half = size / 2;
+    const singles = region.types.filter((entry) => entry.total === 1);
+    if (!singles.length) return "";
+    const box = 15;
+    const row = singles.length * box;
+    let cursor = x - row / 2 + box / 2;
+    const top = y - size / 2 - 11;
     const out = [];
-    const check = region.types.find((entry) => entry.type === "check" && entry.total === 1);
-    const test = region.types.find((entry) => entry.type === "test" && entry.total === 1);
-    if (check) {
-      const ink = check.done ? TYPE_INK.check : "#5b6874";
-      const cx = x - half - 1;
-      const cy = y - half - 1;
-      out.push(`<path fill="#1d2830" opacity=".65" d="M${cx - 8} ${cy - 8}h16v16h-16z"/>`);
-      out.push(`<path fill="${ink}" d="M${cx - 6} ${cy - 5}h12v4h-12zm0 5h12v6h-12z"/>`);
-      if (check.done) out.push(`<path fill="#2c3a44" d="M${cx - 1} ${cy - 1}h2v4h-2z"/>`);
-    }
-    if (test) {
-      const ink = test.done ? TYPE_INK.test : "#5b6874";
-      const cx = x + half + 1;
-      const cy = y - half - 1;
-      out.push(`<path fill="#1d2830" opacity=".65" d="M${cx - 8} ${cy - 8}h16v16h-16z"/>`);
-      out.push(`<path fill="${ink}" d="M${cx - 1} ${cy - 6}h3v9h-3z"/>`);
-      out.push(`<path fill="${ink}" d="M${cx - 4} ${cy + 2}h9v3h-9z"/>`);
+    for (const entry of singles) {
+      const ink = entry.done ? TYPE_INK[entry.type] : "#66727d";
+      out.push(`<path fill="#16202a" opacity=".78" d="M${cursor - 7} ${top - 7}h14v14h-14z"/>`);
+      out.push((ICON_GLYPH[entry.type] ?? ICON_GLYPH.orientation)(cursor, top, ink));
+      cursor += box;
     }
     return out.join("");
   }
