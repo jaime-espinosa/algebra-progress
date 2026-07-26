@@ -337,11 +337,17 @@ export function recentVolume(data, today, days = 7) {
 }
 
 // One call for the whole instrument cluster, so app.js never recomputes pace.
-export function dashboard(data, today) {
+// `windowDays` is the site-wide rolling window. It defaults to 3 because three days is
+// what he was asked to hold in his head at once; the control on the dashboard lets a
+// parent widen it without touching anything else. The field names below keep the `3`
+// suffix for continuity with the frozen fixtures — read them as "the current window",
+// and use `windowDays` whenever a label needs to say the number out loud.
+export function dashboard(data, today, windowDays = 3) {
+  const days = Math.max(1, Math.min(14, Math.round(Number(windowDays) || 3)));
   const stats = effortStats(data, today);
   const totalRows = stats.submitted + stats.rowsLeft;
-  const recent = recentVolume(data, today, 3);
-  const prior = recentVolume(data, addDays(parseDateKey(today), -3), 3);
+  const recent = recentVolume(data, today, days);
+  const prior = recentVolume(data, addDays(parseDateKey(today), -days), days);
   return {
     // Odometer: rows submitted, all time. Only ever goes up.
     odometer: stats.submitted,
@@ -354,6 +360,7 @@ export function dashboard(data, today) {
     fastEnough: stats.fastEnough,
     // Rolling dial: raw rows in the last three calendar days, and the three
     // before that. Both are counts, never rates.
+    windowDays: days,
     recent3: recent.total,
     recent3From: recent.from,
     recent3To: recent.to,
