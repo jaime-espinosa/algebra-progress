@@ -140,9 +140,9 @@
 .gauge__face-unit {
   fill: var(--text);
   font-family: var(--mono);
-  font-size: 6.4px;
+  font-size: 5.8px;
   font-weight: 700;
-  letter-spacing: .12em;
+  letter-spacing: .08em;
   text-shadow: none;
 }
 
@@ -168,13 +168,13 @@
    odometer window. The needle sweeps 135deg to 405deg and never crosses it. */
 .gauge__window {
   position: absolute;
-  top: 62%;
+  top: 60%;
   left: 50%;
   transform: translateX(-50%);
   display: grid;
   justify-items: center;
   gap: 1px;
-  min-width: 46%;
+  min-width: 38%;
   border: 1px solid #0c1a12;
   border-radius: 2px;
   padding: 2px 6px 3px;
@@ -183,14 +183,27 @@
   pointer-events: none;
 }
 
-.gauge__window .plate--dial {
-  line-height: 1;
+.gauge__window .plate {
+  gap: 2px;
+}
+
+/* The window is an inset odometer, not the headline: it holds the exact figure
+   at a size that fits inside the arc's bottom gap. */
+.gauge__window .plate__digit {
+  min-width: .6em;
+  border-width: 1px;
+  padding: 1px 3px;
+  font-size: clamp(13px, 1.5vw, 17px);
+}
+
+.gauge__window .plate__mark {
+  font-size: clamp(13px, 1.5vw, 17px);
 }
 
 .gauge__window-sub {
   color: var(--dim);
-  font-size: 8px;
-  letter-spacing: .06em;
+  font-size: 7.5px;
+  letter-spacing: .04em;
   line-height: 1.1;
   white-space: nowrap;
 }

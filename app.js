@@ -632,8 +632,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       viewport.classList.remove("is-dragging");
       try { viewport.releasePointerCapture(event.pointerId); } catch { /* already gone */ }
       // A drag is not a click: without this, pushing the map sideways by
-      // grabbing a chunk would zoom into whatever was under the finger.
-      if (moved > 6) viewport.dataset.suppressClick = "1";
+      // grabbing a chunk would zoom into whatever was under the finger. Stamped
+      // with a time rather than a flag, so the suppression belongs to THIS
+      // gesture and cannot linger and eat a real click made later.
+      if (moved > 6) viewport.dataset.dragEndedAt = String(Date.now());
     };
     viewport.addEventListener("pointerup", endDrag);
     viewport.addEventListener("pointercancel", endDrag);
@@ -971,8 +973,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // `scale` and `secondary` come from quest.mjs (dialScale / percentTicks). This
   // function does geometry and markup only, and computes no reading of its own.
   const GAUGE = {
-    track: 45.5, tickOuter: 44, majorInner: 37, minorInner: 40.5, numbers: 31.5,
-    scale2Arc: 25.5, scale2Outer: 27.5, scale2Inner: 23.5, scale2Numbers: 19,
+    track: 45.5, tickOuter: 44, majorInner: 37, minorInner: 40.5, numbers: 33.5,
+    scale2Arc: 25.5, scale2Outer: 27.5, scale2Inner: 23.5, scale2Numbers: 18,
     needle: 42,
   };
 
@@ -995,17 +997,22 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     const numbers = scale.majors
       .map(({ at, text }) => gaugeText(at, GAUGE.numbers, text, "gauge__number")).join("");
 
-    const ticks2 = secondary.ticks.map(({ at }) => gaugeTick(at, GAUGE.scale2Inner, GAUGE.scale2Outer)).join("");
-    const numbers2 = secondary.ticks
+    // The inner scale is drawn from its first non-zero tick, like the reference
+    // dial's second scale, which starts short of the zero end. That also keeps
+    // its numbers clear of the digital window in the gap at the bottom.
+    const ticks2list = secondary.ticks.filter(({ percent }) => percent > 0);
+    const ticks2 = ticks2list.map(({ at }) => gaugeTick(at, GAUGE.scale2Inner, GAUGE.scale2Outer)).join("");
+    const numbers2 = ticks2list
       .map(({ at, text }) => gaugeText(at, GAUGE.scale2Numbers, text, "gauge__number2")).join("");
-    const lastTick = secondary.ticks.length ? secondary.ticks[secondary.ticks.length - 1].at : 0;
-    const scale2 = secondary.ticks.length ? `
+    const firstTick = ticks2list.length ? ticks2list[0].at : 0;
+    const lastTick = ticks2list.length ? ticks2list[ticks2list.length - 1].at : 0;
+    const scale2 = ticks2list.length ? `
             <g class="gauge__scale2">
-              <path class="gauge__scale2-arc" d="${gaugeArc(0, lastTick, GAUGE.scale2Arc)}"></path>
+              <path class="gauge__scale2-arc" d="${gaugeArc(firstTick, lastTick, GAUGE.scale2Arc)}"></path>
               <g class="gauge__scale2-ticks" shape-rendering="crispEdges">${ticks2}</g>
               <g class="gauge__scale2-numbers">${numbers2}</g>
             </g>
-            <text class="gauge__scale2-unit" x="50" y="41" text-anchor="middle">${escapeHtml(secondary.unit)}</text>` : "";
+            <text class="gauge__scale2-unit" x="50" y="56" text-anchor="middle">${escapeHtml(secondary.unit)}</text>` : "";
 
     const progress = clamped > 0 ? `
             <path class="gauge__progress" d="${gaugeArc(0, clamped, GAUGE.track)}"></path>` : "";
@@ -1023,7 +1030,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
             <g class="gauge__majors" shape-rendering="crispEdges">${majors}</g>
             <g class="gauge__numbers">${numbers}</g>
             ${scale2}
-            <text class="gauge__face-unit" x="50" y="87" text-anchor="middle">${escapeHtml(faceUnit)}</text>
+            <text class="gauge__face-unit" x="50" y="86" text-anchor="middle">${escapeHtml(faceUnit)}</text>
             <g class="gauge__needle" style="transform: rotate(${angle}deg)">
               <polygon points="42,48.8 92,50 42,51.2 40,50"></polygon>
             </g>
@@ -1281,7 +1288,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           secondary: { unit: "% OF AUG 15 PACE", ticks: percentTicks(paceScale.max, s.requiredPerDay) },
           faceUnit: "UNITS / DAY",
           readout: s.activePace.toFixed(2),
-          readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)}`,
+          readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)} TO FINISH ON TIME`,
           ariaText: `Units per day on the days you work: ${s.activePace.toFixed(2)}, on a dial reading 0 to ${paceScale.max} units per day — ${s.odometer} units over ${s.activeDays} working days. Aug 15 needs ${s.requiredPerDay.toFixed(2)} a day, so the inner amber percentage scale reads ${pacePercent} percent of that pace.`
         })}
 
@@ -1918,10 +1925,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       if (regionButton) {
         // A drag that ended on a chunk is a pan, not a click.
         const viewport = document.querySelector("#wm-viewport");
-        if (viewport?.dataset.suppressClick === "1") {
-          delete viewport.dataset.suppressClick;
-          return;
-        }
+        const draggedAt = Number(viewport?.dataset.dragEndedAt ?? 0);
+        if (draggedAt && Date.now() - draggedAt < 300) return;
         openRegion(regionButton.dataset.region);
         return;
       }
