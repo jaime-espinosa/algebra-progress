@@ -1115,15 +1115,11 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       : `That plan lands after Aug 15. ${closesGap.toFixed(1)} a day reaches it.`;
     const next = remaining[0];
 
-    // The heading used to say REROUTING permanently, including when his own plan
-    // landed early — a header that never changes is a header that stops being read,
-    // and this one was quietly calling every good plan a course correction.
-    const heading = remaining.length === 0
-      ? "ROUTE CLEAR"
-      : projectedDate <= data.deadline.date
-        ? `ROUTE LOCKED&nbsp;&nbsp;//&nbsp;&nbsp;${Math.max(0, ahead)} days of slack`
-        : "REROUTING";
-    document.querySelector("#pace-heading").innerHTML = heading;
+    // The dynamic heading is gone: "ROUTE LOCKED // 2 days of slack" was jargon nobody
+    // asked for and it was not understood ("i don't fully understand the 'route locked'
+    // -- let's remove it"). The static "Route" in index.html stays, so the section keeps
+    // its accessible name and the slot never renders empty — a heading that vanishes on a
+    // bad day communicates "behind" without a number, which is exactly what we avoid here.
 
     document.querySelector("#pace-content").innerHTML = `
       <div class="daily-readout numeric">
