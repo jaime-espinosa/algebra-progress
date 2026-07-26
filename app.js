@@ -31,8 +31,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   let currentLandmarks = [];
   let currentTerrain = null;
   let intervalId = null;
-  // Set when a batch of tiles is queued to reveal; cleared once the vault slots
-  // that follow them have been unhidden.
+  // Raised by renderVault when a newly earned slot is drawn hidden; cleared on
+  // the next tick, which is what turns it into an arrival rather than a state.
   let revealPending = false;
   let pendingArtifact = null;
   let refreshMessage = "";
