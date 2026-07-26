@@ -30,6 +30,20 @@
   text-align: center;
 }
 
+/* Names the dial above the glass, where a car's instrument cluster puts it. Kept
+   small and dim so it labels the face without competing with the reading on it. */
+.gauge__title {
+  margin: 0 0 4px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: clamp(9px, 1vw, 11px);
+  font-weight: 700;
+  letter-spacing: .08em;
+  line-height: 1.2;
+  text-shadow: none;
+  text-wrap: balance;
+}
+
 /* The bezel: an outer ring of the panel colour with an inner shadow, so the
    face reads as sunk into a housing rather than printed on the panel. */
 .gauge__face {

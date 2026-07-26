@@ -876,8 +876,12 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
               d="${gaugeArc(Math.max(0, from), Math.min(1, to), GAUGE.track)}"></path>`).join("");
     const angle = (135 + clamped * 270).toFixed(2);
 
+    // The title sits ABOVE the face, not on it: naming the dial inside the glass crowded
+    // the numerals and the window, and he asked for it out here where a car puts it. The
+    // face keeps only its unit, which is what a speedometer actually prints.
     return `
       <article class="gauge">
+        <h3 class="gauge__title">${escapeHtml(label)}</h3>
         <div class="gauge__face">
           <svg class="gauge__svg" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
             <circle class="gauge__disc" cx="50" cy="50" r="49"></circle>
@@ -901,7 +905,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
             ${numeralPlate(readout, "dial")}
             ${readoutSub ? `<span class="gauge__window-sub numeric">${escapeHtml(readoutSub)}</span>` : ""}
           </div>
-          <p class="gauge__sr">${escapeHtml(`${label}. ${ariaText}`)}</p>
+          <p class="gauge__sr">${escapeHtml(ariaText)}</p>
         </div>
       </article>`;
   }
