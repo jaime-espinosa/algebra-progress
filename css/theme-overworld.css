@@ -347,8 +347,8 @@ summary.section-heading::-webkit-details-marker {
   50%      { opacity: .12; }
 }
 
-/* The semester summaries. They sit above the map rather than inside it: the map
-   is terrain now, and paragraphs laid over terrain are paragraphs nobody reads. */
+/* The semester summaries stay above the map as compact controls. Their figures
+   live in click-triggered dialogs, not in always-on text blocks. */
 .wm-worlds {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -356,14 +356,77 @@ summary.section-heading::-webkit-details-marker {
   margin: 0 0 14px;
 }
 
-.wm-band {
-  position: relative;
+.wm-world-card {
   display: grid;
   gap: 6px;
+  width: 100%;
   align-content: start;
   padding: 14px;
   border: 1px solid var(--line);
   background: var(--panel-solid);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.wm-world-card:hover,
+.wm-world-card:focus-visible,
+.wm-world-card[aria-expanded="true"] {
+  border-color: var(--accent);
+  outline: 2px solid transparent;
+}
+
+.wm-world-card .wm-world__name {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.wm-world-card__action {
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.wm-world-popup {
+  position: fixed;
+  z-index: 20;
+  inset: 50% auto auto 50%;
+  display: none;
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  margin: 0;
+  overflow: auto;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--accent);
+  padding: 18px;
+  background: var(--panel-solid);
+  box-shadow: 0 12px 0 var(--shadow);
+  color: var(--text);
+}
+
+.wm-world-popup[open] {
+  display: grid;
+  gap: 8px;
+}
+
+.wm-world-popup__close {
+  justify-self: end;
+  min-width: 36px;
+  min-height: 36px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.wm-world-popup__close:hover,
+.wm-world-popup__close:focus-visible {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* A banner naming a landmass, pinned above its northern coast. */
@@ -543,35 +606,15 @@ summary.section-heading::-webkit-details-marker {
   color: #d6e3ea;
 }
 
-/* The key under the map. Swatches are literal terrain colours, quoted from the
-   palette in quest.mjs so the legend cannot drift away from the map. */
-.wm-key__swatch {
+/* Each key sample is inline SVG from the same drawing function or terrain
+   values as the map itself. No generic colour-square stand-ins. */
+.wm-key__glyph {
   display: inline-block;
-  width: 12px;
-  height: 12px;
-  vertical-align: -2px;
-  box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, .25);
-}
-
-.wm-key__swatch.is-settled { background: #7cab52; }
-.wm-key__swatch.is-haze    { background: #3d5060; }
-.wm-key__swatch.is-water   { background: #356089; }
-.wm-key__swatch.is-here    { background: #3b6ea8; }
-.wm-key__swatch.is-landmark { background: #d7b45c; }
-/* The work-type inks, matching the bands and icons inside a node exactly.
-   Literal values, same as in app.js, so the legend cannot drift from the map. */
-.wm-key__swatch.is-lesson   { background: #f0c86a; }
-.wm-key__swatch.is-quiz     { background: #79c0a4; }
-.wm-key__swatch.is-activity { background: #a89ad6; }
-.wm-key__swatch.is-check    { background: #c8b48a; }
-.wm-key__swatch.is-test     { background: #ffd67a; }
-.wm-key__swatch.is-empty    { background: #31414e; }
-.wm-key__swatch.is-route {
-  background: none;
-  border-top: 3px dashed #ffd67a;
-  height: 0;
-  align-self: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  overflow: visible;
+  vertical-align: middle;
 }
 
 /* The text equivalent. Not a fallback and not hidden: the same counts the map
@@ -816,6 +859,32 @@ summary.section-heading::-webkit-details-marker {
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
+}
+
+.game-item {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+}
+
+.game-item__body {
+  min-width: 0;
+}
+
+.game-kind-icon {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  image-rendering: pixelated;
+  vertical-align: middle;
+}
+
+.wm-links .game-kind-icon {
+  width: 24px;
+  height: 24px;
+  flex-basis: 24px;
 }
 
 .wm-detail__lesson {

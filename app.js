@@ -360,6 +360,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   let panX = 0;
   let panY = 0;
   let zoomedRegion = null;
+  let worldPopupOpener = null;
   // First paint centres the viewport on the territory holding his next unit.
   // Only the first: a later redraw must not yank the map out from under a pan
   // he is in the middle of.
@@ -521,16 +522,16 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // never padlocked, never marked.
   const ICON_GLYPH = {
     // chest: lid band over a body
-    check: (x, y, ink) => `<path fill="${ink}" d="M${x - 5} ${y - 4}h10v3h-10zm0 4h10v5h-10z"/>`,
+    check: (x, y, ink) => `<path class="wm-icon wm-icon-check" fill="${ink}" d="M${x - 5} ${y - 4}h10v3h-10zm0 4h10v5h-10z"/>`,
     // sword: blade over a crossguard
-    test: (x, y, ink) => `<path fill="${ink}" d="M${x - 1} ${y - 5}h3v9h-3zm-3 6h9v3h-9z"/>`,
+    test: (x, y, ink) => `<path class="wm-icon wm-icon-test" fill="${ink}" d="M${x - 1} ${y - 5}h3v9h-3zm-3 6h9v3h-9z"/>`,
     // scroll: two stacked bars
-    quiz: (x, y, ink) => `<path fill="${ink}" d="M${x - 5} ${y - 4}h10v3h-10zm0 5h10v3h-10z"/>`,
+    quiz: (x, y, ink) => `<path class="wm-icon wm-icon-quiz" fill="${ink}" d="M${x - 5} ${y - 4}h10v3h-10zm0 5h10v3h-10z"/>`,
     // block: a solid square
-    lesson: (x, y, ink) => `<path fill="${ink}" d="M${x - 4} ${y - 4}h9v9h-9z"/>`,
+    lesson: (x, y, ink) => `<path class="wm-icon wm-icon-lesson" fill="${ink}" d="M${x - 4} ${y - 4}h9v9h-9z"/>`,
     // diamond, stepped so it stays blocky
-    activity: (x, y, ink) => `<path fill="${ink}" d="M${x - 1} ${y - 5}h3v2h-3zm-3 2h9v3h-9zm-2 3h13v3h-13zm3 3h7v2h-7z"/>`,
-    orientation: (x, y, ink) => `<path fill="${ink}" d="M${x - 3} ${y - 3}h7v7h-7z"/>`,
+    activity: (x, y, ink) => `<path class="wm-icon wm-icon-activity" fill="${ink}" d="M${x - 1} ${y - 5}h3v2h-3zm-3 2h9v3h-9zm-2 3h13v3h-13zm3 3h7v2h-7z"/>`,
+    orientation: (x, y, ink) => `<path class="wm-icon wm-icon-orientation" fill="${ink}" d="M${x - 3} ${y - 3}h7v7h-7z"/>`,
   };
 
   function nodeIcons(region, x, y, size) {
@@ -548,6 +549,58 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       cursor += box;
     }
     return out.join("");
+  }
+
+  function mapLegendGlyph(kind, body, viewBox = "0 0 24 24") {
+    return `<svg class="wm-key__glyph" data-glyph="${kind}" viewBox="${viewBox}"
+      aria-hidden="true" focusable="false" shape-rendering="crispEdges">${body}</svg>`;
+  }
+
+  // The key calls the same drawing functions as the map. That makes these true
+  // samples rather than lookalike squares that can drift from the actual glyphs.
+  function mapLegend(terrain) {
+    const node = {
+      types: [
+        { type: "lesson", total: 3, done: 2 },
+        { type: "quiz", total: 2, done: 1 },
+        { type: "activity", total: 2, done: 1 },
+      ],
+      unitsDone: 4,
+      unitsTotal: 7,
+    };
+    const fog = terrain.layers.find(layer => layer.id === "fog0.7")
+      ?? terrain.layers.find(layer => layer.id.startsWith("fog"));
+    const ground = terrain.layers.find(layer => layer.id === "t1.1")
+      ?? terrain.layers.find(layer => layer.id.startsWith("t"));
+    const fogBody = `
+      <rect x="2" y="2" width="20" height="20" fill="${ground?.fill ?? "#7cab52"}"/>
+      <rect x="2" y="2" width="20" height="20" fill="${fog?.fill ?? "#122334"}"
+        opacity="${fog?.opacity ?? 0.55}"/>`;
+    const nodeBody = `
+      <path class="wm-node__frame" d="M2 2h20v20h-20z"/>
+      ${nodeBands(node, 12, 12, 20)}`;
+    return `<div class="wm-key quiet">
+      <span>${mapLegendGlyph("route",
+        '<path class="wm-route is-walked" d="M1 12h22"/>')} the road, in section order</span>
+      <span>${mapLegendGlyph("node", nodeBody)}
+        node bands — lessons, practice quizzes and activities; dark space is still to do</span>
+      <span>${mapLegendGlyph("chest", ICON_GLYPH.check(12, 12, TYPE_INK.check))}
+        chest — the end-of-section assignment</span>
+      <span>${mapLegendGlyph("sword", ICON_GLYPH.test(12, 12, TYPE_INK.test))}
+        sword — the section test</span>
+      <span>${mapLegendGlyph("settled",
+        `<rect x="2" y="2" width="20" height="20" fill="${ground?.fill ?? "#7cab52"}"/>`)}
+        settled ground</span>
+      <span>${mapLegendGlyph("fog", fogBody)}
+        haze — not discovered yet, and worth going to see</span>
+      <span>${mapLegendGlyph("water",
+        `<rect x="2" y="2" width="20" height="20" fill="${terrain.ocean}"/>`)}
+        ocean</span>
+      <span>${mapLegendGlyph("flag", hereFlag(20, 60), "0 0 42 64")}
+        the flag — you are here</span>
+      <span>${mapLegendGlyph("landmark", landmarkStructure(12, 20, true, 0.5))}
+        a landmark stands or unlocks here</span>
+    </div>`;
   }
 
   // A node on the route. This is the focusable control — a real <button> in the
@@ -630,15 +683,29 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // The summary that used to sit in the map's left gutter as a band. It is the
   // same figures, above the map instead of inside it, because the map is now
   // terrain and text laid over terrain is text nobody can read.
-  function renderWorldCard(world, landmarks) {
+  function worldEyebrow(world) {
     const numeral = WORLD_NUMERAL[world.index] ?? String(world.index);
-    const eyebrow = world.sealed
+    return world.sealed
       ? `WORLD ${numeral} // SEALED`
       : world.holdsNext
         ? `WORLD ${numeral} // YOU BUILT THIS`
         : world.unitsDone > 0
           ? `WORLD ${numeral} // UNDER WAY`
           : `WORLD ${numeral} // NEWLY SIGHTED CONTINENT`;
+  }
+
+  function renderWorldCard(world) {
+    const popupId = `wm-world-popup-${world.id}`;
+    return `
+      <button type="button" class="wm-world-card" data-world-card="${escapeHtml(world.id)}"
+        aria-haspopup="dialog" aria-controls="${popupId}" aria-expanded="false">
+        <span class="eyebrow">${escapeHtml(worldEyebrow(world))}</span>
+        <span class="wm-world__name">${escapeHtml(world.name)}</span>
+        <span class="wm-world-card__action">Open world record</span>
+      </button>`;
+  }
+
+  function renderWorldPopup(world, landmarks) {
     const near = world.sealed
       ? `${escapeHtml(world.name)} is sealed. Every unit in it is submitted.`
       : `${world.unitsLeft} unit${world.unitsLeft === 1 ? "" : "s"} from sealing ${escapeHtml(world.name)}.`;
@@ -648,9 +715,12 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           world.letter ? ` · ${escapeHtml(world.letter)}` : ""}</span>`;
     const standing = landmarks.filter(entry => entry.earned);
     return `
-      <div class="wm-band">
-        <span class="eyebrow">${escapeHtml(eyebrow)}</span>
-        <h3 class="wm-world__name">${escapeHtml(world.name)}</h3>
+      <dialog class="wm-world-popup" id="wm-world-popup-${escapeHtml(world.id)}"
+        aria-labelledby="wm-world-popup-title-${escapeHtml(world.id)}">
+        <button type="button" class="wm-world-popup__close" data-world-close
+          aria-label="Close ${escapeHtml(world.name)} world record">×</button>
+        <span class="eyebrow">${escapeHtml(worldEyebrow(world))}</span>
+        <h3 class="wm-world__name" id="wm-world-popup-title-${escapeHtml(world.id)}">${escapeHtml(world.name)}</h3>
         <strong class="big-number numeric">${world.unitsDone}<span class="wm-world__of"> of ${world.unitsTotal} units placed</span></strong>
         <span class="numeric">${world.percent}% · ${world.regionsSettled} of ${world.regionsTotal} regions settled</span>
         <strong class="wm-world__near">${near}</strong>
@@ -658,7 +728,27 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         ${standing.length ? `<span class="wm-world__standing quiet">${standing.length} landmark${
           standing.length === 1 ? "" : "s"} already standing here: ${escapeHtml(
             standing.map(entry => entry.artifact.name).join(", "))}</span>` : ""}
-      </div>`;
+      </dialog>`;
+  }
+
+  function openWorldPopup(worldId) {
+    const opener = document.querySelector(`[data-world-card="${worldId}"]`);
+    const popup = document.querySelector(`#wm-world-popup-${worldId}`);
+    if (!opener || !(popup instanceof HTMLDialogElement)) return;
+    closeWorldPopup(false);
+    worldPopupOpener = opener;
+    opener.setAttribute("aria-expanded", "true");
+    popup.show();
+    popup.querySelector(".wm-world-popup__close")?.focus();
+  }
+
+  function closeWorldPopup(restoreFocus = true) {
+    const popup = document.querySelector(".wm-world-popup[open]");
+    if (popup instanceof HTMLDialogElement) popup.close();
+    const opener = worldPopupOpener;
+    worldPopupOpener = null;
+    opener?.setAttribute("aria-expanded", "false");
+    if (restoreFocus && opener?.isConnected) opener.focus();
   }
 
   // The text equivalent. The map is decoration over real counts, so the counts
@@ -745,7 +835,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     const games = regionGames(region);
     const gamesHtml = games.length
       ? `<ul class="wm-links">${games.map(item => `
-          <li><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a>
+          <li>${gameKindIcon(item.kind)}
+            <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a>
             <span class="meta">${escapeHtml(item.kind)}</span></li>`).join("")}</ul>`
       : `<p class="quiet">No games pinned to this region yet.</p>`;
 
@@ -1000,8 +1091,9 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         walked yet; the further along the road it sits, the hazier it is, and there is nothing in it
         but places to go. Drag the map, or use the arrow keys, to look around. Click a section to
         zoom into it.</p>
-      <div class="wm-worlds">${map.worlds.map(world =>
-        renderWorldCard(world, landmarksFor(world.id))).join("")}</div>
+      <div class="wm-worlds">${map.worlds.map(world => renderWorldCard(world)).join("")}</div>
+      ${map.worlds.map(world =>
+        renderWorldPopup(world, landmarksFor(world.id))).join("")}
       <div id="wm-viewport" class="wm-viewport" tabindex="0" role="group"
         aria-label="World map. Drag or use the arrow keys to pan. Click a territory to zoom in.">
         <div id="wm-canvas" class="wm-canvas" style="width:${terrain.width}px;height:${terrain.height}px">
@@ -1018,20 +1110,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         </div>
       </div>
       <div class="wm-zoom" id="wm-zoom" role="group" aria-labelledby="wm-zoom-heading" hidden></div>
-      <div class="wm-key quiet">
-        <span><b class="wm-key__swatch is-route"></b> the road, in the order you do the sections</span>
-        <span><b class="wm-key__swatch is-lesson"></b> lessons done in a section</span>
-        <span><b class="wm-key__swatch is-quiz"></b> practice quizzes done</span>
-        <span><b class="wm-key__swatch is-activity"></b> activities done</span>
-        <span><b class="wm-key__swatch is-check"></b> chest — the end-of-section assignment</span>
-        <span><b class="wm-key__swatch is-test"></b> sword — the section test</span>
-        <span><b class="wm-key__swatch is-empty"></b> still to do in that section</span>
-        <span><b class="wm-key__swatch is-settled"></b> settled ground</span>
-        <span><b class="wm-key__swatch is-haze"></b> haze — not discovered yet, and worth going to see</span>
-        <span><b class="wm-key__swatch is-water"></b> ocean</span>
-        <span><b class="wm-key__swatch is-here"></b> the flag — you are here</span>
-        <span><b class="wm-key__swatch is-landmark"></b> a landmark stands or unlocks here</span>
-      </div>
+      ${mapLegend(terrain)}
       ${renderTerritoryTable(map)}`
       : `<p class="quiet">Saved telemetry is thin right now — the map redraws on the next check.</p>`;
 
@@ -1334,7 +1413,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       text-anchor="${anchor}" dominant-baseline="central">${escapeHtml(text)}</text>`;
   }
 
-  function gaugeDial({ label, scale, secondary, faceUnit, readout, readoutSub, ariaText, bandTo = 1, outOfRangeFrom = null }) {
+  function gaugeDial({
+    label, scale, secondary, faceUnit, readout, readoutSub, ariaText,
+    bandTo = 1, outOfRangeFrom = null, thresholdBands = [],
+  }) {
     const clamped = Math.max(0, Math.min(1, scale.fraction));
     const majors = scale.majors.map(({ at }) => gaugeTick(at, GAUGE.majorInner, GAUGE.tickOuter)).join("");
     const minors = scale.minors.map((at) => gaugeTick(at, GAUGE.minorInner, GAUGE.tickOuter)).join("");
@@ -1377,6 +1459,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
             <path class="gauge__ahead" d="${gaugeArc(clamped, bandEnd, GAUGE.track)}"></path>` : "";
     const outOfRange = Number.isFinite(outOfRangeFrom) && outOfRangeFrom < 1 ? `
             <path class="gauge__out-of-range" d="${gaugeArc(Math.max(0, outOfRangeFrom), 1, GAUGE.track)}"></path>` : "";
+    const thresholds = thresholdBands.map(({ className, from, to, boundary }) => `
+            <path class="gauge__threshold-band ${className}"
+              data-boundary="${escapeHtml(boundary)}"
+              d="${gaugeArc(Math.max(0, from), Math.min(1, to), GAUGE.track)}"></path>`).join("");
     const angle = (135 + clamped * 270).toFixed(2);
 
     return `
@@ -1388,6 +1474,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
             ${ahead}
             ${progress}
             ${outOfRange}
+            ${thresholds}
             <g class="gauge__minors" shape-rendering="crispEdges">${minors}</g>
             <g class="gauge__majors" shape-rendering="crispEdges">${majors}</g>
             <g class="gauge__numbers">${numbers}</g>
@@ -1636,6 +1723,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     const recentScale = dialScale(s.recent3, Math.max(1, s.recent3));
     const doneScale = dialScale(s.odometer, totalUnits);
     const daysScale = dialScale(s.activeDays, calendarSpan);
+    // Owner-granted dial-only exception: the current Aug 15 pace boundary is
+    // 3.38/day, and fifty percent above it is 3.38 × 1.5 = 5.07/day.
+    const paceBandNeeded = 3.38;
+    const paceBandOrange = Number((paceBandNeeded * 1.5).toFixed(2));
     const pacePercent = s.requiredPerDay > 0 ? Math.round((s.activePace / s.requiredPerDay) * 100) : 0;
     const recentPercent = s.rowsLeft > 0 ? Math.round((s.recent3 / s.rowsLeft) * 100) : 0;
     const donePercent = Math.round(s.tripDone * 100);
@@ -1655,7 +1746,27 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           readout: s.activePace.toFixed(2),
           readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)}`,
           bandTo: 1,
-          ariaText: `Units per day on the days you work: ${s.activePace.toFixed(2)}, on a dial reading 0 to ${paceScale.max} units per day — ${s.odometer} units over ${s.activeDays} working days. Aug 15 needs ${s.requiredPerDay.toFixed(2)} a day, so the inner amber percentage scale reads ${pacePercent} percent of that pace. ${BAND_TEXT}`
+          thresholdBands: [
+            {
+              className: "is-below-pace",
+              from: 0,
+              to: paceBandNeeded / paceScale.max,
+              boundary: `below ${paceBandNeeded.toFixed(2)}`,
+            },
+            {
+              className: "is-at-pace",
+              from: paceBandNeeded / paceScale.max,
+              to: paceBandOrange / paceScale.max,
+              boundary: `${paceBandNeeded.toFixed(2)} to ${paceBandOrange.toFixed(2)}`,
+            },
+            {
+              className: "is-over-fifty",
+              from: paceBandOrange / paceScale.max,
+              to: 1,
+              boundary: `${paceBandOrange.toFixed(2)} and above`,
+            },
+          ],
+          ariaText: `Units per day on the days you work: ${s.activePace.toFixed(2)}, on a dial reading 0 to ${paceScale.max} units per day — ${s.odometer} units over ${s.activeDays} working days. Aug 15 needs ${s.requiredPerDay.toFixed(2)} a day, so the inner amber percentage scale reads ${pacePercent} percent of that pace. Below ${paceBandNeeded.toFixed(2)} units per day is the wide solid red rim band; ${paceBandNeeded.toFixed(2)} through ${paceBandOrange.toFixed(2)} is the narrower long-dash green band; ${paceBandOrange.toFixed(2)} and above is the widest short-dash orange band, fifty percent over the needed pace.`
         })}
 
         ${gaugeDial({
@@ -2051,6 +2162,38 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     }));
   }
 
+  const GAME_KIND_FACES = {
+    game: {
+      ink: "#7cab52",
+      head: "M2 2h20v20H2z",
+      face: "M6 7h4v4H6zm8 0h4v4h-4zm-6 5h8v3h2v5h-4v-3h-4v3H6v-5h2z",
+    },
+    puzzle: {
+      ink: "#d7b45c",
+      head: "M4 2h16v3h3v14h-3v3H4v-3H1V5h3z",
+      face: "M6 7h4v3H6zm8 0h4v3h-4zm-4 4h5v3h3v3h-8v-2H7v-3h3z",
+    },
+    tool: {
+      ink: "#79c0a4",
+      head: "M1 5h4V2h14v3h4v15h-4v2H5v-2H1z",
+      face: "M6 7h4v4H6zm8 0h4v4h-4zM8 15h8v3H8z",
+    },
+    video: {
+      ink: "#a89ad6",
+      head: "M5 2h14v3h3v17H2V5h3z",
+      face: "M7 7h3v4H7zm7 0h3v4h-3zM8 15h8v3H8z",
+    },
+  };
+
+  function gameKindIcon(kind) {
+    const face = GAME_KIND_FACES[kind] ?? GAME_KIND_FACES.tool;
+    return `<svg class="game-kind-icon" data-kind="${escapeHtml(kind)}" viewBox="0 0 24 24"
+      aria-hidden="true" focusable="false" shape-rendering="crispEdges">
+      <path class="game-kind-icon__head" fill="${face.ink}" d="${face.head}"/>
+      <path fill="#16202a" d="${face.face}"/>
+    </svg>`;
+  }
+
   function renderGames(data) {
     const content = document.querySelector("#games-content");
     gamesRendered = false;
@@ -2100,10 +2243,13 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         ? escapeHtml(section.name)
         : `${section.semester === "sem1" ? "S1" : "S2"} // SECTION ${String(section.number).padStart(2, "0")} · ${escapeHtml(section.name)}`;
       const items = section.items.map(item => `
-        <li>
-          <strong><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a></strong><br>
-          <span class="meta">${escapeHtml(item.kind)}${item.sourceAvailable === true && item.remixable === true ? " · source you can read" : ""}</span>
-          <p class="why">${escapeHtml(item.why)}</p>
+        <li class="game-item">
+          ${gameKindIcon(item.kind)}
+          <div class="game-item__body">
+            <strong><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a></strong><br>
+            <span class="meta">${escapeHtml(item.kind)}${item.sourceAvailable === true && item.remixable === true ? " · source you can read" : ""}</span>
+            <p class="why">${escapeHtml(item.why)}</p>
+          </div>
         </li>`).join("");
       return `<article class="quest-card">
         <h3>${heading}</h3>
@@ -2379,6 +2525,11 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     }
     document.addEventListener("visibilitychange", handleVisibility);
     document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && document.querySelector(".wm-world-popup[open]")) {
+        event.preventDefault();
+        closeWorldPopup();
+        return;
+      }
       if (event.key === "Escape" && zoomedRegion) closeRegion();
     });
     document.addEventListener("click", event => {
@@ -2390,6 +2541,15 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       }
       if (event.target.closest("[data-wm-back]")) {
         closeRegion();
+        return;
+      }
+      if (event.target.closest("[data-world-close]")) {
+        closeWorldPopup();
+        return;
+      }
+      const worldCard = event.target.closest("[data-world-card]");
+      if (worldCard) {
+        openWorldPopup(worldCard.dataset.worldCard);
         return;
       }
       // Escape leaves a sub-map too, so zooming in is never a trap.

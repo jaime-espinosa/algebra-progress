@@ -63,6 +63,7 @@
 .gauge__progress,
 .gauge__ahead,
 .gauge__out-of-range,
+.gauge__threshold-band,
 .gauge__majors,
 .gauge__minors,
 .gauge__scale2-arc,
@@ -100,6 +101,30 @@
   stroke-width: 7;
   stroke-dasharray: 1 2;
   stroke-linecap: butt;
+}
+
+/* Owner-granted exception: red is permitted only on the below-pace segment of
+   this dial rim. Width and dash density carry the same three meanings without
+   colour: wide solid, narrower long-dash, widest short-dash. */
+.gauge__threshold-band {
+  stroke-linecap: butt;
+}
+
+.gauge__threshold-band.is-below-pace {
+  stroke: #d54b4b;
+  stroke-width: 8;
+}
+
+.gauge__threshold-band.is-at-pace {
+  stroke: #69ad55;
+  stroke-width: 6;
+  stroke-dasharray: 7 2;
+}
+
+.gauge__threshold-band.is-over-fifty {
+  stroke: #d88932;
+  stroke-width: 9;
+  stroke-dasharray: 2 2;
 }
 
 /* High-contrast numerals and ticks, as on the reference face. */
