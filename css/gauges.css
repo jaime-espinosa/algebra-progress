@@ -175,7 +175,7 @@
   justify-items: center;
   gap: 1px;
   min-width: 36%;
-  max-width: 44%;
+  max-width: 38%;
   border: 1px solid #0c1a12;
   border-radius: 2px;
   padding: 2px 6px 3px;
@@ -194,17 +194,17 @@
   min-width: .6em;
   border-width: 1px;
   padding: 1px 3px;
-  font-size: clamp(13px, 1.5vw, 17px);
+  font-size: clamp(12px, 1.4vw, 15px);
 }
 
 .gauge__window .plate__mark {
-  font-size: clamp(13px, 1.5vw, 17px);
+  font-size: clamp(12px, 1.4vw, 15px);
 }
 
 .gauge__window-sub {
   color: var(--dim);
-  font-size: 7px;
-  letter-spacing: .04em;
+  font-size: 6.5px;
+  letter-spacing: .02em;
   line-height: 1.1;
   white-space: nowrap;
 }
