@@ -318,8 +318,12 @@ function unlockConditions(data) {
     "surveyor": sectionDone(4),
     "farm-rate-optimizer": sectionDone(5),
     "youtube-analytics-template": sectionDone(6),
-    "end-theme-final": semesters.every(semester =>
-      semester.activities.every(item => item.state !== "not_started"))
+    // The only rule that was unguarded against vacuous truth: with an empty
+    // activity list every() is true, so a failed scrape handed him the End theme.
+    // Every other rule already required rows to exist. Not a change on real data.
+    "end-theme-final": semesters.length > 0 && semesters.every(semester =>
+      (semester.activities?.length ?? 0) > 0
+      && semester.activities.every(item => item.state !== "not_started"))
   };
 }
 
