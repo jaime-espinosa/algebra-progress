@@ -1173,7 +1173,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           <span><b class="chart-key__swatch is-flag"></b>a tab was probably left open${tip("A day flagged here has one unbroken entry of 3 hours or more, or 8 hours or more in total. The seconds are still counted — they are just named. This time is never divided by units.")}</span>
         </div>
         <svg viewBox="0 0 ${CHART.width} ${height}" preserveAspectRatio="xMidYMid meet" role="img"
-          aria-label="${escapeHtml(`Units submitted per calendar day from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, with a reference line at ${requiredPerDay.toFixed(1)} units per day. A second line on the right axis shows how long the course page was open each day, in hours; ${series ? series.markedDays : 0} days are flagged as a tab left open.`)}">
+          aria-label="${escapeHtml(`Units submitted per calendar day from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, with a reference line at ${requiredPerDay.toFixed(2)} units per day. A second line on the right axis shows how long the course page was open each day, in hours; ${series ? series.markedDays : 0} days are flagged as a tab left open.`)}">
           ${yTicks}
           <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
           <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
@@ -1183,7 +1183,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           <line class="chart-reference" x1="${CHART.left}" y1="${requiredY.toFixed(1)}"
             x2="${CHART.width - CHART.right}" y2="${requiredY.toFixed(1)}"></line>
           <text class="chart-reference__label" x="${CHART.left + 6}" y="${(requiredY - 5).toFixed(1)}"
-            text-anchor="start">${requiredPerDay.toFixed(1)}/day — what Aug 15 needs</text>
+            text-anchor="start">${requiredPerDay.toFixed(2)}/day — what Aug 15 needs</text>
           ${openSeries}
           <polyline class="chart-unit" points="${unitPoints}"></polyline>
           ${unitDots}
@@ -1534,7 +1534,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
                  aria-label="units I plan to do per day">
           <span>&nbsp;a day &rarr; finishes <strong>${formatDay(projectedDate)}</strong></span>
         </label>
-        <span>Aug 15 needs&nbsp;&nbsp; <strong>${required.toFixed(1)}/day</strong>. On the days you work you do <strong>${stats.activePace.toFixed(1)}</strong>${stats.fastEnough ? " — more than enough" : ""}.</span>
+        <span>Aug 15 needs&nbsp;&nbsp; <strong>${required.toFixed(2)}/day</strong>. On the days you work you do <strong>${stats.activePace.toFixed(2)}</strong>${stats.fastEnough ? " — more than enough" : ""}.</span>
         <span>${escapeHtml(statusCopy)}</span>
         <span>${next ? `Next action: ${escapeHtml(next.title)}` : "Every named unit is submitted."}</span>
       </div>`;
