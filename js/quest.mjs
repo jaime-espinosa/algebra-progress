@@ -676,6 +676,26 @@ export function planTrack(data, today) {
 // so the page can show them instead of quietly counting or quietly dropping
 // them. Callers must label the number "time the course was open" — never
 // "hours worked", never "study time" — and must never divide it by rows.
+//
+// WHAT THIS NO LONGER HAS, AND WHY (2026-07-26, owner ruling). activity.json used
+// to publish the per-entry array — one record per activity, each with a `title`
+// and a `startTime` like "12:07 AM". On a public repo that is a behavioural record
+// of when a named 14-year-old is at his computer, so the producer now writes daily
+// aggregates only. This function followed it down:
+//
+//   - `stretches` (a list of individual long entries, each with a start time) and
+//     `withoutMarkedStretches` (a total derived from that list) are GONE, not
+//     emptied. Nothing rendered read them. Returning `stretches: []` for a day he
+//     worked ten hours would have been a quiet lie, and an empty list subtracts to
+//     zero, so `withoutMarkedStretches` would have silently become the full total.
+//   - `day.longest` and `day.marked` SURVIVE, honestly: the producer now ships
+//     `longestSeconds` per day, which is the same maximum, as a duration with no
+//     clock time attached. So a long unbroken sitting is still distinguishable
+//     from a long day of many short ones, and the day chart's hollow dot and its
+//     aria-label still describe the days they always described.
+//
+// The fallback to `day.entries` below is for the FROZEN test fixtures, which are
+// never rewritten and still carry the old shape. Live data no longer has it.
 export const LONG_STRETCH_SECONDS = 3 * 3600;   // one unbroken entry this long is marked
 export const LONG_DAY_SECONDS = 8 * 3600;       // a day's total this long is marked
 
@@ -691,7 +711,6 @@ export function openTime(activity, today) {
   const courses = Array.isArray(activity?.courses) ? activity.courses : [];
   const todayKey = parseDateKey(today);
   const byDay = new Map();
-  const stretches = [];
   let totalSeconds = 0;
 
   for (const course of courses) {
@@ -704,21 +723,13 @@ export function openTime(activity, today) {
       const seconds = Number(day?.reportedSeconds) || 0;
       const entry = byDay.get(date) ?? { date, seconds: 0, longest: 0, marked: false };
       entry.seconds += seconds;
-      for (const item of day?.entries ?? []) {
-        const span = Number(item?.seconds) || 0;
-        entry.longest = Math.max(entry.longest, span);
-        // The parser's own idleSuspect fires at four hours and caught two
-        // entries in the whole dataset. Three hours unbroken catches the rest
-        // without inventing a value: the entry is still counted, just named.
-        if (span >= LONG_STRETCH_SECONDS || item?.idleSuspect === true) {
-          stretches.push({
-            date,
-            seconds: span,
-            startTime: typeof item?.startTime === "string" ? item.startTime : null,
-            text: formatDuration(span),
-          });
-        }
-      }
+      // The published shape carries the day's longest single entry as a plain
+      // duration. Old fixtures carry the entries instead; take the max off
+      // whichever one is actually there rather than assuming a shape.
+      const longestSeconds = Number.isFinite(Number(day?.longestSeconds))
+        ? Number(day.longestSeconds)
+        : (day?.entries ?? []).reduce((max, item) => Math.max(max, Number(item?.seconds) || 0), 0);
+      entry.longest = Math.max(entry.longest, longestSeconds);
       byDay.set(date, entry);
     }
   }
@@ -730,7 +741,6 @@ export function openTime(activity, today) {
   }
 
   const days = [...byDay.values()].sort((left, right) => left.date.localeCompare(right.date));
-  stretches.sort((left, right) => right.seconds - left.seconds);
   const asOf = typeof activity?.generatedAt === "string"
     ? activity.generatedAt.slice(0, 10)
     : null;
@@ -742,30 +752,25 @@ export function openTime(activity, today) {
     firstDay: days[0]?.date ?? null,
     lastDay: days.at(-1)?.date ?? null,
     days,
-    // Named, not removed. Every second above is still counted; these are the
-    // stretches long enough that "the tab was open" is the likelier story.
-    stretches,
+    // Named, not removed. Every second is still counted in totalSeconds; these
+    // are the days long enough, or with one sitting long enough, that "the tab
+    // was open" is the likelier story. The day chart draws them hollow.
     markedDays: days.filter((day) => day.marked).length,
     asOf,
-    // A caller that wants a total with the flagged stretches taken out has to
-    // ask for it explicitly, and then it must say so on screen.
-    withoutMarkedStretches: totalSeconds
-      - stretches.reduce((sum, stretch) => sum + stretch.seconds, 0),
   };
 }
 
 // Open time keyed by date, plus the peak, so a chart can plot it without any
-// caller re-deriving it. `longest` and `startTime` travel with the day so the
-// view can say WHY a spike is a spike ("a tab was left open") instead of
-// letting it read as a ten-hour day. Nothing here is capped or smoothed.
+// caller re-deriving it. `longest` and `marked` travel with the day so the view
+// can distinguish a spike that was one unbroken sitting from a genuine long day,
+// without publishing when that sitting started. Nothing here is capped or
+// smoothed. `longestStretch` used to ride along here carrying a clock time; it
+// is gone, not emptied — see the note above openTime.
 export function openTimeSeries(activity, today) {
   const open = openTime(activity, today);
   const byDay = new Map();
   for (const day of open.days) {
-    const longest = open.stretches
-      .filter((stretch) => stretch.date === day.date)
-      .sort((left, right) => right.seconds - left.seconds)[0] ?? null;
-    byDay.set(day.date, { ...day, longestStretch: longest });
+    byDay.set(day.date, { ...day });
   }
   return {
     ...open,
