@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code lab: The Quadratic That Eats Itself</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S2 // SECTION 03 // SOLVING QUADRATICS // CODE LAB</p>
+      <h1>The Quadratic That Eats Itself</h1>
+      <p class="prose">The Mandelbrot set is not a new kind of maths. It is the quadratic you are already studying, fed its own answer, over and over.</p>
+    </header>
+
+    <section>
+      <h2>The idea</h2>
+      <div class="prose">
+        <p>Solving a quadratic asks one question once: for which x is <code>x² + c</code> equal to zero?</p>
+        <p>This asks a different question about the same expression. Start at <code>z = 0</code>, work out <code>z² + c</code>, then put that answer back in as the new z, and keep going:</p>
+      </div>
+      <div class="math">
+        <p>z → z² + c</p>
+        <p>z₀ = 0, z₁ = c, z₂ = c² + c, z₃ = (c² + c)² + c, …</p>
+      </div>
+      <div class="prose">
+        <p>Some values of c keep z small forever. Others send it racing off to infinity. That is the only question being asked, once per pixel.</p>
+        <p>The dark region is every c that stayed. Colour is how many steps the runaways survived first.</p>
+        <p>The trick is that c is allowed to be a <em>complex</em> number, which is a pair of numbers (cx, cy) rather than one. Squaring such a pair follows from the same FOIL expansion you do by hand: <code>(x + y·i)² = x² − y² + 2xy·i</code>, because <code>i² = −1</code>. That is where the two lines in the loop come from.</p>
+        <p>Underneath the picture, the same rule runs on the ordinary number line, where c is just a number and you can read the values.</p>
+      </div>
+      <p class="small-screen status">This lab wants a wide screen. It works here, but the editor and picture are stacked.</p>
+    </section>
+
+    <div class="bench">
+      <section aria-labelledby="editor-heading">
+        <h2 id="editor-heading">The code</h2>
+        <label class="label" for="code">JavaScript — edit freely</label>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+          aria-describedby="api"></textarea>
+        <div class="controls">
+          <button id="run" type="button">Run</button>
+          <button id="reset" type="button" class="secondary">Back to the start</button>
+          <span id="run-status" role="status" aria-live="polite"></span>
+        </div>
+        <p class="api" id="api">
+          Ctrl+Enter also runs it. This page gives you
+          <code>picture(xMin, xMax, yMin, yMax, f, maxSteps)</code>, which calls your
+          <code>f(x, y)</code> once per pixel, plus <code>say(...)</code>. The image is
+          240×160 so it stays fast on a slow laptop.
+        </p>
+      </section>
+
+      <section aria-labelledby="output-heading">
+        <h2 id="output-heading">What it drew</h2>
+        <div id="picture"></div>
+        <div id="description" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <section>
+      <h2>Challenges</h2>
+      <ol class="challenges">
+        <li>Change both <code>60</code>s to <code>120</code> — the one in the loop and the one at the end of <code>picture(...)</code>. The edge gets finer, because you are asking each point to survive twice as long before you call it a survivor.</li>
+        <li>Zoom in. Replace the ranges with <code>picture(-0.78, -0.72, 0.08, 0.14, escapeSteps, 120)</code>. The shape at the small scale looks like the shape at the large scale. Nobody wrote that in; it falls out of one line of algebra.</li>
+        <li>In the number-line loop at the bottom, change <code>c</code> to <code>0.5</code>. Watch z run away. Then try <code>-1.5</code>, then <code>-2</code>, then <code>-2.1</code>. Find roughly where the behaviour flips — then find that spot on the picture.</li>
+        <li>Change the escape test from <code>&lt;= 4</code> to <code>&lt;= 100</code>. Almost nothing changes. Once the distance from zero passes 2, squaring makes it grow every single step, so it can never come back — 4 is just 2².</li>
+        <li>Change the exponent. Replace the two loop lines with the cube rule:
+          <code>const nextX = x ** 3 - 3 * x * y * y + cx;</code> and
+          <code>const nextY = 3 * x * x * y - y ** 3 + cy;</code>
+          Run it. Squaring gives one big bulb; cubing gives two. The exponent decides the symmetry.</li>
+        <li>Break it on purpose: delete <code>steps += 1</code> and run. The loop can never finish, and the page stops it and tells you so. Nothing is lost, and your code stays exactly as you left it. Put the line back.</li>
+      </ol>
+    </section>
+
+    <aside class="python">
+      <span class="label">Why JavaScript and not Python</span>
+      <div class="prose">
+        <p>This lab is the reason the choice matters. Drawing 38,400 pixels with up to 60 steps each is a couple of million operations. JavaScript does that in a fraction of a second in the browser you already have open. The same code under an in-browser Python would need a ten-megabyte download first and would then run far slower.</p>
+        <p>Write it in real Python at home and it will be recognisably the same program: <code>while x*x + y*y &lt;= 4 and steps &lt; 60:</code> instead of <code>while (x * x + y * y &lt;= 4 &amp;&amp; steps &lt; 60) {</code>.</p>
+        <p><code>&amp;&amp;</code> is Python's <code>and</code>. <code>||</code> is <code>or</code>. <code>steps += 1</code> is identical in both.</p>
+        <p>Python also has complex numbers built in, so there you could write <code>z = z*z + c</code> in one line and skip the two-part bookkeeping. JavaScript makes you do it by hand — which is not a bad thing the first time, because those two lines are the algebra.</p>
+      </div>
+    </aside>
+
+    <section>
+      <h2>Nearby</h2>
+      <p class="prose">
+        <a href="../lessons/sem2-03.html">Mini-lesson: Solving Quadratic Equations</a> ·
+        <a href="sem2-02-parabola.html">Code lab: Bend the Parabola</a> ·
+        <a href="../index.html">Back to the quest board</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="text/plain" id="starter-code">
+// z -> z*z + c, starting at z = 0.
+// A complex number has two parts, so z is (x, y) and c is (cx, cy).
+// Returns how many steps it took to escape. 60 means it never did.
+
+function escapeSteps(cx, cy) {
+  let x = 0;
+  let y = 0;
+  let steps = 0;
+  while (x * x + y * y <= 4 && steps < 60) {
+    const nextX = x * x - y * y + cx;   // real part of z*z + c
+    const nextY = 2 * x * y + cy;       // imaginary part of z*z + c
+    x = nextX;
+    y = nextY;
+    steps += 1;
+  }
+  return steps;
+}
+
+picture(-2.2, 0.8, -1.2, 1.2, escapeSteps, 60);
+
+// The same rule on the ordinary number line, where c is just a number.
+let z = 0;
+const c = -1;
+for (let i = 1; i <= 6; i += 1) {
+  z = z * z + c;
+  say("step", i, "z =", z);
+}
+</script>
+  <script type="module">
+    import { mountLab } from "./lab-runtime.mjs";
+    mountLab();
+  </script>
+</body>
+</html>
