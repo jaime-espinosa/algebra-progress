@@ -1573,7 +1573,7 @@ function buildTerrain(map, options) {
       let run = 1;
       while (gx + run < cols && land[i + run] && !explored[i + run]
         && fogBucket(owner[i + run]) === level) run += 1;
-      push(`fog${level}`, FOG, level * 0.62, gx, gy, run);
+      push(`fog${level}`, FOG, level * 0.78, gx, gy, run);
       gx += run;
     }
   }
@@ -1585,7 +1585,7 @@ function buildTerrain(map, options) {
       // Dither density rises with distance, so far ground looks genuinely
       // uncharted while near ground stays readable through the haze.
       if (hash2(gx, gy, seed + 4242) < 0.18 + level * 0.34) {
-        push(`fogd${level}`, FOG, level * 0.42, gx, gy, 1);
+        push(`fogd${level}`, FOG, level * 0.5, gx, gy, 1);
       }
     }
   }
