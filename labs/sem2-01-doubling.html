@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code lab: The Moment Doubling Wins</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S2 // SECTION 01 // EXPONENTIAL FUNCTIONS // CODE LAB</p>
+      <h1>The Moment Doubling Wins</h1>
+      <p class="prose">Adding six a day beats doubling — for a while. The whole lesson is finding where that stops being true.</p>
+    </header>
+
+    <section>
+      <h2>The idea</h2>
+      <div class="prose">
+        <p>Linear growth <em>adds</em> the same amount each step: <code>y = start + step·x</code>.</p>
+        <p>Exponential growth <em>multiplies</em> by the same amount each step: <code>y = start · rate<sup>x</sup></code>.</p>
+        <p>Early on the linear one is usually ahead, because a small number doubled is still a small number. It does not stay ahead. There is a crossing point, and after it the gap is never close again.</p>
+        <p>The code draws both and then hunts for that crossing with a loop instead of a formula.</p>
+      </div>
+      <p class="small-screen status">This lab wants a wide screen. It works here, but the editor and picture are stacked.</p>
+    </section>
+
+    <div class="bench">
+      <section aria-labelledby="editor-heading">
+        <h2 id="editor-heading">The code</h2>
+        <label class="label" for="code">JavaScript — edit freely</label>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+          aria-describedby="api"></textarea>
+        <div class="controls">
+          <button id="run" type="button">Run</button>
+          <button id="reset" type="button" class="secondary">Back to the start</button>
+          <span id="run-status" role="status" aria-live="polite"></span>
+        </div>
+        <p class="api" id="api">
+          Ctrl+Enter also runs it. This page gives you
+          <code>graph(xMin, xMax, yMin, yMax)</code>, then <code>.plot(f)</code>,
+          <code>.point(x, y, "label")</code> and <code>.points([[x, y], ...])</code>,
+          plus <code>say(...)</code>.
+        </p>
+      </section>
+
+      <section aria-labelledby="output-heading">
+        <h2 id="output-heading">What it drew</h2>
+        <div id="picture"></div>
+        <div id="description" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <section>
+      <h2>Challenges</h2>
+      <ol class="challenges">
+        <li>Run it as-is and read the description under the picture. The curve leaves the top of the window almost immediately — the window only goes up to 120 and by day 10 the exponential is past 4000. Change the graph to <code>graph(0, 10, 0, 4500)</code> and look again. Now the <em>linear</em> line is the one you can barely see. Neither window is lying; exponential growth simply does not fit on a page with its own start.</li>
+        <li>Set <code>rate = 1.1</code> — ten percent a day. It looks almost flat. Now change the graph to <code>graph(0, 60, 0, 500)</code> and watch it eat the line anyway. Slow exponential growth still wins; it just takes longer.</li>
+        <li>Set <code>rate = 0.5</code>. Halving is still exponential. Where does the curve go, and does it ever reach zero?</li>
+        <li>Raise <code>step</code> to <code>50</code>. Does the crossing day move a lot or a little? Try to predict before you run it.</li>
+        <li>Change <code>day += 1</code> to <code>day += 0.25</code> to find the crossing more precisely, and add <code>say("linear there:", linear(day));</code> to see how close the two are at that moment.</li>
+        <li>Plot the gap instead. Add <code>function gap(x) { return exponential(x) - linear(x); }</code> and <code>g.plot(gap, "difference");</code>. Where the gap crosses zero is the same answer the loop found.</li>
+      </ol>
+    </section>
+
+    <aside class="python">
+      <span class="label">Why JavaScript and not Python</span>
+      <div class="prose">
+        <p>An in-browser Python would mean a ten-megabyte download before this page could draw a single line. JavaScript is already running, so it starts instantly and needs no connection.</p>
+        <p><code>rate ** x</code> is the same in both languages.</p>
+        <p><code>while (condition) { ... }</code> is Python's <code>while condition:</code> — braces instead of indentation.</p>
+        <p>The safety catch <code>day &lt; 100</code> in the loop is worth copying into your Python habits too: any loop that searches for something should have a limit, in case the thing it is looking for is not there.</p>
+      </div>
+    </aside>
+
+    <section>
+      <h2>Nearby</h2>
+      <p class="prose">
+        <a href="../lessons/sem2-01.html">Mini-lesson: Exponential Functions</a> ·
+        <a href="sem2-02-parabola.html">Code lab: Bend the Parabola</a> ·
+        <a href="../index.html">Back to the quest board</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="text/plain" id="starter-code">
+// Two ways to grow, from the same starting point.
+let start = 4;
+let step = 6;    // linear: ADD 6 each day
+let rate = 2;    // exponential: MULTIPLY by 2 each day
+
+function linear(x) {
+  return start + step * x;
+}
+
+function exponential(x) {
+  return start * rate ** x;
+}
+
+const g = graph(0, 10, 0, 120);
+g.plot(linear, "start + step*x");
+g.plot(exponential, "start * rate^x");
+
+// Find the first whole day where the exponential is in front.
+let day = 0;
+while (exponential(day) <= linear(day) && day < 100) {
+  day += 1;
+}
+
+g.point(day, exponential(day), "overtaken");
+say("the exponential passes the line on day", day);
+say("by day 10 it is at", exponential(10), "against", linear(10));
+</script>
+  <script type="module">
+    import { mountLab } from "./lab-runtime.mjs";
+    mountLab();
+  </script>
+</body>
+</html>
