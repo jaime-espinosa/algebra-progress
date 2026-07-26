@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code lab: Bend the Parabola</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S2 // SECTION 02 // QUADRATIC FUNCTIONS // CODE LAB</p>
+      <h1>Bend the Parabola</h1>
+      <p class="prose">Three numbers, one curve. The formula for the roots is in the code, so you can watch it agree with the picture.</p>
+    </header>
+
+    <section>
+      <h2>The idea</h2>
+      <div class="prose">
+        <p>A quadratic function is <code>y = ax² + bx + c</code>.</p>
+        <p>The roots are the x values where y is 0 — where the curve crosses the x axis.</p>
+      </div>
+      <div class="math">
+        <p>x = (−b ± √(b² − 4ac)) ÷ 2a</p>
+        <p>discriminant = b² − 4ac</p>
+        <p>vertex x = −b ÷ 2a</p>
+      </div>
+      <div class="prose">
+        <p>The discriminant is the part under the square root. Positive means two roots, zero means one, negative means the curve never reaches the axis and there is no real root.</p>
+        <p>The code computes all of that and marks it. Change a, b or c and the marks move with the curve.</p>
+      </div>
+      <p class="small-screen status">This lab wants a wide screen. It works here, but the editor and picture are stacked.</p>
+    </section>
+
+    <div class="bench">
+      <section aria-labelledby="editor-heading">
+        <h2 id="editor-heading">The code</h2>
+        <label class="label" for="code">JavaScript — edit freely</label>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+          aria-describedby="api"></textarea>
+        <div class="controls">
+          <button id="run" type="button">Run</button>
+          <button id="reset" type="button" class="secondary">Back to the start</button>
+          <span id="run-status" role="status" aria-live="polite"></span>
+        </div>
+        <p class="api" id="api">
+          Ctrl+Enter also runs it. This page gives you
+          <code>graph(xMin, xMax, yMin, yMax)</code>, then <code>.plot(f)</code> and
+          <code>.point(x, y, "label")</code>, plus <code>say(...)</code>.
+        </p>
+      </section>
+
+      <section aria-labelledby="output-heading">
+        <h2 id="output-heading">What it drew</h2>
+        <div id="picture"></div>
+        <div id="description" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <section>
+      <h2>Challenges</h2>
+      <ol class="challenges">
+        <li>Change <code>a</code> to <code>-1</code>. The parabola opens downward and the vertex becomes the highest point instead of the lowest.</li>
+        <li>Change <code>a</code> to <code>0.25</code>, then <code>4</code>. Same roots? Find out. <code>a</code> controls how tightly the curve is squeezed.</li>
+        <li>Set <code>c = 5</code> with <code>a = 1, b = -2</code>. The discriminant goes negative, the curve floats above the axis, and the code says so instead of drawing a root that does not exist.</li>
+        <li>Find a set of numbers where the discriminant is exactly <code>0</code>. Try <code>a = 1, b = -2, c = 1</code>. One root, sitting exactly under the vertex — that is not a coincidence, and the two formulas show why.</li>
+        <li>Add <code>say("y at the vertex:", q(vertexX));</code> at the end. For a positive <code>a</code>, no x you can pick will beat it.</li>
+        <li>Swap the exponent: change <code>x ** 2</code> to <code>x ** 3</code> and run. It is not a parabola any more — that is what makes the squared term the definition of quadratic.</li>
+      </ol>
+    </section>
+
+    <aside class="python">
+      <span class="label">Why JavaScript and not Python</span>
+      <div class="prose">
+        <p>Python in the browser needs a ten-megabyte runtime downloaded before anything draws. This page has no downloads and no network at all, so it opens the same on a slow connection or none.</p>
+        <p><code>x ** 2</code> is the same in JavaScript and Python. JS also has <code>Math.pow(x, 2)</code>, which is the older spelling.</p>
+        <p><code>Math.sqrt(d)</code> is Python's <code>math.sqrt(d)</code>.</p>
+        <p><code>if (disc &gt; 0) { ... } else if (disc === 0) { ... }</code> is Python's <code>if / elif</code>. JS uses <code>===</code> for "equal" because <code>==</code> quietly converts types first, and that is a real source of bugs.</p>
+      </div>
+    </aside>
+
+    <section>
+      <h2>Nearby</h2>
+      <p class="prose">
+        <a href="../lessons/sem2-02.html">Mini-lesson: Quadratic Functions</a> ·
+        <a href="sem2-03-mandelbrot.html">Code lab: The Quadratic That Eats Itself</a> ·
+        <a href="../index.html">Back to the quest board</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="text/plain" id="starter-code">
+// y = a*x^2 + b*x + c
+let a = 1;
+let b = -2;
+let c = -3;
+
+function q(x) {
+  return a * x ** 2 + b * x + c;
+}
+
+const disc = b * b - 4 * a * c;   // the discriminant
+const vertexX = -b / (2 * a);
+
+const g = graph(-6, 6, -8, 8);
+g.plot(q, "y = a*x^2 + b*x + c");
+g.point(vertexX, q(vertexX), "vertex");
+
+if (disc > 0) {
+  const root1 = (-b - Math.sqrt(disc)) / (2 * a);
+  const root2 = (-b + Math.sqrt(disc)) / (2 * a);
+  g.point(root1, 0, "root");
+  g.point(root2, 0, "root");
+  say("two roots:", root1, "and", root2);
+} else if (disc === 0) {
+  g.point(vertexX, 0, "one root");
+  say("one root, at x =", vertexX);
+} else {
+  say("no real roots - the curve never reaches the x axis");
+}
+
+say("discriminant =", disc, "and the vertex is at x =", vertexX);
+</script>
+  <script type="module">
+    import { mountLab } from "./lab-runtime.mjs";
+    mountLab();
+  </script>
+</body>
+</html>
