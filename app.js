@@ -398,14 +398,23 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // "You are here": a planted flag on the ground of the section that holds his
   // next unit, with a beacon column behind it so it is findable from across the
   // map without zooming. It is a position, not a score.
-  function hereMarker(x, y) {
+  // `flyLeft` mirrors the banner so the flag can be planted on whichever side of
+  // the node has open ground, instead of flying into the neighbouring section's
+  // name plaque.
+  function hereMarker(x, y, flyLeft = false) {
+    const bar = (w, top) => {
+      const left = flyLeft ? x - 2 - w : x + 2;
+      return `M${left} ${top}h${w}v9h-${w}z`;
+    };
     return `<g class="wm-you">
-      <path class="wm-you__beam" fill="#ffd67a" d="M${x - 8} ${y - 230}h16v230h-16z"/>
-      <path class="wm-you__beam" fill="#fff2cf" opacity=".55" d="M${x - 3} ${y - 230}h6v230h-6z"/>
-      <path fill="#1d2830" opacity=".5" d="M${x - 12} ${y + 1}h24v5h-24z"/>
-      <path fill="#c9b48f" d="M${x - 2} ${y - 44}h4v45h-4z"/>
-      <path fill="#3b6ea8" d="M${x + 2} ${y - 44}h26v7h-26zm0 7h22v7h-22zm0 7h18v7h-18z"/>
-      <path fill="#254a72" d="M${x + 2} ${y - 44}h26v2h-26z"/>
+      <path class="wm-you__beam" fill="#ffd67a" d="M${x - 8} ${y - 240}h16v240h-16z"/>
+      <path class="wm-you__beam" fill="#fff2cf" opacity=".55" d="M${x - 3} ${y - 240}h6v240h-6z"/>
+      <path fill="#1d2830" opacity=".55" d="M${x - 13} ${y + 1}h26v5h-26z"/>
+      <path fill="#e8dcc0" d="M${x - 2} ${y - 56}h4v57h-4z"/>
+      <path fill="#3b6ea8" d="${bar(34, y - 56)}${bar(28, y - 47)}${bar(21, y - 38)}"/>
+      <path fill="#8fc4e8" d="M${flyLeft ? x - 36 : x + 2} ${y - 56}h34v3h-34z"/>
+      <path fill="#254a72" d="M${flyLeft ? x - 23 : x + 2} ${y - 38}h21v3h-21z"/>
+      <path fill="#e8dcc0" d="M${x - 4} ${y - 60}h8v5h-8z"/>
     </g>`;
   }
 
@@ -953,7 +962,9 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           width="${terrain.width}" height="${terrain.height}" aria-hidden="true" focusable="false"
           shape-rendering="auto" xmlns="http://www.w3.org/2000/svg">
           ${routePaths(route)}${compassRose(terrain.width - 92, 96)}
-          ${marks.join("")}${hereSpot ? hereMarker(hereSpot.cx + 44, hereSpot.cy + 10) : ""}</svg>`;
+          ${marks.join("")}${hereSpot
+            ? hereMarker(hereSpot.cx - 30, hereSpot.cy + 12, true)
+            : ""}</svg>`;
 
     document.querySelector("#worldmap-content").innerHTML = map.worlds.length
       ? `
