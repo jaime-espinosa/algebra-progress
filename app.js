@@ -445,8 +445,14 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // test. A kind with no rows in this section is drawn as nothing at all rather
   // than as an empty band, so the node never implies work that does not exist.
   function nodeBands(region, x, y, size) {
-    const bands = region.types.filter((entry) => entry.total > 1);
-    if (!bands.length) return "";
+    let bands = region.types.filter((entry) => entry.total > 1);
+    // A section made entirely of one-offs — Orientation is two single rows —
+    // would otherwise draw a blank node. It falls back to one band for the
+    // section as a whole, which is the same number in the same place, never an
+    // empty box that reads as "nothing here".
+    if (!bands.length) {
+      bands = [{ type: "orientation", total: region.unitsTotal, done: region.unitsDone }];
+    }
     const totalRows = bands.reduce((sum, entry) => sum + entry.total, 0);
     const inner = size - 8;
     let cursor = y - inner / 2;
