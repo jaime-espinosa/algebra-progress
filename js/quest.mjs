@@ -1574,16 +1574,31 @@ function buildTerrain(map, options) {
   // It dims; it never marks. There is no word or count of anything missed
   // anywhere in this map, and nothing here is ever drawn as blocked: heavier
   // haze means further off, not shut.
-  const fogBucket = (t) => Math.round((territories[t]?.fog ?? 0.8) * 10) / 10;
+  // Which cells the veil covers, and how strongly.
+  //
+  // In the section he is standing in, and in every section behind it, only the
+  // ground he has not walked is veiled, and only thinly — those places are
+  // discovered, and a discovered place does not go back into the dark just
+  // because it has a few units left in it.
+  //
+  // A section AHEAD is veiled edge to edge, including whatever ground in it is
+  // lit, because the whole section is the thing he has not reached yet. That is
+  // what makes "the next section sits at fifty percent" read as one coherent
+  // half-seen territory rather than as a mottle of patches.
+  const fogLevelAt = (i) => {
+    const territory = territories[owner[i]];
+    if (!territory) return 0;
+    if ((territory.ahead ?? 0) < 1 && explored[i]) return 0;
+    return Math.round(territory.fog * 10) / 10;
+  };
   for (let gy = 0; gy < rows; gy += 1) {
     let gx = 0;
     while (gx < cols) {
       const i = gy * cols + gx;
-      if (!land[i] || explored[i]) { gx += 1; continue; }
-      const level = fogBucket(owner[i]);
+      const level = land[i] ? fogLevelAt(i) : 0;
+      if (!level) { gx += 1; continue; }
       let run = 1;
-      while (gx + run < cols && land[i + run] && !explored[i + run]
-        && fogBucket(owner[i + run]) === level) run += 1;
+      while (gx + run < cols && land[i + run] && fogLevelAt(i + run) === level) run += 1;
       push(`fog${level}`, FOG, level * 0.78, gx, gy, run);
       gx += run;
     }
@@ -1591,8 +1606,9 @@ function buildTerrain(map, options) {
   for (let gy = 0; gy < rows; gy += 1) {
     for (let gx = 0; gx < cols; gx += 1) {
       const i = gy * cols + gx;
-      if (!land[i] || explored[i]) continue;
-      const level = fogBucket(owner[i]);
+      if (!land[i]) continue;
+      const level = fogLevelAt(i);
+      if (!level) continue;
       // Dither density rises with distance, so far ground looks genuinely
       // uncharted while near ground stays readable through the haze.
       if (hash2(gx, gy, seed + 4242) < 0.18 + level * 0.34) {
