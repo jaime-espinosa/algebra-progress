@@ -195,6 +195,12 @@ meter,
   font-size: 13px;
 }
 
+.trophy-near {
+  color: var(--accent);
+  font-size: 15px;
+  line-height: 1.35;
+}
+
 .big-number {
   font-size: 28px;
   line-height: 1;
@@ -701,45 +707,36 @@ html.motion-paused *::after {
   }
 }
 
-/* ---- Effort car dashboard ------------------------------------------------ */
-.effort-odometer {
-  display: grid;
-  justify-items: center;
-  gap: 6px;
-  width: 100%;
-  margin-bottom: 20px;
-  border: 1px solid var(--line);
-  padding: 16px;
-  background: var(--panel-solid);
-  text-align: center;
-}
-
-.effort-odometer__digits {
-  display: flex;
+/* ---- Effort dials -------------------------------------------------------- */
+/* Car-dash STYLE, not car-dash names: he was giving an example of a look, and
+   the literal ODOMETER / SPEEDOMETER / TACHOMETER labels went with the joke.
+   Each dial now reads in the same plate numerals the all-time count used, and
+   the label, the unit and the tick numbers sit around the face rather than in a
+   caption underneath. */
+.plate {
+  display: inline-flex;
   justify-content: center;
-  gap: 4px;
+  align-items: baseline;
+  gap: 3px;
 }
 
-.effort-odometer__digit {
-  min-width: .8em;
+.plate__digit {
+  min-width: .72em;
   border: 2px solid var(--line);
-  padding: 4px 8px;
+  padding: 2px 4px;
   background: var(--bg);
   color: var(--text);
   box-shadow: inset 0 -3px 0 var(--shadow);
-  font-size: clamp(42px, 9vw, 72px);
+  font-size: clamp(22px, 3.4vw, 32px);
   font-weight: 700;
   line-height: 1;
 }
 
-.effort-odometer__caption {
+.plate__mark {
   color: var(--text);
-  letter-spacing: .08em;
-}
-
-.effort-odometer__promise {
-  color: var(--accent);
-  font-size: 12px;
+  font-size: clamp(16px, 2.4vw, 22px);
+  font-weight: 700;
+  line-height: 1;
 }
 
 .effort-gauges {
@@ -751,29 +748,63 @@ html.motion-paused *::after {
 .gauge {
   min-width: 0;
   border: 1px solid var(--line);
-  padding: 10px;
+  padding: 10px 8px 12px;
   background: var(--panel-solid);
   text-align: center;
 }
 
-.gauge h3 {
-  margin: 0 0 4px;
-  color: var(--dim);
+.gauge__title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin: 0 0 2px;
+  color: var(--text);
   font-size: 12px;
   letter-spacing: .08em;
 }
 
+.gauge__face {
+  position: relative;
+  width: min(100%, 190px);
+  margin: 0 auto;
+}
+
 .gauge__svg {
   display: block;
-  width: min(100%, 180px);
-  margin: 0 auto -12px;
+  width: 100%;
+  height: auto;
+}
+
+.gauge__reading {
+  position: absolute;
+  top: 52%;
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  width: 74%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.gauge__unit {
+  color: var(--dim);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.gauge__sub {
+  color: var(--faint);
+  font-size: 10px;
+  line-height: 1.2;
 }
 
 .gauge__track,
 .gauge__target,
 .gauge__progress,
 .gauge__ticks,
-.gauge__needle {
+.gauge__marker {
   fill: none;
   vector-effect: non-scaling-stroke;
 }
@@ -785,7 +816,7 @@ html.motion-paused *::after {
 
 .gauge__target {
   stroke: var(--warn);
-  stroke-width: 5;
+  stroke-width: 3;
 }
 
 .gauge__progress {
@@ -798,122 +829,257 @@ html.motion-paused *::after {
   stroke-width: 1;
 }
 
-.gauge__needle {
+.gauge__marker {
   stroke: var(--text);
-  stroke-width: 2;
+  stroke-width: 3;
 }
 
-.gauge__hub {
-  fill: var(--accent);
+.gauge__tick-label {
+  fill: var(--faint);
+  text-shadow: none;
+  font-family: var(--mono);
+  font-size: 8px;
 }
 
-.gauge__scale {
-  display: flex;
-  justify-content: space-between;
-  margin: 0 8px 6px;
-  color: var(--faint);
+/* ---- Tooltips ------------------------------------------------------------ */
+/* Hover for a trackpad, focus for the keyboard, focus-within for a tap on the
+   touchscreen. The body stays in the DOM and only fades, so a screen reader
+   always has it, and nothing here is the only route to a number's meaning. */
+.tip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: help;
+}
+
+.tip:hover,
+.tip:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  outline: none;
+}
+
+.tip__mark {
+  font-family: var(--mono);
   font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
 }
 
-.gauge__readout,
-.gauge__label,
-.gauge__note {
-  display: block;
-}
-
-.gauge__readout {
-  min-height: 2.4em;
+.tip__body {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  z-index: 5;
+  width: max-content;
+  max-width: min(38ch, 74vw);
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  background: var(--panel-solid);
+  box-shadow: 0 4px 0 var(--shadow);
   color: var(--text);
-  font-size: 15px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.4;
+  text-align: left;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 4px);
+  transition: opacity .12s ease, transform .12s ease;
 }
 
-.gauge__label,
-.gauge__note {
-  margin-top: 3px;
-  font-size: 11px;
-  line-height: 1.35;
+.tip:hover .tip__body,
+.tip:focus .tip__body,
+.tip:focus-within .tip__body {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
-.gauge__note {
-  color: var(--warn);
+@media (prefers-reduced-motion: reduce) {
+  .tip__body {
+    transition: none;
+    transform: translate(-50%, 0);
+  }
 }
 
-.effort-copy {
-  max-width: 72ch;
-  margin: 18px auto;
+.effort-line {
+  margin: 16px 0;
   color: var(--text);
   font-size: 14px;
   line-height: 1.5;
+  text-align: center;
 }
 
-.effort-graph {
+/* ---- Charts -------------------------------------------------------------- */
+/* Both effort charts share these classes as well as their geometry. */
+.chart-block {
   width: 100%;
+  margin-bottom: 12px;
   border: 1px solid var(--line);
   padding: 8px;
   background: var(--panel-solid);
 }
 
-.effort-graph svg {
+.chart-block svg {
   display: block;
   width: 100%;
   height: auto;
-  min-height: 150px;
+  min-height: 160px;
+  overflow: visible;
 }
 
-.effort-graph__axis,
-.effort-graph__grid,
-.effort-graph__reference,
-.effort-graph__series {
+.chart-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  align-items: center;
+  margin-bottom: 6px;
+  color: var(--dim);
+  font-size: 11px;
+}
+
+.chart-key__swatch {
+  display: inline-block;
+  width: 14px;
+  height: 4px;
+  margin-right: 6px;
+  vertical-align: middle;
+  background: var(--accent);
+}
+
+.chart-key__swatch.is-open {
+  height: 2px;
+  background: var(--dim);
+}
+
+.chart-key__swatch.is-flag {
+  width: 8px;
+  height: 8px;
+  background: none;
+  border: 2px solid var(--dim);
+  transform: rotate(45deg);
+}
+
+.chart-key__swatch.is-steady {
+  background: var(--faint);
+}
+
+.chart-key__swatch.is-adjusted {
+  background: var(--warn);
+}
+
+.chart-axis,
+.chart-axis__tick,
+.chart-grid,
+.chart-reference,
+.chart-unit,
+.chart-open,
+.chart-steady,
+.chart-adjusted,
+.chart-actual,
+.chart-today {
   fill: none;
   vector-effect: non-scaling-stroke;
 }
 
-.effort-graph__axis {
+.chart-axis,
+.chart-axis__tick {
   stroke: var(--line);
   stroke-width: 1;
 }
 
-.effort-graph__grid {
+.chart-grid {
   stroke: var(--gap);
   stroke-width: 1;
 }
 
-.effort-graph__series {
+.chart-unit {
   stroke: var(--accent);
   stroke-width: 2;
 }
 
-.effort-graph__point {
+.chart-unit__dot {
   fill: var(--accent);
 }
 
-.effort-graph__reference {
+.chart-open {
+  stroke: var(--dim);
+  stroke-width: 1.5;
+}
+
+.chart-open__dot {
+  fill: var(--dim);
+}
+
+.chart-open__flag {
+  fill: var(--panel-solid);
+  stroke: var(--dim);
+  stroke-width: 1.5;
+}
+
+.chart-reference {
   stroke: var(--warn);
   stroke-width: 1;
   stroke-dasharray: 6 4;
 }
 
-.effort-graph__label,
-.effort-graph__axis-title,
-.effort-graph__reference-label {
+.chart-steady {
+  stroke: var(--faint);
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+}
+
+.chart-adjusted {
+  stroke: var(--warn);
+  stroke-width: 2;
+}
+
+.chart-actual {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.chart-today {
+  stroke: var(--dim);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.chart-marker {
+  fill: var(--accent);
+}
+
+.chart-label,
+.chart-axis-title,
+.chart-reference__label,
+.chart-today__label {
   fill: var(--dim);
   text-shadow: none;
   font-family: var(--mono);
   font-size: 10px;
 }
 
-.effort-graph__axis-title {
+.chart-axis-title {
   fill: var(--text);
   font-size: 11px;
 }
 
-.effort-graph__reference-label {
-  fill: var(--warn);
+.chart-label--open,
+.chart-axis-title--open {
+  fill: var(--dim);
 }
 
-.effort-graph__caption {
-  margin: 4px 8px 0;
-  font-size: 11px;
+.chart-reference__label {
+  fill: var(--warn);
 }
 
 @media (max-width: 760px) {
@@ -927,8 +1093,8 @@ html.motion-paused *::after {
     grid-template-columns: 1fr;
   }
 
-  .effort-odometer__digit {
-    padding-inline: 6px;
+  .chart-key {
+    font-size: 10px;
   }
 }
 
@@ -942,126 +1108,6 @@ html.motion-paused *::after {
   font-size: clamp(16px, 2.2vw, 22px);
   font-weight: 700;
   line-height: 1.35;
-}
-
-.calendar-chart {
-  width: 100%;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  padding: 10px;
-  background: var(--panel-solid);
-}
-
-.calendar-chart__key {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px 18px;
-  align-items: center;
-  color: var(--dim);
-  font-size: 11px;
-}
-
-.calendar-chart__swatch {
-  display: inline-block;
-  width: 24px;
-  margin-right: 5px;
-  border-top: 2px solid var(--line);
-  vertical-align: middle;
-}
-
-.calendar-chart__swatch.is-actual {
-  border-width: 4px;
-  border-color: var(--accent);
-}
-
-.calendar-chart__swatch.is-steady {
-  border-color: var(--faint);
-  border-style: dashed;
-}
-
-.calendar-chart__swatch.is-adjusted {
-  border-color: var(--warn);
-}
-
-.calendar-chart svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  min-height: 180px;
-}
-
-.calendar-chart__axis,
-.calendar-chart__grid,
-.calendar-chart__today,
-.calendar-chart__steady,
-.calendar-chart__adjusted,
-.calendar-chart__actual {
-  fill: none;
-  vector-effect: non-scaling-stroke;
-}
-
-.calendar-chart__axis {
-  stroke: var(--line);
-  stroke-width: 1;
-}
-
-.calendar-chart__grid {
-  stroke: var(--gap);
-  stroke-width: 1;
-}
-
-.calendar-chart__today {
-  stroke: var(--line);
-  stroke-width: 1;
-}
-
-.calendar-chart__steady {
-  stroke: var(--faint);
-  stroke-width: 1.5;
-  stroke-dasharray: 6 5;
-}
-
-.calendar-chart__adjusted {
-  stroke: var(--warn);
-  stroke-width: 2.5;
-}
-
-.calendar-chart__actual {
-  stroke: var(--accent);
-  stroke-width: 5;
-  stroke-linecap: square;
-  stroke-linejoin: miter;
-}
-
-.calendar-chart__marker {
-  fill: var(--accent);
-  stroke: var(--panel-solid);
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-}
-
-.calendar-chart__label,
-.calendar-chart__axis-title,
-.calendar-chart__today-label {
-  fill: var(--dim);
-  text-shadow: none;
-  font-family: var(--mono);
-  font-size: 14px;
-}
-
-.calendar-chart__axis-title {
-  fill: var(--text);
-  font-size: 15px;
-}
-
-.calendar-chart__today-label {
-  fill: var(--text);
-}
-
-.calendar-chart__caption {
-  max-width: 88ch;
-  margin: 8px 2px 16px;
-  line-height: 1.5;
 }
 
 .cal-strip {
@@ -1171,15 +1217,15 @@ html.motion-paused *::after {
 }
 
 @media (max-width: 480px) {
-  .calendar-chart {
+  .chart-block {
     padding: 6px;
   }
 
-  .calendar-chart svg {
+  .chart-block svg {
     min-height: 155px;
   }
 
-  .calendar-chart__key {
+  .chart-key {
     display: grid;
     grid-template-columns: 1fr;
   }

@@ -288,8 +288,21 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
     banner.hidden = !message;
   }
 
+  // WHICH DENOMINATOR LEADS, and why. A request came in to "lie that we are past
+  // 50% so he doesn't get unmotivated". The fabrication was declined — nothing on
+  // this page may be a number he cannot check — but the point underneath it was
+  // real. 46% was never more true than 93%: it is the same work, counted against
+  // the most discouraging denominator available.
+  //
+  // So the trophy wall leads with Semester 1 — 98 of 105 done, six activities from
+  // sealed — which is checkable in his gradebook and is the nearest real finish
+  // line he has. The whole-course figure did not disappear; it moved to the
+  // course-progress dial and stopped being the headline. The numbers come from
+  // semesterFocus() in quest.mjs. If you change the denominator, change it there,
+  // pick one he can verify, and say on screen which one you picked.
   function renderTrophy(data, previousSnapshot, isNewSnapshot) {
     const semester = data.semesters.find(item => item.id === "sem1") ?? data.semesters[0];
+    const focus = semesterFocus(data);
     const total = Math.max(0, semester.allTotal || 0);
     const done = Math.min(total, Math.max(0, semester.allDone || 0));
     const completeSections = semester.sections.filter(section => section.complete).length;
