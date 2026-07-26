@@ -249,15 +249,13 @@
 
 /* Below this width the minor ticks and the inner scale's own numbers turn to
    mush, so they are dropped rather than shrunk under legible size. The inner
-   scale keeps its ticks and its name, and every number stays full size. */
+   scale keeps its ticks and its name. The main numerals are NOT scaled here:
+   the face itself gets bigger at one column, so 6.6 face units is about 17
+   CSS px on a phone against 14 on the desktop grid. */
 @media (max-width: 520px) {
   .gauge__minors,
   .gauge__number2 {
     display: none;
-  }
-
-  .gauge__number {
-    font-size: 7px;
   }
 }
 
