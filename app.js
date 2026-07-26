@@ -537,10 +537,13 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     const label = `${region.name}. ${region.unitsDone} of ${region.unitsTotal} units placed: ${
       breakdown}. ${state}${where}${grade}. Zoom in.`;
     const size = 34;
-    const node = `<svg class="wm-node" width="${size + 20}" height="${size + 20}"
-      viewBox="${-size / 2 - 10} ${-size / 2 - 10} ${size + 20} ${size + 20}"
+    // The box is tight to the node and the icon row above it is allowed to
+    // overflow (.wm-node is overflow:visible), so the button's layout box stays
+    // the size of the node itself and the name plaque sits right under it.
+    const node = `<svg class="wm-node" width="${size + 6}" height="${size + 6}"
+      viewBox="${-size / 2 - 3} ${-size / 2 - 3} ${size + 6} ${size + 6}"
       aria-hidden="true" focusable="false" shape-rendering="crispEdges">
-      <path fill="#1d2830" opacity=".55" d="M${-size / 2 - 3} ${-size / 2 - 3}h${size + 6}v${size + 6}h-${size + 6}z"/>
+      <path fill="#16202a" opacity=".5" d="M${-size / 2 - 2} ${-size / 2 - 2}h${size + 4}v${size + 4}h-${size + 4}z"/>
       <path class="wm-node__frame" d="M${-size / 2} ${-size / 2}h${size}v${size}h-${size}z"/>
       ${nodeBands(region, 0, 0, size)}
       ${nodeIcons(region, 0, 0, size)}
