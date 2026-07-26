@@ -327,9 +327,13 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
     // and say so out loud, because 105 tiles is the better wall and 94% is honest.
     // Two named things, not one word meaning two: a countdown of 6 here would run
     // past the reward landing at 5 and read as the site being broken.
+    // Both figures carry their noun on screen, because stacking a 6 and a 5 with
+    // the same word between them reads as an arithmetic slip no matter how right
+    // each one is. "units" is always the gradebook row; anything counted in LMS
+    // activities says "activities".
     const nearFinish = total > 0 && focus?.sealed
-      ? "Semester 1 sealed. Every unit is submitted."
-      : `${focus?.rowsLeft ?? total - done} units from sealing Semester 1.`;
+      ? "Semester 1 sealed. Every gradebook row is submitted."
+      : `${focus?.rowsLeft ?? total - done} units — gradebook rows — from sealing Semester 1.`;
     document.querySelector("#trophy-content").innerHTML = `
       <div class="trophy-summary">
         <div class="trophy-stats">
