@@ -1210,8 +1210,12 @@ export function worldTerrain(map, options = {}) {
       // dead-straight Voronoi edges and the thing reads as a pie chart with a
       // coastline. Warping the input warps the borders and the coast together,
       // so they agree with each other.
-      const wx = gx + 0.5 + (fbm(gx * 0.06, gy * 0.06, seed + 401) - 0.5) * 16;
-      const wy = gy + 0.5 + (fbm(gx * 0.06, gy * 0.06, seed + 557) - 0.5) * 16;
+      const wx = gx + 0.5
+        + (fbm(gx * 0.052, gy * 0.049, seed + 401) - 0.5) * 22
+        + (fbm(gx * 0.15, gy * 0.15, seed + 613, 2) - 0.5) * 6;
+      const wy = gy + 0.5
+        + (fbm(gx * 0.047 + 11.3, gy * 0.055 + 5.7, seed + 557) - 0.5) * 22
+        + (fbm(gx * 0.15 + 3.1, gy * 0.15 + 9.4, seed + 787, 2) - 0.5) * 6;
       let best = Infinity;
       let bestIndex = -1;
       for (let t = 0; t < territories.length; t += 1) {
