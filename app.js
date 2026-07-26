@@ -1716,18 +1716,33 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   //           not proof of absence, so the link stays: hiding every lesson because the
   //           network blinked is a bigger failure than a link that will not open while
   //           he has no connection anyway.
-  async function lessonExists(slug) {
-    if (lessonFileCache.has(slug)) return lessonFileCache.get(slug);
+  async function pageExists(path) {
+    if (lessonFileCache.has(path)) return lessonFileCache.get(path);
     let answer;
     try {
-      const response = await fetch(`lessons/${slug}.html`, { method: "HEAD" });
+      const response = await fetch(path, { method: "HEAD" });
       answer = response.ok ? true : (response.status === 404 ? false : null);
     } catch {
       answer = null;
     }
-    lessonFileCache.set(slug, answer);
+    lessonFileCache.set(path, answer);
     return answer;
   }
+
+  function lessonExists(slug) {
+    return pageExists(`lessons/${slug}.html`);
+  }
+
+  // Code labs: a page with a small editor, working code already loaded, and a picture
+  // that moves when he changes a number. Each one is pinned to a real section of the
+  // syllabus, and like the mini-lessons it is only linked once the file is confirmed.
+  const LAB_CATALOG = [
+    { file: "sem1-03-crossing", semesterId: "sem1", number: 3, name: "Where Two Lines Cross" },
+    { file: "sem1-05-line", semesterId: "sem1", number: 5, name: "Move the Line" },
+    { file: "sem2-01-doubling", semesterId: "sem2", number: 1, name: "The Moment Doubling Wins" },
+    { file: "sem2-02-parabola", semesterId: "sem2", number: 2, name: "Bend the Parabola" },
+    { file: "sem2-03-mandelbrot", semesterId: "sem2", number: 3, name: "The Quadratic That Eats Itself" },
+  ];
 
   // Every section in the syllabus, in order, whether or not a lesson file exists for it.
   function lessonCatalog(data) {
