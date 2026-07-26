@@ -1212,7 +1212,8 @@ function buildTerrain(map, options) {
       to: territories.length,
       unitsTotal: world.unitsTotal,
       unitsDone: world.unitsDone,
-      targetCells: world.unitsTotal * CELLS_PER_UNIT,
+      gridX: place.cx * cols,
+      gridY: place.cy * rows,
     });
   });
 
@@ -1238,9 +1239,21 @@ function buildTerrain(map, options) {
       const wy = gy + 0.5
         + (fbm(gx * 0.047 + 11.3, gy * 0.055 + 5.7, seed + 557, 2) - 0.5) * 22
         + (fbm(gx * 0.15 + 3.1, gy * 0.15 + 9.4, seed + 787, 2) - 0.5) * 6;
+      // Pick the landmass first, then only its own territories. Half the
+      // distance tests disappear, and — the reason it is done this way rather
+      // than for speed alone — a territory can never claim a cell on the other
+      // continent, so the two can never grow into each other.
+      let mass = landmasses[0];
+      let massBest = Infinity;
+      for (const candidate of landmasses) {
+        const dx = wx - candidate.gridX;
+        const dy = wy - candidate.gridY;
+        const d = dx * dx + dy * dy;
+        if (d < massBest) { massBest = d; mass = candidate; }
+      }
       let best = Infinity;
-      let bestIndex = -1;
-      for (let t = 0; t < territories.length; t += 1) {
+      let bestIndex = mass.from;
+      for (let t = mass.from; t < mass.to; t += 1) {
         const territory = territories[t];
         const dx = wx - territory.seedX;
         const dy = wy - territory.seedY;
