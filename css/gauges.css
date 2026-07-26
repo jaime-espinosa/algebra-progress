@@ -104,8 +104,8 @@
 }
 
 /* Owner-granted exception: red is permitted only on the below-pace segment of
-   this dial rim. Width and dash density carry the same three meanings without
-   colour: wide solid, narrower long-dash, widest short-dash. */
+   this dial rim. Width and dash density carry the same two meanings without
+   colour: wide solid below pace, narrower long-dash at or above it. */
 .gauge__threshold-band {
   stroke-linecap: butt;
 }
@@ -121,11 +121,9 @@
   stroke-dasharray: 7 2;
 }
 
-.gauge__threshold-band.is-over-fifty {
-  stroke: #d88932;
-  stroke-width: 9;
-  stroke-dasharray: 2 2;
-}
+/* `is-over-fifty` used to shade the rim from 5.07/day up, in orange. Removed by request:
+   a band that begins where he is doing well reads as one more threshold to clear. The
+   class is gone from the markup too — nothing emits it. */
 
 /* High-contrast numerals and ticks, as on the reference face. */
 .gauge__majors {

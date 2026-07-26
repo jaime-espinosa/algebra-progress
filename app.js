@@ -931,10 +931,12 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     const recentScale = dialScale(s.recent3, Math.max(1, s.recent3));
     const doneScale = dialScale(s.odometer, totalUnits);
     const daysScale = dialScale(s.activeDays, calendarSpan);
-    // Owner-granted dial-only exception: the current Aug 15 pace boundary is
-    // 3.38/day, and fifty percent above it is 3.38 × 1.5 = 5.07/day.
+    // Owner-granted dial-only exception: the current Aug 15 pace boundary is 3.38/day.
+    // There used to be a third, orange band from 5.07 up — fifty percent over the needed
+    // pace. It is gone by request ("remove the idea of shading past 4"): a band that
+    // starts where he is doing WELL reads as another threshold to worry about, and this
+    // dial only needs to say one thing, which is whether today clears the bar.
     const paceBandNeeded = 3.38;
-    const paceBandOrange = Number((paceBandNeeded * 1.5).toFixed(2));
     const pacePercent = s.requiredPerDay > 0 ? Math.round((s.activePace / s.requiredPerDay) * 100) : 0;
     const recentPercent = s.rowsLeft > 0 ? Math.round((s.recent3 / s.rowsLeft) * 100) : 0;
     const donePercent = Math.round(s.tripDone * 100);
@@ -964,17 +966,11 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
             {
               className: "is-at-pace",
               from: paceBandNeeded / paceScale.max,
-              to: paceBandOrange / paceScale.max,
-              boundary: `${paceBandNeeded.toFixed(2)} to ${paceBandOrange.toFixed(2)}`,
-            },
-            {
-              className: "is-over-fifty",
-              from: paceBandOrange / paceScale.max,
               to: 1,
-              boundary: `${paceBandOrange.toFixed(2)} and above`,
+              boundary: `${paceBandNeeded.toFixed(2)} and above`,
             },
           ],
-          ariaText: `Units per day on the days you work: ${s.activePace.toFixed(2)}, on a dial reading 0 to ${paceScale.max} units per day — ${s.odometer} units over ${s.activeDays} working days. Aug 15 needs ${s.requiredPerDay.toFixed(2)} a day, so the inner amber percentage scale reads ${pacePercent} percent of that pace. Below ${paceBandNeeded.toFixed(2)} units per day is the wide solid red rim band; ${paceBandNeeded.toFixed(2)} through ${paceBandOrange.toFixed(2)} is the narrower long-dash green band; ${paceBandOrange.toFixed(2)} and above is the widest short-dash orange band, fifty percent over the needed pace.`
+          ariaText: `Units per day on the days you work: ${s.activePace.toFixed(2)}, on a dial reading 0 to ${paceScale.max} units per day — ${s.odometer} units over ${s.activeDays} working days. Aug 15 needs ${s.requiredPerDay.toFixed(2)} a day, so the inner amber percentage scale reads ${pacePercent} percent of that pace. Below ${paceBandNeeded.toFixed(2)} units per day is the wide solid red rim band; ${paceBandNeeded.toFixed(2)} and above is the narrower long-dash green band.`
         })}
 
         ${gaugeDial({

@@ -882,9 +882,8 @@ export const GAME_KIND_FACES = {
           <text class="chart-axis-title" x="14" y="${(top + bottom) / 2}"
             text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">units/day</text>
           <line class="chart-reference" x1="${CHART.left}" y1="${requiredY.toFixed(1)}"
-            x2="${CHART.width - CHART.right}" y2="${requiredY.toFixed(1)}"></line>
-          <text class="chart-reference__label" x="${CHART.left + 6}" y="${(requiredY - 5).toFixed(1)}"
-            text-anchor="start">${requiredPerDay.toFixed(2)}/day — what Aug 15 needs</text>
+            x2="${CHART.width - CHART.right}" y2="${requiredY.toFixed(1)}"
+            ><title>${escapeHtml(`${requiredPerDay.toFixed(2)} units a day is what finishing on time needs`)}</title></line>
           ${openSeries}
           <polyline class="chart-unit" points="${unitPoints}"></polyline>
           ${unitDots}
