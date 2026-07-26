@@ -1124,15 +1124,6 @@ const LANDMASS_PLACEMENT = [
   { cx: 0.725, cy: 0.645, halfW: 0.185, halfH: 0.150 },
 ];
 
-// Quantile without sorting the whole array twice over: a plain sort of a
-// Float32Array copy is fine at this size and is exactly reproducible.
-function quantileAt(values, count) {
-  if (values.length === 0) return 0;
-  const sorted = Float64Array.from(values).sort();
-  const index = Math.max(0, Math.min(sorted.length - 1, count - 1));
-  return sorted[index];
-}
-
 /**
  * Terrain geometry for a worldMap() result.
  *
