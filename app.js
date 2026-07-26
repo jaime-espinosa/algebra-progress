@@ -462,9 +462,15 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
 
   function renderSkinCard(options = {}) {
     const storedUsername = storageGet("mc.username", "");
+    // A data refresh re-renders the whole page, and this card can be mid-type when
+    // that happens — a background poll that silently erased what he was typing
+    // would look like the page fighting him. Half-typed input and focus survive.
+    const liveInput = document.querySelector("#skin-name");
+    const typed = liveInput && document.activeElement === liveInput ? liveInput.value : null;
     const username = typeof options.username === "string"
       ? options.username
-      : typeof storedUsername === "string" ? storedUsername : "";
+      : typed !== null ? typed
+        : typeof storedUsername === "string" ? storedUsername : "";
     const skin = options.skin === undefined
       ? validSkinCache(storageGet("mc.skin", null))
       : validSkinCache(options.skin);
