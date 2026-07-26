@@ -398,23 +398,30 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // "You are here": a planted flag on the ground of the section that holds his
   // next unit, with a beacon column behind it so it is findable from across the
   // map without zooming. It is a position, not a score.
-  // `flyLeft` mirrors the banner so the flag can be planted on whichever side of
-  // the node has open ground, instead of flying into the neighbouring section's
-  // name plaque.
-  function hereMarker(x, y, flyLeft = false) {
-    const bar = (w, top) => {
-      const left = flyLeft ? x - 2 - w : x + 2;
-      return `M${left} ${top}h${w}v9h-${w}z`;
-    };
+  // The beacon column that says "he is over there" from anywhere on the map.
+  // Ambience only — it lives in the terrain overlay, under the nodes.
+  function hereMarker(x, y) {
     return `<g class="wm-you">
-      <path class="wm-you__beam" fill="#ffd67a" d="M${x - 8} ${y - 240}h16v240h-16z"/>
-      <path class="wm-you__beam" fill="#fff2cf" opacity=".55" d="M${x - 3} ${y - 240}h6v240h-6z"/>
-      <path fill="#1d2830" opacity=".55" d="M${x - 13} ${y + 1}h26v5h-26z"/>
-      <path fill="#e8dcc0" d="M${x - 2} ${y - 56}h4v57h-4z"/>
-      <path fill="#3b6ea8" d="${bar(34, y - 56)}${bar(28, y - 47)}${bar(21, y - 38)}"/>
-      <path fill="#8fc4e8" d="M${flyLeft ? x - 36 : x + 2} ${y - 56}h34v3h-34z"/>
-      <path fill="#254a72" d="M${flyLeft ? x - 23 : x + 2} ${y - 38}h21v3h-21z"/>
-      <path fill="#e8dcc0" d="M${x - 4} ${y - 60}h8v5h-8z"/>
+      <path class="wm-you__beam" fill="#ffd67a" d="M${x - 8} ${y - 260}h16v260h-16z"/>
+      <path class="wm-you__beam" fill="#fff2cf" opacity=".55" d="M${x - 3} ${y - 260}h6v260h-6z"/>
+      <path fill="#1d2830" opacity=".5" d="M${x - 13} ${y - 2}h26v5h-26z"/>
+    </g>`;
+  }
+
+  // The planted flag. It is drawn INSIDE the node's own svg rather than out in
+  // the terrain overlay, because the overlay sits under the name plaques and
+  // the flag kept ending up behind the neighbouring section's sign. Here it is
+  // part of the control it belongs to, so it can never be covered by anything
+  // except by moving the node itself. It overflows the svg box upward, which
+  // .wm-node allows on purpose.
+  function hereFlag(x, y) {
+    const bar = (w, top) => `M${x + 2} ${top}h${w}v9h-${w}z`;
+    return `<g class="wm-flag">
+      <path fill="#16202a" opacity=".5" d="M${x - 4} ${y - 1}h9v4h-9z"/>
+      <path fill="#e8dcc0" d="M${x - 2} ${y - 54}h4v55h-4z"/>
+      <path fill="#3b6ea8" d="${bar(30, y - 54)}${bar(25, y - 45)}${bar(19, y - 36)}"/>
+      <path fill="#8fc4e8" d="M${x + 2} ${y - 54}h30v3h-30z"/>
+      <path fill="#e8dcc0" d="M${x - 4} ${y - 58}h8v5h-8z"/>
     </g>`;
   }
 
@@ -556,6 +563,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       <path class="wm-node__frame" d="M${-size / 2} ${-size / 2}h${size}v${size}h-${size}z"/>
       ${nodeBands(region, 0, 0, size)}
       ${nodeIcons(region, 0, 0, size)}
+      ${region.status === "here" ? hereFlag(-size / 2 - 7, size / 2 - 2) : ""}
     </svg>`;
     return `
       <button type="button" class="wm-region is-${region.status}" data-region="${escapeHtml(region.key)}"
@@ -962,9 +970,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           width="${terrain.width}" height="${terrain.height}" aria-hidden="true" focusable="false"
           shape-rendering="auto" xmlns="http://www.w3.org/2000/svg">
           ${routePaths(route)}${compassRose(terrain.width - 92, 96)}
-          ${marks.join("")}${hereSpot
-            ? hereMarker(hereSpot.cx - 30, hereSpot.cy + 12, true)
-            : ""}</svg>`;
+          ${marks.join("")}${hereSpot ? hereMarker(hereSpot.cx, hereSpot.cy + 18) : ""}</svg>`;
 
     document.querySelector("#worldmap-content").innerHTML = map.worlds.length
       ? `

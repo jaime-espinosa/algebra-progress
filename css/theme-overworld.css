@@ -444,6 +444,12 @@ meter,
   border-color: rgba(139, 219, 122, .55);
 }
 
+/* Where he is standing sits above its neighbours, so the flag and the node are
+   never covered by an adjacent section's sign. */
+.wm-region.is-here {
+  z-index: 3;
+}
+
 .wm-region.is-here .wm-node__frame {
   stroke: #ffd67a;
   stroke-width: 4;
