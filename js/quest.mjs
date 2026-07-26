@@ -602,3 +602,58 @@ export function openTime(activity, today) {
       - stretches.reduce((sum, stretch) => sum + stretch.seconds, 0),
   };
 }
+
+// Open time keyed by date, plus the peak, so a chart can plot it without any
+// caller re-deriving it. `longest` and `startTime` travel with the day so the
+// view can say WHY a spike is a spike ("a tab was left open") instead of
+// letting it read as a ten-hour day. Nothing here is capped or smoothed.
+export function openTimeSeries(activity, today) {
+  const open = openTime(activity, today);
+  const byDay = new Map();
+  for (const day of open.days) {
+    const longest = open.stretches
+      .filter((stretch) => stretch.date === day.date)
+      .sort((left, right) => right.seconds - left.seconds)[0] ?? null;
+    byDay.set(day.date, { ...day, longestStretch: longest });
+  }
+  return {
+    ...open,
+    byDay,
+    maxSeconds: open.days.reduce((max, day) => Math.max(max, day.seconds), 0),
+  };
+}
+
+// --- Which denominator the trophy wall leads with ---------------------------
+// A "lie that we are past 50%" was requested, so the whole-course figure would
+// read as encouraging, and was DECLINED: nothing on this page may be a number he
+// cannot check against his own gradebook. This is what replaced it.
+//
+// 46% is not more true than 93%; it is the same work under the most
+// discouraging denominator available. Semester 1 is the nearest real finish
+// line — 98 of 105 done, six activities from sealed — so that is what leads.
+// The whole-course figure is still on the page, in the course-progress dial; it
+// just stopped being the headline. If you change the denominator, change it to
+// another one he can verify, and say which one it is on screen.
+export function semesterFocus(data) {
+  const semester = (data.semesters ?? []).find((item) => item.id === "sem1")
+    ?? (data.semesters ?? [])[0] ?? null;
+  if (!semester) return null;
+  const total = Math.max(0, Number(semester.allTotal) || 0);
+  const done = Math.min(total, Math.max(0, Number(semester.allDone) || 0));
+  const activities = semester.activities ?? [];
+  const unitsLeft = activities.filter((item) => item.state === "not_started").length;
+  return {
+    id: semester.id,
+    name: semester.name ?? "",
+    done,
+    total,
+    // Rounded for display only; both operands are printed beside it.
+    percent: total > 0 ? Math.round((done / total) * 100) : 0,
+    unitsLeft,
+    sealed: activities.length > 0 && unitsLeft === 0,
+    sectionsSealed: (semester.sections ?? []).filter((section) => section.complete).length,
+    sectionsTotal: (semester.sections ?? []).length,
+    grade: Number.isFinite(semester.percent) ? semester.percent : null,
+    letter: typeof semester.letter === "string" ? semester.letter : null,
+  };
+}
