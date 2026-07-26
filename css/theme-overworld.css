@@ -328,35 +328,90 @@ meter,
   font-weight: 700;
 }
 
-/* A territory plaque: the focusable control standing on its own ground. It is a
-   real button carrying the region's counts in its accessible name, so the map
-   is never a picture a screen reader cannot read. */
+/* The road. One dashed stroke per hop between consecutive sections, in the order
+   he actually does them. Road already walked is solid-bright; road ahead is the
+   same road, quieter — never a different or barred road, because he is not
+   blocked from any of it, he simply has not got there yet. */
+.wm-route {
+  fill: none;
+  stroke: #e8c887;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 2 9;
+  opacity: .42;
+}
+
+.wm-route.is-walked {
+  stroke: #ffd67a;
+  stroke-dasharray: 5 7;
+  opacity: .85;
+}
+
+/* The sea leg between the two semesters: a longer dash, because it is a crossing
+   rather than a walk. */
+.wm-route.is-sea {
+  stroke: #a9d2ec;
+  stroke-width: 3;
+  stroke-dasharray: 10 12;
+  opacity: .45;
+}
+
+/* A node on the route: the focusable control standing on its own section's
+   ground. It is a real button carrying that section's counts, its work-type
+   breakdown and its discovery state in its accessible name, so the map is never
+   a picture a screen reader cannot read. */
 .wm-region {
   position: absolute;
   display: grid;
-  gap: 1px;
+  gap: 2px;
   justify-items: center;
-  /* The plaque hangs ABOVE the point it names, so the structures and the "you
-     are here" beacon standing on that same ground are not hidden under it. */
-  transform: translate(-50%, -125%);
-  max-width: 148px;
-  padding: 4px 8px;
-  border: 1px solid rgba(255, 255, 255, .28);
-  background: rgba(12, 22, 30, .62);
+  /* Centred on the point it names, so the node sits ON the road rather than
+     floating beside it. The name plaque hangs underneath. */
+  transform: translate(-50%, -50%);
+  padding: 0;
+  border: 0;
+  background: none;
   color: #f2f7f9;
   font: inherit;
   font-size: 12px;
   line-height: 1.2;
   text-align: center;
   cursor: pointer;
+}
+
+.wm-node {
+  display: block;
+  overflow: visible;
+}
+
+.wm-node__frame {
+  fill: none;
+  stroke: #cfe0e8;
+  stroke-width: 3;
+  opacity: .85;
+}
+
+/* The name plaque under the node, in the register of the banner signs. */
+.wm-region__plaque {
+  display: grid;
+  gap: 1px;
+  max-width: 132px;
+  padding: 2px 7px;
+  border: 1px solid rgba(255, 255, 255, .26);
+  background: rgba(12, 22, 30, .70);
+  white-space: normal;
   transition: background-color 120ms, border-color 120ms;
 }
 
-.wm-region:hover,
-.wm-region:focus-visible {
+.wm-region:hover .wm-region__plaque,
+.wm-region:focus-visible .wm-region__plaque {
   border-color: #ffd67a;
-  background: rgba(12, 22, 30, .88);
-  outline: none;
+  background: rgba(12, 22, 30, .92);
+}
+
+.wm-region:focus-visible {
+  outline: 3px solid #ffd67a;
+  outline-offset: 2px;
 }
 
 .wm-region__name {
@@ -368,21 +423,47 @@ meter,
   color: #cfe0e8;
 }
 
-/* Settled ground carries a lit plaque; ground he has not reached carries a
+/* Settled ground carries a lit node; ground he has not reached carries a
    quieter one. Quieter, never darker-as-a-warning, and never a count of
    anything missed. */
-.wm-region.is-settled {
+.wm-region.is-settled .wm-node__frame {
+  stroke: #8bdb7a;
+}
+
+.wm-region.is-settled .wm-region__plaque {
   border-color: rgba(139, 219, 122, .55);
 }
 
-.wm-region.is-here {
-  border-color: #ffd67a;
-  background: rgba(24, 20, 10, .80);
+.wm-region.is-here .wm-node__frame {
+  stroke: #ffd67a;
+  stroke-width: 4;
+  opacity: 1;
 }
 
-.wm-region.is-ahead {
+.wm-region.is-here .wm-region__plaque {
+  border-color: #ffd67a;
+  background: rgba(24, 20, 10, .86);
+}
+
+/* Sections further off sit further into the haze — the same graded fog the
+   terrain under them is drawn with, so a node never floats bright over ground
+   that is meant to read as undiscovered. It stays fully legible on hover and
+   focus, and its accessible name is never dimmed at all. */
+.wm-region[data-ahead="1"] { opacity: .85; }
+.wm-region[data-ahead="2"] { opacity: .72; }
+.wm-region[data-ahead="3"],
+.wm-region[data-ahead="4"],
+.wm-region[data-ahead="5"],
+.wm-region[data-ahead="6"],
+.wm-region[data-ahead="7"],
+.wm-region[data-ahead="8"] { opacity: .62; }
+
+.wm-region:hover,
+.wm-region:focus-visible { opacity: 1; }
+
+.wm-region.is-ahead .wm-region__plaque {
   border-style: dashed;
-  border-color: rgba(255, 255, 255, .22);
+  border-color: rgba(255, 255, 255, .24);
   color: #d6e3ea;
 }
 
@@ -400,8 +481,22 @@ meter,
 .wm-key__swatch.is-settled { background: #7cab52; }
 .wm-key__swatch.is-haze    { background: #3d5060; }
 .wm-key__swatch.is-water   { background: #356089; }
-.wm-key__swatch.is-here    { background: #ffd67a; }
+.wm-key__swatch.is-here    { background: #3b6ea8; }
 .wm-key__swatch.is-landmark { background: #d7b45c; }
+/* The work-type inks, matching the bands and icons inside a node exactly.
+   Literal values, same as in app.js, so the legend cannot drift from the map. */
+.wm-key__swatch.is-lesson   { background: #f0c86a; }
+.wm-key__swatch.is-quiz     { background: #79c0a4; }
+.wm-key__swatch.is-activity { background: #a89ad6; }
+.wm-key__swatch.is-check    { background: #c8b48a; }
+.wm-key__swatch.is-test     { background: #ffd67a; }
+.wm-key__swatch.is-empty    { background: #31414e; }
+.wm-key__swatch.is-route {
+  background: none;
+  border-top: 3px dashed #ffd67a;
+  height: 0;
+  align-self: center;
+}
 
 /* The text equivalent. Not a fallback and not hidden: the same counts the map
    draws, in a table, for a keyboard, a screen reader, or anyone who would
