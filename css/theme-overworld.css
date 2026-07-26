@@ -221,18 +221,16 @@ meter,
   line-height: 1.45;
 }
 
-/* The map itself: a window onto a canvas that is bigger than the window. The
-   canvas moves with transform only, so panning composites one layer instead of
-   reflowing fourteen chunks — which is what makes it smooth on a 2018 machine. */
+/* The map itself: a window onto a world that is bigger than the window. The
+   world moves with transform only, so panning composites one layer instead of
+   reflowing anything — which is what makes it smooth on a 2018 machine. */
 .wm-viewport {
   position: relative;
   overflow: hidden;
-  height: min(64vh, 560px);
+  height: min(66vh, 600px);
   border: 1px solid var(--line);
-  background:
-    repeating-linear-gradient(90deg, var(--gap) 0 1px, transparent 1px 48px),
-    repeating-linear-gradient(180deg, var(--gap) 0 1px, transparent 1px 48px),
-    var(--panel-solid);
+  /* Open ocean, so the edge of the world is water and not a hole. */
+  background: #274a72;
   cursor: grab;
   /* pan-y, never none: a finger swiped up over the map scrolls the PAGE, the
      same as everywhere else. Dragging the map is a mouse/pen gesture and the
@@ -249,19 +247,48 @@ meter,
   outline-offset: -2px;
 }
 
+/* One transformed layer. Everything on the map — terrain, structures, plaques —
+   is a child of this, so a pan is a single composited translate3d and never a
+   redraw. Nothing inside it may have its own transform animation. */
 .wm-canvas {
-  display: grid;
-  grid-template-columns: 210px repeat(var(--wm-cols), 190px);
-  gap: 14px;
-  align-items: start;
-  padding: 16px;
-  width: max-content;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
   will-change: transform;
 }
 
-/* A semester is a band across the map, labelled in the left margin and spanning
-   exactly the rows its own regions occupy. Regions are never moved between
-   bands to make a row come out even. */
+.wm-terrain,
+.wm-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  /* The terrain is decoration over data; every fact it carries is also a
+     button's accessible name and a row of the text table underneath. */
+  pointer-events: none;
+  /* Hard block edges. A smoothed map is not a Minecraft map. */
+  image-rendering: pixelated;
+}
+
+.wm-you__beam {
+  animation: wm-beacon 2.4s ease-in-out infinite;
+}
+
+@keyframes wm-beacon {
+  0%, 100% { opacity: .30; }
+  50%      { opacity: .10; }
+}
+
+/* The semester summaries. They sit above the map rather than inside it: the map
+   is terrain now, and paragraphs laid over terrain are paragraphs nobody reads. */
+.wm-worlds {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
 .wm-band {
   position: relative;
   display: grid;
@@ -272,246 +299,148 @@ meter,
   background: var(--panel-solid);
 }
 
-.wm-band::before {
-  content: "";
+/* A banner naming a landmass, pinned above its northern coast. */
+.wm-banner {
   position: absolute;
-  inset: 0;
-  opacity: .14;
-  background: repeating-linear-gradient(180deg, var(--accent-dim) 0 8px, transparent 8px 16px);
+  display: grid;
+  gap: 1px;
+  justify-items: center;
+  transform: translateX(-50%);
+  padding: 5px 12px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  background: rgba(11, 20, 28, .74);
+  color: #e9f1f5;
+  font-size: 12px;
+  text-align: center;
+  white-space: nowrap;
   pointer-events: none;
 }
 
-.wm-band > * {
-  position: relative;
-}
-
-.wm-world__name {
-  margin: 0;
-  font-size: 17px;
+.wm-banner__name {
+  font-size: 15px;
   font-weight: 700;
 }
 
-.wm-world__of {
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--dim);
-}
-
-.wm-world__near {
-  color: var(--accent);
-  font-size: 13px;
-  line-height: 1.35;
-}
-
-.wm-world__standing {
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-/* A region is a chunk of terrain: sky on top, an id plate and a name, then the
-   blocks it is built out of. */
+/* A territory plaque: the focusable control standing on its own ground. It is a
+   real button carrying the region's counts in its accessible name, so the map
+   is never a picture a screen reader cannot read. */
 .wm-region {
+  position: absolute;
   display: grid;
-  grid-template-rows: 34px auto auto 1fr auto auto auto auto;
-  gap: 4px;
-  align-content: start;
-  min-height: 0;
-  padding: 0 10px 10px;
-  border: 1px solid var(--line);
-  background: var(--panel-solid);
-  color: var(--text);
+  gap: 1px;
+  justify-items: center;
+  transform: translate(-50%, -50%);
+  max-width: 148px;
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, .28);
+  background: rgba(12, 22, 30, .62);
+  color: #f2f7f9;
   font: inherit;
-  text-align: left;
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: center;
   cursor: pointer;
-  transition: transform 120ms steps(2), border-color 120ms;
+  transition: background-color 120ms, border-color 120ms;
 }
 
 .wm-region:hover,
 .wm-region:focus-visible {
-  border-color: var(--accent);
-}
-
-.wm-region:hover {
-  transform: translateY(-2px);
-}
-
-.wm-region__split {
-  font-size: 11px;
-}
-
-/* Settled ground is lit: the sky brightens and the chunk sits on solid rock. */
-.wm-region.is-settled {
-  background:
-    linear-gradient(180deg, transparent 0 60%, var(--accent-dim) 60% 100%),
-    var(--panel-solid);
-}
-
-.wm-region.is-here {
-  border-color: var(--warn);
-}
-
-/* Unexplored is quieter, never darker or warning-coloured. */
-.wm-region.is-ahead {
-  border-style: dashed;
-}
-
-.wm-region.is-ahead .wm-region__name {
-  color: var(--dim);
-}
-
-.wm-region__sky {
-  position: relative;
-  display: block;
-  margin: 0 -10px;
-  height: 34px;
-  border-bottom: 1px solid var(--line);
-  background: repeating-linear-gradient(180deg, var(--gap) 0 6px, transparent 6px 12px);
-}
-
-.wm-region.is-settled .wm-region__sky {
-  background: repeating-linear-gradient(180deg, var(--accent-dim) 0 6px, transparent 6px 12px);
-}
-
-.wm-region__id {
-  font-size: 11px;
-  letter-spacing: .12em;
-  color: var(--faint);
+  border-color: #ffd67a;
+  background: rgba(12, 22, 30, .88);
+  outline: none;
 }
 
 .wm-region__name {
-  /* Three lines' worth whether or not the name needs three, so the block fields
-     in a row of chunks all start at the same height and read as one landscape
-     instead of a ragged line. */
-  min-height: 3.75em;
-  font-size: 14px;
   font-weight: 700;
-  line-height: 1.25;
-}
-
-.wm-region__blocks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px;
-  padding: 4px 0;
-}
-
-.wm-block,
-.wm-key__block {
-  width: 11px;
-  height: 11px;
-  box-sizing: border-box;
-  border: 1px solid var(--line);
-  background: transparent;
-}
-
-/* A placed block is grass on dirt: solid body, bright hard top edge. */
-.wm-block.is-placed,
-.wm-key__block.is-placed {
-  border-color: var(--accent-dim);
-  border-top: 3px solid var(--accent);
-  background: var(--accent-dim);
-}
-
-.wm-block.is-next,
-.wm-key__block.is-next {
-  border-color: var(--warn);
-  border-top: 3px solid var(--warn);
-  background: transparent;
-  animation: wm-beacon 1.8s steps(2, end) infinite;
-}
-
-.wm-key__block.is-landmark {
-  border-color: var(--accent);
-  background:
-    linear-gradient(180deg, var(--accent) 0 4px, transparent 4px 100%),
-    linear-gradient(90deg, transparent 0 4px, var(--accent) 4px 6px, transparent 6px 100%);
-}
-
-@keyframes wm-beacon {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: .45; }
-}
-
-/* A battle block is notched at the corners so quizzes and tests read as a
-   different kind of place from training, without a second colour. */
-.wm-block.is-battle,
-.wm-key__block.is-battle {
-  border-width: 1px 3px;
-}
-
-.wm-block.reveal-hidden {
-  opacity: .18;
-  transform: scale(.7);
-}
-
-.wm-block.reveal-visible {
-  opacity: 1;
-  transform: scale(1);
-  transition: opacity 200ms, transform 200ms steps(3);
 }
 
 .wm-region__count {
-  font-size: 12px;
+  font-size: 11px;
+  color: #cfe0e8;
+}
+
+/* Settled ground carries a lit plaque; ground he has not reached carries a
+   quieter one. Quieter, never darker-as-a-warning, and never a count of
+   anything missed. */
+.wm-region.is-settled {
+  border-color: rgba(139, 219, 122, .55);
+}
+
+.wm-region.is-here {
+  border-color: #ffd67a;
+  background: rgba(24, 20, 10, .80);
+}
+
+.wm-region.is-ahead {
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, .22);
+  color: #d6e3ea;
+}
+
+/* The key under the map. Swatches are literal terrain colours, quoted from the
+   palette in quest.mjs so the legend cannot drift away from the map. */
+.wm-key__swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  vertical-align: -2px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, .25);
+}
+
+.wm-key__swatch.is-settled { background: #7cab52; }
+.wm-key__swatch.is-haze    { background: #3d5060; }
+.wm-key__swatch.is-water   { background: #356089; }
+.wm-key__swatch.is-here    { background: #ffd67a; }
+.wm-key__swatch.is-landmark { background: #d7b45c; }
+
+/* The text equivalent. Not a fallback and not hidden: the same counts the map
+   draws, in a table, for a keyboard, a screen reader, or anyone who would
+   rather read the numbers than look at the picture. */
+.wm-text {
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  background: var(--panel-solid);
+}
+
+.wm-text > summary {
+  cursor: pointer;
+  font-size: 13px;
   color: var(--dim);
 }
 
-.wm-region__state {
-  font-size: 11px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
-
-.wm-region.is-settled .wm-region__state {
-  color: var(--accent);
-}
-
-.wm-region.is-here .wm-region__state {
-  color: var(--warn);
-}
-
-.wm-region__grade {
-  min-height: 1.2em;
+.wm-text__table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
   font-size: 12px;
 }
 
-/* "You are here": a two-block figure standing on the skyline. */
-.wm-here {
-  position: absolute;
-  left: 12px;
-  bottom: 0;
-  width: 8px;
-  height: 20px;
+.wm-text__table caption {
+  padding-bottom: 8px;
+  text-align: left;
+  font-size: 12px;
 }
 
-.wm-here__head,
-.wm-here__body {
-  position: absolute;
-  left: 0;
-  width: 8px;
-  background: var(--warn);
+.wm-text__table th,
+.wm-text__table td {
+  padding: 4px 8px 4px 0;
+  border-bottom: 1px solid var(--gap);
+  text-align: left;
+  font-weight: 400;
 }
 
-.wm-here__head {
-  bottom: 12px;
-  height: 8px;
+.wm-text__table thead th {
+  color: var(--faint);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 
-.wm-here__body {
-  bottom: 0;
-  height: 11px;
-  background: var(--accent);
-}
-
-/* A landmark is a banner on a post, planted where the reward unlocks. */
-.wm-region__landmarks {
-  position: absolute;
-  right: 8px;
-  bottom: 0;
-  display: flex;
-  gap: 6px;
-}
-
+/* A landmark is a banner on a post, planted where the reward unlocks. Used in
+   the zoomed-in view; on the world map itself a landmark is a structure drawn
+   into the terrain overlay. */
 .wm-landmark {
   position: relative;
   display: inline-block;
@@ -1134,10 +1063,6 @@ html.motion-paused *::after {
     height: min(70vh, 460px);
   }
 
-  .wm-canvas {
-    grid-template-columns: 180px repeat(var(--wm-cols), 170px);
-  }
-
   .hotbar {
     grid-template-columns: repeat(3, minmax(64px, 1fr));
   }
@@ -1179,16 +1104,12 @@ html.motion-paused *::after {
     transform: none !important;
   }
 
-  /* The one looping animation on the page. It is the marker for where he is
-     standing, so it has to stay visible with the motion removed, not disappear
-     with it. */
-  .wm-block.is-next {
+  /* The one looping animation on the map. It is the beacon over the territory
+     he is standing in, so with motion removed it has to stay VISIBLE and stop
+     pulsing, not vanish along with the animation. */
+  .wm-you__beam {
     animation: none !important;
-    opacity: 1;
-  }
-
-  .wm-region:hover {
-    transform: none;
+    opacity: .3;
   }
 
   /* Panning still works with motion reduced — it is his own hand moving the

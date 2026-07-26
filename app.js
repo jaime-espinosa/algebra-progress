@@ -31,7 +31,6 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   let currentLandmarks = [];
   let currentTerrain = null;
   let intervalId = null;
-  let revealQueue = [];
   // Set when a batch of tiles is queued to reveal; cleared once the vault slots
   // that follow them have been unhidden.
   let revealPending = false;
@@ -1024,6 +1023,14 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           ${action}
         </article>`;
     }).join("");
+    // A newly earned slot is drawn hidden and revealed one tick later, so it
+    // lands as an event rather than as part of the page. The flag used to be
+    // raised by the world map — it drew the last reveal on the page and the
+    // vault rode in behind it — which meant deleting the map's block reveal
+    // silently left every new artifact invisible. It is raised here now,
+    // beside the thing it is actually about.
+    if (isNewSnapshot && !reducedMotion()
+      && document.querySelector("#hotbar .vault-slot.reveal-hidden")) revealPending = true;
   }
 
   function gaugePoint(fraction, radius) {
@@ -1948,13 +1955,6 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
 
   function tick() {
     if (document.hidden || reducedMotion()) return;
-    if (revealQueue.length) {
-      revealQueue.splice(0, 20).forEach(tile => {
-        tile.classList.remove("reveal-hidden");
-        tile.classList.add("reveal-visible");
-      });
-      return;
-    }
     if (revealPending) {
       revealPending = false;
       document.querySelectorAll(".vault-slot.reveal-hidden").forEach(slot => {
@@ -2034,12 +2034,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       if (event.key === "Escape" && zoomedRegion) closeRegion();
     });
     document.addEventListener("click", event => {
-      if (revealQueue.length || revealPending) {
-        revealQueue.forEach(tile => {
-          tile.classList.remove("reveal-hidden");
-          tile.classList.add("reveal-visible");
-        });
-        revealQueue = [];
+      if (revealPending) {
         revealPending = false;
         document.querySelectorAll(".vault-slot.reveal-hidden").forEach(slot => {
           slot.classList.remove("reveal-hidden");
