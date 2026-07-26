@@ -367,10 +367,11 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       ? Math.min(previousDone, region.unitsDone)
       : null;
     const state = REGION_STATE_COPY[region.status] ?? "";
-    const grade = region.grade === null
-      ? ""
-      : `<span class="wm-region__grade quiet numeric">${region.grade.toFixed(1)}%${
-          region.letter ? ` · ${escapeHtml(region.letter)}` : ""}</span>`;
+    // Always rendered, empty when the section has no grade yet, so every chunk
+    // has the same number of rows and a row of chunks lines up as one landscape.
+    // An empty span, never a 0% — a zero would read as a score he was given.
+    const grade = `<span class="wm-region__grade quiet numeric">${region.grade === null ? ""
+      : `${region.grade.toFixed(1)}%${region.letter ? ` · ${escapeHtml(region.letter)}` : ""}`}</span>`;
     const marker = region.status === "here"
       ? `<span class="wm-here" aria-hidden="true"><span class="wm-here__body"></span><span class="wm-here__head"></span></span>`
       : "";
