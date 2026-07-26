@@ -956,46 +956,85 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     return `<span class="plate numeric${modifier ? ` plate--${modifier}` : ""}">${glyphs}</span>`;
   }
 
-  // Dial anatomy, in the order he asked for it: a label above, tick numbers
-  // around the arc, the reading and its unit inside the face. Nothing is
-  // captioned underneath — the numbers under the old dials were the part he
-  // said nobody reads.
-  function gaugeDial({ label, hint, reading, unit, sub, ticks, fraction, targetFrom = null, ariaLabel }) {
-    const clamped = Math.max(0, Math.min(1, fraction));
-    const tickMarks = Array.from({ length: 11 }, (_, index) => {
-      const outer = gaugePoint(index / 10, 42);
-      const inner = gaugePoint(index / 10, index % 5 === 0 ? 35 : 38);
-      return `<line x1="${inner.x.toFixed(2)}" y1="${inner.y.toFixed(2)}" x2="${outer.x.toFixed(2)}" y2="${outer.y.toFixed(2)}"></line>`;
-    }).join("");
-    const tickLabels = ticks.map(({ at, text }) => {
-      const point = gaugePoint(at, 49);
-      return `<text class="gauge__tick-label" x="${point.x.toFixed(2)}" y="${point.y.toFixed(2)}"
-        text-anchor="middle" dominant-baseline="middle">${escapeHtml(text)}</text>`;
-    }).join("");
-    const markerFrom = gaugePoint(clamped, 33);
-    const markerTo = gaugePoint(clamped, 45);
-    const target = targetFrom === null ? "" : `
-      <path class="gauge__target" d="${gaugeArc(Math.max(0, Math.min(1, targetFrom)), 1, 31)}"></path>`;
+  // Dial anatomy, copied off the analog speedometer he pointed at: the numbers
+  // sit AROUND the arc (not stacked under the face), each numbered major tick
+  // has three unnumbered minors between it and the next, a second scale runs on
+  // a tighter inner arc in its own colour, the unit is named on the face, and an
+  // inset window carries the exact figure. Nothing is captioned underneath —
+  // the numbers under the old dials were the part he said nobody reads.
+  //
+  // The reference dial's inner scale is red. This site has no red in any theme
+  // or state, so the inner scale is drawn in the site's amber accent — the same
+  // token the adjusted-route line and the calendar keys already use. It is a
+  // second scale, not a warning; nothing on this panel warns about anything.
+  //
+  // `scale` and `secondary` come from quest.mjs (dialScale / percentTicks). This
+  // function does geometry and markup only, and computes no reading of its own.
+  const GAUGE = {
+    track: 45.5, tickOuter: 44, majorInner: 37, minorInner: 40.5, numbers: 31.5,
+    scale2Arc: 25.5, scale2Outer: 27.5, scale2Inner: 23.5, scale2Numbers: 19,
+    needle: 42,
+  };
+
+  function gaugeTick(at, fromRadius, toRadius) {
+    const from = gaugePoint(at, fromRadius);
+    const to = gaugePoint(at, toRadius);
+    return `<line x1="${from.x.toFixed(2)}" y1="${from.y.toFixed(2)}" x2="${to.x.toFixed(2)}" y2="${to.y.toFixed(2)}"></line>`;
+  }
+
+  function gaugeText(at, radius, text, className) {
+    const point = gaugePoint(at, radius);
+    return `<text class="${className}" x="${point.x.toFixed(2)}" y="${point.y.toFixed(2)}"
+      text-anchor="middle" dominant-baseline="central">${escapeHtml(text)}</text>`;
+  }
+
+  function gaugeDial({ label, hint, scale, secondary, faceUnit, readout, readoutSub, ariaText }) {
+    const clamped = Math.max(0, Math.min(1, scale.fraction));
+    const majors = scale.majors.map(({ at }) => gaugeTick(at, GAUGE.majorInner, GAUGE.tickOuter)).join("");
+    const minors = scale.minors.map((at) => gaugeTick(at, GAUGE.minorInner, GAUGE.tickOuter)).join("");
+    const numbers = scale.majors
+      .map(({ at, text }) => gaugeText(at, GAUGE.numbers, text, "gauge__number")).join("");
+
+    const ticks2 = secondary.ticks.map(({ at }) => gaugeTick(at, GAUGE.scale2Inner, GAUGE.scale2Outer)).join("");
+    const numbers2 = secondary.ticks
+      .map(({ at, text }) => gaugeText(at, GAUGE.scale2Numbers, text, "gauge__number2")).join("");
+    const lastTick = secondary.ticks.length ? secondary.ticks[secondary.ticks.length - 1].at : 0;
+    const scale2 = secondary.ticks.length ? `
+            <g class="gauge__scale2">
+              <path class="gauge__scale2-arc" d="${gaugeArc(0, lastTick, GAUGE.scale2Arc)}"></path>
+              <g class="gauge__scale2-ticks" shape-rendering="crispEdges">${ticks2}</g>
+              <g class="gauge__scale2-numbers">${numbers2}</g>
+            </g>
+            <text class="gauge__scale2-unit" x="50" y="41" text-anchor="middle">${escapeHtml(secondary.unit)}</text>` : "";
+
     const progress = clamped > 0 ? `
-      <path class="gauge__progress" d="${gaugeArc(0, clamped)}"></path>` : "";
+            <path class="gauge__progress" d="${gaugeArc(0, clamped, GAUGE.track)}"></path>` : "";
+    const angle = (135 + clamped * 270).toFixed(2);
+
     return `
       <article class="gauge">
         <h3 class="gauge__title">${escapeHtml(label)}${hint ? tip(hint) : ""}</h3>
         <div class="gauge__face">
-          <svg class="gauge__svg" viewBox="0 -8 100 108" role="img" aria-label="${escapeHtml(ariaLabel)}">
-            <path class="gauge__track" d="${gaugeArc(0, 1)}"></path>
-            ${target}
+          <svg class="gauge__svg" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle class="gauge__disc" cx="50" cy="50" r="49"></circle>
+            <path class="gauge__track" d="${gaugeArc(0, 1, GAUGE.track)}"></path>
             ${progress}
-            <g class="gauge__ticks" shape-rendering="crispEdges">${tickMarks}</g>
-            ${tickLabels}
-            <line class="gauge__marker" x1="${markerFrom.x.toFixed(2)}" y1="${markerFrom.y.toFixed(2)}"
-              x2="${markerTo.x.toFixed(2)}" y2="${markerTo.y.toFixed(2)}"></line>
+            <g class="gauge__minors" shape-rendering="crispEdges">${minors}</g>
+            <g class="gauge__majors" shape-rendering="crispEdges">${majors}</g>
+            <g class="gauge__numbers">${numbers}</g>
+            ${scale2}
+            <text class="gauge__face-unit" x="50" y="87" text-anchor="middle">${escapeHtml(faceUnit)}</text>
+            <g class="gauge__needle" style="transform: rotate(${angle}deg)">
+              <polygon points="42,48.8 92,50 42,51.2 40,50"></polygon>
+            </g>
+            <circle class="gauge__hub" cx="50" cy="50" r="4"></circle>
+            <circle class="gauge__hub-pin" cx="50" cy="50" r="1.4"></circle>
           </svg>
-          <div class="gauge__reading">
-            ${numeralPlate(reading, "dial")}
-            <span class="gauge__unit">${escapeHtml(unit)}</span>
-            ${sub ? `<span class="gauge__sub">${escapeHtml(sub)}</span>` : ""}
+          <div class="gauge__window" aria-hidden="true">
+            ${numeralPlate(readout, "dial")}
+            ${readoutSub ? `<span class="gauge__window-sub numeric">${escapeHtml(readoutSub)}</span>` : ""}
           </div>
+          <p class="gauge__sr">${escapeHtml(ariaText)}</p>
         </div>
       </article>`;
   }
@@ -1218,60 +1257,70 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     const perDay = effortStats(data, today).perDay;
     const track = planTrack(data, today);
     const series = currentActivity ? openTimeSeries(currentActivity, today) : null;
-    const tachMax = Math.max(28, s.recent7);
     const totalUnits = s.odometer + s.rowsLeft;
-    const calendarSpan = Math.max(1, Math.round(s.activeDays / Math.max(s.showUpRate, 0.01)));
+    const calendarSpan = s.spanDays;
+    // Each dial's inner scale is the SAME needle read as a percentage of a basis
+    // that is printed on this page, so both numbers are checkable by hand and
+    // neither can disagree with the other. Percentages are rounded the same way
+    // everywhere on the site (nearest whole).
+    const paceScale = dialScale(s.activePace, 6);
+    const weekScale = dialScale(s.recent7, Math.max(28, s.recent7));
+    const doneScale = dialScale(s.odometer, totalUnits);
+    const daysScale = dialScale(s.activeDays, calendarSpan);
+    const pacePercent = s.requiredPerDay > 0 ? Math.round((s.activePace / s.requiredPerDay) * 100) : 0;
+    const weekPercent = s.rowsLeft > 0 ? Math.round((s.recent7 / s.rowsLeft) * 100) : 0;
+    const donePercent = Math.round(s.tripDone * 100);
+    const daysPercent = Math.round(s.showUpRate * 100);
 
     document.querySelector("#effort-content").innerHTML = `
       <div class="effort-gauges">
         ${gaugeDial({
           label: "UNITS PER DAY",
-          hint: "Units submitted divided by the number of days you actually submitted something. Days you never opened the course are not in the divisor.",
-          ariaLabel: `${s.activePace.toFixed(1)} units per working day on a scale from 0 to 6. Aug 15 needs ${s.requiredPerDay.toFixed(1)} per day.`,
-          reading: s.activePace.toFixed(1),
-          unit: "on days you work",
-          sub: `needs ${s.requiredPerDay.toFixed(1)}`,
-          ticks: [{ at: 0, text: "0" }, { at: 0.5, text: "3" }, { at: 1, text: "6" }],
-          fraction: s.activePace / 6,
-          targetFrom: s.requiredPerDay / 6
+          hint: `Units submitted divided by the number of days you actually submitted something. Days you never opened the course are not in the divisor: ${s.odometer} units over ${s.activeDays} days. The inner amber scale is the same needle as a percentage of the ${s.requiredPerDay.toFixed(2)} a day Aug 15 needs.`,
+          scale: paceScale,
+          secondary: { unit: "% OF AUG 15 PACE", ticks: percentTicks(paceScale.max, s.requiredPerDay) },
+          faceUnit: "UNITS / DAY",
+          readout: s.activePace.toFixed(2),
+          readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)}`,
+          ariaText: `Units per day on the days you work: ${s.activePace.toFixed(2)}, on a dial reading 0 to ${paceScale.max} units per day — ${s.odometer} units over ${s.activeDays} working days. Aug 15 needs ${s.requiredPerDay.toFixed(2)} a day, so the inner amber percentage scale reads ${pacePercent} percent of that pace.`
         })}
 
         ${gaugeDial({
           label: "LAST 7 DAYS",
-          hint: `A raw count of units submitted ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}. Not a rate.`,
-          ariaLabel: `${s.recent7} units submitted from ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}, on a scale from 0 to ${tachMax}.`,
-          reading: String(s.recent7),
-          unit: "units",
-          sub: `prev 7: ${s.prior7}`,
-          ticks: [{ at: 0, text: "0" }, { at: 0.5, text: String(Math.round(tachMax / 2)) }, { at: 1, text: String(tachMax) }],
-          fraction: s.recent7 / tachMax
+          hint: `A raw count of units submitted ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}. Not a rate. The inner amber scale is that same count as a percentage of the ${s.rowsLeft} units still to do.`,
+          scale: weekScale,
+          secondary: { unit: `% OF THE ${s.rowsLeft} LEFT`, ticks: percentTicks(weekScale.max, s.rowsLeft) },
+          faceUnit: "UNITS / 7 DAYS",
+          readout: String(s.recent7),
+          readoutSub: `PREV 7: ${s.prior7}`,
+          ariaText: `${s.recent7} units submitted from ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}, on a dial reading 0 to ${weekScale.max} units. The seven days before that were ${s.prior7}. The inner amber percentage scale reads that week as ${weekPercent} percent of the ${s.rowsLeft} units still to do.`
         })}
 
         ${gaugeDial({
           label: "UNITS DONE",
-          hint: `Every unit you have submitted, out of ${totalUnits} across both semesters. It only ever goes up.`,
-          ariaLabel: `${s.odometer} of ${totalUnits} units submitted across both semesters, ${Math.round(s.tripDone * 100)} percent.`,
-          reading: String(s.odometer),
-          unit: "units submitted",
-          sub: `${s.rowsLeft} left · ${Math.round(s.tripDone * 100)}%`,
-          ticks: [{ at: 0, text: "0" }, { at: 0.5, text: String(Math.round(totalUnits / 2)) }, { at: 1, text: String(totalUnits) }],
-          fraction: s.tripDone
+          hint: `Every unit you have submitted, out of ${totalUnits} across both semesters. It only ever goes up. The inner amber scale is the same needle as a percentage of all ${totalUnits}.`,
+          scale: doneScale,
+          secondary: { unit: `% OF ALL ${totalUnits}`, ticks: percentTicks(doneScale.max, totalUnits) },
+          faceUnit: "UNITS SUBMITTED",
+          readout: String(s.odometer),
+          readoutSub: `${s.rowsLeft} LEFT`,
+          ariaText: `${s.odometer} of ${totalUnits} units submitted across both semesters, ${s.rowsLeft} still to do, on a dial reading 0 to ${doneScale.max} units. The inner amber percentage scale reads ${donePercent} percent of all ${totalUnits}.`
         })}
 
         ${gaugeDial({
           label: "DAYS YOU SAT DOWN",
-          hint: `Calendar days since your first submission on which you submitted at least one unit — ${s.activeDays} out of ${calendarSpan}.`,
-          ariaLabel: `${s.activeDays} working days out of the ${calendarSpan} calendar days since work began.`,
-          reading: String(s.activeDays),
-          unit: "days worked",
-          sub: `of ${calendarSpan} days`,
-          ticks: [{ at: 0, text: "0" }, { at: 0.5, text: String(Math.round(calendarSpan / 2)) }, { at: 1, text: String(calendarSpan) }],
-          fraction: s.showUpRate
+          hint: `Calendar days since your first submission on which you submitted at least one unit — ${s.activeDays} out of ${calendarSpan}. The inner amber scale is the same needle as a percentage of those ${calendarSpan} days.`,
+          scale: daysScale,
+          secondary: { unit: `% OF THE ${calendarSpan} DAYS`, ticks: percentTicks(daysScale.max, calendarSpan) },
+          faceUnit: "DAYS WORKED",
+          readout: String(s.activeDays),
+          readoutSub: `OF ${calendarSpan} DAYS`,
+          ariaText: `${s.activeDays} days worked out of the ${calendarSpan} calendar days since ${formatDay(track.firstDay)}, on a dial reading 0 to ${daysScale.max} days. The inner amber percentage scale reads ${daysPercent} percent of those ${calendarSpan} days.`
         })}
       </div>
 
       <p class="effort-line numeric">
-        ${s.odometer} units in ${s.activeDays} days · ${s.activePace.toFixed(1)} a day when you sit down · Aug 15 needs ${s.requiredPerDay.toFixed(1)}${s.fastEnough ? " — <strong>you are already fast enough</strong>" : ""}.
+        ${s.odometer} units in ${s.activeDays} days · ${s.activePace.toFixed(2)} a day when you sit down · Aug 15 needs ${s.requiredPerDay.toFixed(2)}${s.fastEnough ? " — <strong>you are already fast enough</strong>" : ""}.
       </p>
 
       ${perDayChart(track, perDay, s.requiredPerDay, series)}

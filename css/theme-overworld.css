@@ -545,59 +545,52 @@ meter,
   background: var(--accent-dim);
 }
 
-/* ---- Region detail ------------------------------------------------------- */
-
-.wm-detail {
-  border-top: 1px solid var(--line);
-  background: var(--panel);
-}
-
-.wm-detail__inner {
+/* ---- Level 2: inside one region ------------------------------------------ */
+/* Zooming in swaps the canvas for this panel in the same slot, so the page does
+   not jump and the way back is always the first thing in reading order. */
+.wm-zoom {
+  border: 1px solid var(--accent);
+  background: var(--panel-solid);
   padding: 14px 16px;
 }
 
-.wm-detail__head {
+.wm-zoom__head {
   display: grid;
-  gap: 4px;
-  margin-bottom: 12px;
-  padding-right: 80px;
-  position: relative;
+  gap: 6px;
+  margin-bottom: 14px;
 }
 
-.wm-detail__head h4 {
+.wm-zoom__head h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
 }
 
-.wm-detail__close {
-  position: absolute;
-  top: 0;
-  right: 0;
-  min-height: 28px;
-  height: 28px;
-  padding: 2px 10px;
-  border: 1px solid var(--line);
+.wm-back {
+  justify-self: start;
+  min-height: 30px;
+  padding: 4px 12px;
+  border: 1px solid var(--accent);
   background: transparent;
-  color: var(--dim);
+  color: var(--accent);
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
 }
 
-.wm-detail__close:hover,
-.wm-detail__close:focus-visible {
+.wm-back:hover,
+.wm-back:focus-visible {
+  background: var(--accent-dim);
   color: var(--text);
-  border-color: var(--text);
 }
 
-.wm-detail__cols {
+.wm-zoom__cols {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
   align-items: start;
 }
 
-.wm-detail__col h5 {
+.wm-zoom__label {
   margin: 14px 0 6px;
   font-size: 12px;
   letter-spacing: .1em;
@@ -605,59 +598,95 @@ meter,
   color: var(--dim);
 }
 
-.wm-detail__col h5:first-child {
+.wm-zoom__label:first-child {
   margin-top: 0;
 }
 
-.wm-units {
+/* Training locations and battles, drawn as places on a track. The connecting
+   line is a border on the list, not a graphic. */
+.wm-nodes {
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 14px;
   list-style: none;
   display: grid;
-  gap: 4px;
+  gap: 6px;
+  border-left: 1px dashed var(--line);
 }
 
-.wm-unit {
+.wm-node {
+  position: relative;
   display: grid;
-  grid-template-columns: 12px 1fr auto auto auto;
-  gap: 8px;
+  grid-template-columns: auto 1fr auto auto;
+  grid-template-areas:
+    "step title state score"
+    "step title when  when";
+  gap: 2px 8px;
   align-items: center;
-  padding: 4px 0;
-  border-bottom: 1px solid var(--line);
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  background: var(--panel);
   font-size: 13px;
   color: var(--dim);
 }
 
-.wm-unit.is-placed {
+.wm-node.is-done {
   color: var(--text);
+  border-color: var(--accent-dim);
 }
 
-.wm-unit__block {
-  width: 10px;
-  height: 10px;
+.wm-node.is-next {
+  border-color: var(--warn);
+}
+
+/* The tick on the connecting track. */
+.wm-node__glyph {
+  position: absolute;
+  left: -15px;
+  top: 12px;
+  width: 9px;
+  height: 9px;
   box-sizing: border-box;
   border: 1px solid var(--line);
+  background: var(--panel-solid);
 }
 
-.wm-unit.is-placed .wm-unit__block {
+.wm-node.is-training .wm-node__glyph {
+  border-top: 3px solid var(--line);
+}
+
+.wm-node.is-battle .wm-node__glyph {
+  border-width: 1px 3px;
+}
+
+.wm-node.is-done .wm-node__glyph {
   border-color: var(--accent-dim);
-  border-top: 3px solid var(--accent);
+  border-top-color: var(--accent);
   background: var(--accent-dim);
 }
 
-.wm-unit.is-next .wm-unit__block {
+.wm-node.is-next .wm-node__glyph {
   border-color: var(--warn);
-  border-top: 3px solid var(--warn);
+  border-top-color: var(--warn);
 }
 
-.wm-unit__mark {
+.wm-node__step { grid-area: step; font-size: 11px; }
+.wm-node__title { grid-area: title; overflow-wrap: anywhere; }
+.wm-node__score { grid-area: score; font-size: 12px; }
+.wm-node__when { grid-area: when; font-size: 11px; }
+
+.wm-node__state {
+  grid-area: state;
   font-size: 10px;
   letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--faint);
 }
 
-.wm-unit.is-next .wm-unit__mark {
+.wm-node.is-done .wm-node__state {
+  color: var(--accent);
+}
+
+.wm-node.is-next .wm-node__state {
   color: var(--warn);
 }
 
@@ -1095,12 +1124,15 @@ html.motion-paused *::after {
     padding: 12px;
   }
 
-  .wm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  /* On a narrow screen the map window shrinks; the canvas inside keeps its
+     real size and he pans it, rather than the regions reflowing into a
+     different shape of world every time the window changes. */
+  .wm-viewport {
+    height: min(70vh, 460px);
   }
 
-  .wm-detail__cols {
-    grid-template-columns: 1fr;
+  .wm-canvas {
+    grid-template-columns: 180px repeat(var(--wm-cols), 170px);
   }
 
   .hotbar {
@@ -1154,6 +1186,12 @@ html.motion-paused *::after {
 
   .wm-region:hover {
     transform: none;
+  }
+
+  /* Panning still works with motion reduced — it is his own hand moving the
+     map, not the page animating at him — but nothing eases into place. */
+  .wm-canvas {
+    transition: none !important;
   }
 }
 
