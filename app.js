@@ -1815,6 +1815,18 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       node.textContent = "";
       node.append(link);
     }));
+    const labTargets = [...scope.querySelectorAll("[data-lab]")];
+    await Promise.all(labTargets.map(async node => {
+      const file = node.dataset.lab;
+      if (!/^sem[12]-\d{2}-[a-z]+$/.test(file)) return;
+      if (await pageExists(`labs/${file}.html`) === false) return;
+      const link = document.createElement("a");
+      link.href = `labs/${file}.html`;
+      link.className = "lesson-library__link";
+      link.textContent = node.textContent;
+      node.textContent = "";
+      node.append(link);
+    }));
   }
 
   function renderGames(data) {
