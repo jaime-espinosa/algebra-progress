@@ -709,6 +709,17 @@ export const UNIT_TYPE_LABELS = {
   orientation: "orientation",
 };
 
+// Written out rather than an -s rule, because "practice quizs" and "activitys"
+// is what an -s rule produces and a screen reader reads that out loud.
+export const UNIT_TYPE_PLURALS = {
+  lesson: "lessons",
+  quiz: "practice quizzes",
+  activity: "activities",
+  check: "end-of-section assignments",
+  test: "section tests",
+  orientation: "orientation rows",
+};
+
 export function activityType(title) {
   const text = String(title ?? "");
   // Ordered most specific first. "Section 5 Final Test" and "End of Section
