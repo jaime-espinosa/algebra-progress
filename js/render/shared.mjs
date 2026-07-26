@@ -635,8 +635,7 @@ export const GAME_KIND_FACES = {
       <details class="wm-text">
         <summary>Section list, as text</summary>
         <table class="wm-text__table">
-          <caption class="quiet">Every section on the map, with the same counts the map draws.
-            A dash means that section has none of that kind of work.</caption>
+          <caption class="quiet">A dash means that section has none of that kind of work.</caption>
           <thead><tr><th scope="col">Section</th><th scope="col">Units</th>
             <th scope="col">Lessons</th><th scope="col">Practice quizzes</th>
             <th scope="col">Activities</th><th scope="col">End-of-section</th>
@@ -796,7 +795,7 @@ export const GAME_KIND_FACES = {
         <span class="chart-legend__secondary">${stats.rowsLeft} remaining · ${stats.totalRows} total units</span>
         ${series?.totalSeconds ? `<strong class="chart-legend__total">${escapeHtml(series.totalText)} total · time the course page was open</strong>` : ""}
         <span><b class="chart-key__swatch is-units"></b>units/day and ${stats.requiredPerDay.toFixed(2)}/day reference</span>
-        <span><b class="chart-key__swatch is-open"></b>hours open — total only, never a rate</span>
+        <span><b class="chart-key__swatch is-open"></b>hours open</span>
         <span><b class="chart-key__swatch is-actual"></b>cumulative units submitted</span>
         <span><b class="chart-key__swatch is-steady"></b>steady route</span>
         <span><b class="chart-key__swatch is-adjusted"></b>plan to ${escapeHtml(formatDay(track.finishesOn))}</span>
@@ -851,9 +850,12 @@ export const GAME_KIND_FACES = {
         const x = chartX(track, index);
         const y = openY(day.seconds);
         const stretch = day.longestStretch;
+        // The fact, and nothing after it. This used to end with "Nothing logs you out, so
+        // a tab left open keeps counting" — an explanation of our own bookkeeping, on a
+        // page that is his, not ours.
         const why = day.marked
           ? `${formatDay(point.date)}: the course page was open ${day.text}${stretch
-            ? `, including one unbroken ${stretch.text}${stretch.startTime ? ` from ${stretch.startTime}` : ""}` : ""}. Nothing logs you out, so a tab left open keeps counting.`
+            ? `, including one unbroken ${stretch.text}${stretch.startTime ? ` from ${stretch.startTime}` : ""}` : ""}`
           : `${formatDay(point.date)}: the course page was open ${day.text}`;
         const shape = day.marked
           ? `<polygon class="chart-open__flag" points="${x.toFixed(1)},${(y - 5).toFixed(1)} ${(x + 5).toFixed(1)},${y.toFixed(1)} ${x.toFixed(1)},${(y + 5).toFixed(1)} ${(x - 5).toFixed(1)},${y.toFixed(1)}"></polygon>`
@@ -1018,13 +1020,11 @@ export const GAME_KIND_FACES = {
     return `
       <section class="open-time" aria-label="Time the course was open">
         <strong class="open-time__total numeric">${escapeHtml(series.totalText)}</strong>
-        <span class="open-time__caption">TIME THE COURSE PAGE HAS BEEN OPEN${tip("The LMS's own clock, summed straight off its Activity report. It measures the page being open, not work, so it is never divided by units.")}</span>
+        <span class="open-time__caption">TIME THE COURSE PAGE HAS BEEN OPEN</span>
         <span class="quiet">across ${series.dayCount} days, ${formatDay(series.firstDay)} to ${formatDay(series.lastDay)}</span>
         ${marked ? `
         <details class="open-time__marked">
           <summary>${series.stretches.length} long stretch${series.stretches.length === 1 ? "" : "es"} counted in that total</summary>
-          <p class="quiet">Nothing logs you out, so a tab left open keeps counting. These are
-            still inside the ${escapeHtml(series.totalText)} above — nothing has been removed:</p>
           <ul>${marked}</ul>
         </details>` : ""}
         ${series.asOf ? `<span class="quiet open-time__asof">Activity report read ${formatDay(series.asOf)}.</span>` : ""}
@@ -1060,11 +1060,12 @@ export const GAME_KIND_FACES = {
       classes.push("is-idle");
     }
 
-    const roundedSurplus = Math.round(point.surplus);
+    // A worked day now reads back only the count he logged. The old surplus wording
+    // ("N more than the steady route asked for") measured his day against our plan;
+    // he asked for it gone. The is-pushing class and the ▲ marker stay — those flag
+    // the day, they don't lecture about it.
     let tooltip = "nothing logged";
-    if (point.done > 0 && roundedSurplus >= 1) {
-      tooltip = `${formatDay(point.date)}: ${point.done} units — ${roundedSurplus} more than the steady route asked for`;
-    } else if (point.done > 0) {
+    if (point.done > 0) {
       tooltip = `${formatDay(point.date)}: ${point.done} ${point.done === 1 ? "unit" : "units"}`;
     } else if (point.planned > 0 && (point.future || isToday)) {
       tooltip = `planned: ${point.planned} ${point.planned === 1 ? "unit" : "units"}`;

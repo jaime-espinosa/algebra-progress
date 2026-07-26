@@ -70,7 +70,11 @@ test("rendered markup keeps its exact leading whitespace", () => {
   const table = renderTerritoryTable(map);
   const indents = table.split("\n").filter((l) => l.trim()).map((l) => l.match(/^ */)[0].length);
   const signature = indents.slice(0, 12).join(",");
-  assert.equal(signature, "6,8,8,10,12,10,12,12,12,12,10,6",
+  // Updated 2026-07-26: caption in renderTerritoryTable changed from two lines to one line
+  // (first sentence "Every section on the map, with the same counts the map draws." removed
+  // per owner request, verified by full-array comparison proving only the 12-indent
+  // continuation line was removed, no re-indentation occurred).
+  assert.equal(signature, "6,8,8,10,10,12,12,12,12,10,6,8",
     `leading-whitespace signature moved (got ${signature}).\n` +
     "This is the de-indent defect class. Do not update this string to make the test pass — " +
     "find out why the emitted indentation changed.");

@@ -1059,20 +1059,17 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
   function renderQuests(data) {
     const groups = questBoard(data, localIsoDate());
     const remaining = remainingActivities(data);
-    const sem1Open = data.semesters.find(item => item.id === "sem1")
-      ?.activities.some(item => item.state === "not_started");
+    // The "Why this is next" line is gone, and the sem1Open flag that picked between
+    // its two wordings with it. He asked for it: the card can list the work he has
+    // left, but it has no business arguing the case for our ordering back at him.
     document.querySelector("#quest-content").innerHTML = groups.map((group, index) => {
       const dateName = index === 0 ? "Next up" : "Then";
       const items = group.items.length
         ? group.items.map(item => `<li><strong>${escapeHtml(item.title)}</strong><br><span class="meta">${escapeHtml(item.semesterId.toUpperCase())} · Section ${item.sectionNumber}</span></li>`).join("")
         : `<li><span class="quiet">${remaining.length ? "Route buffer." : "Route clear."}</span></li>`;
-      const why = sem1Open
-        ? "Why this is next: seal Semester 1 first."
-        : "Why this is next: syllabus order keeps concepts connected.";
       return `<article class="quest-card">
         <h3>${escapeHtml(dateName)} · ${formatDay(group.date)}</h3>
         <ol class="quest-list">${items}</ol>
-        <p class="why">${escapeHtml(why)}</p>
       </article>`;
     }).join("");
   }

@@ -38,6 +38,46 @@ function dayDifference(from, to) {
   return Math.ceil((dateKeyToTime(to) - dateKeyToTime(from)) / DAY_MS);
 }
 
+// Section 0 of each semester is Red Comet's Orientation: "Contacting your
+// Teacher" and the "are you ready to take this course online?" quiz. It is
+// preamble, not coursework — he is allowed to skip parts of it and move on, and
+// the teachers grade on the quizzes and tests that follow. So the rule the site
+// uses is the rule the course uses: Orientation is DONE the moment he has
+// touched ANY of its rows, not all of them.
+//
+// This is a statement about what is OUTSTANDING, never about arithmetic. The
+// rows stay in unitsDone/unitsTotal exactly as the gradebook lists them, so the
+// odometer, the dials and the 133 still reconcile against Red Comet row for
+// row. What changes is that a touched Orientation stops being queued as next
+// work, stops reporting a remaining count, and can never hold the "you are here"
+// marker — which is what would otherwise pin `here` at section 0 the day he
+// crosses into Semester 2 and fog the whole semester from there, while the
+// course itself had already moved him past it.
+const ORIENTATION_SECTION = 0;
+
+function sectionOf(item) {
+  return Number(item.sectionNumber) || 0;
+}
+
+function rowTouched(item) {
+  return item.state !== "not_started" || typeof item.submittedDate === "string";
+}
+
+// True when this semester's Orientation counts as cleared. Untouched Orientation
+// is left completely alone: it stays ahead/here exactly as before.
+function orientationCleared(activities) {
+  const rows = (activities ?? []).filter(
+    (item) => sectionOf(item) === ORIENTATION_SECTION,
+  );
+  return rows.length > 0 && rows.some(rowTouched);
+}
+
+// A row that no longer counts as work left to do even though it is unsubmitted:
+// an Orientation row in an Orientation he has already stepped through.
+function excusedRow(item, activities) {
+  return sectionOf(item) === ORIENTATION_SECTION && orientationCleared(activities);
+}
+
 function remainingRows(data) {
   const semesters = (data.semesters ?? []).map((semester, inputIndex) => ({
     semester,
@@ -53,6 +93,7 @@ function remainingRows(data) {
   return semesters.flatMap(({ semester }) =>
     (semester.activities ?? [])
       .filter((activity) => activity.state === "not_started")
+      .filter((activity) => !excusedRow(activity, semester.activities))
       .map((activity) => ({ activity, semesterId: semester.id }))
       .sort(
         (left, right) =>
@@ -185,12 +226,19 @@ export function boundedRemainingCount(remaining) {
 }
 
 export function regionHorizon(region) {
+  // `outstanding` is what the region still ASKS of him, which is unitsLeft
+  // everywhere except a cleared Orientation, where it is 0 while unitsLeft stays
+  // whatever the gradebook says. Falling back to unitsLeft keeps every
+  // hand-built region object in the tests working.
+  const outstanding = region.outstanding ?? region.unitsLeft;
   return {
-    remainingCount: boundedRemainingCount(region.unitsLeft),
-    nextTasks: (region.units ?? [])
-      .filter((unit) => !unit.done)
-      .slice(0, 3)
-      .map((unit) => unit.title),
+    remainingCount: boundedRemainingCount(outstanding),
+    nextTasks: outstanding === 0
+      ? []
+      : (region.units ?? [])
+        .filter((unit) => !unit.done)
+        .slice(0, 3)
+        .map((unit) => unit.title),
   };
 }
 
@@ -829,6 +877,11 @@ export function worldMap(data) {
       const unitsTotal = units.length;
       const unitsLeft = unitsTotal - unitsDone;
       const holdsNext = semester.id === nextWorldId && units.some((unit) => unit.isNext);
+      // Orientation clears on one touched row (see ORIENTATION_SECTION above).
+      // unitsDone/unitsTotal/unitsLeft are untouched by this — only `outstanding`
+      // and `status` are, so the counts still reconcile with the gradebook.
+      const cleared = number === ORIENTATION_SECTION
+        && orientationCleared(activities);
       const section = sections.find((entry) => entry.number === number) ?? null;
       // Every region with rows is drawn. A region with no rows is not drawn at
       // all rather than drawn empty, so a failed scrape cannot paint the map as
@@ -867,10 +920,14 @@ export function worldMap(data) {
             single: rows.length === 1,
           };
         }),
-        // settled — every row in it submitted. here — it holds the next row.
-        // started — some rows in, not the current one. ahead — not visited yet,
-        // which is a neutral statement of fact and never a shortfall.
-        status: unitsTotal > 0 && unitsLeft === 0
+        // What the region still asks of him. Same as unitsLeft everywhere except
+        // a cleared Orientation, which asks for nothing further.
+        outstanding: cleared ? 0 : unitsLeft,
+        // settled — every row in it submitted, OR a cleared Orientation.
+        // here — it holds the next row. started — some rows in, not the current
+        // one. ahead — not visited yet, which is a neutral statement of fact and
+        // never a shortfall.
+        status: (unitsTotal > 0 && unitsLeft === 0) || cleared
           ? "settled"
           : holdsNext
             ? "here"
