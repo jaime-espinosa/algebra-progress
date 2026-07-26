@@ -605,21 +605,38 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // without hunting across a picture. Every row here is read straight off the
   // region object — same source as the plaques, so the two cannot disagree.
   function renderTerritoryTable(map) {
+    // Every band and every icon the node draws, written out. A sighted reader
+    // gets the breakdown from the fill; this is the same breakdown in words, so
+    // nothing on this map is available only as a picture. The haze is here too,
+    // as the discovery column, because fog that hides information from
+    // assistive tech is fog that has hidden information.
+    const cell = (region, type) => {
+      const entry = region.types.find((item) => item.type === type);
+      return entry && entry.total > 0 ? `${entry.done}/${entry.total}` : "—";
+    };
     const rows = map.worlds.flatMap(world => world.regions.map(region => `
       <tr>
         <th scope="row">${escapeHtml(world.name)} · ${escapeHtml(region.name)}</th>
         <td class="numeric">${region.unitsDone}/${region.unitsTotal}</td>
-        <td class="numeric">${region.trainingDone}/${region.trainingTotal}</td>
-        <td class="numeric">${region.battleCleared}/${region.battleTotal}</td>
+        <td class="numeric">${cell(region, "lesson")}</td>
+        <td class="numeric">${cell(region, "quiz")}</td>
+        <td class="numeric">${cell(region, "activity")}</td>
+        <td class="numeric">${cell(region, "check")}</td>
+        <td class="numeric">${cell(region, "test")}</td>
         <td>${escapeHtml(REGION_STATE_COPY[region.status] ?? "")}</td>
+        <td>${escapeHtml(region.discovery ?? "")}</td>
       </tr>`).join("")).join("");
     return `
       <details class="wm-text">
-        <summary>Territory list, as text</summary>
+        <summary>Section list, as text</summary>
         <table class="wm-text__table">
-          <caption class="quiet">Every territory on the map, with the same counts the map draws.</caption>
-          <thead><tr><th scope="col">Territory</th><th scope="col">Units</th>
-            <th scope="col">Training</th><th scope="col">Battles</th><th scope="col">State</th></tr></thead>
+          <caption class="quiet">Every section on the map, with the same counts the map draws.
+            A dash means that section has none of that kind of work.</caption>
+          <thead><tr><th scope="col">Section</th><th scope="col">Units</th>
+            <th scope="col">Lessons</th><th scope="col">Practice quizzes</th>
+            <th scope="col">Activities</th><th scope="col">End-of-section</th>
+            <th scope="col">Section test</th>
+            <th scope="col">State</th><th scope="col">Discovery</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </details>`;
