@@ -645,6 +645,20 @@ export function openTimeSeries(activity, today) {
 
 const WORLD_SEQUENCE = ["sem1", "sem2"];
 const ORIENTATION_REGION_NAME = "Orientation";
+// How many regions sit across the world before the route wraps to the next
+// band. Layout only: it never changes which regions exist or what order they
+// are in, it only decides where the same route bends.
+const MAP_COLUMNS = 4;
+
+// Training or battle. The LMS gives no type field at all — every row carries
+// `type: null` — so the only honest signal is the title the school wrote.
+// A row whose title says quiz or test is a battle; everything else
+// (assignments, activities, the orientation contact row) is training.
+// Nothing about this changes a count: every row is still exactly one unit,
+// and trainingTotal + battleTotal === unitsTotal for every region.
+export function activityKind(title) {
+  return /\b(quiz|test|exam)\b/i.test(String(title ?? "")) ? "battle" : "training";
+}
 
 function regionKey(worldId, number) {
   return `${worldId}:${number}`;
@@ -688,7 +702,10 @@ export function worldMap(data) {
           score: item.score ?? null,
           submittedDate: typeof item.submittedDate === "string" ? item.submittedDate : null,
           isNext: item.id === nextId,
+          kind: activityKind(item.title),
         }));
+      const training = units.filter((unit) => unit.kind === "training");
+      const battles = units.filter((unit) => unit.kind === "battle");
       const unitsDone = units.filter((unit) => unit.done).length;
       const unitsTotal = units.length;
       const unitsLeft = unitsTotal - unitsDone;
@@ -708,6 +725,13 @@ export function worldMap(data) {
         unitsTotal,
         unitsDone,
         unitsLeft,
+        // The same rows, split by what they are. These are two views of one
+        // list, never a second denominator: trainingTotal + battleTotal
+        // always equals unitsTotal.
+        trainingTotal: training.length,
+        trainingDone: training.filter((unit) => unit.done).length,
+        battleTotal: battles.length,
+        battleCleared: battles.filter((unit) => unit.done).length,
         // settled — every row in it submitted. here — it holds the next row.
         // started — some rows in, not the current one. ahead — not visited yet,
         // which is a neutral statement of fact and never a shortfall.
@@ -749,10 +773,31 @@ export function worldMap(data) {
     };
   }).filter((world) => world.regionsTotal > 0);
 
+  // One scrollable world, laid out in 2D. The route is unchanged — regions
+  // stay in route order — it just bends at the edge of the map instead of
+  // running off to the right forever. Each semester starts on its own band so
+  // no region is ever moved between worlds to make a row come out even.
+  let rowCursor = 0;
+  for (const world of worlds) {
+    world.rowStart = rowCursor;
+    world.regions.forEach((region, index) => {
+      const band = Math.floor(index / MAP_COLUMNS);
+      const offset = index % MAP_COLUMNS;
+      // Serpentine: odd bands run right to left, so the route is one
+      // continuous path he can trace with a finger rather than a jump back.
+      region.col = band % 2 === 0 ? offset : MAP_COLUMNS - 1 - offset;
+      region.row = rowCursor + band;
+    });
+    const bands = Math.ceil(world.regions.length / MAP_COLUMNS);
+    world.rowSpan = bands;
+    rowCursor += bands;
+  }
+
   const totalDone = worlds.reduce((sum, world) => sum + world.unitsDone, 0);
   const totalUnits = worlds.reduce((sum, world) => sum + world.unitsTotal, 0);
   return {
     worlds,
+    grid: { cols: MAP_COLUMNS, rows: rowCursor },
     totalUnits,
     totalDone,
     totalLeft: totalUnits - totalDone,
