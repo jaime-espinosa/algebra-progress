@@ -1392,7 +1392,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
             ${scale2}
             <text class="gauge__face-unit" x="50" y="87" text-anchor="middle">${escapeHtml(faceUnit)}</text>
             <g class="gauge__needle" style="transform: rotate(${angle}deg)">
-              <polygon points="42,48.8 92,50 42,51.2 40,50"></polygon>
+              <polygon points="42,48.3 92,50 42,51.7 40,50"></polygon>
             </g>
             <circle class="gauge__hub" cx="50" cy="50" r="4"></circle>
             <circle class="gauge__hub-pin" cx="50" cy="50" r="1.4"></circle>
