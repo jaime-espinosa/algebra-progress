@@ -554,9 +554,14 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
       // buys him a status line and nothing else. Anchor, not window.open, so a popup
       // blocker cannot swallow the reward.
       const page = item.files.find(file => file.endsWith(".html"));
-      const openable = isEarned && !gated && page;
+      // A skin is only a reward once it is on his machine, so a file artifact gets a
+      // real download link rather than a button that describes it.
+      const file = item.files.find(entry => !entry.endsWith(".html"));
+      const openable = isEarned && !gated && (page || file);
       const action = openable
-        ? `<a class="action vault-slot__open" href="${escapeHtml(`vault/${page}`)}" target="_blank" rel="noopener noreferrer" data-artifact="${item.id}">Open</a>`
+        ? page
+          ? `<a class="action vault-slot__open" href="${escapeHtml(`vault/${page}`)}" target="_blank" rel="noopener noreferrer" data-artifact="${item.id}">Open</a>`
+          : `<a class="action vault-slot__open" href="${escapeHtml(`vault/${file}`)}" download data-artifact="${item.id}">Download</a>`
         : isEarned
           ? `<button type="button" data-artifact="${item.id}">${gated ? "Check version" : "Preview"}</button>`
           : `<span class="quiet">${escapeHtml(item.tier)} · locked</span>`;
