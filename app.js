@@ -1,4 +1,4 @@
-import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, worldMap, mapLandmarks } from "./js/quest.mjs";
+import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, worldMap, mapLandmarks, worldTerrain } from "./js/quest.mjs";
 
 (() => {
   "use strict";
@@ -346,18 +346,6 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   let panX = 0;
   let panY = 0;
   let zoomedRegion = null;
-
-  // A region drawn as blocks: one block per gradebook row, filled if submitted.
-  // Blocky geometry and hard edges only — no images, no canvas.
-  function regionBlocks(region, revealFrom) {
-    return region.units.map((unit, index) => {
-      const classes = ["wm-block", unit.kind === "battle" ? "is-battle" : "is-training"];
-      if (unit.done) classes.push("is-placed");
-      if (unit.isNext) classes.push("is-next");
-      if (unit.done && revealFrom !== null && index >= revealFrom) classes.push("reveal-hidden");
-      return `<span class="${classes.join(" ")}" aria-hidden="true"></span>`;
-    }).join("");
-  }
 
   function landmarkGlyph(item, earned) {
     return `<span class="wm-landmark${earned ? " is-earned" : ""}" title="${escapeHtml(
