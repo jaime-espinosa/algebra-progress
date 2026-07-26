@@ -533,6 +533,12 @@ function sandboxBoot() {
     }
   }
 
+  // Reported to the parent so the frame is exactly as tall as the picture in it,
+  // rather than a fixed box with a stripe of empty space under a small plot.
+  function stageHeight() {
+    return Math.ceil(stage.getBoundingClientRect().height) + 16;
+  }
+
   function run(code) {
     stage.textContent = "";
     notes.length = 0;
@@ -543,7 +549,9 @@ function sandboxBoot() {
       const guarded = guardLoops(String(code));
       const program = new Function("graph", "picture", "say", "__tick", '"use strict";\n' + guarded);
       program(graph, picture, say, tick);
-      parent.postMessage({ type: "done", notes: notes.slice(), said: said.slice() }, "*");
+      parent.postMessage({
+        type: "done", notes: notes.slice(), said: said.slice(), height: stageHeight(),
+      }, "*");
     } catch (error) {
       const message = error && error.message ? String(error.message) : String(error);
       const kind = error instanceof SyntaxError
@@ -551,6 +559,7 @@ function sandboxBoot() {
         : "The program started and then stopped here.";
       parent.postMessage({
         type: "error",
+        height: stageHeight(),
         kind: kind,
         message: message,
         notes: notes.slice(),
@@ -620,6 +629,13 @@ export function mountLab(options = {}) {
     description.append(list);
   };
 
+  // Kept inside sane bounds: a lab that draws nothing still leaves a visible frame,
+  // and one that draws a lot never pushes the challenges off the bottom of the page.
+  const fitFrame = (height) => {
+    if (!frame || !Number.isFinite(height)) return;
+    frame.style.height = `${Math.max(200, Math.min(560, Math.round(height)))}px`;
+  };
+
   const stopWatchdog = () => {
     if (watchdog) clearTimeout(watchdog);
     watchdog = 0;
@@ -638,12 +654,14 @@ export function mountLab(options = {}) {
     }
     if (data.type === "done") {
       stopWatchdog();
+      fitFrame(data.height);
       setStatus("Ran fine.");
       renderResult(data);
       return;
     }
     if (data.type === "error") {
       stopWatchdog();
+      fitFrame(data.height);
       setStatus("Stopped early — read the note below, then try again.");
       renderResult(data);
     }

@@ -894,7 +894,11 @@ export function worldMap(data) {
   for (const region of route) {
     const ahead = hereIndex === -1 ? 0 : Math.max(0, region.routeIndex - hereIndex);
     region.ahead = ahead;
-    region.fog = ahead === 0 ? 0
+    // Veil strength over the ground he has NOT walked in that section. Ground
+    // he has already covered is never veiled at all, at any distance, so a
+    // finished section always reads clear. A section he is standing in keeps a
+    // thin haze on its remaining ground — near, and plainly still there to go.
+    region.fog = ahead === 0 ? 0.24
       : ahead === 1 ? 0.5
         : ahead === 2 ? 0.68
           : 0.8;
@@ -1301,6 +1305,11 @@ function buildTerrain(map, options) {
         status: region.status,
         unitsDone: region.unitsDone,
         unitsTotal: region.unitsTotal,
+        // Carried through so the veil and the route can be drawn without the
+        // renderer having to re-derive where he is standing.
+        routeIndex: region.routeIndex ?? 0,
+        ahead: region.ahead ?? 0,
+        fog: Number.isFinite(region.fog) ? region.fog : 0.8,
         // Area is bought with units: weight is sqrt(units), and a weighted
         // Voronoi cell's area goes as the square of the weight.
         weight: Math.sqrt(Math.max(1, region.unitsTotal)),
