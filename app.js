@@ -647,6 +647,11 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     const viewport = document.querySelector("#wm-viewport");
     const canvas = document.querySelector("#wm-canvas");
     if (!viewport || !canvas) return;
+    // A hidden panel measures 0 x 0. Clamping against that pins the map to the
+    // corner and then never un-pins it, which is exactly how the first paint
+    // lost its "centre on where he is standing" — the panel is still hidden
+    // when the map is drawn. Unmeasurable means leave the pan alone.
+    if (viewport.clientWidth === 0 || viewport.clientHeight === 0) return;
     const slackX = Math.max(0, canvas.scrollWidth - viewport.clientWidth);
     const slackY = Math.max(0, canvas.scrollHeight - viewport.clientHeight);
     panX = Math.min(0, Math.max(-slackX, panX));
@@ -818,13 +823,23 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       : `<p class="quiet">Saved telemetry is thin right now — the map redraws on the next check.</p>`;
 
     wireViewport();
-    // Open on the ground he is standing on rather than the top-left corner of
-    // the ocean: on a first paint the viewport is centred on his next unit.
+    // Open on the ground he is standing on rather than on the top-left corner
+    // of the ocean. Deferred a frame because the panel is still hidden while it
+    // is being drawn, and a hidden panel cannot be measured. Once only: a later
+    // redraw must not yank the map out of a pan he is in the middle of.
     if (hereSpot && !panInitialised) {
       panInitialised = true;
-      const viewport = document.querySelector("#wm-viewport");
-      panX = -(hereSpot.cx - (viewport?.clientWidth ?? 900) / 2);
-      panY = -(hereSpot.cy - (viewport?.clientHeight ?? 520) / 2);
+      const centre = () => {
+        const viewport = document.querySelector("#wm-viewport");
+        if (!viewport || viewport.clientWidth === 0) {
+          window.requestAnimationFrame(centre);
+          return;
+        }
+        panX = -(hereSpot.cx - viewport.clientWidth / 2);
+        panY = -(hereSpot.cy - viewport.clientHeight / 2);
+        clampPan();
+      };
+      window.requestAnimationFrame(centre);
     }
     clampPan();
     if (openKey && findRegion(openKey)) openRegion(openKey);

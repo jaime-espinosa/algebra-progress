@@ -1548,7 +1548,7 @@ export function hexHue(hex) {
 }
 
 export function terrainPalette() {
-  const colours = [OCEAN_DEEP, OCEAN_MID, OCEAN_SHALLOW, SAND_LIGHT, SAND_DARK, RIVER, TRUNK, "#eef3f6"];
+  const colours = [OCEAN_DEEP, OCEAN_MID, OCEAN_SHALLOW, SAND_LIGHT, SAND_DARK, RIVER, TRUNK, FOG, "#eef3f6"];
   for (const biome of Object.values(BIOMES)) {
     colours.push(...biome.shades);
     if (biome.tree) colours.push(biome.tree);
