@@ -274,9 +274,11 @@ meter,
   line-height: 1.4;
 }
 
+/* auto-fit, not auto-fill: seven regions should sit as one strip of terrain on a
+   laptop rather than leaving a single orphaned chunk on a second row. */
 .wm-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
   gap: 2px;
   padding: 2px;
 }
@@ -353,6 +355,9 @@ meter,
 }
 
 .wm-region__name {
+  /* Two lines' worth whether or not the name needs two, so the block fields in
+     a row of chunks all start at the same height and read as one landscape. */
+  min-height: 2.5em;
   font-size: 14px;
   font-weight: 700;
   line-height: 1.25;

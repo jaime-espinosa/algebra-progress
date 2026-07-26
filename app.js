@@ -14,7 +14,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
   // lesson slugs come from data.json, and lessonExists() checks the file is really there
   // before anything becomes a link.
   const lessonFileCache = new Map();
-  const sectionIds = ["effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request", "games", "worldmap"];
+  const sectionIds = ["worldmap", "effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request", "games"];
 
   // vault/manifest.json is the single source of truth for artifacts. Hardcoding a
   // second copy here drifted immediately: it advertised the victory pack as 1.21.x
