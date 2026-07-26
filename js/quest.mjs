@@ -272,47 +272,95 @@ function allSubmitted(activities) {
   return activities.length > 0 && activities.every(isSubmitted);
 }
 
-export function evaluateUnlocks(data, earnedSet) {
-  const unlocked = new Set(earnedSet ?? []);
+// The unlock gate. This lived in app.js while quest.mjs exported a DIFFERENT
+// implementation keyed on ids that existed nowhere in vault/manifest.json — the two
+// sets shared exactly one id, so wiring the exported one up would have unlocked one
+// artifact out of eleven. HANDOFF.md claimed this file governed unlocks the whole
+// time, which was false. The app.js rules won because they are keyed to the manifest
+// and are what actually gated; they now live here because this module is tested and
+// unlock rules do not belong in a 1600-line render file.
+//
+// Ids must match vault/manifest.json exactly or a milestone silently unlocks nothing.
+// A test asserts that correspondence in both directions; it is what stops this
+// happening a third time.
+export function evaluateUnlocks(data) {
   const semesters = data.semesters ?? [];
-  const allActivities = semesters.flatMap(
-    (semester) => semester.activities ?? [],
-  );
-  const sem1Activities =
-    semesters.find((semester) => semester.id === "sem1")?.activities ?? [];
-  const sem2Activities =
-    semesters.find((semester) => semester.id === "sem2")?.activities ?? [];
-  const newSubmissions = allActivities.filter(
-    (activity) =>
-      isSubmitted(activity) &&
-      typeof activity.submittedDate === "string" &&
-      activity.submittedDate > REWARD_START_DATE,
-  );
+  const sem1 = semesters.find((semester) => semester.id === "sem1");
+  const sem2 = semesters.find((semester) => semester.id === "sem2");
+  const sem2Submitted =
+    sem2?.activities.filter((item) => item.state !== "not_started") ?? [];
+  const sectionDone = (number) => {
+    const rows =
+      sem2?.activities.filter((item) => item.sectionNumber === number) ?? [];
+    return rows.length > 0 && rows.every((item) => item.state !== "not_started");
+  };
+  // Retroactive: already earned by the work behind him. Without these the vault is
+  // empty on first load and the reveal has nothing to reveal — 97 finished
+  // activities would have bought him nothing.
+  const sem1SectionsSealed = sem1
+    ? new Set(
+        sem1.activities
+          .filter((item) => item.sectionNumber > 0)
+          .map((item) => item.sectionNumber),
+      ).size -
+      new Set(
+        sem1.activities
+          .filter(
+            (item) => item.sectionNumber > 0 && item.state === "not_started",
+          )
+          .map((item) => item.sectionNumber),
+      ).size
+    : 0;
 
-  if (newSubmissions.length >= 1) unlocked.add("first-contact");
-  if (newSubmissions.length >= 3) unlocked.add("momentum");
-  if (allSubmitted(sem1Activities)) unlocked.add("sem1-sealed");
-  if (sem2Activities.filter(isSubmitted).length >= 3) unlocked.add("ignition");
-
-  const sectionMilestones = new Map([
-    [1, "exponential"],
-    [2, "ballistics"],
-    [3, "marksman"],
-    [4, "surveyor"],
-    [5, "engineer"],
-    [6, "analyst"],
-  ]);
-  for (const [sectionNumber, artifactId] of sectionMilestones) {
-    const sectionActivities = sem2Activities.filter(
-      (activity) => activity.sectionNumber === sectionNumber,
-    );
-    if (allSubmitted(sectionActivities)) unlocked.add(artifactId);
-  }
-
-  if (allSubmitted(allActivities)) unlocked.add("full-clear");
-
-  return unlocked;
+  const conditions = {
+    "algebra-miner-skin": (sem1?.allDone ?? 0) >= 90,
+    "momentum-cursor-pet": sem1SectionsSealed >= 4,
+    "sem1-victory-pack": (sem1?.percent ?? 0) >= 80,
+    // Six rows from now. Checkable against the Semester 1 list itself: every row
+    // in it submitted, nothing modelled or estimated. The length guard matters —
+    // without it a failed scrape returning an empty list unlocks by vacuous truth.
+    "photo-skin-studio":
+      (sem1?.activities.length ?? 0) > 0 &&
+      sem1.activities.every((item) => item.state !== "not_started"),
+    // The skins are the reward strand, so the first one has to land in days, not
+    // weeks: one Semester 2 row opens it. Each is a palette in
+    // vault/tools/make-skins.mjs — new ones he asks for are cheap to add.
+    "ignition-skin": sem2Submitted.length >= 1,
+    "nether-skin": sectionDone(1),
+    "end-skin": sectionDone(3),
+    "nether-theme": sem2Submitted.length >= 3,
+    "auto-breeding-pen": sectionDone(1),
+    "ballistics-workbench": sectionDone(2),
+    "target-practice": sectionDone(3),
+    surveyor: sectionDone(4),
+    "farm-rate-optimizer": sectionDone(5),
+    "youtube-analytics-template": sectionDone(6),
+    "end-theme-final": semesters.every((semester) =>
+      (semester.activities ?? []).every((item) => item.state !== "not_started"),
+    ),
+  };
+  return new Set(Object.keys(conditions).filter((id) => conditions[id]));
 }
+
+// Exported so a test can assert the rule ids and the manifest agree without
+// evaluating any of them.
+export const UNLOCK_IDS = Object.freeze([
+  "algebra-miner-skin",
+  "momentum-cursor-pet",
+  "sem1-victory-pack",
+  "photo-skin-studio",
+  "ignition-skin",
+  "nether-skin",
+  "end-skin",
+  "nether-theme",
+  "auto-breeding-pen",
+  "ballistics-workbench",
+  "target-practice",
+  "surveyor",
+  "farm-rate-optimizer",
+  "youtube-analytics-template",
+  "end-theme-final",
+]);
 
 // --- Dashboard instruments -------------------------------------------------
 // Every quantity below is a count he can check against his own gradebook. No
