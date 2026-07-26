@@ -103,7 +103,7 @@ a:focus-visible {
 /* The workbench: editor on the left, picture on the right, stacked on a phone. */
 .bench {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   gap: 16px;
   align-items: start;
 }
@@ -115,7 +115,7 @@ a:focus-visible {
 textarea {
   display: block;
   width: 100%;
-  min-height: 340px;
+  min-height: 480px;
   border: 1px solid var(--line);
   background: var(--panel-solid);
   padding: 12px;

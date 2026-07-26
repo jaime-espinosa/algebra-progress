@@ -242,7 +242,7 @@ function sandboxBoot() {
 
     const W = 640;
     const H = 420;
-    const pad = 40;
+    const pad = 46;
     const svg = el("svg", {
       viewBox: "0 0 " + W + " " + H,
       role: "img",
@@ -261,16 +261,16 @@ function sandboxBoot() {
     const sy = (y) => H - pad - ((y - y0) / (y1 - y0)) * (H - pad * 2);
 
     const grid = el("g", { stroke: "#242a33", "stroke-width": "1" });
-    const labels = el("g", { fill: "#59636e", "font-size": "12", "font-family": "monospace" });
+    const labels = el("g", { fill: "#98a2ad", "font-size": "12", "font-family": "monospace" });
     const stepX = gridStep(x1 - x0);
     for (let x = Math.ceil(x0 / stepX) * stepX; x <= x1 + 1e-9; x += stepX) {
       grid.append(el("line", { x1: sx(x), y1: pad, x2: sx(x), y2: H - pad }));
-      labels.append(text(sx(x) + 3, H - pad + 15, num(Math.round(x * 1e6) / 1e6)));
+      labels.append(text(sx(x), H - pad + 16, num(Math.round(x * 1e6) / 1e6), "middle"));
     }
     const stepY = gridStep(y1 - y0);
     for (let y = Math.ceil(y0 / stepY) * stepY; y <= y1 + 1e-9; y += stepY) {
       grid.append(el("line", { x1: pad, y1: sy(y), x2: W - pad, y2: sy(y) }));
-      labels.append(text(4, sy(y) - 3, num(Math.round(y * 1e6) / 1e6)));
+      labels.append(text(pad - 6, sy(y) + 4, num(Math.round(y * 1e6) / 1e6), "end"));
     }
     svg.append(grid);
 
@@ -299,8 +299,8 @@ function sandboxBoot() {
     let used = 0;
     const nextColour = () => SERIES[used++ % SERIES.length];
 
-    function text(x, y, value) {
-      const node = el("text", { x: x, y: y });
+    function text(x, y, value, anchor) {
+      const node = el("text", { x: x, y: y, "text-anchor": anchor || "start" });
       node.textContent = value;
       return node;
     }
