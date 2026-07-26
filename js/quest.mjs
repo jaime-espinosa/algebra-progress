@@ -875,6 +875,36 @@ export function worldMap(data) {
     rowCursor += bands;
   }
 
+  // Fog of war, graded by how far ahead of him a section sits on the route.
+  //
+  // route: the flat list of every region in the order he actually does them,
+  // Semester 1 then Semester 2, section number ascending. `ahead` is how many
+  // sections past his current one a region is: 0 is where he is standing or
+  // anywhere he has already been, 1 is the very next section, and so on.
+  //
+  // fog is what the map paints over it. The ladder is Jaime's: clear behind
+  // and at his position, half-veiled one section ahead so he can see there is
+  // something there and roughly what it is, heavier beyond that. It tops out
+  // rather than going to full black, because a section he cannot see at all
+  // reads as a wall, and none of this is a wall — it is ground he has not
+  // walked yet. Nothing is ever hidden from the text equivalent.
+  const route = worlds.flatMap((world) => world.regions);
+  route.forEach((region, index) => { region.routeIndex = index; });
+  const hereIndex = route.findIndex((region) => region.status === "here");
+  for (const region of route) {
+    const ahead = hereIndex === -1 ? 0 : Math.max(0, region.routeIndex - hereIndex);
+    region.ahead = ahead;
+    region.fog = ahead === 0 ? 0
+      : ahead === 1 ? 0.5
+        : ahead === 2 ? 0.68
+          : 0.8;
+    // What a screen reader is told, so the haze never carries information the
+    // text does not. Deliberately never "locked" or "blocked".
+    region.discovery = ahead === 0 ? "explored"
+      : ahead === 1 ? "just over the horizon"
+        : "not discovered yet";
+  }
+
   const totalDone = worlds.reduce((sum, world) => sum + world.unitsDone, 0);
   const totalUnits = worlds.reduce((sum, world) => sum + world.unitsTotal, 0);
   return {
