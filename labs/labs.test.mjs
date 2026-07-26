@@ -101,6 +101,33 @@ test("sem1-03: parallel and identical lines fall out of the same formula", async
   assert.ok(Number.isNaN(identical.points[0].x), "same line twice: every point solves it");
 });
 
+test("sem1-06: both pieces meet the boundary rule and expose the jump", async () => {
+  const run = runStarter(await starterOf("sem1-06-piecewise.html"));
+  assert.equal(run.plots.length, 2);
+  const [leftPiece, rightPiece] = run.plots.map((entry) => entry.fn);
+  // The starter rule is x + 2 before x = 1, then 2x from x = 1 onward.
+  assert.equal(leftPiece(0), 2);
+  assert.equal(leftPiece(0.999), 2.999);
+  assert.ok(Number.isNaN(leftPiece(1)), "the left piece excludes the boundary");
+  assert.ok(Number.isNaN(rightPiece(0.999)), "the right piece starts at the boundary");
+  assert.equal(rightPiece(1), 2);
+  assert.equal(rightPiece(2), 4);
+  // At x = 1 the excluded left value would be 3, while the included right value is 2.
+  assert.deepEqual(
+    run.points.map(({ x, y, label }) => [x, y, label]),
+    [[1, 3, "left would be 3"], [1, 2, "actual value is 2"]],
+  );
+  assert.deepEqual(run.said[1], ["jump size", -1]);
+
+  const moved = runStarter(
+    (await starterOf("sem1-06-piecewise.html")).replace("let boundary = 1;", "let boundary = 3;"),
+  );
+  assert.deepEqual(
+    moved.points.map(({ x, y, label }) => [x, y, label]),
+    [[3, 5, "left would be 5"], [3, 6, "actual value is 6"]],
+  );
+});
+
 test("sem2-02: roots, vertex and discriminant match the quadratic formula", async () => {
   const run = runStarter(await starterOf("sem2-02-parabola.html"));
   const q = run.plots[0].fn;
@@ -194,6 +221,70 @@ test("sem2-03: the cube rule from the challenge is still the same shape of progr
   assert.ok(escapeSteps(-1, 0) < 60);
 });
 
+test("sem2-04: the square-root curve starts exactly where its domain starts", async () => {
+  const run = runStarter(await starterOf("sem2-04-radical.html"));
+  assert.equal(run.plots.length, 1);
+  const root = run.plots[0].fn;
+  // y = sqrt(x - 1) - 2 has domain x >= 1.
+  assert.ok(Number.isNaN(root(0)));
+  assert.equal(root(1), -2);
+  assert.equal(root(2), -1);
+  assert.equal(root(5), 0);
+  assert.equal(root(10), 1);
+  assert.deepEqual(
+    run.points.map(({ x, y, label }) => [x, y, label]),
+    [[1, -2, "the curve starts here"]],
+  );
+  assert.deepEqual(run.said[2], ["one step before is a real y?", false]);
+});
+
+test("sem2-05: zero denominator and both asymptotes match the rational function", async () => {
+  const run = runStarter(await starterOf("sem2-05-rational.html"));
+  assert.equal(run.plots.length, 1);
+  const rational = run.plots[0].fn;
+  // y = (x + 1) / (x - 2): zero at -1, vertical asymptote x = 2,
+  // horizontal asymptote y = 1.
+  assert.ok(rational(-1) === 0, "the numerator zero is still numerically zero");
+  assert.equal(rational(0), -0.5);
+  assert.equal(rational(1.5), -5);
+  assert.equal(rational(2), Infinity);
+  assert.equal(rational(2.5), 7);
+  assert.equal(rational(5), 2);
+  assert.ok(Math.abs(rational(1000) - 1) < 0.004);
+  assert.ok(Math.abs(rational(-1000) - 1) < 0.004);
+  assert.deepEqual(
+    run.points.map(({ x, y }) => [x, y]),
+    [[1.5, -5], [2.5, 7]],
+  );
+});
+
+test("sem2-06: least-squares line and residuals match the hand calculation", async () => {
+  const run = runStarter(await starterOf("sem2-06-data.html"));
+  assert.equal(run.plots.length, 2);
+  assert.equal(run.pointLists.length, 2);
+  const fit = run.plots[0].fn;
+  const zero = run.plots[1].fn;
+  const data = [[1, 2], [2, 3], [3, 5], [4, 4], [5, 6]];
+  assert.deepEqual(run.pointLists[0].list, data);
+  // mean x = 3, mean y = 4, covariance numerator = 9,
+  // x-spread denominator = 10, so slope = 0.9 and intercept = 1.3.
+  assert.ok(Math.abs(fit(0) - 1.3) < 1e-12);
+  assert.ok(Math.abs(fit(3) - 4) < 1e-12);
+  assert.ok(Math.abs(fit(5) - 5.8) < 1e-12);
+  const residuals = run.pointLists[1].list;
+  const expected = [[1, -0.2], [2, -0.1], [3, 1], [4, -0.9], [5, 0.2]];
+  for (let i = 0; i < expected.length; i += 1) {
+    assert.equal(residuals[i][0], expected[i][0]);
+    assert.ok(Math.abs(residuals[i][1] - expected[i][1]) < 1e-12);
+  }
+  const residualSum = residuals.reduce((sum, pair) => sum + pair[1], 0);
+  const squaredError = residuals.reduce((sum, pair) => sum + pair[1] ** 2, 0);
+  assert.ok(Math.abs(residualSum) < 1e-12);
+  assert.ok(Math.abs(squaredError - 1.9) < 1e-12);
+  assert.equal(zero(-100), 0);
+  assert.equal(zero(100), 0);
+});
+
 test("guardLoops rewrites loops it should and leaves alone the ones it should not", () => {
   assert.match(guardLoops("while (true) {}"), /while\s*\(__tick\(\) && \(true\)\)/);
   assert.match(guardLoops("for (let i = 0; i < 3; i += 1) {}"), /__tick\(\) && \(i < 3\)/);
@@ -267,8 +358,10 @@ test("the sandbox document runs code in an isolated frame and reaches no network
 });
 
 test("every lab page is self-contained, sandboxed and free of dated claims", async () => {
-  const files = (await readdir(labsDir)).filter((name) => name.endsWith(".html"));
-  assert.ok(files.length >= 5, "expected the labs to be present");
+  const files = (await readdir(labsDir)).filter(
+    (name) => name.endsWith(".html") && name !== "index.html",
+  );
+  assert.equal(files.length, 9, "expected all nine runnable labs");
   for (const file of files) {
     const html = await readFile(path.join(labsDir, file), "utf8");
     assert.ok(!/https?:\/\//.test(html), `${file} must not reference the network`);
@@ -283,6 +376,45 @@ test("every lab page is self-contained, sandboxed and free of dated claims", asy
   assert.match(runtime, /setAttribute\("sandbox", "allow-scripts"\)/);
   assert.ok(!/setAttribute\("sandbox", "[^"]*allow-same-origin/.test(runtime),
     "the frame must stay cross-origin");
+});
+
+test("the lab index links all nine labs by their real section names", async () => {
+  const html = await readFile(path.join(labsDir, "index.html"), "utf8");
+  const expected = [
+    ["sem1-03-crossing.html", "Systems of Equations and Inequalities"],
+    ["sem1-05-line.html", "Linear Functions"],
+    ["sem1-06-piecewise.html", "Piecewise Functions"],
+    ["sem2-01-doubling.html", "Exponential Functions"],
+    ["sem2-02-parabola.html", "Quadratic Functions"],
+    ["sem2-03-mandelbrot.html", "Solving Quadratic Equations"],
+    ["sem2-04-radical.html", "Radical Functions"],
+    ["sem2-05-rational.html", "Rational Expressions"],
+    ["sem2-06-data.html", "Data Analysis"],
+  ];
+  for (const [file, section] of expected) {
+    assert.match(html, new RegExp(`href="${file.replace(".", "\\.")}"`));
+    assert.match(html, new RegExp(section));
+  }
+  assert.ok(!/https?:\/\//.test(html), "the index must not reference the network");
+  assert.ok(!/20(2[7-9]|[3-9]\d)/.test(html), "the index must not name a late date");
+});
+
+test("the four matching mini-lessons and the app catalog link the new labs", async () => {
+  const expected = [
+    ["sem1-06", "sem1-06-piecewise"],
+    ["sem2-04", "sem2-04-radical"],
+    ["sem2-05", "sem2-05-rational"],
+    ["sem2-06", "sem2-06-data"],
+  ];
+  for (const [lesson, lab] of expected) {
+    const html = await readFile(path.join(labsDir, "..", "lessons", `${lesson}.html`), "utf8");
+    assert.match(html, /CODE LAB \/\/ WRITE IT, RUN IT/);
+    assert.match(html, new RegExp(`href="../labs/${lab.replace(".", "\\.")}\\.html"`));
+  }
+  const app = await readFile(path.join(labsDir, "..", "app.js"), "utf8");
+  for (const [, lab] of expected) assert.match(app, new RegExp(`file: "${lab}"`));
+  assert.match(app, /file: "index"/);
+  assert.match(app, /file === "index"/, "the catalog linker must allow labs/index.html");
 });
 
 // Hue check. "No red anywhere" is a hard rule, so it is enforced by arithmetic rather

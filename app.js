@@ -2066,6 +2066,11 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     { file: "sem2-01-doubling", semesterId: "sem2", number: 1, name: "The Moment Doubling Wins" },
     { file: "sem2-02-parabola", semesterId: "sem2", number: 2, name: "Bend the Parabola" },
     { file: "sem2-03-mandelbrot", semesterId: "sem2", number: 3, name: "The Quadratic That Eats Itself" },
+    { file: "sem1-06-piecewise", semesterId: "sem1", number: 6, name: "Move the Join" },
+    { file: "sem2-04-radical", semesterId: "sem2", number: 4, name: "Where the Root Begins" },
+    { file: "sem2-05-rational", semesterId: "sem2", number: 5, name: "Divide by Almost Zero" },
+    { file: "sem2-06-data", semesterId: "sem2", number: 6, name: "Fit the Mess" },
+    { file: "index", semesterId: null, number: null, name: "All code labs" },
   ];
 
   // Every section in the syllabus, in order, whether or not a lesson file exists for it.
@@ -2110,7 +2115,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         </li>`;
       }).join("")}</ol>
       <h4 class="lesson-library__heading">Code labs</h4>
-      <ol class="lesson-library">${LAB_CATALOG.map(lab => {
+      <ol class="lesson-library">${LAB_CATALOG.filter(lab => lab.semesterId).map(lab => {
         const slug = lessonSlug(lab.semesterId, lab.number);
         const state = slug === currentSlug ? "current" : "ahead";
         return `<li class="lesson-library__item lesson-library__item--${state}">
@@ -2118,7 +2123,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           <span class="lesson-library__name" data-lab="${escapeHtml(lab.file)}">${escapeHtml(lab.name)}</span>
           ${state === "current" ? `<span class="lesson-library__mark">this section</span>` : ""}
         </li>`;
-      }).join("")}</ol>`;
+      }).join("")}</ol>
+      <p class="lesson-library__all"><span data-lab="index">All code labs</span></p>`;
     linkExistingLessons();
   }
 
@@ -2142,7 +2148,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     const labTargets = [...scope.querySelectorAll("[data-lab]")];
     await Promise.all(labTargets.map(async node => {
       const file = node.dataset.lab;
-      if (!/^sem[12]-\d{2}-[a-z]+$/.test(file)) return;
+      // "index" is the labs contents page — it has no section, so it fails the
+      // per-section pattern every other lab matches, and is allowed explicitly.
+      const isIndex = file === "index";
+      if (!isIndex && !/^sem[12]-\d{2}-[a-z]+$/.test(file)) return;
       if (await pageExists(`labs/${file}.html`) === false) return;
       const link = document.createElement("a");
       link.href = `labs/${file}.html`;

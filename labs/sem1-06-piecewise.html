@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code lab: Move the Join</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S1 // SECTION 06 // PIECEWISE FUNCTIONS // CODE LAB</p>
+      <h1>Move the Join</h1>
+      <p class="prose">One function can follow different rules in different places. The boundary decides where the handoff happens.</p>
+    </header>
+
+    <section>
+      <h2>The idea</h2>
+      <div class="prose">
+        <p>A piecewise function asks a question before it calculates: which rule owns this x?</p>
+        <p>Here the first rule is <code>y = x + 2</code> when x is less than the boundary. At the boundary and after it, the rule is <code>y = 2x</code>.</p>
+        <p>The two rules do not agree at the starting boundary. The first would reach 3, but the function switches and returns 2. That jump is not a drawing glitch — it is what the rule says.</p>
+        <p>The code draws each side separately so the gap stays visible. Change <code>boundary</code> and the handoff moves.</p>
+      </div>
+      <p class="small-screen status">This lab wants a wide screen. It works here, but the editor and picture are stacked.</p>
+    </section>
+
+    <div class="bench">
+      <section aria-labelledby="editor-heading">
+        <h2 id="editor-heading">The code</h2>
+        <label class="label" for="code">JavaScript — edit freely</label>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+          aria-describedby="api"></textarea>
+        <div class="controls">
+          <button id="run" type="button">Run</button>
+          <button id="reset" type="button" class="secondary">Back to the start</button>
+          <span id="run-status" role="status" aria-live="polite"></span>
+        </div>
+        <p class="api" id="api">
+          Ctrl+Enter also runs it. This page gives you
+          <code>graph(xMin, xMax, yMin, yMax)</code>, then <code>.plot(f)</code> and
+          <code>.point(x, y, "label")</code>, plus <code>say(...)</code>.
+        </p>
+      </section>
+
+      <section aria-labelledby="output-heading">
+        <h2 id="output-heading">What it drew</h2>
+        <div id="picture"></div>
+        <div id="description" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <section>
+      <h2>Challenges</h2>
+      <ol class="challenges">
+        <li>Change <code>boundary</code> from <code>1</code> to <code>3</code>. The join moves, and the jump changes size because both formulas are being checked at a new x.</li>
+        <li>Set <code>boundary = 2</code>. Both rules give 4 there. The two pieces touch, so the function is continuous even though its rule still changes.</li>
+        <li>Change <code>x &lt; boundary</code> to <code>x &lt;= boundary</code> in both places it appears. Which rule now owns the boundary?</li>
+        <li>Change the right rule from <code>2 * x</code> to <code>x + 2</code>. There is still a boundary in the code, but can the graph reveal it?</li>
+        <li>Make the first piece flat: change <code>x + 2</code> to <code>3</code> in the function and in <code>leftValue</code>.</li>
+      </ol>
+    </section>
+
+    <aside class="python">
+      <span class="label">If you know Python</span>
+      <div class="prose">
+        <p>The decision is the same in both languages. JavaScript writes <code>if (x &lt; boundary) { return x + 2; }</code>; Python writes <code>if x &lt; boundary: return x + 2</code>.</p>
+        <p>JavaScript's <code>NaN</code> means “not a number.” Returning it here tells the plotter that this piece does not own that x. Python can make the same value with <code>float("nan")</code>.</p>
+      </div>
+    </aside>
+
+    <section>
+      <h2>Nearby</h2>
+      <p class="prose">
+        <a href="../lessons/sem1-06.html">Mini-lesson: Piecewise Functions</a> ·
+        <a href="index.html">All code labs</a> ·
+        <a href="../index.html">Back to the quest board</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="text/plain" id="starter-code">
+// One function, two rules. The boundary decides which one runs.
+let boundary = 1;
+
+function piecewise(x) {
+  if (x < boundary) {
+    return x + 2;
+  }
+  return 2 * x;
+}
+
+// NaN tells the plotter to lift its pen outside this piece.
+function leftPiece(x) {
+  return x < boundary ? x + 2 : NaN;
+}
+
+function rightPiece(x) {
+  return x >= boundary ? 2 * x : NaN;
+}
+
+const g = graph(-5, 5, -5, 10);
+g.plot(leftPiece, "x + 2 before the boundary");
+g.plot(rightPiece, "2x from the boundary onward");
+
+const leftValue = boundary + 2;
+const actualValue = piecewise(boundary);
+g.point(boundary, leftValue, "left would be " + leftValue);
+g.point(boundary, actualValue, "actual value is " + actualValue);
+
+say("boundary", boundary, "actual value", actualValue);
+say("jump size", actualValue - leftValue);
+</script>
+  <script type="module">
+    import { mountLab } from "./lab-runtime.mjs";
+    mountLab();
+  </script>
+</body>
+</html>

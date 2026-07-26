@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code lab: Divide by Almost Zero</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S2 // SECTION 05 // RATIONAL EXPRESSIONS // CODE LAB</p>
+      <h1>Divide by Almost Zero</h1>
+      <p class="prose">The asymptote is not extra decoration. It appears because the denominator is heading toward zero.</p>
+    </header>
+
+    <section>
+      <h2>The idea</h2>
+      <div class="prose">
+        <p>A rational function is one polynomial divided by another. This one is <code>y = (x + 1) ÷ (x − 2)</code>.</p>
+        <p>At x = 2 the denominator is zero, so the function has no finite value. Close to 2, dividing by a tiny negative or positive number makes the curve plunge or climb. That is the vertical asymptote.</p>
+        <p>Far away, the +1 and −2 matter less compared with x. The fraction gets closer to <code>x ÷ x = 1</code>. That is the horizontal asymptote.</p>
+        <p>The plotter lifts its pen at the non-finite value instead of joining the two branches through a place the function never reaches.</p>
+      </div>
+      <p class="small-screen status">This lab wants a wide screen. It works here, but the editor and picture are stacked.</p>
+    </section>
+
+    <div class="bench">
+      <section aria-labelledby="editor-heading">
+        <h2 id="editor-heading">The code</h2>
+        <label class="label" for="code">JavaScript — edit freely</label>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+          aria-describedby="api"></textarea>
+        <div class="controls">
+          <button id="run" type="button">Run</button>
+          <button id="reset" type="button" class="secondary">Back to the start</button>
+          <span id="run-status" role="status" aria-live="polite"></span>
+        </div>
+        <p class="api" id="api">
+          Ctrl+Enter also runs it. This page gives you
+          <code>graph(xMin, xMax, yMin, yMax)</code>, then <code>.plot(f)</code> and
+          <code>.point(x, y, "label")</code>, plus <code>say(...)</code>.
+        </p>
+      </section>
+
+      <section aria-labelledby="output-heading">
+        <h2 id="output-heading">What it drew</h2>
+        <div id="picture"></div>
+        <div id="description" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <section>
+      <h2>Challenges</h2>
+      <ol class="challenges">
+        <li>Change <code>vertical = 2</code> to <code>vertical = -3</code>. The zero denominator and the vertical asymptote move together.</li>
+        <li>Change <code>numeratorShift</code> to <code>-2</code>. The numerator and denominator are now both <code>x − 2</code>. Everywhere except x = 2 the value is 1; at x = 2 there is still a hole.</li>
+        <li>Set <code>numeratorShift = 0</code> and <code>vertical = 0</code>. The expression is <code>x ÷ x</code>: still undefined at zero, still 1 everywhere else.</li>
+        <li>Change the numerator to <code>2 * x + numeratorShift</code>. Check values at x = 100 and x = −100. Which horizontal value does the curve now approach?</li>
+        <li>Move the two marked test points closer: use <code>vertical - 0.1</code> and <code>vertical + 0.1</code>. Watch how quickly their y values grow.</li>
+      </ol>
+    </section>
+
+    <aside class="python">
+      <span class="label">If you know Python</span>
+      <div class="prose">
+        <p>The formula and <code>/</code> division are identical in JavaScript and Python.</p>
+        <p>At exactly zero, JavaScript number division gives <code>Infinity</code> here. Python raises <code>ZeroDivisionError</code>. Both are telling you the same algebraic fact: x = 2 is not in the domain.</p>
+      </div>
+    </aside>
+
+    <section>
+      <h2>Nearby</h2>
+      <p class="prose">
+        <a href="../lessons/sem2-05.html">Mini-lesson: Rational Expressions</a> ·
+        <a href="index.html">All code labs</a> ·
+        <a href="../index.html">Back to the quest board</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="text/plain" id="starter-code">
+// y = (x + numeratorShift) / (x - vertical)
+let numeratorShift = 1;
+let vertical = 2;
+
+function rational(x) {
+  const denominator = x - vertical;
+  return (x + numeratorShift) / denominator;
+}
+
+const g = graph(-8, 8, -10, 10);
+g.plot(rational, "(x + 1) / (x - 2)");
+g.point(vertical - 0.5, rational(vertical - 0.5), "left of the asymptote");
+g.point(vertical + 0.5, rational(vertical + 0.5), "right of the asymptote");
+
+say("denominator at x =", vertical, "is", vertical - vertical);
+say("function value there", rational(vertical));
+say("far right", rational(100), "far left", rational(-100));
+</script>
+  <script type="module">
+    import { mountLab } from "./lab-runtime.mjs";
+    mountLab();
+  </script>
+</body>
+</html>

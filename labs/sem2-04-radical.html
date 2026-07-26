@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code lab: Where the Root Begins</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S2 // SECTION 04 // RADICAL FUNCTIONS // CODE LAB</p>
+      <h1>Where the Root Begins</h1>
+      <p class="prose">A square-root curve has a real starting point. The code tries the forbidden side and shows exactly what happens.</p>
+    </header>
+
+    <section>
+      <h2>The idea</h2>
+      <div class="prose">
+        <p>The parent radical function is <code>y = √x</code>. It starts at x = 0 because no real number squares to make a negative number.</p>
+        <p>This one is <code>y = √(x − start) + up</code>. <code>start</code> slides the beginning sideways; <code>up</code> slides it vertically.</p>
+        <p>The domain is not a rule pasted on afterward. The code actually tests <code>x &lt; start</code> and returns <code>NaN</code>, so the plotter has no real point to draw there.</p>
+      </div>
+      <p class="small-screen status">This lab wants a wide screen. It works here, but the editor and picture are stacked.</p>
+    </section>
+
+    <div class="bench">
+      <section aria-labelledby="editor-heading">
+        <h2 id="editor-heading">The code</h2>
+        <label class="label" for="code">JavaScript — edit freely</label>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+          aria-describedby="api"></textarea>
+        <div class="controls">
+          <button id="run" type="button">Run</button>
+          <button id="reset" type="button" class="secondary">Back to the start</button>
+          <span id="run-status" role="status" aria-live="polite"></span>
+        </div>
+        <p class="api" id="api">
+          Ctrl+Enter also runs it. This page gives you
+          <code>graph(xMin, xMax, yMin, yMax)</code>, then <code>.plot(f)</code> and
+          <code>.point(x, y, "label")</code>, plus <code>say(...)</code>.
+        </p>
+      </section>
+
+      <section aria-labelledby="output-heading">
+        <h2 id="output-heading">What it drew</h2>
+        <div id="picture"></div>
+        <div id="description" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <section>
+      <h2>Challenges</h2>
+      <ol class="challenges">
+        <li>Change <code>start</code> to <code>-3</code>. The curve begins three units left of the y axis, and the domain moves with it.</li>
+        <li>Set <code>up = 2</code>. The starting x stays put while every y value rises four units from the starter picture.</li>
+        <li>Change <code>Math.sqrt(x - start)</code> to <code>2 * Math.sqrt(x - start)</code>. The curve stretches upward without changing its domain.</li>
+        <li>Remove the <code>if</code> check and run. JavaScript's own square root still returns <code>NaN</code> for a negative input. The check makes the reason readable; it does not invent the restriction.</li>
+        <li>Change the graph window to <code>graph(-2, 30, -5, 5)</code>. The curve keeps rising, but more slowly and slowly.</li>
+      </ol>
+    </section>
+
+    <aside class="python">
+      <span class="label">If you know Python</span>
+      <div class="prose">
+        <p>JavaScript uses <code>Math.sqrt(value)</code>. Python uses <code>math.sqrt(value)</code> after <code>import math</code>.</p>
+        <p>There is one useful difference: JavaScript returns <code>NaN</code> for <code>Math.sqrt(-1)</code>, while Python raises an exception. Either way, there is no real y value to plot.</p>
+      </div>
+    </aside>
+
+    <section>
+      <h2>Nearby</h2>
+      <p class="prose">
+        <a href="../lessons/sem2-04.html">Mini-lesson: Radical Functions</a> ·
+        <a href="index.html">All code labs</a> ·
+        <a href="../index.html">Back to the quest board</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="text/plain" id="starter-code">
+// y = sqrt(x - start) + up
+let start = 1;
+let up = -2;
+
+function root(x) {
+  if (x < start) {
+    return NaN;  // no real square root lives here
+  }
+  return Math.sqrt(x - start) + up;
+}
+
+const g = graph(-2, 12, -5, 4);
+g.plot(root, "square-root curve");
+g.point(start, root(start), "the curve starts here");
+
+say("domain: x must be at least", start);
+say("root at the start", root(start));
+// The code really calls root outside its domain, then asks whether it got a real y.
+say("one step before is a real y?", Number.isFinite(root(start - 1)));
+</script>
+  <script type="module">
+    import { mountLab } from "./lab-runtime.mjs";
+    mountLab();
+  </script>
+</body>
+</html>

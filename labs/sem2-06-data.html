@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code lab: Fit the Mess</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S2 // SECTION 06 // DATA ANALYSIS // CODE LAB</p>
+      <h1>Fit the Mess</h1>
+      <p class="prose">Real points do not line up politely. Least squares finds the line whose misses are smallest overall.</p>
+    </header>
+
+    <section>
+      <h2>The idea</h2>
+      <div class="prose">
+        <p>A residual is <code>actual y − predicted y</code>. Positive means the point sits above the line; negative means it sits below.</p>
+        <p>The best-fit line uses every point. Its slope is the shared x-and-y movement divided by the x movement squared. Then the line is placed through the mean point.</p>
+      </div>
+      <div class="math">
+        <p>slope = Σ((x − mean x)(y − mean y)) ÷ Σ((x − mean x)²)</p>
+        <p>intercept = mean y − slope · mean x</p>
+        <p>residual = actual y − (slope · x + intercept)</p>
+      </div>
+      <p class="prose">The first plot shows the data and fitted line. The second puts every residual around zero, so the misses are visible instead of hidden inside one score.</p>
+      <p class="small-screen status">This lab wants a wide screen. It works here, but the editor and picture are stacked.</p>
+    </section>
+
+    <div class="bench">
+      <section aria-labelledby="editor-heading">
+        <h2 id="editor-heading">The code</h2>
+        <label class="label" for="code">JavaScript — edit freely</label>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+          aria-describedby="api"></textarea>
+        <div class="controls">
+          <button id="run" type="button">Run</button>
+          <button id="reset" type="button" class="secondary">Back to the start</button>
+          <span id="run-status" role="status" aria-live="polite"></span>
+        </div>
+        <p class="api" id="api">
+          Ctrl+Enter also runs it. This page gives you
+          <code>graph(xMin, xMax, yMin, yMax)</code>, then <code>.plot(f)</code> and
+          <code>.points([[x, y], ...], "label")</code>, plus <code>say(...)</code>.
+        </p>
+      </section>
+
+      <section aria-labelledby="output-heading">
+        <h2 id="output-heading">What it drew</h2>
+        <div id="picture"></div>
+        <div id="description" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <section>
+      <h2>Challenges</h2>
+      <ol class="challenges">
+        <li>Change the middle point from <code>[3, 5]</code> to <code>[3, 4]</code>. The points become more line-like. Watch the largest residual shrink.</li>
+        <li>Change the last point to <code>[5, 10]</code>. One far point can pull the fitted line; the residual plot shows which misses that creates elsewhere.</li>
+        <li>Add <code>[6, 7]</code> to the data array. Nothing else needs changing — every sum and both plots use the array's length.</li>
+        <li>Change every y value by adding 2. Predict which of slope and intercept will change before you run it.</li>
+        <li>Replace <code>actualY - fit(x)</code> with <code>fit(x) - actualY</code>. The residual picture flips, but the squared error stays the same because squaring removes the sign.</li>
+      </ol>
+    </section>
+
+    <aside class="python">
+      <span class="label">If you know Python</span>
+      <div class="prose">
+        <p>JavaScript arrays and Python lists play the same role here. JS <code>data.length</code> is Python <code>len(data)</code>, and <code>residuals.push(pair)</code> is <code>residuals.append(pair)</code>.</p>
+        <p>The loops are deliberately ordinary. A statistics library can fit this line in one call, but these few lines show what that call is actually calculating.</p>
+      </div>
+    </aside>
+
+    <section>
+      <h2>Nearby</h2>
+      <p class="prose">
+        <a href="../lessons/sem2-06.html">Mini-lesson: Data Analysis</a> ·
+        <a href="index.html">All code labs</a> ·
+        <a href="../index.html">Back to the quest board</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="text/plain" id="starter-code">
+// Five measured points. They almost make a line, but not quite.
+const data = [[1, 2], [2, 3], [3, 5], [4, 4], [5, 6]];
+
+let sumX = 0;
+let sumY = 0;
+for (const [x, y] of data) {
+  sumX += x;
+  sumY += y;
+}
+const meanX = sumX / data.length;
+const meanY = sumY / data.length;
+
+let together = 0;
+let xSpread = 0;
+for (const [x, y] of data) {
+  together += (x - meanX) * (y - meanY);
+  xSpread += (x - meanX) ** 2;
+}
+
+const slope = together / xSpread;
+const intercept = meanY - slope * meanX;
+
+function fit(x) {
+  return slope * x + intercept;
+}
+
+const residuals = [];
+let squaredError = 0;
+for (const [x, actualY] of data) {
+  const residual = actualY - fit(x);
+  residuals.push([x, residual]);
+  squaredError += residual ** 2;
+}
+
+const fitted = graph(0, 6, 0, 8);
+fitted.points(data, "measured data");
+fitted.plot(fit, "least-squares line");
+
+const misses = graph(0, 6, -2, 2);
+misses.points(residuals, "residuals");
+misses.plot(function zero() { return 0; }, "zero residual");
+
+say("slope", slope, "intercept", intercept);
+say("residuals", residuals.map(pair => pair[1]));
+say("sum of squared residuals", squaredError);
+</script>
+  <script type="module">
+    import { mountLab } from "./lab-runtime.mjs";
+    mountLab();
+  </script>
+</body>
+</html>
