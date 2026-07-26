@@ -1476,12 +1476,33 @@ export function worldTerrain(map, options = {}) {
     width, height, cell, cols, rows, ocean: OCEAN_DEEP,
     layers,
     territories,
+    // Landmass bounds measured off the LAND ITSELF, not off the territory
+    // centres. A banner hung from the average of the centres lands in the
+    // middle of the continent, on top of the territory plaques; hung from the
+    // northern coast it lands in open water where it can be read.
     landmasses: landmasses.map((mass) => {
-      const own = territories.filter((territory) => territory.worldIndex === mass.index);
-      const cx = own.reduce((sum, territory) => sum + territory.cx, 0) / Math.max(1, own.length);
-      const cy = own.reduce((sum, territory) => sum + territory.cy, 0) / Math.max(1, own.length);
-      const top = Math.min(...own.map((territory) => territory.cy));
-      return { ...mass, cx, cy, top };
+      let minX = cols;
+      let maxX = 0;
+      let minY = rows;
+      let maxY = 0;
+      for (let i = 0; i < size; i += 1) {
+        if (!land[i] || territories[owner[i]].worldIndex !== mass.index) continue;
+        const gx = i % cols;
+        const gy = (i - gx) / cols;
+        if (gx < minX) minX = gx;
+        if (gx > maxX) maxX = gx;
+        if (gy < minY) minY = gy;
+        if (gy > maxY) maxY = gy;
+      }
+      return {
+        ...mass,
+        cx: ((minX + maxX) / 2 + 0.5) * cell,
+        cy: ((minY + maxY) / 2 + 0.5) * cell,
+        top: minY * cell,
+        bottom: (maxY + 1) * cell,
+        left: minX * cell,
+        right: (maxX + 1) * cell,
+      };
     }),
     // Nodes the renderer will emit for terrain: one <path> per layer, plus the
     // ocean rect. Reported so the budget is measured, not assumed.
