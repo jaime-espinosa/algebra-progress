@@ -504,7 +504,12 @@ function sandboxBoot() {
   }
 
   function say(...values) {
-    said.push(values.map((v) => (typeof v === "string" ? v : num(Number(v)) === "NaN" && typeof v !== "number" ? String(v) : num(v))).join(" "));
+    said.push(values.map((value) => {
+      if (typeof value === "number") return num(value);
+      if (typeof value === "string") return value;
+      if (Array.isArray(value)) return "[" + value.map((v) => (typeof v === "number" ? num(v) : String(v))).join(", ") + "]";
+      return String(value);
+    }).join(" "));
     if (said.length > 200) {
       throw new Error(
         "say() was called more than 200 times. That is usually a loop printing " +

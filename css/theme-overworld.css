@@ -242,8 +242,11 @@ meter,
   cursor: grabbing;
 }
 
+/* A literal amber rather than var(--accent). The map draws its own colours in
+   every theme so that "no red on the map" is provable by sampling the rendered
+   pixels in any theme, and the Nether accent sits at hue 17. */
 .wm-viewport:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid #ffd67a;
   outline-offset: -2px;
 }
 
