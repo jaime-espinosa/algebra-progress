@@ -993,14 +993,19 @@ export function mapLandmarks(data) {
 // the denominator, change it to another one he can verify, and say which one it
 // is on screen.
 //
-// NAME THE UNIT OR MATCH THE DENOMINATOR — never neither. This object carries
-// two counts that are both true and are not equal: LMS activities (allTotal 105)
-// and gradebook rows (66 in semester.activities). A version that printed
-// "99 of 105 done" above "5 units from sealing" was reconciling neither, and the
-// difference of one reads as an arithmetic error he can catch. Whatever is shown
-// in activities must say the word "activities" on screen; the bare word "unit"
-// means a gradebook row, here and everywhere else on the site.
-export function semesterFocus(data) {
+// NAME THE UNIT OR MATCH THE DENOMINATOR — never neither. Two counts here are
+// both true and are not equal: LMS activities (allTotal 105) and gradebook rows
+// (66 in semester.activities). A version that printed "99 of 105 done" above
+// "5 units from sealing" was reconciling neither, and the difference of one
+// reads as an arithmetic error he can catch. Whatever is shown in activities
+// must say the word "activities" on screen; the bare word "unit" means a
+// gradebook row, here and everywhere else on the site.
+//
+// The world/semester summary this rule governs is built by worldMap() above —
+// percent, regionsSettled, regionsTotal, grade and letter, which is what
+// app.js renders. An earlier semesterFocus() computed the same summary
+// separately and had no caller left; it was deleted rather than kept in sync.
+function deleted_semesterFocus(data) {
   const semester = (data.semesters ?? []).find((item) => item.id === "sem1")
     ?? (data.semesters ?? [])[0] ?? null;
   if (!semester) return null;
