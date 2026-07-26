@@ -953,7 +953,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           width="${terrain.width}" height="${terrain.height}" aria-hidden="true" focusable="false"
           shape-rendering="auto" xmlns="http://www.w3.org/2000/svg">
           ${routePaths(route)}${compassRose(terrain.width - 92, 96)}
-          ${marks.join("")}${hereSpot ? hereMarker(hereSpot.cx, hereSpot.cy + 26) : ""}</svg>`;
+          ${marks.join("")}${hereSpot ? hereMarker(hereSpot.cx - 34, hereSpot.cy + 8) : ""}</svg>`;
 
     document.querySelector("#worldmap-content").innerHTML = map.worlds.length
       ? `
