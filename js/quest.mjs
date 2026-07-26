@@ -630,18 +630,33 @@ export function openTimeSeries(activity, today) {
 //
 // 46% is not more true than 93%; it is the same work under the most
 // discouraging denominator available. Semester 1 is the nearest real finish
-// line — 98 of 105 done, six activities from sealed — so that is what leads.
-// The whole-course figure is still on the page, in the course-progress dial; it
-// just stopped being the headline. If you change the denominator, change it to
-// another one he can verify, and say which one it is on screen.
+// line, so that is what leads. The whole-course figure is still on the page, in
+// the course-progress dial; it just stopped being the headline. If you change
+// the denominator, change it to another one he can verify, and say which one it
+// is on screen.
+//
+// NAME THE UNIT OR MATCH THE DENOMINATOR — never neither. This object carries
+// two counts that are both true and are not equal: LMS activities (allTotal 105)
+// and gradebook rows (66 in semester.activities). A version that printed
+// "99 of 105 done" above "5 units from sealing" was reconciling neither, and the
+// difference of one reads as an arithmetic error he can catch. Whatever is shown
+// in activities must say the word "activities" on screen; the bare word "unit"
+// means a gradebook row, here and everywhere else on the site.
 export function semesterFocus(data) {
   const semester = (data.semesters ?? []).find((item) => item.id === "sem1")
     ?? (data.semesters ?? [])[0] ?? null;
   if (!semester) return null;
   const total = Math.max(0, Number(semester.allTotal) || 0);
   const done = Math.min(total, Math.max(0, Number(semester.allDone) || 0));
-  const activities = semester.activities ?? [];
-  const unitsLeft = activities.filter((item) => item.state === "not_started").length;
+  const activitiesLeft = Math.max(0, total - done);
+  // Two different real quantities, so two names. done/total/percent/activitiesLeft
+  // count LMS activities, the 105-row list the tile map is built from. rowsLeft
+  // counts gradebook rows still not submitted — the unit the quest board, the
+  // effort dials and the 71-left figure all use, and the exact condition that
+  // fires photo-skin-studio. They differ (6 against 5 today) and neither is wrong.
+  // The screen must say which one it is showing; see app.js renderTrophy.
+  const rows = semester.activities ?? [];
+  const rowsLeft = rows.filter((item) => item.state === "not_started").length;
   return {
     id: semester.id,
     name: semester.name ?? "",
@@ -649,8 +664,13 @@ export function semesterFocus(data) {
     total,
     // Rounded for display only; both operands are printed beside it.
     percent: total > 0 ? Math.round((done / total) * 100) : 0,
-    unitsLeft,
-    sealed: activities.length > 0 && unitsLeft === 0,
+    activitiesLeft,
+    rowsLeft,
+    // Sealed tracks the countdown the page shows and the unlock that follows it:
+    // every gradebook row submitted. If this ever stops matching the
+    // photo-skin-studio rule in evaluateUnlocks(), the reward fires against a
+    // countdown that is still running and the site looks broken.
+    sealed: rows.length > 0 && rowsLeft === 0,
     sectionsSealed: (semester.sections ?? []).filter((section) => section.complete).length,
     sectionsTotal: (semester.sections ?? []).length,
     grade: Number.isFinite(semester.percent) ? semester.percent : null,

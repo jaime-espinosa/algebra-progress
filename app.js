@@ -26,7 +26,9 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
   let currentActivity = null;
   let intervalId = null;
   let revealQueue = [];
-  let revealCounter = null;
+  // Set when a batch of tiles is queued to reveal; cleared once the vault slots
+  // that follow them have been unhidden.
+  let revealPending = false;
   let pendingArtifact = null;
   let refreshMessage = "";
   let gamesRendered = false;
@@ -294,12 +296,18 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
   // real. 46% was never more true than 93%: it is the same work, counted against
   // the most discouraging denominator available.
   //
-  // So the trophy wall leads with Semester 1 — 98 of 105 done, six activities from
-  // sealed — which is checkable in his gradebook and is the nearest real finish
-  // line he has. The whole-course figure did not disappear; it moved to the
-  // course-progress dial and stopped being the headline. The numbers come from
-  // semesterFocus() in quest.mjs. If you change the denominator, change it there,
-  // pick one he can verify, and say on screen which one you picked.
+  // So the trophy wall leads with Semester 1, which is checkable in his gradebook
+  // and is the nearest real finish line he has. The whole-course figure did not
+  // disappear; it moved to the course-progress dial and stopped being the
+  // headline. The numbers come from semesterFocus() in quest.mjs. If you change
+  // the denominator, change it there, pick one he can verify, and say on screen
+  // which one you picked.
+  //
+  // EVERY FIGURE IN THIS PANEL IS THE SAME UNIT — a Semester 1 activity row, named
+  // "unit" on screen — and comes off the one allDone/allTotal pair. He can subtract
+  // the headline pair and land exactly on the line below it. Do not mix in a count
+  // from a different array here, however correct that count is on its own: two
+  // numbers a subtraction apart is read as an error, not as two units.
   function renderTrophy(data, previousSnapshot, isNewSnapshot) {
     const semester = data.semesters.find(item => item.id === "sem1") ?? data.semesters[0];
     const focus = semesterFocus(data);
@@ -313,9 +321,15 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
     }).join("");
     // total > 0 guard: a zeroed payload makes done === total trivially true, which
     // would tell him he sealed the semester while the page shows 0/0.
+    // The countdown is in gradebook rows — the unit the quest board schedules, the
+    // dials count, the 71-left figure uses, and the one whose last submission fires
+    // photo-skin-studio. The percent and the tile map beside it are LMS activities
+    // and say so out loud, because 105 tiles is the better wall and 94% is honest.
+    // Two named things, not one word meaning two: a countdown of 6 here would run
+    // past the reward landing at 5 and read as the site being broken.
     const nearFinish = total > 0 && focus?.sealed
-      ? "Semester 1 sealed. Every activity is loaded."
-      : `${focus?.unitsLeft ?? total - done} units from sealing Semester 1.`;
+      ? "Semester 1 sealed. Every unit is submitted."
+      : `${focus?.rowsLeft ?? total - done} units from sealing Semester 1.`;
     document.querySelector("#trophy-content").innerHTML = `
       <div class="trophy-summary">
         <div class="trophy-stats">
@@ -326,7 +340,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
           <span class="quiet">Grade so far ${safeNumber(semester.percent)?.toString()}%${semester.letter ? ` · ${escapeHtml(semester.letter)}` : ""}</span>
         </div>
         <div>
-          <div class="chunk-map" aria-label="${done} of ${total} activities finished">${tiles}</div>
+          <div class="chunk-map" aria-label="${done} of ${total} Semester 1 activities done">${tiles}</div>
           <div id="trophy-footer" class="trophy-footer numeric">${done} activities loaded</div>
         </div>
       </div>`;
@@ -338,13 +352,13 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
         tile.classList.remove("reveal-hidden");
         tile.classList.add("reveal-visible");
       });
+      // #trophy-footer used to count up to done as these tiles revealed. It now
+      // renders its final value straight away: tick() returns early on a hidden tab
+      // and under prefers-reduced-motion, so anyone who never sees the animation was
+      // left looking at "0 activities loaded" under a headline about finished work.
+      // The tiles still reveal in batches; only the number stopped waiting for them.
       revealQueue = completedTiles.slice(Math.min(oldDone, done));
-      revealCounter = {
-        node: document.querySelector("#trophy-footer"),
-        value: Math.min(oldDone, done),
-        target: done
-      };
-      revealCounter.node.textContent = `${revealCounter.value} activities loaded`;
+      revealPending = true;
     }
   }
 
@@ -596,14 +610,12 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       return `<text class="gauge__tick-label" x="${point.x.toFixed(2)}" y="${point.y.toFixed(2)}"
         text-anchor="middle" dominant-baseline="middle">${escapeHtml(text)}</text>`;
     }).join("");
-    const marker = gaugePoint(clamped, 0);
     const markerFrom = gaugePoint(clamped, 33);
     const markerTo = gaugePoint(clamped, 45);
     const target = targetFrom === null ? "" : `
       <path class="gauge__target" d="${gaugeArc(Math.max(0, Math.min(1, targetFrom)), 1, 31)}"></path>`;
     const progress = clamped > 0 ? `
       <path class="gauge__progress" d="${gaugeArc(0, clamped)}"></path>` : "";
-    void marker;
     return `
       <article class="gauge">
         <h3 class="gauge__title">${escapeHtml(label)}${hint ? tip(hint) : ""}</h3>
@@ -856,7 +868,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
           ariaLabel: `${s.activePace.toFixed(1)} units per working day on a scale from 0 to 6. Aug 15 needs ${s.requiredPerDay.toFixed(1)} per day.`,
           reading: s.activePace.toFixed(1),
           unit: "on days you work",
-          sub: `Aug 15 needs ${s.requiredPerDay.toFixed(1)}`,
+          sub: `needs ${s.requiredPerDay.toFixed(1)}`,
           ticks: [{ at: 0, text: "0" }, { at: 0.5, text: "3" }, { at: 1, text: "6" }],
           fraction: s.activePace / 6,
           targetFrom: s.requiredPerDay / 6
@@ -867,8 +879,8 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
           hint: `A raw count of units submitted ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}. Not a rate.`,
           ariaLabel: `${s.recent7} units submitted from ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}, on a scale from 0 to ${tachMax}.`,
           reading: String(s.recent7),
-          unit: "units this week",
-          sub: `the 7 days before: ${s.prior7}`,
+          unit: "units",
+          sub: `prev 7: ${s.prior7}`,
           ticks: [{ at: 0, text: "0" }, { at: 0.5, text: String(Math.round(tachMax / 2)) }, { at: 1, text: String(tachMax) }],
           fraction: s.recent7 / tachMax
         })}
@@ -879,7 +891,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
           ariaLabel: `${s.odometer} of ${totalUnits} units submitted across both semesters, ${Math.round(s.tripDone * 100)} percent.`,
           reading: String(s.odometer),
           unit: "units submitted",
-          sub: `${s.rowsLeft} left · ${Math.round(s.tripDone * 100)}% of both semesters`,
+          sub: `${s.rowsLeft} left · ${Math.round(s.tripDone * 100)}%`,
           ticks: [{ at: 0, text: "0" }, { at: 0.5, text: String(Math.round(totalUnits / 2)) }, { at: 1, text: String(totalUnits) }],
           fraction: s.tripDone
         })}
@@ -890,7 +902,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
           ariaLabel: `${s.activeDays} working days out of the ${calendarSpan} calendar days since work began.`,
           reading: String(s.activeDays),
           unit: "days worked",
-          sub: `of ${calendarSpan} since you started`,
+          sub: `of ${calendarSpan} days`,
           ticks: [{ at: 0, text: "0" }, { at: 0.5, text: String(Math.round(calendarSpan / 2)) }, { at: 1, text: String(calendarSpan) }],
           fraction: s.showUpRate
         })}
@@ -1392,15 +1404,10 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
         tile.classList.remove("reveal-hidden");
         tile.classList.add("reveal-visible");
       });
-      if (revealCounter) {
-        revealCounter.value = Math.min(revealCounter.target, revealCounter.value + 20);
-        revealCounter.node.textContent = `${revealCounter.value} activities loaded`;
-      }
       return;
     }
-    if (revealCounter) {
-      revealCounter.node.textContent = `${revealCounter.target} activities loaded`;
-      revealCounter = null;
+    if (revealPending) {
+      revealPending = false;
       document.querySelectorAll(".vault-slot.reveal-hidden").forEach(slot => {
         slot.classList.remove("reveal-hidden");
       });
@@ -1446,19 +1453,42 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
     status.textContent = `${item.name} · ${item.testedOn}.`;
   }
 
+  // A tooltip is anchored under its own marker, and some markers sit at the right
+  // edge of a panel, where a centred body would hang off the screen. Measure and
+  // nudge it back inside when it opens rather than guessing at render time; the
+  // body is laid out even while faded, so the box is real.
+  function nudgeTip(mark) {
+    const body = mark.querySelector(".tip__body");
+    if (!body) return;
+    body.style.setProperty("--tip-shift", "0px");
+    const box = body.getBoundingClientRect();
+    const margin = 8;
+    const overRight = box.right - (document.documentElement.clientWidth - margin);
+    const overLeft = margin - box.left;
+    const shift = overRight > 0 ? -overRight : overLeft > 0 ? overLeft : 0;
+    if (shift) body.style.setProperty("--tip-shift", `${Math.round(shift)}px`);
+  }
+
   function bindEvents() {
+    // pointerover covers hover on a trackpad and the tap that precedes focus on a
+    // touchscreen; focusin covers Tab.
+    document.addEventListener("pointerover", event => {
+      const mark = event.target?.closest?.(".tip");
+      if (mark) nudgeTip(mark);
+    }, { passive: true });
+    document.addEventListener("focusin", event => {
+      const mark = event.target?.closest?.(".tip");
+      if (mark) nudgeTip(mark);
+    });
     document.addEventListener("visibilitychange", handleVisibility);
     document.addEventListener("click", event => {
-      if (revealQueue.length || revealCounter) {
+      if (revealQueue.length || revealPending) {
         revealQueue.forEach(tile => {
           tile.classList.remove("reveal-hidden");
           tile.classList.add("reveal-visible");
         });
         revealQueue = [];
-        if (revealCounter) {
-          revealCounter.node.textContent = `${revealCounter.target} activities loaded`;
-          revealCounter = null;
-        }
+        revealPending = false;
         document.querySelectorAll(".vault-slot.reveal-hidden").forEach(slot => {
           slot.classList.remove("reveal-hidden");
         });
