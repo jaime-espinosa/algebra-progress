@@ -1082,15 +1082,6 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
 
     document.querySelector("#worldmap-content").innerHTML = map.worlds.length
       ? `
-      <p class="wm-intro">The whole of Algebra I drawn as one world. Ground is bought with units —
-        a bigger section is a bigger territory — and the ground you have settled is the lit ground:
-        ${map.totalDone} of ${map.totalUnits} units placed, the same ${map.totalDone} the dials
-        count. The road runs through the sections in the order you do them, and the marker on each
-        one fills up as you finish its lessons, practice quizzes and activities — with a chest for
-        its end-of-section assignment and a sword for its test. The haze is ground you have not
-        walked yet; the further along the road it sits, the hazier it is, and there is nothing in it
-        but places to go. Drag the map, or use the arrow keys, to look around. Click a section to
-        zoom into it.</p>
       <div class="wm-worlds">${map.worlds.map(world => renderWorldCard(world)).join("")}</div>
       ${map.worlds.map(world =>
         renderWorldPopup(world, landmarksFor(world.id))).join("")}
