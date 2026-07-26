@@ -1845,6 +1845,9 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       if (mark) nudgeTip(mark);
     });
     document.addEventListener("visibilitychange", handleVisibility);
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && zoomedRegion) closeRegion();
+    });
     document.addEventListener("click", event => {
       if (revealQueue.length || revealPending) {
         revealQueue.forEach(tile => {
@@ -1861,6 +1864,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
         closeRegion();
         return;
       }
+      // Escape leaves a sub-map too, so zooming in is never a trap.
       const regionButton = event.target.closest(".wm-region");
       if (regionButton) {
         // A drag that ended on a chunk is a pan, not a click.
