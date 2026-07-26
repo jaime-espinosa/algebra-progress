@@ -415,12 +415,14 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // except by moving the node itself. It overflows the svg box upward, which
   // .wm-node allows on purpose.
   function hereFlag(x, y) {
-    const bar = (w, top) => `M${x + 2} ${top}h${w}v9h-${w}z`;
+    // The banner flies LEFT, away from the node, so it never sits over the
+    // node's own icon row or bands.
+    const bar = (w, top) => `M${x - 2 - w} ${top}h${w}v9h-${w}z`;
     return `<g class="wm-flag">
-      <path fill="#16202a" opacity=".5" d="M${x - 4} ${y - 1}h9v4h-9z"/>
+      <path fill="#16202a" opacity=".5" d="M${x - 5} ${y - 1}h10v4h-10z"/>
       <path fill="#e8dcc0" d="M${x - 2} ${y - 54}h4v55h-4z"/>
       <path fill="#3b6ea8" d="${bar(30, y - 54)}${bar(25, y - 45)}${bar(19, y - 36)}"/>
-      <path fill="#8fc4e8" d="M${x + 2} ${y - 54}h30v3h-30z"/>
+      <path fill="#8fc4e8" d="M${x - 32} ${y - 54}h30v3h-30z"/>
       <path fill="#e8dcc0" d="M${x - 4} ${y - 58}h8v5h-8z"/>
     </g>`;
   }
