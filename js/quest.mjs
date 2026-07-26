@@ -1005,42 +1005,6 @@ export function mapLandmarks(data) {
 // percent, regionsSettled, regionsTotal, grade and letter, which is what
 // app.js renders. An earlier semesterFocus() computed the same summary
 // separately and had no caller left; it was deleted rather than kept in sync.
-function deleted_semesterFocus(data) {
-  const semester = (data.semesters ?? []).find((item) => item.id === "sem1")
-    ?? (data.semesters ?? [])[0] ?? null;
-  if (!semester) return null;
-  const total = Math.max(0, Number(semester.allTotal) || 0);
-  const done = Math.min(total, Math.max(0, Number(semester.allDone) || 0));
-  const activitiesLeft = Math.max(0, total - done);
-  // Two different real quantities, so two names. done/total/percent/activitiesLeft
-  // count LMS activities, the 105-row list the tile map is built from. rowsLeft
-  // counts gradebook rows still not submitted — the unit the quest board, the
-  // effort dials and the 71-left figure all use, and the exact condition that
-  // fires photo-skin-studio. They differ (6 against 5 today) and neither is wrong.
-  // The screen must say which one it is showing; see app.js renderWorldMap.
-  const rows = semester.activities ?? [];
-  const rowsLeft = rows.filter((item) => item.state === "not_started").length;
-  return {
-    id: semester.id,
-    name: semester.name ?? "",
-    done,
-    total,
-    // Rounded for display only; both operands are printed beside it.
-    percent: total > 0 ? Math.round((done / total) * 100) : 0,
-    activitiesLeft,
-    rowsLeft,
-    // Sealed tracks the countdown the page shows and the unlock that follows it:
-    // every gradebook row submitted. If this ever stops matching the
-    // photo-skin-studio rule in evaluateUnlocks(), the reward fires against a
-    // countdown that is still running and the site looks broken.
-    sealed: rows.length > 0 && rowsLeft === 0,
-    sectionsSealed: (semester.sections ?? []).filter((section) => section.complete).length,
-    sectionsTotal: (semester.sections ?? []).length,
-    grade: Number.isFinite(semester.percent) ? semester.percent : null,
-    letter: typeof semester.letter === "string" ? semester.letter : null,
-  };
-}
-
 // --- Dial scales -----------------------------------------------------------
 // The gauges are analog now: numbered major ticks around the arc, unnumbered
 // minors between them, and a second percentage scale on a tighter inner arc.
