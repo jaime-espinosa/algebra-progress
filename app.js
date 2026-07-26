@@ -951,7 +951,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
           secondary: { unit: "% OF NEEDED", ticks: percentTicks(paceScale.max, s.requiredPerDay) },
           faceUnit: "UNITS / DAY",
           readout: s.activePace.toFixed(2),
-          readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)}`,
+          readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)} TO FINISH ON TIME`,
           bandTo: 1,
           thresholdBands: [
             {
@@ -1685,9 +1685,6 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     document.querySelector("#exit-parent").addEventListener("click", () => {
       setParentView(false);
       document.querySelector("#refresh")?.focus();
-    });
-    document.querySelector("#show-route").addEventListener("click", () => {
-      document.querySelector("#calendar").scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth" });
     });
     document.querySelector("#cursor-toggle").addEventListener("click", () => {
       storageSet(MOMENTUM_CURSOR_KEY, storageGet(MOMENTUM_CURSOR_KEY, true) === false);
