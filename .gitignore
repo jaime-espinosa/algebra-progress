@@ -3,3 +3,8 @@
 js/*.test.mjs
 vault/tools/
 vault/artifacts/*.test.mjs
+
+# Nested test files the patterns above missed: js/*.test.mjs does not reach
+# js/render/, and labs/ was never covered at all. Both were tracked in this public
+# repo and the scrub warned on them every run.
+**/*.test.mjs

@@ -462,6 +462,44 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     savePan();
   }
 
+  // The first-ever framing centres on the ground he is standing on, which put the
+  // WORLD I banner ABOVE the clipping window: a real mouse click at its own centre
+  // landed on the page behind the map and the world record could not be opened at
+  // all. A banner is a control, so the cold framing has to leave every banner's own
+  // centre inside the window. This nudges the here-centred pan by the MINIMUM that
+  // does that — it does not re-frame the map, and the "you are here" marker stays
+  // in view at both widths. Where the banners are further apart than the window is
+  // wide (390px: their centres are 460px apart in a 348px window, so no pan shows
+  // both) the first banner wins, because the alternative is showing neither.
+  function frameWorldBanners() {
+    const viewport = document.querySelector("#wm-viewport");
+    if (!viewport || viewport.clientWidth === 0) return;
+    const banners = [...document.querySelectorAll(".wm-banner")];
+    if (!banners.length) return;
+    const frame = viewport.getBoundingClientRect();
+    // Centres, not boxes: a banner wider than the window can never be contained,
+    // and what makes it clickable is that the point you aim at is inside.
+    const centres = banners.map(banner => {
+      const box = banner.getBoundingClientRect();
+      return { x: (box.left + box.right) / 2, y: (box.top + box.bottom) / 2 };
+    });
+    const pad = 16;
+    const nudge = (values, low, high) => {
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      // Cannot hold all of them: bring the first one in and leave the rest to the pan.
+      if (max - min > high - low - pad * 2) return values[0] < low + pad
+        ? low + pad - values[0]
+        : values[0] > high - pad ? high - pad - values[0] : 0;
+      if (min < low + pad) return low + pad - min;
+      if (max > high - pad) return high - pad - max;
+      return 0;
+    };
+    const dx = nudge(centres.map(point => point.x), frame.left, frame.right);
+    const dy = nudge(centres.map(point => point.y), frame.top, frame.bottom);
+    if (dx || dy) panBy(dx, dy);
+  }
+
   function wireViewport() {
     const viewport = document.querySelector("#wm-viewport");
     if (!viewport || viewport.dataset.wired === "1") return;
@@ -652,6 +690,10 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
         } else {
           panX = -(hereSpot.cx - viewport.clientWidth / 2);
           panY = -(hereSpot.cy - viewport.clientHeight / 2);
+          clampPan();
+          // …then the smallest correction that leaves the world banners — which
+          // are controls, not scenery — inside the clipping window.
+          frameWorldBanners();
         }
         clampPan();
       };
