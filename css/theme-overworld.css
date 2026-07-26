@@ -61,6 +61,55 @@ a.action:focus-visible {
   outline-offset: 2px;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  html.momentum-cursor {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath fill='%236fdc82' stroke='%23000' d='M2 2v17l5-5 4 8 4-2-4-8h7z'/%3E%3C/svg%3E") 2 2, auto;
+  }
+
+  html.momentum-cursor input,
+  html.momentum-cursor textarea,
+  html.momentum-cursor [contenteditable="true"] {
+    cursor: text;
+  }
+}
+
+#pet {
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-80px, -80px);
+  will-change: transform, opacity;
+}
+
+#pet i {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #6fdc82;
+  box-shadow:
+    8px 0 #2f6b3c,
+    16px 0 #6fdc82,
+    0 8px #2f6b3c,
+    8px 8px #f2c14e,
+    16px 8px #2f6b3c,
+    8px 16px #6fdc82;
+}
+
+@media (forced-colors: active), (prefers-contrast: more) {
+  html.momentum-cursor {
+    cursor: auto;
+  }
+
+  #pet {
+    display: none !important;
+  }
+}
+
 [hidden] {
   display: none !important;
 }
@@ -1211,6 +1260,10 @@ html.motion-paused *::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  #pet {
+    display: none !important;
+  }
+
   *,
   *::before,
   *::after {

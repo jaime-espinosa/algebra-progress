@@ -8,6 +8,13 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   const VALID_THEMES = new Set(["overworld", "nether", "end"]);
   const VALID_LOADERS = new Set(["vanilla", "fabric", "forge", "neoforge", "unsure"]);
   const VALID_GAME_KINDS = new Set(["game", "puzzle", "tool", "video"]);
+  const MOMENTUM_CURSOR_ID = "momentum-cursor-pet";
+  const MOMENTUM_CURSOR_KEY = "mc.momentumCursor";
+  const finePointerQuery = window.matchMedia?.("(hover: hover) and (pointer: fine)");
+  const reducedMotionQuery = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+  const contrastPointerQuery = window.matchMedia?.(
+    "(forced-colors: active), (prefers-contrast: more)"
+  );
   // Which mini-lessons exist is asked of the server, not kept in a list here. A second
   // catalog has drifted twice on this project (the artifact list shipped a wrong
   // Minecraft version), and a hand-maintained list of filenames is the same trap: the
@@ -37,6 +44,13 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   let pendingArtifact = null;
   let refreshMessage = "";
   let gamesRendered = false;
+  let cursorEarned = false;
+  let cursorFrameId = null;
+  let petHasPosition = false;
+  let petX = -80;
+  let petY = -80;
+  let pointerX = -80;
+  let pointerY = -80;
 
   function artifact(id, name, tier, minVersion, maxVersion, loader, files, testedOn) {
     return { id, name, tier, minVersion, maxVersion, loader, files, testedOn };
@@ -2100,7 +2114,73 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   }
 
   function reducedMotion() {
-    return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    return reducedMotionQuery?.matches ?? false;
+  }
+
+  function drawMomentumCursor() {
+    const pet = document.querySelector("#pet");
+    const dx = pointerX - petX;
+    const dy = pointerY - petY;
+    if (Math.abs(dx) <= 0.4 && Math.abs(dy) <= 0.4) {
+      petX = pointerX;
+      petY = pointerY;
+      pet.style.transform = `translate(${petX}px, ${petY}px)`;
+      cursorFrameId = null;
+      return;
+    }
+    petX += dx * 0.35;
+    petY += dy * 0.35;
+    pet.style.transform = `translate(${petX}px, ${petY}px)`;
+    cursorFrameId = window.requestAnimationFrame(drawMomentumCursor);
+  }
+
+  function trackMomentumPointer(event) {
+    const pet = document.querySelector("#pet");
+    if (pet.hidden) return;
+    pointerX = event.clientX + 18;
+    pointerY = event.clientY + 18;
+    if (!petHasPosition) {
+      petHasPosition = true;
+      petX = pointerX;
+      petY = pointerY;
+      pet.style.transform = `translate(${petX}px, ${petY}px)`;
+      pet.style.opacity = "1";
+      return;
+    }
+    if (cursorFrameId === null) {
+      cursorFrameId = window.requestAnimationFrame(drawMomentumCursor);
+    }
+  }
+
+  function updateMomentumCursor(earned = cursorEarned) {
+    cursorEarned = earned;
+    const toggle = document.querySelector("#cursor-toggle");
+    const pet = document.querySelector("#pet");
+    const wanted = storageGet(MOMENTUM_CURSOR_KEY, true) !== false;
+    const cursorAllowed = earned && wanted
+      && (finePointerQuery?.matches ?? true)
+      && !(contrastPointerQuery?.matches ?? false);
+    const chaseAllowed = cursorAllowed && !reducedMotion();
+
+    toggle.hidden = !earned;
+    toggle.textContent = wanted ? "Cursor: on" : "Cursor: off";
+    toggle.setAttribute("aria-pressed", String(wanted));
+    toggle.setAttribute("aria-label",
+      `${wanted ? "Turn" : "Enable"} Momentum Cursor ${wanted ? "off" : ""}`.trim());
+    document.documentElement.classList.toggle("momentum-cursor", cursorAllowed);
+    pet.hidden = !chaseAllowed;
+
+    if (!chaseAllowed) {
+      if (cursorFrameId !== null) window.cancelAnimationFrame(cursorFrameId);
+      cursorFrameId = null;
+      petHasPosition = false;
+      petX = -80;
+      petY = -80;
+      pointerX = -80;
+      pointerY = -80;
+      pet.style.opacity = "0";
+      pet.style.transform = "translate(-80px, -80px)";
+    }
   }
 
   function render(data) {
@@ -2119,6 +2199,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     renderWorldMap(safeData, previousSnapshot, isNewSnapshot);
     renderEffort(safeData);
     renderVault(safeData, earned, newlyEarned, isNewSnapshot);
+    updateMomentumCursor(earned.has(MOMENTUM_CURSOR_ID));
     renderSkinCard();
     renderCalendar(safeData);
     renderQuests(safeData);
@@ -2283,6 +2364,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       const mark = event.target?.closest?.(".tip");
       if (mark) nudgeTip(mark);
     });
+    document.addEventListener("pointermove", trackMomentumPointer, { passive: true });
+    for (const query of [finePointerQuery, reducedMotionQuery, contrastPointerQuery]) {
+      query?.addEventListener?.("change", () => updateMomentumCursor());
+    }
     document.addEventListener("visibilitychange", handleVisibility);
     document.addEventListener("keydown", event => {
       if (event.key === "Escape" && zoomedRegion) closeRegion();
@@ -2329,6 +2414,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     document.querySelector("#refresh").addEventListener("click", () => loadData(true));
     document.querySelector("#show-route").addEventListener("click", () => {
       document.querySelector("#calendar").scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth" });
+    });
+    document.querySelector("#cursor-toggle").addEventListener("click", () => {
+      storageSet(MOMENTUM_CURSOR_KEY, storageGet(MOMENTUM_CURSOR_KEY, true) === false);
+      updateMomentumCursor();
     });
     document.querySelector("#version-cancel").addEventListener("click", closeVersionGate);
     document.querySelector("#version-unsure").addEventListener("click", () => {
