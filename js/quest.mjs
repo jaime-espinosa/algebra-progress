@@ -1114,7 +1114,7 @@ const SAND_LIGHT = "#e3d5a6";
 const SAND_DARK = "#cfbf8d";
 const RIVER = "#5a8cba";
 const TRUNK = "#6b533b";
-const FOG = "#101b24";
+const FOG = "#122334";
 
 // Where each landmass sits, in fractions of the grid. Sem 1 is the near
 // continent; Sem 2 is across open water to the south-east, deliberately far
@@ -1205,12 +1205,19 @@ export function worldTerrain(map, options = {}) {
   for (let gy = 0; gy < rows; gy += 1) {
     for (let gx = 0; gx < cols; gx += 1) {
       const i = gy * cols + gx;
+      // Domain warp: the point is nudged by low-frequency noise BEFORE the
+      // nearest-territory test. Without this the territory borders come out as
+      // dead-straight Voronoi edges and the thing reads as a pie chart with a
+      // coastline. Warping the input warps the borders and the coast together,
+      // so they agree with each other.
+      const wx = gx + 0.5 + (fbm(gx * 0.06, gy * 0.06, seed + 401) - 0.5) * 16;
+      const wy = gy + 0.5 + (fbm(gx * 0.06, gy * 0.06, seed + 557) - 0.5) * 16;
       let best = Infinity;
       let bestIndex = -1;
       for (let t = 0; t < territories.length; t += 1) {
         const territory = territories[t];
-        const dx = gx + 0.5 - territory.seedX;
-        const dy = gy + 0.5 - territory.seedY;
+        const dx = wx - territory.seedX;
+        const dy = wy - territory.seedY;
         const d = Math.sqrt(dx * dx + dy * dy) / territory.weight;
         if (d < best) { best = d; bestIndex = t; }
       }
@@ -1396,7 +1403,7 @@ export function worldTerrain(map, options = {}) {
       if (!land[i] || explored[i]) { gx += 1; continue; }
       let run = 1;
       while (gx + run < cols && land[i + run] && !explored[i + run]) run += 1;
-      push("fog", FOG, 0.52, gx, gy, run);
+      push("fog", FOG, 0.44, gx, gy, run);
       gx += run;
     }
   }
@@ -1404,7 +1411,7 @@ export function worldTerrain(map, options = {}) {
     for (let gx = 0; gx < cols; gx += 1) {
       const i = gy * cols + gx;
       if (!land[i] || explored[i]) continue;
-      if (hash2(gx, gy, seed + 4242) < 0.34) push("fog2", FOG, 0.34, gx, gy, 1);
+      if (hash2(gx, gy, seed + 4242) < 0.34) push("fog2", FOG, 0.26, gx, gy, 1);
     }
   }
 
