@@ -329,7 +329,9 @@ meter,
   display: grid;
   gap: 1px;
   justify-items: center;
-  transform: translate(-50%, -50%);
+  /* The plaque hangs ABOVE the point it names, so the structures and the "you
+     are here" beacon standing on that same ground are not hidden under it. */
+  transform: translate(-50%, -125%);
   max-width: 148px;
   padding: 4px 8px;
   border: 1px solid rgba(255, 255, 255, .28);

@@ -435,7 +435,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         : world.unitsDone > 0
           ? "UNDER WAY"
           : "NEWLY SIGHTED";
-    return `<div class="wm-banner" style="left:${mass.cx}px;top:${Math.max(10, mass.top - 46)}px"
+    return `<div class="wm-banner" style="left:${mass.cx}px;top:${Math.max(6, mass.top - 58)}px"
       aria-hidden="true">
       <span class="eyebrow">WORLD ${numeral} // ${state}</span>
       <span class="wm-banner__name">${escapeHtml(world.name)}</span>
@@ -769,14 +769,14 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       if (!spot) return;
       const seen = perRegion.get(key) ?? 0;
       perRegion.set(key, seen + 1);
-      marks.push(landmarkStructure(spot.cx, spot.cy - 14 + seen * 9, entry.earned, seen));
+      marks.push(landmarkStructure(spot.cx, spot.cy + 30 + seen * 10, entry.earned, seen));
     });
     const hereSpot = map.next ? spotOf.get(map.next.regionKey) : null;
     const overlaySvg = marks.length || hereSpot
       ? `<svg class="wm-overlay" viewBox="0 0 ${terrain.width} ${terrain.height}"
           width="${terrain.width}" height="${terrain.height}" aria-hidden="true" focusable="false"
           shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
-          ${marks.join("")}${hereSpot ? hereMarker(hereSpot.cx, hereSpot.cy - 4) : ""}</svg>`
+          ${marks.join("")}${hereSpot ? hereMarker(hereSpot.cx, hereSpot.cy + 26) : ""}</svg>`
       : "";
 
     document.querySelector("#worldmap-content").innerHTML = map.worlds.length
