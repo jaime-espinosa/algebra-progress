@@ -564,9 +564,16 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // Road behind him is solid and settled; road ahead is faint. The sea leg
   // between the two semesters gets a longer dash — a crossing, not a walk.
   function routePaths(route) {
-    const leg = (entry) => `<path class="wm-route${entry.walked ? " is-walked" : ""}${
-      entry.sea ? " is-sea" : ""}" d="${entry.d}"/>`;
-    return [...route.crossings, ...route.legs].map(leg).join("");
+    const all = [...route.crossings, ...route.legs];
+    // Every leg is drawn twice: a dark casing underneath, then the dash on top.
+    // Without the casing the road vanishes over pale sand and snow, which is
+    // exactly where it crosses most often. Two passes over thirteen legs is 26
+    // paths — cheap, and it is what makes the road actually readable.
+    const casing = all.map((entry) =>
+      `<path class="wm-route__casing" d="${entry.d}"/>`).join("");
+    const ink = all.map((entry) => `<path class="wm-route${entry.walked ? " is-walked" : ""}${
+      entry.sea ? " is-sea" : ""}" d="${entry.d}"/>`).join("");
+    return casing + ink;
   }
 
   // The banner naming a landmass, pinned above its northern coast.
