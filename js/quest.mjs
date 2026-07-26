@@ -1614,19 +1614,28 @@ function buildTerrain(map, options) {
   }
 
   const layers = [];
+  // Fog is held back and appended last, after the trees and the snow. Painting
+  // it before them left sharp, fully-lit trees standing on ground that is meant
+  // to be uncharted, which read as a rendering bug rather than as distance.
+  const fogLayers = [];
   const order = ["sea1", "sea2", "sandA", "sandB", "river"];
+  const isFog = (k) => k.startsWith("fog");
   for (const key of [...buckets.keys()].sort((a, b) => {
-    const rank = (k) => (k === "fog" ? 90 : k === "fog2" ? 91 : order.indexOf(k) >= 0 ? order.indexOf(k) : 50);
-    return rank(a) - rank(b);
+    const rank = (k) => (order.indexOf(k) >= 0 ? order.indexOf(k) : 50);
+    return rank(a) - rank(b) || (a < b ? -1 : a > b ? 1 : 0);
   })) {
     const layer = buckets.get(key);
-    layers.push({ id: key, fill: layer.fill, opacity: layer.opacity, d: layer.parts.join("") });
+    const entry = { id: key, fill: layer.fill, opacity: layer.opacity, d: layer.parts.join("") };
+    (isFog(key) ? fogLayers : layers).push(entry);
   }
   if (snow.length) layers.push({ id: "snow", fill: "#eef3f6", opacity: 0.85, d: snow.join("") });
   for (const [fill, parts] of canopy) {
     layers.push({ id: `tree-${fill}`, fill, opacity: 1, d: parts.join("") });
   }
   if (trunks.length) layers.push({ id: "trunk", fill: TRUNK, opacity: 0.9, d: trunks.join("") });
+  // Plain veil first, then the dither on top of it.
+  fogLayers.sort((a, b) => (a.id.startsWith("fogd") ? 1 : 0) - (b.id.startsWith("fogd") ? 1 : 0));
+  layers.push(...fogLayers);
 
   // --- 10. Where the labels, landmarks and the "you are here" marker go: the
   // centre of mass of the territory's own ground, so a label never floats in
