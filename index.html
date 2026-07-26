@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="overworld">
+<html lang="en" data-theme="overworld" data-view="child">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -50,8 +50,10 @@
     </section>
 
     <section id="calendar" class="panel" aria-labelledby="calendar-heading" hidden>
-      <h2 id="calendar-heading" class="section-heading">Calendar</h2>
-      <div id="calendar-content"></div>
+      <details class="parent-expanded">
+        <summary id="calendar-heading" class="section-heading">Full calendar route</summary>
+        <div id="calendar-content"></div>
+      </details>
     </section>
 
     <section id="quests" class="panel" aria-labelledby="quests-heading" hidden>

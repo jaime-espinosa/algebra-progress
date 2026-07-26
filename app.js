@@ -1,4 +1,4 @@
-import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, worldMap, mapLandmarks, worldTerrain, worldRoute, UNIT_TYPE_LABELS, UNIT_TYPE_PLURALS } from "./js/quest.mjs";
+import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, worldMap, mapLandmarks, worldTerrain, worldRoute, regionHorizon, headerSegments, questBoard, UNIT_TYPE_LABELS, UNIT_TYPE_PLURALS } from "./js/quest.mjs";
 
 (() => {
   "use strict";
@@ -10,6 +10,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   const VALID_GAME_KINDS = new Set(["game", "puzzle", "tool", "video"]);
   const MOMENTUM_CURSOR_ID = "momentum-cursor-pet";
   const MOMENTUM_CURSOR_KEY = "mc.momentumCursor";
+  const PARENT_VIEW_KEY = "mc.parentView";
+  const PARENT_PHRASE = [104, 101, 108, 108, 111]
+    .map(code => String.fromCharCode(code))
+    .join("");
   const finePointerQuery = window.matchMedia?.("(hover: hover) and (pointer: fine)");
   const reducedMotionQuery = window.matchMedia?.("(prefers-reduced-motion: reduce)");
   const contrastPointerQuery = window.matchMedia?.(
@@ -51,6 +55,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   let petY = -80;
   let pointerX = -80;
   let pointerY = -80;
+  let parentKeyBuffer = "";
 
   function artifact(id, name, tier, minVersion, maxVersion, loader, files, testedOn) {
     return { id, name, tier, minVersion, maxVersion, loader, files, testedOn };
@@ -79,6 +84,54 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     } catch {
       // Forgetting still clears the visible card when storage is blocked.
     }
+  }
+
+  function sessionGet(key, fallback) {
+    try {
+      const value = sessionStorage.getItem(key);
+      return value === null ? fallback : JSON.parse(value);
+    } catch {
+      return fallback;
+    }
+  }
+
+  function sessionSet(key, value) {
+    try {
+      sessionStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // The curtain remains usable for this page load when session storage is blocked.
+    }
+  }
+
+  function parentViewActive() {
+    return document.documentElement.dataset.view === "parent";
+  }
+
+  function setParentView(active) {
+    document.documentElement.dataset.view = active ? "parent" : "child";
+    sessionSet(PARENT_VIEW_KEY, active);
+    const exit = document.querySelector("#exit-parent");
+    if (exit) exit.hidden = !active;
+    document.querySelectorAll("details.parent-expanded").forEach(details => {
+      details.open = active;
+    });
+  }
+
+  function isTypingTarget(target) {
+    if (!(target instanceof Element)) return false;
+    return Boolean(target.closest("input, textarea, select, [contenteditable]:not([contenteditable='false'])"));
+  }
+
+  function listenForParentPhrase(event) {
+    if (event.ctrlKey || event.metaKey || event.altKey || event.key.length !== 1) return;
+    if (isTypingTarget(event.target)) {
+      parentKeyBuffer = "";
+      return;
+    }
+    parentKeyBuffer = `${parentKeyBuffer}${event.key.toLowerCase()}`.slice(-PARENT_PHRASE.length);
+    if (parentKeyBuffer !== PARENT_PHRASE) return;
+    parentKeyBuffer = "";
+    setParentView(!parentViewActive());
   }
 
   function escapeHtml(value) {
@@ -283,18 +336,9 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
 
   function renderHeader(data) {
     const today = localIsoDate();
-    const days = Math.max(0, dateDiff(today, data.deadline.date));
-    // Units — gradebook rows — because that is what every other number on the
-    // page counts. This line used to print allDone/allTotal, which are LMS
-    // activities: it said "S2 5/103" while the map, the dials and the vault all
-    // agreed he had not started Semester 2, and 105 minus 99 landed one away
-    // from the countdown right beside it.
-    const map = worldMap(data);
-    const counts = map.worlds.map(world =>
-      `${world.id === "sem1" ? "S1" : "S2"} ${world.unitsDone}/${world.unitsTotal}u`
-    ).join("  ");
+    const segments = headerSegments(data, today);
     document.querySelector("#f3-line").textContent =
-      `algebra_quest 1.0 | ${counts} | D-${days} | scraped ${formatTime(data.generatedAt)}  next ${nextScrapeTime()}`;
+      `algebra_quest 1.0 | ${segments.join(" | ")} | checked ${formatTime(data.generatedAt)}`;
   }
 
   function renderStatus(data, previousSeen, unchanged) {
@@ -610,6 +654,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // picture a screen reader cannot read.
   function territoryPlaque(region, spot) {
     const state = REGION_STATE_COPY[region.status] ?? "";
+    const horizon = regionHorizon(region);
     const grade = region.grade === null ? "" : `, section grade ${region.grade.toFixed(1)}%`;
     const breakdown = region.types
       .filter((entry) => entry.total > 0)
@@ -621,6 +666,13 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     const where = region.ahead === 0 ? "" : `, ${region.discovery}`;
     const label = `${region.name}. ${region.unitsDone} of ${region.unitsTotal} units placed: ${
       breakdown}. ${state}${where}${grade}. Zoom in.`;
+    const childSummary = region.status === "settled"
+      ? `${region.unitsDone} done`
+      : horizon.remainingCount !== null
+        ? `${horizon.remainingCount} to finish`
+        : horizon.nextTasks[0]
+          ? `Next: ${horizon.nextTasks[0]}`
+          : state;
     const size = 34;
     // The box is tight to the node and the icon row above it is allowed to
     // overflow (.wm-node is overflow:visible), so the button's layout box stays
@@ -641,7 +693,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         ${node}
         <span class="wm-region__plaque" aria-hidden="true">
           <span class="wm-region__name">${escapeHtml(region.name)}</span>
-          <span class="wm-region__count numeric">${region.unitsDone}/${region.unitsTotal}</span>
+          <span class="wm-region__count">${escapeHtml(childSummary)}</span>
         </span>
       </button>`;
   }
@@ -665,6 +717,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // The banner naming a landmass, pinned above its northern coast.
   function landmassBanner(world, mass) {
     const numeral = WORLD_NUMERAL[world.index] ?? String(world.index);
+    const here = world.regions.find(region => region.status === "here");
+    const nextTasks = here ? regionHorizon(here).nextTasks : [];
     const state = world.sealed
       ? "SEALED"
       : world.holdsNext
@@ -676,7 +730,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       aria-hidden="true">
       <span class="eyebrow">WORLD ${numeral} // ${state}</span>
       <span class="wm-banner__name">${escapeHtml(world.name)}</span>
-      <span class="numeric quiet">${world.unitsDone}/${world.unitsTotal} units placed</span>
+      <span class="numeric quiet">${world.unitsDone} units placed</span>
+      ${nextTasks.length
+        ? `<span class="wm-banner__next">Next: ${nextTasks.map(escapeHtml).join(" · ")}</span>`
+        : ""}
     </div>`;
   }
 
@@ -749,6 +806,29 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     worldPopupOpener = null;
     opener?.setAttribute("aria-expanded", "false");
     if (restoreFocus && opener?.isConnected) opener.focus();
+  }
+
+  function renderWholePicture(map, data) {
+    const remaining = remainingActivities(data);
+    const worldTotals = map.worlds.map(world => `
+      <li><strong>${escapeHtml(world.name)}</strong>:
+        <span class="numeric">${world.unitsDone} done · ${world.unitsLeft} remaining · ${world.unitsTotal} total</span>
+      </li>`).join("");
+    const upcoming = remaining.map(item => `
+      <li><strong>${escapeHtml(item.title)}</strong>
+        <span class="meta">${escapeHtml(item.semesterId.toUpperCase())} · Section ${item.sectionNumber}</span>
+      </li>`).join("");
+    return `
+      <details id="whole-picture" class="whole-picture parent-expanded"${parentViewActive() ? " open" : ""}>
+        <summary>The whole picture</summary>
+        <div class="whole-picture__summary">
+          <strong class="whole-picture__done numeric">${map.totalDone} units done</strong>
+          <span class="whole-picture__remaining numeric">${map.totalUnits - map.totalDone} remaining · ${map.totalUnits} total</span>
+          <ul class="whole-picture__worlds">${worldTotals}</ul>
+        </div>
+        <h3>All upcoming work</h3>
+        <ol class="whole-picture__tasks">${upcoming || "<li>Every named unit is submitted.</li>"}</ol>
+      </details>`;
   }
 
   // The text equivalent. The map is decoration over real counts, so the counts
@@ -1082,6 +1162,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
 
     document.querySelector("#worldmap-content").innerHTML = map.worlds.length
       ? `
+      ${renderWholePicture(map, data)}
       <div class="wm-worlds">${map.worlds.map(world => renderWorldCard(world)).join("")}</div>
       ${map.worlds.map(world =>
         renderWorldPopup(world, landmarksFor(world.id))).join("")}
@@ -1532,7 +1613,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   function chartLegend(stats, series, track) {
     return `
       <div class="chart-legend numeric" role="group" aria-label="Chart legend and totals">
-        <strong class="chart-legend__total">${stats.odometer} submitted · ${stats.rowsLeft} left · ${stats.totalRows} total units</strong>
+        <strong class="chart-legend__total">${stats.odometer} units submitted</strong>
+        <span class="chart-legend__secondary">${stats.rowsLeft} remaining · ${stats.totalRows} total units</span>
         ${series?.totalSeconds ? `<strong class="chart-legend__total">${escapeHtml(series.totalText)} total · time the course page was open</strong>` : ""}
         <span><b class="chart-key__swatch is-units"></b>units/day and ${stats.requiredPerDay.toFixed(2)}/day reference</span>
         <span><b class="chart-key__swatch is-open"></b>hours open — total only, never a rate</span>
@@ -1764,7 +1846,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           label: "LAST 3 DAYS",
           hint: `A raw count of units submitted ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}. Not a rate. The inner amber scale is that same count as a percentage of the ${s.rowsLeft} units still to do.`,
           scale: recentScale,
-          secondary: { unit: `% OF ${s.rowsLeft} LEFT`, ticks: percentTicks(recentScale.max, s.rowsLeft) },
+          secondary: { unit: "% OF 3-DAY SCALE", ticks: percentTicks(recentScale.max, recentScale.max) },
           faceUnit: "UNITS / 3 DAYS",
           readout: String(s.recent3),
           readoutSub: `PREV 3: ${s.prior3}`,
@@ -1776,10 +1858,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           label: "UNITS DONE",
           hint: `Every unit you have submitted, out of ${totalUnits} across both semesters. It only ever goes up. The inner amber scale is the same needle as a percentage of all ${totalUnits}.`,
           scale: doneScale,
-          secondary: { unit: `% OF ALL ${totalUnits}`, ticks: percentTicks(doneScale.max, totalUnits) },
+          secondary: { unit: "% COMPLETE", ticks: percentTicks(doneScale.max, totalUnits) },
           faceUnit: "UNITS SUBMITTED",
           readout: String(s.odometer),
-          readoutSub: `${s.rowsLeft} LEFT`,
+          readoutSub: "KEEPS CLIMBING",
           bandTo: totalUnits / doneScale.max,
           outOfRangeFrom: totalUnits / doneScale.max,
           ariaText: `${s.odometer} of ${totalUnits} units submitted across both semesters, ${s.rowsLeft} still to do, on a dial reading 0 to ${doneScale.max} units. The inner amber percentage scale reads ${donePercent} percent of all ${totalUnits}. The thick band on the rim covers the ${s.odometer} you have done and the thin dashed band runs on to the ${totalUnits}th unit. The neutral shaded rim after ${totalUnits} is outside the course total.`
@@ -1905,14 +1987,12 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   }
 
   function renderQuests(data) {
-    const groups = questDays(data);
+    const groups = questBoard(data, localIsoDate());
     const remaining = remainingActivities(data);
     const sem1Open = data.semesters.find(item => item.id === "sem1")
       ?.activities.some(item => item.state === "not_started");
     document.querySelector("#quest-content").innerHTML = groups.map((group, index) => {
-      const dateName = index === 0
-        ? "Today"
-        : new Intl.DateTimeFormat("en-US", { timeZone: ZONE, weekday: "long" }).format(parseIsoDate(group.date));
+      const dateName = index === 0 ? "Next up" : "Then";
       const items = group.items.length
         ? group.items.map(item => `<li><strong>${escapeHtml(item.title)}</strong><br><span class="meta">${escapeHtml(item.semesterId.toUpperCase())} · Section ${item.sectionNumber}</span></li>`).join("")
         : `<li><span class="quiet">${remaining.length ? "Route buffer." : "Route clear."}</span></li>`;
@@ -1984,22 +2064,25 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       <div class="bar daily-bar" aria-label="${todayDone} of ${dailyAsk} units today">
         <span class="daily-bar__fill" style="width:${Math.min(100, todayDone / dailyAsk * 100)}%"></span>
       </div>
-      <div class="bar work-bar" aria-label="${submitted} done, ${projectedRows} projected by Aug 15, ${Math.max(0, totalWork - submitted - projectedRows)} beyond current pace">
-        <span class="bar__done" style="width:${doneWidth}%"></span>
-        <span class="bar__projected" style="width:${projectedWidth}%"></span>
-        <span class="bar__gap" style="width:${gapWidth}%"></span>
-      </div>
-      <div class="pace-copy numeric">
-        <label class="target-picker">
-          <span>my pace&nbsp;&nbsp;</span>
-          <input type="number" id="daily-target" min="1" max="8" step="1" value="${dailyAsk}"
-                 aria-label="units I plan to do per day">
-          <span>&nbsp;a day &rarr; finishes <strong>${formatDay(projectedDate)}</strong></span>
-        </label>
-        <span>Aug 15 needs&nbsp;&nbsp; <strong>${required.toFixed(2)}/day</strong>. On the days you work you do <strong>${stats.activePace.toFixed(2)}</strong>${stats.fastEnough ? " — more than enough" : ""}.</span>
-        <span>${escapeHtml(statusCopy)}</span>
-        <span>${next ? `Next action: ${escapeHtml(next.title)}` : "Every named unit is submitted."}</span>
-      </div>`;
+      <details class="route-details parent-expanded"${parentViewActive() ? " open" : ""}>
+        <summary>Full route controls</summary>
+        <div class="bar work-bar" aria-label="${submitted} done, ${projectedRows} projected by Aug 15, ${Math.max(0, totalWork - submitted - projectedRows)} beyond current pace">
+          <span class="bar__done" style="width:${doneWidth}%"></span>
+          <span class="bar__projected" style="width:${projectedWidth}%"></span>
+          <span class="bar__gap" style="width:${gapWidth}%"></span>
+        </div>
+        <div class="pace-copy numeric">
+          <label class="target-picker">
+            <span>my pace&nbsp;&nbsp;</span>
+            <input type="number" id="daily-target" min="1" max="8" step="1" value="${dailyAsk}"
+                   aria-label="units I plan to do per day">
+            <span>&nbsp;a day &rarr; finishes <strong>${formatDay(projectedDate)}</strong></span>
+          </label>
+          <span>Aug 15 needs&nbsp;&nbsp; <strong>${required.toFixed(2)}/day</strong>. On the days you work you do <strong>${stats.activePace.toFixed(2)}</strong>${stats.fastEnough ? " — more than enough" : ""}.</span>
+          <span>${escapeHtml(statusCopy)}</span>
+          <span>${next ? `Next action: ${escapeHtml(next.title)}` : "Every named unit is submitted."}</span>
+        </div>
+      </details>`;
 
     const targetInput = document.querySelector("#daily-target");
     targetInput?.addEventListener("change", () => {
@@ -2525,6 +2608,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     }
     document.addEventListener("visibilitychange", handleVisibility);
     document.addEventListener("keydown", event => {
+      listenForParentPhrase(event);
       if (event.key === "Escape" && document.querySelector(".wm-world-popup[open]")) {
         event.preventDefault();
         closeWorldPopup();
@@ -2581,6 +2665,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     });
 
     document.querySelector("#refresh").addEventListener("click", () => loadData(true));
+    document.querySelector("#exit-parent").addEventListener("click", () => {
+      setParentView(false);
+      document.querySelector("#refresh")?.focus();
+    });
     document.querySelector("#show-route").addEventListener("click", () => {
       document.querySelector("#calendar").scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth" });
     });
@@ -2642,6 +2730,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     staleSafeData
   });
 
+  setParentView(sessionGet(PARENT_VIEW_KEY, false) === true);
   bindEvents();
   // He is going to hit F12 and poke at this. That is the correct instinct for someone
   // who wants to build software, so the console rewards it instead of hiding from it.

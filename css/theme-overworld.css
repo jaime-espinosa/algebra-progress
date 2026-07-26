@@ -162,6 +162,71 @@ meter,
   font-size: 13px;
 }
 
+.whole-picture {
+  margin: 0 0 14px;
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  background: var(--panel-solid);
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.whole-picture summary {
+  cursor: pointer;
+  color: var(--faint);
+}
+
+.whole-picture__summary {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.whole-picture__done {
+  color: var(--accent);
+  font-size: 18px;
+}
+
+.whole-picture__remaining {
+  color: var(--faint);
+  font-size: 11px;
+}
+
+.whole-picture__worlds,
+.whole-picture__tasks {
+  margin: 10px 0 0;
+  padding-left: 22px;
+}
+
+.whole-picture__tasks {
+  display: grid;
+  gap: 7px;
+  max-height: 42vh;
+  overflow: auto;
+}
+
+html[data-view="parent"] .whole-picture {
+  border: 2px solid var(--accent);
+  padding: 14px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+html[data-view="parent"] .whole-picture summary {
+  color: var(--accent);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+html[data-view="parent"] .whole-picture__done {
+  font-size: clamp(26px, 4vw, 42px);
+}
+
+html[data-view="parent"] .whole-picture__remaining {
+  color: var(--text);
+  font-size: 16px;
+}
+
 .page {
   width: 100%;
   max-width: 1400px;
@@ -449,6 +514,12 @@ summary.section-heading::-webkit-details-marker {
 .wm-banner__name {
   font-size: 15px;
   font-weight: 700;
+}
+
+.wm-banner__next {
+  max-width: 360px;
+  color: #ffd67a;
+  white-space: normal;
 }
 
 /* The road. One dashed stroke per hop between consecutive sections, in the order
@@ -1197,6 +1268,28 @@ summary.section-heading::-webkit-details-marker {
   margin: 16px 0 8px;
 }
 
+.route-details {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.route-details summary {
+  cursor: pointer;
+  color: var(--faint);
+}
+
+html[data-view="parent"] .route-details {
+  border-color: var(--accent);
+}
+
+html[data-view="parent"] .route-details summary {
+  color: var(--accent);
+  font-weight: 700;
+}
+
 .pace-copy {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1641,6 +1734,11 @@ html.motion-paused *::after {
 
 .chart-legend__total {
   color: var(--text);
+}
+
+.chart-legend__secondary {
+  color: var(--faint);
+  font-size: 10px;
 }
 
 .chart-key__swatch {
