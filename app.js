@@ -606,6 +606,32 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     let startY = 0;
     let moved = 0;
 
+    // Move and release are watched on the window, not captured on the viewport:
+    // capturing the pointer retargets the follow-up click at the viewport itself,
+    // which silently ate every click on a region the first time this was written.
+    const onMove = event => {
+      if (!dragging) return;
+      const dx = event.clientX - originX;
+      const dy = event.clientY - originY;
+      moved = Math.max(moved, Math.abs(dx) + Math.abs(dy));
+      panX = startX + dx;
+      panY = startY + dy;
+      clampPan();
+    };
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      viewport.classList.remove("is-dragging");
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", endDrag);
+      window.removeEventListener("pointercancel", endDrag);
+      // A drag is not a click: without this, pushing the map sideways by
+      // grabbing a chunk would zoom into whatever was under the finger. Stamped
+      // with a time rather than a flag, so the suppression belongs to THIS
+      // gesture and cannot linger and eat a real click made later.
+      if (moved > 6) viewport.dataset.dragEndedAt = String(Date.now());
+    };
+
     viewport.addEventListener("pointerdown", event => {
       if (event.button !== 0) return;
       dragging = true;
@@ -614,31 +640,11 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       originY = event.clientY;
       startX = panX;
       startY = panY;
-      viewport.setPointerCapture(event.pointerId);
       viewport.classList.add("is-dragging");
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", endDrag);
+      window.addEventListener("pointercancel", endDrag);
     });
-    viewport.addEventListener("pointermove", event => {
-      if (!dragging) return;
-      const dx = event.clientX - originX;
-      const dy = event.clientY - originY;
-      moved = Math.max(moved, Math.abs(dx) + Math.abs(dy));
-      panX = startX + dx;
-      panY = startY + dy;
-      clampPan();
-    });
-    const endDrag = event => {
-      if (!dragging) return;
-      dragging = false;
-      viewport.classList.remove("is-dragging");
-      try { viewport.releasePointerCapture(event.pointerId); } catch { /* already gone */ }
-      // A drag is not a click: without this, pushing the map sideways by
-      // grabbing a chunk would zoom into whatever was under the finger. Stamped
-      // with a time rather than a flag, so the suppression belongs to THIS
-      // gesture and cannot linger and eat a real click made later.
-      if (moved > 6) viewport.dataset.dragEndedAt = String(Date.now());
-    };
-    viewport.addEventListener("pointerup", endDrag);
-    viewport.addEventListener("pointercancel", endDrag);
 
     // Arrow keys pan. Only the arrows are swallowed, and only when the map
     // itself has focus, so Tab and page scrolling are untouched.
@@ -1002,7 +1008,11 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     // its numbers clear of the digital window in the gap at the bottom.
     const ticks2list = secondary.ticks.filter(({ percent }) => percent > 0);
     const ticks2 = ticks2list.map(({ at }) => gaugeTick(at, GAUGE.scale2Inner, GAUGE.scale2Outer)).join("");
+    // A label in the last few degrees of the inner arc would land on top of the
+    // digital window in the gap at the bottom. Its tick still gets drawn; only
+    // the numeral is dropped, exactly as the reference leaves its end ticks bare.
     const numbers2 = ticks2list
+      .filter(({ at }) => at <= 0.955)
       .map(({ at, text }) => gaugeText(at, GAUGE.scale2Numbers, text, "gauge__number2")).join("");
     const firstTick = ticks2list.length ? ticks2list[0].at : 0;
     const lastTick = ticks2list.length ? ticks2list[ticks2list.length - 1].at : 0;
@@ -1288,7 +1298,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           secondary: { unit: "% OF AUG 15 PACE", ticks: percentTicks(paceScale.max, s.requiredPerDay) },
           faceUnit: "UNITS / DAY",
           readout: s.activePace.toFixed(2),
-          readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)} TO FINISH ON TIME`,
+          readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)}`,
           ariaText: `Units per day on the days you work: ${s.activePace.toFixed(2)}, on a dial reading 0 to ${paceScale.max} units per day — ${s.odometer} units over ${s.activeDays} working days. Aug 15 needs ${s.requiredPerDay.toFixed(2)} a day, so the inner amber percentage scale reads ${pacePercent} percent of that pace.`
         })}
 
