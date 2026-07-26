@@ -399,11 +399,14 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // the territory that holds his next unit. It is a position, not a score.
   function hereMarker(x, y) {
     return `<g class="wm-you">
-      <path class="wm-you__beam" fill="#ffd67a" opacity=".28" d="M${x - 5} ${y - 190}h10v190h-10z"/>
-      <path fill="#1d2830" opacity=".5" d="M${x - 10} ${y + 2}h20v5h-20z"/>
-      <path fill="#3b6ea8" d="M${x - 6} ${y - 12}h12v14h-12z"/>
-      <path fill="#d9a066" d="M${x - 6} ${y - 22}h12v10h-12z"/>
-      <path fill="#22303a" d="M${x - 4} ${y - 19}h3v3h-3zm5 0h3v3h-3z"/>
+      <path class="wm-you__beam" fill="#ffd67a" d="M${x - 9} ${y - 230}h18v230h-18z"/>
+      <path class="wm-you__beam" fill="#fff2cf" opacity=".55" d="M${x - 3} ${y - 230}h6v230h-6z"/>
+      <path fill="#ffd67a" d="M${x - 14} ${y + 1}h28v4h-28zM${x - 5} ${y - 250}h10v6h-10z
+        M${x - 11} ${y - 244}h22v5h-22z"/>
+      <path fill="#1d2830" opacity=".5" d="M${x - 11} ${y + 5}h22v4h-22z"/>
+      <path fill="#3b6ea8" d="M${x - 8} ${y - 16}h16v17h-16z"/>
+      <path fill="#d9a066" d="M${x - 8} ${y - 30}h16v14h-16z"/>
+      <path fill="#22303a" d="M${x - 6} ${y - 26}h4v4h-4zm8 0h4v4h-4z"/>
     </g>`;
   }
 

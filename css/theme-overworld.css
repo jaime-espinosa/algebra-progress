@@ -271,13 +271,17 @@ meter,
   image-rendering: pixelated;
 }
 
+/* The one looping animation on the map, and it is opacity only — nothing here
+   animates a layout property, because the whole point of this panel is that a
+   2018 machine can move it. */
 .wm-you__beam {
+  opacity: .3;
   animation: wm-beacon 2.4s ease-in-out infinite;
 }
 
 @keyframes wm-beacon {
-  0%, 100% { opacity: .30; }
-  50%      { opacity: .10; }
+  0%, 100% { opacity: .34; }
+  50%      { opacity: .12; }
 }
 
 /* The semester summaries. They sit above the map rather than inside it: the map
