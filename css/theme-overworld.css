@@ -261,6 +261,105 @@ meter,
   align-items: center;
 }
 
+.skin-card {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 16px;
+  margin: 16px 0;
+  border: 1px solid var(--line);
+  padding: 12px;
+  background: var(--panel-solid);
+  color: var(--text);
+}
+
+.skin-card__preview,
+.skin-card__head,
+.skin-card__placeholder {
+  width: 96px;
+  height: 96px;
+}
+
+.skin-card__head {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  image-rendering: pixelated;
+}
+
+.skin-card__head-base,
+.skin-card__head-hat {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-size: 768px 768px;
+  image-rendering: pixelated;
+}
+
+.skin-card__head-base {
+  background-position: -96px -96px;
+}
+
+.skin-card__head-hat {
+  background-position: -480px -96px;
+}
+
+.skin-card__placeholder {
+  border: 1px solid var(--line);
+  background: var(--panel-solid);
+}
+
+.skin-card__placeholder svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  shape-rendering: crispEdges;
+}
+
+.skin-card__content {
+  min-width: 0;
+}
+
+.skin-card__title {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--accent);
+}
+
+.skin-card__form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.skin-card__label {
+  grid-column: 1 / -1;
+  color: var(--dim);
+  font-size: 13px;
+}
+
+.skin-card__form input {
+  min-width: 0;
+  width: 100%;
+  border: 1px solid var(--line);
+  padding: 8px;
+  background: var(--panel-solid);
+  color: var(--text);
+}
+
+.skin-card__status {
+  min-height: 1.4em;
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--dim);
+  font-size: 13px;
+}
+
+.skin-card__status.is-warning {
+  color: var(--warn);
+}
+
 .hotbar {
   display: grid;
   grid-template-columns: repeat(9, minmax(64px, 1fr));
@@ -564,11 +663,25 @@ html.motion-paused *::after {
     grid-template-columns: repeat(3, minmax(64px, 1fr));
   }
 
+  .skin-card__form {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
   .quest-days {
     grid-template-columns: 1fr;
   }
 
   .pace-copy {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .skin-card {
+    grid-template-columns: 1fr;
+  }
+
+  .skin-card__form {
     grid-template-columns: 1fr;
   }
 }

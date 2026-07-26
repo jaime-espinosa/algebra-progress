@@ -52,6 +52,14 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
     }
   }
 
+  function storageRemove(key) {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      // Forgetting still clears the visible card when storage is blocked.
+    }
+  }
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -245,6 +253,12 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
       // in it submitted, nothing modelled or estimated.
       "photo-skin-studio": (sem1?.activities.length ?? 0) > 0
         && sem1.activities.every(item => item.state !== "not_started"),
+      // The skins are the reward strand, so the first one has to land in days, not
+      // weeks: one Semester 2 row opens it. Each is a palette in
+      // vault/tools/make-skins.mjs — new ones he asks for are cheap to add.
+      "ignition-skin": sem2Submitted.length >= 1,
+      "nether-skin": sectionDone(1),
+      "end-skin": sectionDone(3),
       "nether-theme": sem2Submitted.length >= 3,
       "auto-breeding-pen": sectionDone(1),
       "ballistics-workbench": sectionDone(2),
@@ -374,6 +388,140 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
       return `<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="${dim}" d="M2 5h12v8H2z"/><path fill="${fill}" d="M4 3h8v8H4z"/><path fill="var(--panel-solid)" d="M6 5h1v2H6zm3 0h1v2H9z"/></svg>`;
     }
     return `<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="${dim}" d="M7 1h2v5h4v2h-2v2H9v5H7v-5H5V8H3V6h4z"/><path fill="${fill}" d="M7 2h2v6H7z"/></svg>`;
+  }
+
+  function validSkinCache(value) {
+    return value &&
+      typeof value.name === "string" &&
+      typeof value.fetchedAt === "string" &&
+      typeof value.dataUrl === "string" &&
+      /^data:image\/png;base64,[a-z0-9+/]+={0,2}$/i.test(value.dataUrl)
+      ? value
+      : null;
+  }
+
+  function skinPlaceholderSvg() {
+    return `
+      <svg viewBox="0 0 8 8" aria-hidden="true">
+        <path fill="var(--dim)" d="M1 1h6v6H1z"></path>
+        <path fill="var(--panel-solid)" d="M2 2h4v1H2zm0 3h1v1H2zm3 0h1v1H5z"></path>
+        <path fill="var(--accent)" d="M2 4h1v1H2zm3 0h1v1H5z"></path>
+        <path fill="var(--line)" d="M3 6h2v1H3z"></path>
+      </svg>`;
+  }
+
+  function blobDataUrl(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => resolve(reader.result));
+      reader.addEventListener("error", () => reject(reader.error || new Error("Skin file could not be read.")));
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  async function loadSkin(name) {
+    const savedSkin = validSkinCache(storageGet("mc.skin", null));
+    storageSet("mc.username", name);
+    renderSkinCard({
+      username: name,
+      skin: savedSkin,
+      status: "Loading skin…",
+      loading: true
+    });
+
+    try {
+      // Fetching a skin by name necessarily sends the username to mc-heads.net from
+      // his browser. That is inherent in this accepted feature and is documented here
+      // so it is not discovered later. The username stays out of this public repo,
+      // which carries only his first name, and is deliberately saved on his laptop.
+      const response = await fetch(`https://mc-heads.net/skin/${encodeURIComponent(name)}`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const dataUrl = await blobDataUrl(await response.blob());
+      if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/png")) {
+        throw new Error("Skin response was not a PNG.");
+      }
+      const skin = { name, dataUrl, fetchedAt: new Date().toISOString() };
+      storageSet("mc.skin", skin);
+      renderSkinCard({
+        username: name,
+        skin,
+        status: "Skin saved on this laptop."
+      });
+    } catch {
+      const cached = validSkinCache(storageGet("mc.skin", null)) || savedSkin;
+      renderSkinCard({
+        username: name,
+        skin: cached,
+        failed: true,
+        status: cached
+          ? "Couldn't reach mc-heads.net just now — this is the copy saved on this laptop."
+          : "Couldn't reach mc-heads.net just now. Check the connection, then retry."
+      });
+    }
+  }
+
+  function renderSkinCard(options = {}) {
+    const storedUsername = storageGet("mc.username", "");
+    const username = typeof options.username === "string"
+      ? options.username
+      : typeof storedUsername === "string" ? storedUsername : "";
+    const skin = options.skin === undefined
+      ? validSkinCache(storageGet("mc.skin", null))
+      : validSkinCache(options.skin);
+    const failed = options.failed === true;
+    const loading = options.loading === true;
+    const status = options.status || (skin
+      ? "This copy is saved on this laptop."
+      : "Type your Minecraft username to put your skin in the Vault.");
+    const preview = skin
+      ? `<div class="skin-card__head" role="img" aria-label="Minecraft skin head for ${escapeHtml(skin.name)}">
+          <div class="skin-card__head-base"></div>
+          <div class="skin-card__head-hat"></div>
+        </div>`
+      : `<div class="skin-card__placeholder">${skinPlaceholderSvg()}</div>`;
+    const nameCopy = skin ? ` // ${escapeHtml(skin.name)}` : "";
+    const card = document.querySelector("#skin-card");
+    card.dataset.motion = reducedMotion() ? "reduced" : "full";
+    card.innerHTML = `
+      <div class="skin-card__preview">
+        ${preview}
+      </div>
+      <div class="skin-card__content">
+        <strong class="skin-card__title">YOUR SKIN${nameCopy}</strong>
+        <form id="skin-form" class="skin-card__form">
+          <label class="skin-card__label" for="skin-name">Minecraft username</label>
+          <input id="skin-name" name="skin-name" type="text" value="${escapeHtml(username)}"
+            placeholder="Minecraft username" maxlength="16" autocomplete="off" spellcheck="false">
+          <button type="submit"${loading ? " disabled" : ""}>Load skin</button>
+          ${failed && !skin ? `<button id="skin-retry" type="button">Retry</button>` : ""}
+          <button id="skin-forget" type="button"${!username && !skin ? " disabled" : ""}>Forget</button>
+        </form>
+        <p class="skin-card__status${failed ? " is-warning" : ""}" role="status">${escapeHtml(status)}</p>
+      </div>`;
+
+    if (skin) {
+      const backgroundImage = `url(${JSON.stringify(skin.dataUrl)})`;
+      card.querySelector(".skin-card__head-base").style.backgroundImage = backgroundImage;
+      card.querySelector(".skin-card__head-hat").style.backgroundImage = backgroundImage;
+    }
+
+    card.querySelector("#skin-form").addEventListener("submit", event => {
+      event.preventDefault();
+      const name = card.querySelector("#skin-name").value.trim();
+      if (!name) {
+        renderSkinCard({ status: "Type your Minecraft username first." });
+        return;
+      }
+      void loadSkin(name);
+    });
+    card.querySelector("#skin-retry")?.addEventListener("click", () => {
+      card.querySelector("#skin-form").requestSubmit();
+    });
+    card.querySelector("#skin-forget").addEventListener("click", () => {
+      storageRemove("mc.username");
+      storageRemove("mc.skin");
+      renderSkinCard();
+    });
   }
 
   // `earned` is passed in, never re-read from storage. Re-reading meant that when
@@ -1081,6 +1229,7 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
     renderTrophy(safeData, previousSnapshot, isNewSnapshot);
     renderEffort(safeData);
     renderVault(safeData, earned, newlyEarned, isNewSnapshot);
+    renderSkinCard();
     renderCalendar(safeData);
     renderQuests(safeData);
     renderPace(safeData);
@@ -1286,6 +1435,7 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
       closeVersionGate();
       if (item) previewArtifact(item);
       if (currentData) renderVault(currentData, unionEarned(currentData).earned, [], false);
+      if (currentData) renderSkinCard();
     });
     document.querySelector("#request-form").addEventListener("submit", async event => {
       event.preventDefault();
