@@ -664,6 +664,67 @@ export function activityKind(title) {
   return /\b(quiz|test|exam)\b/i.test(String(title ?? "")) ? "battle" : "training";
 }
 
+// A finer split of the same rows, for the node fill on the world map.
+//
+// The LMS still gives no type field — `type: null` on all 133 rows — so this,
+// like activityKind, reads the title the school wrote and nothing else. What
+// the titles actually support, checked row by row against the frozen fixture:
+//
+//   lesson       48  "Assignment Section 5 Lesson 3", "Assignment: Geometric
+//                    Sequences". This row IS the lesson's homework. There is
+//                    no separate homework row anywhere in either semester, so
+//                    lesson and homework are not two types here; they are one
+//                    row, and splitting them would be an invention.
+//   quiz         51  "Practice Quiz: Arithmetic Sequences", "Properties of
+//                    Exponents: Practice Quiz", "Orientation Quiz: ...", and
+//                    "Simplify Rational Expressions: Practice Test". That last
+//                    shape is a practice quiz under another name: Semester 2
+//                    Section 5 has four of them and zero rows called Practice
+//                    Quiz. Counting them as tests would print "5 tests" for a
+//                    section that has one.
+//   activity      8  "Activity: Graphing Lines" — the interactive sims. Only
+//                    some sections have any, which is why the fill has to cope
+//                    with a type being absent rather than drawing a zero band.
+//   check        12  "End of Section Assignment: ...". Exactly one per section.
+//   test         12  "Section 5 Final Test". Exactly one per section.
+//   orientation   2  "Contacting your Teacher", one per semester in section 0.
+//
+// 48+51+8+12+12+2 = 133, and the split nests inside the older one: quiz+test
+// are exactly the 63 battles, the other four are exactly the 70 training rows.
+// Both properties are asserted against the fixture, because a fill that does
+// not sum to the section total is a fill that lies about the section.
+//
+// Order is the order the bands are drawn in, which is roughly the order he
+// meets them inside a section.
+export const UNIT_TYPES = ["lesson", "quiz", "activity", "check", "test", "orientation"];
+
+// Plain names, for the accessible text and the legend. He sees these words in
+// the LMS; "homework" and "exam" are not words this course uses.
+export const UNIT_TYPE_LABELS = {
+  lesson: "lesson",
+  quiz: "practice quiz",
+  activity: "activity",
+  check: "end-of-section assignment",
+  test: "section test",
+  orientation: "orientation",
+};
+
+export function activityType(title) {
+  const text = String(title ?? "");
+  // Ordered most specific first. "Section 5 Final Test" and "End of Section
+  // Assignment" must both be caught before the generic assignment and quiz
+  // patterns, or the section's one test lands in the lesson band.
+  if (/final test/i.test(text)) return "test";
+  if (/end of section assignment/i.test(text)) return "check";
+  if (/practice\s+(quiz|test)/i.test(text)) return "quiz";
+  if (/^orientation quiz/i.test(text)) return "quiz";
+  if (/^activity:/i.test(text)) return "activity";
+  if (/^assignment/i.test(text)) return "lesson";
+  // Anything the school invents next is training-shaped and lands here rather
+  // than being dropped, so the bands always still sum to the section total.
+  return "orientation";
+}
+
 function regionKey(worldId, number) {
   return `${worldId}:${number}`;
 }

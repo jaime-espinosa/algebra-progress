@@ -322,6 +322,9 @@ function sandboxBoot() {
         let last = null;
         let lowest = Infinity;
         let highest = -Infinity;
+        let previous = null;
+        let direction = 0;
+        let turns = 0;
         for (let i = 0; i < samples; i += 1) {
           tick();
           const x = x0 + ((x1 - x0) * i) / (samples - 1);
@@ -334,6 +337,14 @@ function sandboxBoot() {
           last = { x: x, y: y };
           if (y < lowest) lowest = y;
           if (y > highest) highest = y;
+          // Counting turns is what stops a parabola being described as "falling"
+          // just because its right-hand end happens to sit below its left-hand end.
+          if (previous !== null && y !== previous) {
+            const step = y > previous ? 1 : -1;
+            if (direction !== 0 && step !== direction) turns += 1;
+            direction = step;
+          }
+          previous = y;
           // Clamped well outside the box so a near-vertical asymptote does not
           // produce a coordinate the renderer chokes on.
           const py = Math.max(-2 * H, Math.min(3 * H, sy(y)));
@@ -350,7 +361,11 @@ function sandboxBoot() {
         if (first && last) {
           const shape = highest - lowest < 1e-9
             ? "flat"
-            : (last.y > first.y ? "rising overall" : (last.y < first.y ? "falling overall" : "returning to where it started"));
+            : (turns === 0
+              ? (last.y > first.y ? "rising the whole way" : "falling the whole way")
+              : (turns === 1
+                ? (direction > 0 ? "falling and then rising, with one lowest point" : "rising and then falling, with one highest point")
+                : "changing direction " + turns + " times"));
           notes.push(
             (label ? label + " (" : "Curve " + used + " (") + colour.name + "): " +
             "y = " + num(first.y) + " at x = " + num(first.x) + ", " +
