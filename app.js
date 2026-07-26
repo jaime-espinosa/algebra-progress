@@ -898,13 +898,13 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       // Lead with the plain count he can verify by adding up his own calendar
       // tiles, then the comparison. Showing only the difference invites him to
       // count 25, see 15, and stop trusting the page.
-      return `${rows} rows in ${days} days, ${formatDay(from)} to ${formatDay(to)} — ${gain} more than the route asked for.`;
+      return `${rows} units in ${days} days, ${formatDay(from)} to ${formatDay(to)} — ${gain} more than the route asked for.`;
     }
     const biggestPush = track.bestDays[0];
     if (biggestPush) {
-      return `Your biggest push: ${biggestPush.done} rows on ${formatDay(biggestPush.date)}.`;
+      return `Your biggest push: ${biggestPush.done} units on ${formatDay(biggestPush.date)}.`;
     }
-    return "Every row you finish moves the route forward.";
+    return "Every unit you finish moves the route forward.";
   }
 
   function calendarCell(point, track) {
@@ -924,11 +924,11 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
     const roundedSurplus = Math.round(point.surplus);
     let tooltip = "nothing logged";
     if (point.done > 0 && roundedSurplus >= 1) {
-      tooltip = `${formatDay(point.date)}: ${point.done} rows — ${roundedSurplus} more than the steady route asked for`;
+      tooltip = `${formatDay(point.date)}: ${point.done} units — ${roundedSurplus} more than the steady route asked for`;
     } else if (point.done > 0) {
-      tooltip = `${formatDay(point.date)}: ${point.done} ${point.done === 1 ? "row" : "rows"}`;
+      tooltip = `${formatDay(point.date)}: ${point.done} ${point.done === 1 ? "unit" : "units"}`;
     } else if (point.planned > 0 && (point.future || isToday)) {
-      tooltip = `planned: ${point.planned} ${point.planned === 1 ? "row" : "rows"}`;
+      tooltip = `planned: ${point.planned} ${point.planned === 1 ? "unit" : "units"}`;
     }
 
     if (point.date === track.deadline) {
@@ -1060,7 +1060,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
         <strong>TODAY&nbsp;&nbsp;${todayDone} / ${dailyAsk}</strong>
         <span class="quiet">${bestDay ? `best day: ${bestDay.count} (${formatDay(bestDay.date)})` : ""}</span>
       </div>
-      <div class="bar daily-bar" aria-label="${todayDone} of ${dailyAsk} rows today">
+      <div class="bar daily-bar" aria-label="${todayDone} of ${dailyAsk} units today">
         <span class="daily-bar__fill" style="width:${Math.min(100, todayDone / dailyAsk * 100)}%"></span>
       </div>
       <div class="bar work-bar" aria-label="${submitted} done, ${projectedRows} projected by Aug 15, ${Math.max(0, totalWork - submitted - projectedRows)} beyond current pace">
@@ -1072,12 +1072,12 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
         <label class="target-picker">
           <span>my pace&nbsp;&nbsp;</span>
           <input type="number" id="daily-target" min="1" max="8" step="1" value="${dailyAsk}"
-                 aria-label="rows I plan to do per day">
+                 aria-label="units I plan to do per day">
           <span>&nbsp;a day &rarr; finishes <strong>${formatDay(projectedDate)}</strong></span>
         </label>
         <span>Aug 15 needs&nbsp;&nbsp; <strong>${required.toFixed(1)}/day</strong>. On the days you work you do <strong>${stats.activePace.toFixed(1)}</strong>${stats.fastEnough ? " — more than enough" : ""}.</span>
         <span>${escapeHtml(statusCopy)}</span>
-        <span>${next ? `Next action: ${escapeHtml(next.title)}` : "Every named row is submitted."}</span>
+        <span>${next ? `Next action: ${escapeHtml(next.title)}` : "Every named unit is submitted."}</span>
       </div>`;
 
     const targetInput = document.querySelector("#daily-target");
@@ -1358,7 +1358,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       if (!data.semesters.length || data.semesters.every(s => !(s.activities?.length > 0))) throw new Error("Empty payload");
       const oldSnapshot = currentData ? summarySnapshot(currentData) : null;
       refreshMessage = force && snapshotsEqual(oldSnapshot, summarySnapshot(data))
-        ? `No new rows yet · last checked ${formatTime(data.generatedAt)} · next ${nextScrapeTime()}`
+        ? `No new units yet · last checked ${formatTime(data.generatedAt)} · next ${nextScrapeTime()}`
         : "";
       render(data);
     } catch (error) {
