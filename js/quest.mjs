@@ -366,8 +366,8 @@ export function recentVolume(data, today, days = 7) {
 export function dashboard(data, today) {
   const stats = effortStats(data, today);
   const totalRows = stats.submitted + stats.rowsLeft;
-  const week = recentVolume(data, today, 7);
-  const priorWeek = recentVolume(data, addDays(parseDateKey(today), -7), 7);
+  const recent = recentVolume(data, today, 3);
+  const prior = recentVolume(data, addDays(parseDateKey(today), -3), 3);
   return {
     // Odometer: rows submitted, all time. Only ever goes up.
     odometer: stats.submitted,
@@ -378,12 +378,12 @@ export function dashboard(data, today) {
     activePace: stats.activePace,
     requiredPerDay: stats.requiredPerDay,
     fastEnough: stats.fastEnough,
-    // Tachometer: raw rows in the last seven calendar days, and the seven
-    // before that, so "hot or cold" is a comparison of two counts.
-    recent7: week.total,
-    recent7From: week.from,
-    recent7To: week.to,
-    prior7: priorWeek.total,
+    // Rolling dial: raw rows in the last three calendar days, and the three
+    // before that. Both are counts, never rates.
+    recent3: recent.total,
+    recent3From: recent.from,
+    recent3To: recent.to,
+    prior3: prior.total,
     // Trip / distance to go.
     rowsLeft: stats.rowsLeft,
     daysLeft: stats.daysLeft,

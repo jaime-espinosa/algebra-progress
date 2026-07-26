@@ -1344,20 +1344,9 @@ html.motion-paused *::after {
 .gauge {
   min-width: 0;
   border: 1px solid var(--line);
-  padding: 10px 8px 12px;
+  padding: 4px 8px 10px;
   background: var(--panel-solid);
   text-align: center;
-}
-
-.gauge__title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  margin: 0 0 2px;
-  color: var(--text);
-  font-size: 12px;
-  letter-spacing: .08em;
 }
 
 .gauge__face {
@@ -1519,10 +1508,45 @@ html.motion-paused *::after {
 /* Both effort charts share these classes as well as their geometry. */
 .chart-block {
   width: 100%;
-  margin-bottom: 12px;
+  margin: 0;
   border: 1px solid var(--line);
   padding: 8px;
   background: var(--panel-solid);
+}
+
+.chart-pair {
+  width: 100%;
+}
+
+.chart-pair__plots {
+  position: relative;
+  display: grid;
+  gap: 0;
+}
+
+.chart-today-span {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  bottom: 0;
+  left: var(--today-left);
+  width: 3px;
+  background: var(--text);
+  box-shadow: 0 0 0 1px var(--panel-solid);
+  pointer-events: none;
+  transform: translateX(-1px);
+}
+
+.chart-today-span span {
+  position: absolute;
+  top: 4px;
+  left: 5px;
+  padding: 1px 3px;
+  background: var(--panel-solid);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+  text-shadow: none;
 }
 
 .chart-block svg {
@@ -1533,14 +1557,21 @@ html.motion-paused *::after {
   overflow: visible;
 }
 
-.chart-key {
+.chart-legend {
   display: flex;
   flex-wrap: wrap;
   gap: 6px 16px;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  border: 2px solid var(--line);
+  padding: 8px 10px;
+  background: var(--bg);
   color: var(--dim);
   font-size: 11px;
+}
+
+.chart-legend__total {
+  color: var(--text);
 }
 
 .chart-key__swatch {
@@ -1554,7 +1585,7 @@ html.motion-paused *::after {
 
 .chart-key__swatch.is-open {
   height: 2px;
-  background: var(--dim);
+  background: var(--warn);
 }
 
 .chart-key__swatch.is-flag {
@@ -1598,6 +1629,11 @@ html.motion-paused *::after {
   stroke-width: 1;
 }
 
+.chart-grid--friday {
+  stroke: var(--line);
+  stroke-dasharray: 2 4;
+}
+
 .chart-unit {
   stroke: var(--accent);
   stroke-width: 2;
@@ -1608,22 +1644,22 @@ html.motion-paused *::after {
 }
 
 .chart-open {
-  stroke: var(--dim);
-  stroke-width: 1.5;
+  stroke: var(--warn);
+  stroke-width: 2;
 }
 
 .chart-open__dot {
-  fill: var(--dim);
+  fill: var(--warn);
 }
 
 .chart-open__flag {
   fill: var(--panel-solid);
-  stroke: var(--dim);
+  stroke: var(--warn);
   stroke-width: 1.5;
 }
 
 .chart-reference {
-  stroke: var(--warn);
+  stroke: var(--accent);
   stroke-width: 1;
   stroke-dasharray: 6 4;
 }
@@ -1644,20 +1680,9 @@ html.motion-paused *::after {
   stroke-width: 3;
 }
 
-.chart-today {
-  stroke: var(--dim);
-  stroke-width: 1;
-  stroke-dasharray: 3 3;
-}
-
-.chart-marker {
-  fill: var(--accent);
-}
-
 .chart-label,
 .chart-axis-title,
-.chart-reference__label,
-.chart-today__label {
+.chart-reference__label {
   fill: var(--dim);
   text-shadow: none;
   font-family: var(--mono);
@@ -1675,7 +1700,7 @@ html.motion-paused *::after {
 }
 
 .chart-reference__label {
-  fill: var(--warn);
+  fill: var(--accent);
 }
 
 @media (max-width: 760px) {
@@ -1689,8 +1714,15 @@ html.motion-paused *::after {
     grid-template-columns: 1fr;
   }
 
-  .chart-key {
+  .chart-legend {
+    display: grid;
+    grid-template-columns: 1fr;
     font-size: 10px;
+  }
+
+  .chart-friday-tick--minor .chart-axis__tick,
+  .chart-friday-tick--minor .chart-label {
+    display: none;
   }
 }
 

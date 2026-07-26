@@ -1334,7 +1334,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       text-anchor="${anchor}" dominant-baseline="central">${escapeHtml(text)}</text>`;
   }
 
-  function gaugeDial({ label, hint, scale, secondary, faceUnit, readout, readoutSub, ariaText, bandTo = 1, bandAheadLabel }) {
+  function gaugeDial({ label, scale, secondary, faceUnit, readout, readoutSub, ariaText, bandTo = 1, outOfRangeFrom = null }) {
     const clamped = Math.max(0, Math.min(1, scale.fraction));
     const majors = scale.majors.map(({ at }) => gaugeTick(at, GAUGE.majorInner, GAUGE.tickOuter)).join("");
     const minors = scale.minors.map((at) => gaugeTick(at, GAUGE.minorInner, GAUGE.tickOuter)).join("");
@@ -1375,17 +1375,19 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
             <path class="gauge__progress" d="${gaugeArc(0, clamped, GAUGE.track)}"></path>` : "";
     const ahead = bandEnd > clamped ? `
             <path class="gauge__ahead" d="${gaugeArc(clamped, bandEnd, GAUGE.track)}"></path>` : "";
+    const outOfRange = Number.isFinite(outOfRangeFrom) && outOfRangeFrom < 1 ? `
+            <path class="gauge__out-of-range" d="${gaugeArc(Math.max(0, outOfRangeFrom), 1, GAUGE.track)}"></path>` : "";
     const angle = (135 + clamped * 270).toFixed(2);
 
     return `
       <article class="gauge">
-        <h3 class="gauge__title">${escapeHtml(label)}${hint ? tip(hint) : ""}</h3>
         <div class="gauge__face">
           <svg class="gauge__svg" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
             <circle class="gauge__disc" cx="50" cy="50" r="49"></circle>
             <path class="gauge__track" d="${gaugeArc(0, 1, GAUGE.track)}"></path>
             ${ahead}
             ${progress}
+            ${outOfRange}
             <g class="gauge__minors" shape-rendering="crispEdges">${minors}</g>
             <g class="gauge__majors" shape-rendering="crispEdges">${majors}</g>
             <g class="gauge__numbers">${numbers}</g>
@@ -1401,7 +1403,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
             ${numeralPlate(readout, "dial")}
             ${readoutSub ? `<span class="gauge__window-sub numeric">${escapeHtml(readoutSub)}</span>` : ""}
           </div>
-          <p class="gauge__sr">${escapeHtml(ariaText)}</p>
+          <p class="gauge__sr">${escapeHtml(`${label}. ${ariaText}`)}</p>
         </div>
       </article>`;
   }
@@ -1420,26 +1422,46 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   }
 
   function chartDayTicks(track) {
-    const step = Math.max(1, Math.round(track.points.length / 6));
     const last = track.points.length - 1;
     const ticks = [];
     track.points.forEach((point, index) => {
-      if (index % step === 0) ticks.push({ index, date: point.date });
+      if (new Date(`${point.date}T12:00:00Z`).getUTCDay() === 5) {
+        ticks.push({ index: Math.min(last, index + 17 / 24), date: point.date });
+      }
     });
-    // Keep the deadline labelled without letting it collide with the tick before it.
-    while (ticks.length && last - ticks.at(-1).index < step * 0.6) ticks.pop();
-    if (last >= 0) ticks.push({ index: last, date: track.points[last].date });
     return ticks;
   }
 
   function chartDayAxis(track, y, labelY) {
-    return chartDayTicks(track).map(({ index, date }, order, all) => {
+    return chartDayTicks(track).map(({ index, date }, order) => {
       const x = chartX(track, index).toFixed(1);
-      const anchor = order === 0 ? "start" : order === all.length - 1 ? "end" : "middle";
       return `
-        <line class="chart-axis__tick" x1="${x}" y1="${y}" x2="${x}" y2="${y + 4}"></line>
-        <text class="chart-label" x="${x}" y="${labelY}" text-anchor="${anchor}">${escapeHtml(formatDay(date))}</text>`;
+        <g class="chart-friday-tick${order % 2 ? " chart-friday-tick--minor" : ""}" data-friday="${date}">
+          <line class="chart-axis__tick" x1="${x}" y1="${y}" x2="${x}" y2="${y + 4}"></line>
+          <text class="chart-label" x="${x}" y="${labelY}" text-anchor="middle">${escapeHtml(formatDay(date))}</text>
+        </g>`;
     }).join("");
+  }
+
+  function chartFridayGrid(track, top, bottom) {
+    return chartDayTicks(track).map(({ index, date }) => {
+      const x = chartX(track, index).toFixed(1);
+      return `<line class="chart-grid chart-grid--friday" data-friday="${date}"
+        x1="${x}" y1="${top}" x2="${x}" y2="${bottom}"></line>`;
+    }).join("");
+  }
+
+  function chartLegend(stats, series, track) {
+    return `
+      <div class="chart-legend numeric" role="group" aria-label="Chart legend and totals">
+        <strong class="chart-legend__total">${stats.odometer} submitted · ${stats.rowsLeft} left · ${stats.totalRows} total units</strong>
+        ${series?.totalSeconds ? `<strong class="chart-legend__total">${escapeHtml(series.totalText)} total · time the course page was open</strong>` : ""}
+        <span><b class="chart-key__swatch is-units"></b>units/day and ${stats.requiredPerDay.toFixed(2)}/day reference</span>
+        <span><b class="chart-key__swatch is-open"></b>hours open — total only, never a rate</span>
+        <span><b class="chart-key__swatch is-actual"></b>cumulative units submitted</span>
+        <span><b class="chart-key__swatch is-steady"></b>steady route</span>
+        <span><b class="chart-key__swatch is-adjusted"></b>plan to ${escapeHtml(formatDay(track.finishesOn))}</span>
+      </div>`;
   }
 
   // ---- Per-day chart --------------------------------------------------------
@@ -1511,14 +1533,10 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
 
     return `
       <div class="chart-block">
-        <div class="chart-key numeric">
-          <span><b class="chart-key__swatch is-units"></b>units submitted that day</span>
-          <span><b class="chart-key__swatch is-open"></b>time the course page was open — the LMS clock, not time worked</span>
-          <span><b class="chart-key__swatch is-flag"></b>a tab was probably left open${tip("A day flagged here has one unbroken entry of 3 hours or more, or 8 hours or more in total. The seconds are still counted — they are just named. This time is never divided by units.")}</span>
-        </div>
         <svg viewBox="0 0 ${CHART.width} ${height}" preserveAspectRatio="xMidYMid meet" role="img"
           aria-label="${escapeHtml(`Units submitted per calendar day from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, with a reference line at ${requiredPerDay.toFixed(2)} units per day. A second line on the right axis shows how long the course page was open each day, in hours; ${series ? series.markedDays : 0} days are flagged as a tab left open.`)}">
           ${yTicks}
+          ${chartFridayGrid(track, top, bottom)}
           <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
           <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
           ${openAxis}
@@ -1560,35 +1578,19 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         <line class="chart-grid" x1="${CHART.left}" y1="${y}" x2="${CHART.width - CHART.right}" y2="${y}"></line>
         <text class="chart-label" x="${CHART.left - 8}" y="${Number(y) + 4}" text-anchor="end">${escapeHtml(value)}</text>`;
     }).join("");
-    const todayIndex = track.points.findIndex(point => point.date === track.today);
-    const todayX = chartX(track, Math.max(0, todayIndex)).toFixed(1);
-    const markers = past.filter(({ point }) => point.beatPlan).map(({ point, index }) => {
-      const x = chartX(track, index);
-      const y = yAt(point.cumDone);
-      const surplus = Math.round(point.surplus);
-      const title = `${formatDay(point.date)}: ${point.done} units, ${surplus} more than the steady route asked for`;
-      return `<polygon class="chart-marker" points="${x.toFixed(1)},${(y - 8).toFixed(1)} ${(x - 7).toFixed(1)},${(y + 5).toFixed(1)} ${(x + 7).toFixed(1)},${(y + 5).toFixed(1)}" shape-rendering="crispEdges"><title>${escapeHtml(title)}</title></polygon>`;
-    }).join("");
-    const ariaLabel = `Cumulative units done from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, on the same day scale as the chart above. The actual line is compared with the steady route and with the adjusted route, which finishes all ${track.totalRows} units by ${formatDay(track.finishesOn)}. Triangles mark days that beat the steady route.`;
+    const ariaLabel = `Cumulative units done from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, on the same Friday-at-5-PM day scale as the chart above. The plain actual line is compared with the steady route and with the adjusted route, which finishes all ${track.totalRows} units by ${formatDay(track.finishesOn)}.`;
 
     return `
       <div class="chart-block">
-        <div class="chart-key numeric">
-          <span><b class="chart-key__swatch is-actual"></b>done so far</span>
-          <span><b class="chart-key__swatch is-steady"></b>steady route${tip(`All ${track.totalRows} units spread evenly from ${formatDay(track.firstDay)} to Aug 15 — about ${track.steadyRate.toFixed(1)} a day.`)}</span>
-          <span><b class="chart-key__swatch is-adjusted"></b>plan — all ${escapeHtml(track.totalRows)} done by ${escapeHtml(formatDay(track.finishesOn))}${tip("The dates the quest board actually assigns, started from where you stand today.")}</span>
-        </div>
         <svg viewBox="0 0 ${CHART.width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${escapeHtml(ariaLabel)}">
           ${grid}
+          ${chartFridayGrid(track, top, bottom)}
           <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
           <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
           <text class="chart-axis-title" x="14" y="${(top + bottom) / 2}" text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">units done</text>
-          <line class="chart-today" x1="${todayX}" y1="${top}" x2="${todayX}" y2="${bottom}"></line>
-          <text class="chart-today__label" x="${todayX}" y="17" text-anchor="middle">today</text>
           <polyline class="chart-steady" points="${pointList(past, point => point.steady)}"></polyline>
           <polyline class="chart-adjusted" points="${pointList(adjusted, point => point.adjusted)}"></polyline>
           <polyline class="chart-actual" points="${pointList(past, point => point.cumDone)}"></polyline>
-          ${markers}
           ${chartDayAxis(track, bottom, bottom + 20)}
         </svg>
       </div>`;
@@ -1631,11 +1633,11 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     // neither can disagree with the other. Percentages are rounded the same way
     // everywhere on the site (nearest whole).
     const paceScale = dialScale(s.activePace, 6);
-    const weekScale = dialScale(s.recent7, Math.max(28, s.recent7));
+    const recentScale = dialScale(s.recent3, Math.max(1, s.recent3));
     const doneScale = dialScale(s.odometer, totalUnits);
     const daysScale = dialScale(s.activeDays, calendarSpan);
     const pacePercent = s.requiredPerDay > 0 ? Math.round((s.activePace / s.requiredPerDay) * 100) : 0;
-    const weekPercent = s.rowsLeft > 0 ? Math.round((s.recent7 / s.rowsLeft) * 100) : 0;
+    const recentPercent = s.rowsLeft > 0 ? Math.round((s.recent3 / s.rowsLeft) * 100) : 0;
     const donePercent = Math.round(s.tripDone * 100);
     const daysPercent = Math.round(s.showUpRate * 100);
     // Said the same way on every dial: the rim band is range shading, never a
@@ -1657,15 +1659,15 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         })}
 
         ${gaugeDial({
-          label: "LAST 7 DAYS",
-          hint: `A raw count of units submitted ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}. Not a rate. The inner amber scale is that same count as a percentage of the ${s.rowsLeft} units still to do.`,
-          scale: weekScale,
-          secondary: { unit: `% OF ${s.rowsLeft} LEFT`, ticks: percentTicks(weekScale.max, s.rowsLeft) },
-          faceUnit: "UNITS / 7 DAYS",
-          readout: String(s.recent7),
-          readoutSub: `PREV 7: ${s.prior7}`,
+          label: "LAST 3 DAYS",
+          hint: `A raw count of units submitted ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}. Not a rate. The inner amber scale is that same count as a percentage of the ${s.rowsLeft} units still to do.`,
+          scale: recentScale,
+          secondary: { unit: `% OF ${s.rowsLeft} LEFT`, ticks: percentTicks(recentScale.max, s.rowsLeft) },
+          faceUnit: "UNITS / 3 DAYS",
+          readout: String(s.recent3),
+          readoutSub: `PREV 3: ${s.prior3}`,
           bandTo: 1,
-          ariaText: `${s.recent7} units submitted from ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}, on a dial reading 0 to ${weekScale.max} units. The seven days before that were ${s.prior7}. The inner amber percentage scale reads that week as ${weekPercent} percent of the ${s.rowsLeft} units still to do. ${BAND_TEXT}`
+          ariaText: `${s.recent3} units submitted from ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}, on a dial reading 0 to ${recentScale.max} units. The three days before that were ${s.prior3}. The inner amber percentage scale reads those three days as ${recentPercent} percent of the ${s.rowsLeft} units still to do. ${BAND_TEXT}`
         })}
 
         ${gaugeDial({
@@ -1677,7 +1679,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           readout: String(s.odometer),
           readoutSub: `${s.rowsLeft} LEFT`,
           bandTo: totalUnits / doneScale.max,
-          ariaText: `${s.odometer} of ${totalUnits} units submitted across both semesters, ${s.rowsLeft} still to do, on a dial reading 0 to ${doneScale.max} units. The inner amber percentage scale reads ${donePercent} percent of all ${totalUnits}. The thick band on the rim covers the ${s.odometer} you have done and the thin dashed band runs on to the ${totalUnits}th unit.`
+          outOfRangeFrom: totalUnits / doneScale.max,
+          ariaText: `${s.odometer} of ${totalUnits} units submitted across both semesters, ${s.rowsLeft} still to do, on a dial reading 0 to ${doneScale.max} units. The inner amber percentage scale reads ${donePercent} percent of all ${totalUnits}. The thick band on the rim covers the ${s.odometer} you have done and the thin dashed band runs on to the ${totalUnits}th unit. The neutral shaded rim after ${totalUnits} is outside the course total.`
         })}
 
         ${gaugeDial({
@@ -1697,8 +1700,14 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         ${s.odometer} units in ${s.activeDays} days · ${s.activePace.toFixed(2)} a day when you sit down · Aug 15 needs ${s.requiredPerDay.toFixed(2)}${s.fastEnough ? " — <strong>you are already fast enough</strong>" : ""}.
       </p>
 
-      ${perDayChart(track, perDay, s.requiredPerDay, series)}
-      ${cumulativeChart(track)}
+      <div class="chart-pair">
+        ${chartLegend(s, series, track)}
+        <div class="chart-pair__plots" style="--today-left: ${(chartX(track, Math.max(0, track.points.findIndex(point => point.date === track.today))) / CHART.width * 100).toFixed(4)}%">
+          <div class="chart-today-span" aria-hidden="true"><span>today</span></div>
+          ${perDayChart(track, perDay, s.requiredPerDay, series)}
+          ${cumulativeChart(track)}
+        </div>
+      </div>
       ${openTimePanel(series)}`;
   }
 
