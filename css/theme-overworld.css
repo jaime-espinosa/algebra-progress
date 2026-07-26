@@ -332,28 +332,38 @@ meter,
    he actually does them. Road already walked is solid-bright; road ahead is the
    same road, quieter — never a different or barred road, because he is not
    blocked from any of it, he simply has not got there yet. */
+/* The casing: a dark stroke under every leg, so the road stays readable where it
+   crosses pale sand, stone and snow instead of disappearing into them. */
+.wm-route__casing {
+  fill: none;
+  stroke: #14202b;
+  stroke-width: 9;
+  stroke-linecap: round;
+  opacity: .40;
+}
+
 .wm-route {
   fill: none;
-  stroke: #e8c887;
-  stroke-width: 3;
+  stroke: #e4c78d;
+  stroke-width: 5;
   stroke-linecap: round;
-  stroke-dasharray: 2 9;
-  opacity: .42;
+  stroke-dasharray: 3 10;
+  opacity: .62;
 }
 
 .wm-route.is-walked {
   stroke: #ffd67a;
-  stroke-dasharray: 5 7;
-  opacity: .85;
+  stroke-dasharray: 7 8;
+  opacity: 1;
 }
 
 /* The sea leg between the two semesters: a longer dash, because it is a crossing
    rather than a walk. */
 .wm-route.is-sea {
-  stroke: #a9d2ec;
-  stroke-width: 3;
-  stroke-dasharray: 10 12;
-  opacity: .45;
+  stroke: #bfe0f4;
+  stroke-width: 5;
+  stroke-dasharray: 12 14;
+  opacity: .7;
 }
 
 /* A node on the route: the focusable control standing on its own section's
