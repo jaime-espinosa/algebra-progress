@@ -1784,6 +1784,16 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           <span class="lesson-library__name" data-slug="${escapeHtml(entry.slug)}">${escapeHtml(entry.name)}</span>
           ${mark ? `<span class="lesson-library__mark">${mark}</span>` : ""}
         </li>`;
+      }).join("")}</ol>
+      <h4 class="lesson-library__heading">Code labs</h4>
+      <ol class="lesson-library">${LAB_CATALOG.map(lab => {
+        const slug = lessonSlug(lab.semesterId, lab.number);
+        const state = slug === currentSlug ? "current" : "ahead";
+        return `<li class="lesson-library__item lesson-library__item--${state}">
+          <span class="lesson-library__id">${escapeHtml(lab.semesterId.toUpperCase())} ${String(lab.number).padStart(2, "0")}</span>
+          <span class="lesson-library__name" data-lab="${escapeHtml(lab.file)}">${escapeHtml(lab.name)}</span>
+          ${state === "current" ? `<span class="lesson-library__mark">this section</span>` : ""}
+        </li>`;
       }).join("")}</ol>`;
     linkExistingLessons();
   }
