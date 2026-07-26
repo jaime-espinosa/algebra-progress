@@ -832,7 +832,7 @@ export function mapLandmarks(data) {
   return landmarks;
 }
 
-// --- Which denominator the trophy wall leads with ---------------------------
+// --- Which denominator the world map leads with -----------------------------
 // A "lie that we are past 50%" was requested, so the whole-course figure would
 // read as encouraging, and was DECLINED: nothing on this page may be a number he
 // cannot check against his own gradebook. This is what replaced it.
@@ -863,7 +863,7 @@ export function semesterFocus(data) {
   // counts gradebook rows still not submitted — the unit the quest board, the
   // effort dials and the 71-left figure all use, and the exact condition that
   // fires photo-skin-studio. They differ (6 against 5 today) and neither is wrong.
-  // The screen must say which one it is showing; see app.js renderTrophy.
+  // The screen must say which one it is showing; see app.js renderWorldMap.
   const rows = semester.activities ?? [];
   const rowsLeft = rows.filter((item) => item.state === "not_started").length;
   return {
