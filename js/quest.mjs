@@ -623,6 +623,215 @@ export function openTimeSeries(activity, today) {
   };
 }
 
+// --- World map --------------------------------------------------------------
+// The syllabus as terrain: two worlds (the two semesters), each divided into
+// regions (the syllabus sections), each region built out of blocks (gradebook
+// rows).
+//
+// THE UNIT IS THE GRADEBOOK ROW, everywhere in here, with no exceptions. That is
+// the same unit the quest board schedules, the effort dials count, the calendar
+// tiles and the "N units left" line all use, so every count on the map adds up
+// against every other count on the page. It is deliberately NOT allDone/allTotal,
+// which count LMS *activities* — a different, larger list (105 against 67 in
+// Semester 1). Both are true; only one can be on the map, because two totals a
+// subtraction apart on one screen read as an arithmetic error no matter how
+// carefully each is labelled. If you ever put an activities figure on the map,
+// it has to say the word "activities" out loud, next to the number.
+//
+// Region order is the route order the rest of the site already uses: Semester 1
+// before Semester 2, section number ascending, rowIndex ascending inside a
+// section. `here` is the region holding the single next unit — the same row the
+// quest board puts at the top.
+
+const WORLD_SEQUENCE = ["sem1", "sem2"];
+const ORIENTATION_REGION_NAME = "Orientation";
+
+function regionKey(worldId, number) {
+  return `${worldId}:${number}`;
+}
+
+function orderedSemesters(data) {
+  const semesters = (data.semesters ?? []).map((semester, inputIndex) => ({
+    semester,
+    inputIndex,
+    rank: WORLD_SEQUENCE.indexOf(semester.id) === -1
+      ? WORLD_SEQUENCE.length
+      : WORLD_SEQUENCE.indexOf(semester.id),
+  }));
+  semesters.sort((left, right) =>
+    left.rank - right.rank || left.inputIndex - right.inputIndex);
+  return semesters.map(({ semester }) => semester);
+}
+
+export function worldMap(data) {
+  const nextRow = remainingRows(data)[0] ?? null;
+  const nextId = nextRow?.activity?.id ?? null;
+  const nextWorldId = nextRow?.semesterId ?? null;
+
+  const worlds = orderedSemesters(data).map((semester, worldIndex) => {
+    const activities = semester.activities ?? [];
+    const sections = semester.sections ?? [];
+    const numbers = [...new Set(activities
+      .map((item) => Number(item.sectionNumber) || 0))]
+      .sort((left, right) => left - right);
+
+    const regions = numbers.map((number) => {
+      const units = activities
+        .filter((item) => (Number(item.sectionNumber) || 0) === number)
+        .slice()
+        .sort((left, right) => (left.rowIndex ?? 0) - (right.rowIndex ?? 0))
+        .map((item) => ({
+          id: item.id,
+          title: item.title,
+          state: item.state,
+          done: item.state !== "not_started",
+          score: item.score ?? null,
+          submittedDate: typeof item.submittedDate === "string" ? item.submittedDate : null,
+          isNext: item.id === nextId,
+        }));
+      const unitsDone = units.filter((unit) => unit.done).length;
+      const unitsTotal = units.length;
+      const unitsLeft = unitsTotal - unitsDone;
+      const holdsNext = semester.id === nextWorldId && units.some((unit) => unit.isNext);
+      const section = sections.find((entry) => entry.number === number) ?? null;
+      // Every region with rows is drawn. A region with no rows is not drawn at
+      // all rather than drawn empty, so a failed scrape cannot paint the map as
+      // a row of finished-looking blanks.
+      return {
+        key: regionKey(semester.id, number),
+        worldId: semester.id,
+        number,
+        name: section?.name
+          || activities.find((item) => (Number(item.sectionNumber) || 0) === number)?.sectionName
+          || (number === 0 ? ORIENTATION_REGION_NAME : `Section ${number}`),
+        units,
+        unitsTotal,
+        unitsDone,
+        unitsLeft,
+        // settled — every row in it submitted. here — it holds the next row.
+        // started — some rows in, not the current one. ahead — not visited yet,
+        // which is a neutral statement of fact and never a shortfall.
+        status: unitsTotal > 0 && unitsLeft === 0
+          ? "settled"
+          : holdsNext
+            ? "here"
+            : unitsDone > 0 ? "started" : "ahead",
+        // The section grade the LMS prints for that section, when there is one.
+        // Semester 2 has none yet, and null renders as nothing rather than 0%.
+        grade: Number.isFinite(section?.percent) ? section.percent : null,
+        letter: typeof section?.letter === "string" ? section.letter : null,
+        // Section 0 is orientation; there is no mini-lesson numbered 00.
+        lessonSlug: number > 0
+          ? `${semester.id}-${String(number).padStart(2, "0")}`
+          : null,
+      };
+    }).filter((region) => region.unitsTotal > 0);
+
+    const unitsDone = regions.reduce((sum, region) => sum + region.unitsDone, 0);
+    const unitsTotal = regions.reduce((sum, region) => sum + region.unitsTotal, 0);
+    return {
+      id: semester.id,
+      index: worldIndex + 1,
+      name: semester.name ?? "",
+      regions,
+      unitsDone,
+      unitsTotal,
+      unitsLeft: unitsTotal - unitsDone,
+      // Rounded for display only; both operands travel with it and are printed
+      // beside it, so the rounding is never the only thing on screen.
+      percent: unitsTotal > 0 ? Math.round((unitsDone / unitsTotal) * 100) : 0,
+      sealed: unitsTotal > 0 && unitsDone === unitsTotal,
+      regionsSettled: regions.filter((region) => region.status === "settled").length,
+      regionsTotal: regions.length,
+      holdsNext: semester.id === nextWorldId,
+      grade: Number.isFinite(semester.percent) ? semester.percent : null,
+      letter: typeof semester.letter === "string" ? semester.letter : null,
+    };
+  }).filter((world) => world.regionsTotal > 0);
+
+  const totalDone = worlds.reduce((sum, world) => sum + world.unitsDone, 0);
+  const totalUnits = worlds.reduce((sum, world) => sum + world.unitsTotal, 0);
+  return {
+    worlds,
+    totalUnits,
+    totalDone,
+    totalLeft: totalUnits - totalDone,
+    next: nextRow
+      ? {
+          id: nextId,
+          title: nextRow.activity.title,
+          worldId: nextWorldId,
+          regionNumber: Number(nextRow.activity.sectionNumber) || 0,
+          regionKey: regionKey(nextWorldId, Number(nextRow.activity.sectionNumber) || 0),
+        }
+      : null,
+  };
+}
+
+// A copy of `data` with every row inside the given regions marked submitted.
+// Used only to ask the real unlock gate where a reward would land; nothing
+// derived from it is ever displayed as fact.
+function withRegionsFinished(data, keys) {
+  return {
+    ...data,
+    semesters: (data.semesters ?? []).map((semester) => ({
+      ...semester,
+      activities: (semester.activities ?? []).map((item) =>
+        keys.has(regionKey(semester.id, Number(item.sectionNumber) || 0))
+          && item.state === "not_started"
+          ? { ...item, state: "graded" }
+          : item),
+    })),
+  };
+}
+
+// Where each vault artifact stands on the map.
+//
+// The anchor is not a hand-written table — those drift, and this project has
+// been burned twice by a second copy of a list. It is found by asking the real
+// unlock gate: walk the regions in route order, mark each one finished in a
+// throwaway copy of the data, and record the first region at which
+// unlockConditions() flips the artifact on. So the landmark sits exactly where
+// the rule says it will, and it cannot disagree with the rule, because it IS
+// the rule.
+//
+// Three outcomes:
+//   earned: true                  — already his; drawn standing, not promised.
+//   regionKey: "sem2:3"           — unlocks when that region is settled.
+//   regionKey: null, earned:false — no amount of remaining rows turns it on,
+//                                   because the rule is keyed on a grade or on
+//                                   the LMS activity count rather than on rows.
+//                                   Left unplaced rather than pinned somewhere
+//                                   false.
+export function mapLandmarks(data) {
+  const now = unlockConditions(data);
+  const landmarks = UNLOCK_IDS
+    .filter((id) => now[id])
+    .map((id) => ({ id, earned: true, worldId: null, regionNumber: null, regionKey: null }));
+
+  const pending = UNLOCK_IDS.filter((id) => !now[id]);
+  const finished = new Set();
+  for (const region of worldMap(data).worlds.flatMap((world) => world.regions)) {
+    if (pending.length === 0) break;
+    finished.add(region.key);
+    const conditions = unlockConditions(withRegionsFinished(data, finished));
+    for (const id of pending.filter((candidate) => conditions[candidate])) {
+      landmarks.push({
+        id,
+        earned: false,
+        worldId: region.worldId,
+        regionNumber: region.number,
+        regionKey: region.key,
+      });
+      pending.splice(pending.indexOf(id), 1);
+    }
+  }
+  for (const id of pending) {
+    landmarks.push({ id, earned: false, worldId: null, regionNumber: null, regionKey: null });
+  }
+  return landmarks;
+}
+
 // --- Which denominator the trophy wall leads with ---------------------------
 // A "lie that we are past 50%" was requested, so the whole-course figure would
 // read as encouraging, and was DECLINED: nothing on this page may be a number he
