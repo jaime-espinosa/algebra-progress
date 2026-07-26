@@ -1131,7 +1131,29 @@ const LANDMASS_PLACEMENT = [
  * SVG user units, and one entry per territory carrying the SAME counts the
  * region object has. The renderer draws this and adds no facts of its own.
  */
+// One-entry memo. The generator is pure, the page draws the same world two or
+// three times over a session (first paint, a fresh scrape, a theme switch), and
+// regenerating costs tens of milliseconds on the machine this has to be smooth
+// on. Keyed on the only inputs that can change the picture: the region ids and
+// their counts. Anything else changing means a genuinely different world.
+let terrainCache = null;
+
+function terrainKey(map, options) {
+  const parts = (map?.worlds ?? []).flatMap((world) => world.regions.map((region) =>
+    `${region.key}:${region.unitsTotal}:${region.unitsDone}:${region.col}:${region.row}`));
+  return `${options.cols ?? ""}|${options.rows ?? ""}|${options.cell ?? ""}|${options.seed ?? ""}|${
+    map?.grid?.cols ?? ""}|${parts.join(",")}`;
+}
+
 export function worldTerrain(map, options = {}) {
+  const cacheKey = terrainKey(map, options);
+  if (terrainCache && terrainCache.key === cacheKey) return terrainCache.value;
+  const value = buildTerrain(map, options);
+  terrainCache = { key: cacheKey, value };
+  return value;
+}
+
+function buildTerrain(map, options) {
   const cols = options.cols ?? TERRAIN_COLS;
   const rows = options.rows ?? TERRAIN_ROWS;
   const cell = options.cell ?? TERRAIN_CELL;
@@ -1211,10 +1233,10 @@ export function worldTerrain(map, options = {}) {
       // coastline. Warping the input warps the borders and the coast together,
       // so they agree with each other.
       const wx = gx + 0.5
-        + (fbm(gx * 0.052, gy * 0.049, seed + 401) - 0.5) * 22
+        + (fbm(gx * 0.052, gy * 0.049, seed + 401, 2) - 0.5) * 22
         + (fbm(gx * 0.15, gy * 0.15, seed + 613, 2) - 0.5) * 6;
       const wy = gy + 0.5
-        + (fbm(gx * 0.047 + 11.3, gy * 0.055 + 5.7, seed + 557) - 0.5) * 22
+        + (fbm(gx * 0.047 + 11.3, gy * 0.055 + 5.7, seed + 557, 2) - 0.5) * 22
         + (fbm(gx * 0.15 + 3.1, gy * 0.15 + 9.4, seed + 787, 2) - 0.5) * 6;
       let best = Infinity;
       let bestIndex = -1;
