@@ -935,3 +935,65 @@ export function semesterFocus(data) {
     letter: typeof semester.letter === "string" ? semester.letter : null,
   };
 }
+
+// --- Dial scales -----------------------------------------------------------
+// The gauges are analog now: numbered major ticks around the arc, unnumbered
+// minors between them, and a second percentage scale on a tighter inner arc.
+// Every one of those positions is arithmetic on a real value, so the geometry
+// lives here with the rest of the derived numbers rather than in the renderer.
+//
+// Nothing in here invents a quantity. `dialScale` only picks a round full-scale
+// value at or above what it is given, and `percentTicks` only expresses a value
+// as a share of a basis the page already shows.
+
+const DIAL_STEPS = [0.25, 0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100, 200, 500];
+
+// Round `raw` up to a full-scale value made of round steps, aiming for four to
+// seven numbered ticks. Returns the scale plus every tick position as a
+// fraction of the arc, so the renderer never divides anything itself.
+export function dialScale(value, raw, { minors = 4 } = {}) {
+  const wanted = Math.max(raw, value, 1);
+  const step = DIAL_STEPS.find((candidate) => Math.ceil(wanted / candidate) <= 7)
+    ?? DIAL_STEPS[DIAL_STEPS.length - 1];
+  const majorCount = Math.max(1, Math.ceil(Number((wanted / step).toFixed(6))));
+  const max = step * majorCount;
+  const decimals = step < 1 ? 1 : 0;
+  const majors = [];
+  for (let index = 0; index <= majorCount; index += 1) {
+    const at = index / majorCount;
+    majors.push({ at, value: step * index, text: (step * index).toFixed(decimals) });
+  }
+  const minorAts = [];
+  for (let index = 0; index < majorCount; index += 1) {
+    for (let sub = 1; sub < minors; sub += 1) {
+      minorAts.push((index + sub / minors) / majorCount);
+    }
+  }
+  return {
+    max,
+    step,
+    majors,
+    minors: minorAts,
+    fraction: Math.max(0, Math.min(1, value / max)),
+  };
+}
+
+const PERCENT_STEPS = [5, 10, 20, 25, 50, 100];
+
+// The inner scale: the same reading expressed as a percentage of `basis`.
+// A percent p sits at value p/100 * basis, i.e. arc fraction that value / max.
+// Ticks past the end of the arc are dropped, which is why the inner scale stops
+// short of the outer one exactly like the reference dial's second scale does.
+export function percentTicks(scaleMax, basis, { maxTicks = 6 } = {}) {
+  if (!(basis > 0) || !(scaleMax > 0)) return [];
+  const fullPercent = (scaleMax / basis) * 100;
+  const step = PERCENT_STEPS.find((candidate) => Math.floor(fullPercent / candidate) + 1 <= maxTicks)
+    ?? PERCENT_STEPS[PERCENT_STEPS.length - 1];
+  const ticks = [];
+  for (let percent = 0; percent <= fullPercent + 1e-9; percent += step) {
+    const at = ((percent / 100) * basis) / scaleMax;
+    if (at > 1 + 1e-9) break;
+    ticks.push({ at: Math.min(1, at), percent, text: String(percent) });
+  }
+  return ticks;
+}

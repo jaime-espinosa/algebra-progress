@@ -339,12 +339,19 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
   };
 
   const WORLD_NUMERAL = ["", "I", "II", "III"];
+  // How far one arrow-key press moves the map, in pixels of the canvas.
+  const PAN_STEP = 96;
+  // Pan state for the level-1 canvas. Kept out of the DOM so a redraw on a new
+  // scrape does not throw him back to the corner he started in.
+  let panX = 0;
+  let panY = 0;
+  let zoomedRegion = null;
 
   // A region drawn as blocks: one block per gradebook row, filled if submitted.
   // Blocky geometry and hard edges only — no images, no canvas.
   function regionBlocks(region, revealFrom) {
     return region.units.map((unit, index) => {
-      const classes = ["wm-block"];
+      const classes = ["wm-block", unit.kind === "battle" ? "is-battle" : "is-training"];
       if (unit.done) classes.push("is-placed");
       if (unit.isNext) classes.push("is-next");
       if (unit.done && revealFrom !== null && index >= revealFrom) classes.push("reveal-hidden");
@@ -379,26 +386,30 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       ? `<span class="wm-region__landmarks">${landmarksHere
           .map(entry => landmarkGlyph(entry.artifact, false)).join("")}</span>`
       : "";
-    const label = `${region.name}, ${region.unitsDone} of ${region.unitsTotal} units placed, ${state}`;
+    // Training and battles are the two halves of the same row list, so they add
+    // back up to the unit count printed beside them. Nothing new is counted.
+    const split = `${region.trainingDone}/${region.trainingTotal} training · ${
+      region.battleCleared}/${region.battleTotal} battles`;
+    const label = `${region.name}, ${region.unitsDone} of ${region.unitsTotal} units placed, ${state}. Zoom in.`;
     return `
       <button type="button" class="wm-region is-${region.status}" data-region="${escapeHtml(region.key)}"
-        aria-expanded="false" aria-controls="wm-detail-${escapeHtml(region.worldId)}"
+        style="grid-column:${region.col + 2};grid-row:${region.row + 1}"
         aria-label="${escapeHtml(label)}">
         <span class="wm-region__sky" aria-hidden="true">${marker}${flags}</span>
         <span class="wm-region__id numeric" aria-hidden="true">${String(region.number).padStart(2, "0")}</span>
         <span class="wm-region__name">${escapeHtml(region.name)}</span>
         <span class="wm-region__blocks" aria-hidden="true">${regionBlocks(region, revealFrom)}</span>
         <span class="wm-region__count numeric" aria-hidden="true">${region.unitsDone}/${region.unitsTotal} units</span>
+        <span class="wm-region__split quiet numeric" aria-hidden="true">${escapeHtml(split)}</span>
         <span class="wm-region__state" aria-hidden="true">${escapeHtml(state)}</span>
         ${grade}
       </button>`;
   }
 
-  function renderWorld(world, landmarks, isNewSnapshot, previousDoneByRegion) {
+  // The band label for a semester, sitting in the left gutter of the map and
+  // spanning exactly the rows that semester's regions occupy.
+  function renderWorldBand(world, landmarks) {
     const numeral = WORLD_NUMERAL[world.index] ?? String(world.index);
-    // Semester 1 keeps the line the trophy wall led with; Semester 2 gets the
-    // one true thing about it — it is open, and it is new ground, which is an
-    // invitation rather than a backlog.
     const eyebrow = world.sealed
       ? `WORLD ${numeral} // SEALED`
       : world.holdsNext
@@ -413,56 +424,58 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       ? ""
       : `<span class="quiet numeric">Grade so far ${world.grade.toFixed(1)}%${
           world.letter ? ` · ${escapeHtml(world.letter)}` : ""}</span>`;
-    const byRegion = new Map();
-    for (const entry of landmarks) {
-      if (!entry.regionKey) continue;
-      if (!byRegion.has(entry.regionKey)) byRegion.set(entry.regionKey, []);
-      byRegion.get(entry.regionKey).push(entry);
-    }
     const standing = landmarks.filter(entry => entry.earned);
     return `
-      <section class="wm-world" data-world="${escapeHtml(world.id)}">
-        <header class="wm-world__head">
-          <span class="eyebrow">${escapeHtml(eyebrow)}</span>
-          <h3 class="wm-world__name">${escapeHtml(world.name)}</h3>
-          <strong class="big-number numeric">${world.unitsDone}<span class="wm-world__of"> of ${world.unitsTotal} units placed</span></strong>
-          <span class="numeric">${world.percent}% · ${world.regionsSettled} of ${world.regionsTotal} regions settled</span>
-          <strong class="wm-world__near">${near}</strong>
-          ${grade}
-          ${standing.length ? `<span class="wm-world__standing quiet">${standing.length} landmark${
-            standing.length === 1 ? "" : "s"} already standing here: ${escapeHtml(
-              standing.map(entry => entry.artifact.name).join(", "))}</span>` : ""}
-        </header>
-        <div class="wm-grid">${world.regions.map(region => renderRegionCard(
-          region,
-          byRegion.get(region.key) ?? [],
-          isNewSnapshot,
-          previousDoneByRegion.get(region.key) ?? 0
-        )).join("")}</div>
-        <div class="wm-detail" id="wm-detail-${escapeHtml(world.id)}" hidden></div>
-      </section>`;
+      <div class="wm-band" style="grid-column:1;grid-row:${world.rowStart + 1} / span ${world.rowSpan}">
+        <span class="eyebrow">${escapeHtml(eyebrow)}</span>
+        <h3 class="wm-world__name">${escapeHtml(world.name)}</h3>
+        <strong class="big-number numeric">${world.unitsDone}<span class="wm-world__of"> of ${world.unitsTotal} units placed</span></strong>
+        <span class="numeric">${world.percent}% · ${world.regionsSettled} of ${world.regionsTotal} regions settled</span>
+        <strong class="wm-world__near">${near}</strong>
+        ${grade}
+        ${standing.length ? `<span class="wm-world__standing quiet">${standing.length} landmark${
+          standing.length === 1 ? "" : "s"} already standing here: ${escapeHtml(
+            standing.map(entry => entry.artifact.name).join(", "))}</span>` : ""}
+      </div>`;
   }
 
-  // What is inside a region, opened on click. Three things: the units themselves,
-  // the mini-lesson for that section if the file is really there, and the games
-  // pinned to it in games.json. Nothing here is computed — the units come
-  // straight off worldMap(), which counts rows in data.json.
-  function renderRegionDetail(region, world, landmarksHere) {
-    const units = region.units.map(unit => {
-      const score = unit.done && unit.score && Number.isFinite(unit.score.percent)
-        ? `<span class="wm-unit__score numeric quiet">${unit.score.percent}%</span>`
-        : "";
-      const when = unit.submittedDate
-        ? `<span class="wm-unit__when quiet numeric">${escapeHtml(formatDay(unit.submittedDate))}</span>`
-        : "";
-      const mark = unit.done ? "placed" : (unit.isNext ? "next" : "");
-      return `<li class="wm-unit${unit.done ? " is-placed" : ""}${unit.isNext ? " is-next" : ""}">
-        <span class="wm-unit__block" aria-hidden="true"></span>
-        <span class="wm-unit__title">${escapeHtml(unit.title)}</span>
+  // ---- Level 2: inside one region ------------------------------------------
+  // Same rows, told as places rather than as a gradebook. A row whose title says
+  // quiz or test is a battle; everything else is training. That split is made in
+  // quest.mjs (activityKind) and tested, so this only draws it.
+  //
+  // A battle he has finished is CLEARED. A battle ahead is WAITING FOR YOU. There
+  // is no wording anywhere for a battle he skipped, because there is no count of
+  // missed work on this page and there is not going to be one.
+  function unitNode(unit, index) {
+    const classes = ["wm-node", unit.kind === "battle" ? "is-battle" : "is-training"];
+    if (unit.done) classes.push("is-done");
+    if (unit.isNext) classes.push("is-next");
+    const state = unit.kind === "battle"
+      ? (unit.done ? "cleared" : unit.isNext ? "next battle" : "waiting for you")
+      : (unit.done ? "trained" : unit.isNext ? "next" : "not yet");
+    const score = unit.done && unit.score && Number.isFinite(unit.score.percent)
+      ? `<span class="wm-node__score numeric quiet">${unit.score.percent}%</span>`
+      : "";
+    const when = unit.submittedDate
+      ? `<span class="wm-node__when quiet numeric">${escapeHtml(formatDay(unit.submittedDate))}</span>`
+      : "";
+    return `
+      <li class="${classes.join(" ")}">
+        <span class="wm-node__glyph" aria-hidden="true"></span>
+        <span class="wm-node__step numeric quiet" aria-hidden="true">${index + 1}</span>
+        <span class="wm-node__title">${escapeHtml(unit.title)}</span>
+        <span class="wm-node__state">${escapeHtml(state)}</span>
         ${score}${when}
-        ${mark ? `<span class="wm-unit__mark">${mark}</span>` : ""}
       </li>`;
-    }).join("");
+  }
+
+  function renderRegionMap(region, world, landmarksHere) {
+    const training = region.units.filter(unit => unit.kind === "training");
+    const battles = region.units.filter(unit => unit.kind === "battle");
+    const list = units => units.length
+      ? `<ol class="wm-nodes">${units.map((unit, index) => unitNode(unit, index)).join("")}</ol>`
+      : `<p class="quiet">Nothing of this kind in this region.</p>`;
 
     const games = regionGames(region);
     const gamesHtml = games.length
@@ -482,27 +495,33 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       : `<p class="quiet">Orientation — there is no mini-lesson for this one.</p>`;
 
     return `
-      <div class="wm-detail__inner">
-        <div class="wm-detail__head">
-          <span class="eyebrow">${escapeHtml(world.name)} // REGION ${String(region.number).padStart(2, "0")}</span>
-          <h4>${escapeHtml(region.name)}</h4>
-          <span class="numeric">${region.unitsDone} of ${region.unitsTotal} units placed${
-            region.grade === null ? "" : ` · section grade ${region.grade.toFixed(1)}%`}</span>
-          <button type="button" class="wm-detail__close">close</button>
+      <div class="wm-zoom__head">
+        <button type="button" class="wm-back" data-wm-back>← back to the world map</button>
+        <span class="eyebrow">${escapeHtml(world.name)} // REGION ${String(region.number).padStart(2, "0")}</span>
+        <h3 id="wm-zoom-heading">${escapeHtml(region.name)}</h3>
+        <span class="numeric">${region.unitsDone} of ${region.unitsTotal} units placed · ${
+          region.trainingDone}/${region.trainingTotal} training · ${
+          region.battleCleared}/${region.battleTotal} battles${
+          region.grade === null ? "" : ` · section grade ${region.grade.toFixed(1)}%`}</span>
+      </div>
+      <div class="wm-zoom__cols">
+        <div class="wm-zoom__col">
+          <h4 class="wm-zoom__label">Training <span class="quiet numeric">${
+            region.trainingDone}/${region.trainingTotal}</span></h4>
+          ${list(training)}
         </div>
-        <div class="wm-detail__cols">
-          <div class="wm-detail__col">
-            <h5>Units in this region</h5>
-            <ol class="wm-units">${units}</ol>
-          </div>
-          <div class="wm-detail__col">
-            <h5>Mini-lesson</h5>
-            ${lesson}
-            <h5>Landmarks</h5>
-            ${landmarksHtml}
-            <h5>Games and puzzles</h5>
-            ${gamesHtml}
-          </div>
+        <div class="wm-zoom__col">
+          <h4 class="wm-zoom__label">Battles <span class="quiet numeric">${
+            region.battleCleared}/${region.battleTotal}</span></h4>
+          ${list(battles)}
+        </div>
+        <div class="wm-zoom__col">
+          <h4 class="wm-zoom__label">Mini-lesson</h4>
+          ${lesson}
+          <h4 class="wm-zoom__label">Landmarks</h4>
+          ${landmarksHtml}
+          <h4 class="wm-zoom__label">Games and puzzles</h4>
+          ${gamesHtml}
         </div>
       </div>`;
   }
@@ -517,41 +536,120 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       .flatMap(section => section.items);
   }
 
+  function findRegion(key) {
+    return currentMap?.worlds.flatMap(world => world.regions).find(item => item.key === key) ?? null;
+  }
+
   function openRegion(key) {
-    const map = currentMap;
-    if (!map) return;
-    const region = map.worlds.flatMap(world => world.regions).find(item => item.key === key);
+    const region = findRegion(key);
     if (!region) return;
-    const world = map.worlds.find(item => item.id === region.worldId);
-    const panel = document.querySelector(`#wm-detail-${region.worldId}`);
-    if (!panel) return;
-    const button = document.querySelector(`.wm-region[data-region="${CSS.escape(key)}"]`);
-    const alreadyOpen = panel.dataset.region === key && !panel.hidden;
+    const world = currentMap.worlds.find(item => item.id === region.worldId);
+    const zoom = document.querySelector("#wm-zoom");
+    const viewport = document.querySelector("#wm-viewport");
+    if (!zoom || !viewport) return;
+    zoom.innerHTML = renderRegionMap(region, world,
+      currentLandmarks.filter(entry => entry.regionKey === key));
+    zoom.hidden = false;
+    zoom.dataset.region = key;
+    viewport.hidden = true;
+    zoomedRegion = key;
+    document.querySelector("#worldmap")?.classList.add("is-zoomed");
+    linkExistingLessons(zoom);
+    zoom.querySelector(".wm-back")?.focus();
+  }
 
-    document.querySelectorAll(".wm-region[aria-expanded='true']")
-      .forEach(node => node.setAttribute("aria-expanded", "false"));
-    document.querySelectorAll(".wm-detail").forEach(node => {
-      if (node !== panel) { node.hidden = true; node.textContent = ""; delete node.dataset.region; }
+  function closeRegion() {
+    const zoom = document.querySelector("#wm-zoom");
+    const viewport = document.querySelector("#wm-viewport");
+    const key = zoomedRegion;
+    if (!zoom || !viewport) return;
+    zoom.hidden = true;
+    zoom.textContent = "";
+    delete zoom.dataset.region;
+    viewport.hidden = false;
+    zoomedRegion = null;
+    document.querySelector("#worldmap")?.classList.remove("is-zoomed");
+    if (key) document.querySelector(`.wm-region[data-region="${CSS.escape(key)}"]`)?.focus();
+  }
+
+  // ---- Panning the level-1 map ---------------------------------------------
+  // transform only, so a 2018 machine moves layers rather than reflowing the
+  // page. The wheel is deliberately left alone: scrolling over the map scrolls
+  // the page, which is what every other panel does and is the one behaviour that
+  // must not surprise him.
+  function clampPan() {
+    const viewport = document.querySelector("#wm-viewport");
+    const canvas = document.querySelector("#wm-canvas");
+    if (!viewport || !canvas) return;
+    const slackX = Math.max(0, canvas.scrollWidth - viewport.clientWidth);
+    const slackY = Math.max(0, canvas.scrollHeight - viewport.clientHeight);
+    panX = Math.min(0, Math.max(-slackX, panX));
+    panY = Math.min(0, Math.max(-slackY, panY));
+    canvas.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
+  }
+
+  function panBy(dx, dy) {
+    panX += dx;
+    panY += dy;
+    clampPan();
+  }
+
+  function wireViewport() {
+    const viewport = document.querySelector("#wm-viewport");
+    if (!viewport || viewport.dataset.wired === "1") return;
+    viewport.dataset.wired = "1";
+
+    let dragging = false;
+    let originX = 0;
+    let originY = 0;
+    let startX = 0;
+    let startY = 0;
+    let moved = 0;
+
+    viewport.addEventListener("pointerdown", event => {
+      if (event.button !== 0) return;
+      dragging = true;
+      moved = 0;
+      originX = event.clientX;
+      originY = event.clientY;
+      startX = panX;
+      startY = panY;
+      viewport.setPointerCapture(event.pointerId);
+      viewport.classList.add("is-dragging");
     });
+    viewport.addEventListener("pointermove", event => {
+      if (!dragging) return;
+      const dx = event.clientX - originX;
+      const dy = event.clientY - originY;
+      moved = Math.max(moved, Math.abs(dx) + Math.abs(dy));
+      panX = startX + dx;
+      panY = startY + dy;
+      clampPan();
+    });
+    const endDrag = event => {
+      if (!dragging) return;
+      dragging = false;
+      viewport.classList.remove("is-dragging");
+      try { viewport.releasePointerCapture(event.pointerId); } catch { /* already gone */ }
+      // A drag is not a click: without this, pushing the map sideways by
+      // grabbing a chunk would zoom into whatever was under the finger.
+      if (moved > 6) viewport.dataset.suppressClick = "1";
+    };
+    viewport.addEventListener("pointerup", endDrag);
+    viewport.addEventListener("pointercancel", endDrag);
 
-    if (alreadyOpen) {
-      panel.hidden = true;
-      panel.textContent = "";
-      delete panel.dataset.region;
-      return;
-    }
-    const landmarksHere = currentLandmarks.filter(entry => entry.regionKey === key);
-    panel.innerHTML = renderRegionDetail(region, world, landmarksHere);
-    panel.hidden = false;
-    panel.dataset.region = key;
-    button?.setAttribute("aria-expanded", "true");
-    linkExistingLessons(panel);
-    panel.querySelector(".wm-detail__close")?.addEventListener("click", () => {
-      panel.hidden = true;
-      panel.textContent = "";
-      delete panel.dataset.region;
-      button?.setAttribute("aria-expanded", "false");
-      button?.focus();
+    // Arrow keys pan. Only the arrows are swallowed, and only when the map
+    // itself has focus, so Tab and page scrolling are untouched.
+    viewport.addEventListener("keydown", event => {
+      const steps = {
+        ArrowLeft: [PAN_STEP, 0], ArrowRight: [-PAN_STEP, 0],
+        ArrowUp: [0, PAN_STEP], ArrowDown: [0, -PAN_STEP]
+      };
+      const step = steps[event.key];
+      if (!step) return;
+      if (event.target.closest(".wm-region")) return;
+      event.preventDefault();
+      panBy(step[0], step[1]);
     });
   }
 
@@ -578,26 +676,47 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       }
     }
 
-    const openKey = document.querySelector(".wm-detail:not([hidden])")?.dataset.region ?? null;
-    const worldLandmarks = worldId => currentLandmarks.filter(entry =>
+    const openKey = zoomedRegion;
+    const landmarksFor = worldId => currentLandmarks.filter(entry =>
       entry.worldId === worldId || (entry.earned && worldId === map.worlds[0]?.id));
+    const regions = map.worlds.flatMap(world => world.regions);
+    const byRegion = new Map();
+    for (const entry of currentLandmarks) {
+      if (!entry.regionKey) continue;
+      if (!byRegion.has(entry.regionKey)) byRegion.set(entry.regionKey, []);
+      byRegion.get(entry.regionKey).push(entry);
+    }
 
     document.querySelector("#worldmap-content").innerHTML = map.worlds.length
       ? `
-      <p class="wm-intro">Every block is one unit from the gradebook. ${map.totalDone} of
-        ${map.totalUnits} placed across both worlds — the same ${map.totalDone} the dials count.
-        Click a region to see what is in it.</p>
-      ${map.worlds.map(world => renderWorld(
-          world, worldLandmarks(world.id), isNewSnapshot, previousDoneByRegion)).join("")}
+      <p class="wm-intro">The whole of Algebra I as one place. Every block is one unit from the
+        gradebook — ${map.totalDone} of ${map.totalUnits} placed, the same ${map.totalDone} the
+        dials count. Drag the map, or use the arrow keys, to look around. Click a region to zoom in.</p>
+      <div id="wm-viewport" class="wm-viewport" tabindex="0" role="group"
+        aria-label="World map. Drag or use the arrow keys to pan. Click a region to zoom in.">
+        <div id="wm-canvas" class="wm-canvas" style="--wm-cols:${map.grid.cols}">
+          ${map.worlds.map(world => renderWorldBand(world, landmarksFor(world.id))).join("")}
+          ${regions.map(region => renderRegionCard(
+            region,
+            byRegion.get(region.key) ?? [],
+            isNewSnapshot,
+            previousDoneByRegion.get(region.key) ?? 0
+          )).join("")}
+        </div>
+      </div>
+      <div class="wm-zoom" id="wm-zoom" role="group" aria-labelledby="wm-zoom-heading" hidden></div>
       <div class="wm-key quiet numeric">
         <span><b class="wm-key__block is-placed"></b> unit placed</span>
         <span><b class="wm-key__block"></b> not built yet</span>
         <span><b class="wm-key__block is-next"></b> your next unit</span>
+        <span><b class="wm-key__block is-battle"></b> a battle (quiz or test)</span>
         <span><b class="wm-key__block is-landmark"></b> a landmark unlocks in that region</span>
       </div>`
       : `<p class="quiet">Saved telemetry is thin right now — the map redraws on the next check.</p>`;
 
-    if (openKey) openRegion(openKey);
+    wireViewport();
+    clampPan();
+    if (openKey && findRegion(openKey)) openRegion(openKey);
 
     if (isNewSnapshot && !reducedMotion()) {
       revealQueue = [...document.querySelectorAll("#worldmap-content .wm-block.reveal-hidden")];
@@ -1738,8 +1857,18 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
           slot.classList.remove("reveal-hidden");
         });
       }
+      if (event.target.closest("[data-wm-back]")) {
+        closeRegion();
+        return;
+      }
       const regionButton = event.target.closest(".wm-region");
       if (regionButton) {
+        // A drag that ended on a chunk is a pan, not a click.
+        const viewport = document.querySelector("#wm-viewport");
+        if (viewport?.dataset.suppressClick === "1") {
+          delete viewport.dataset.suppressClick;
+          return;
+        }
         openRegion(regionButton.dataset.region);
         return;
       }
