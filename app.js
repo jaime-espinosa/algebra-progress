@@ -670,6 +670,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
         <td class="numeric">${cell(region, "activity")}</td>
         <td class="numeric">${cell(region, "check")}</td>
         <td class="numeric">${cell(region, "test")}</td>
+        <td class="numeric">${cell(region, "orientation")}</td>
         <td>${escapeHtml(REGION_STATE_COPY[region.status] ?? "")}</td>
         <td>${escapeHtml(region.discovery ?? "")}</td>
       </tr>`).join("")).join("");
@@ -682,7 +683,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           <thead><tr><th scope="col">Section</th><th scope="col">Units</th>
             <th scope="col">Lessons</th><th scope="col">Practice quizzes</th>
             <th scope="col">Activities</th><th scope="col">End-of-section</th>
-            <th scope="col">Section test</th>
+            <th scope="col">Section test</th><th scope="col">Orientation</th>
             <th scope="col">State</th><th scope="col">Discovery</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
