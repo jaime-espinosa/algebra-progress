@@ -561,6 +561,15 @@ export const GAME_KIND_FACES = {
     // now: the trigger lives on the landmass it describes. Its own text is the
     // label a sighted reader gets, so the accessible name is stated in full
     // here and the decorative innards are left to the aria-label to summarise.
+    //
+    // The visible "N units placed" span was removed 2026-07-26 for #94 ("it repeats
+    // '62 units...' 7 times. Once is enough"). With Semester 2 untouched, World I's
+    // own count IS the same 62 the effort line states, and this was one of the seven.
+    // The figure did not leave the page here: it is still in the aria-label below —
+    // the accessible name, and the only thing a screen reader gets, since every span
+    // in this button is aria-hidden — and the world record this button opens leads
+    // with "62 of 66 units placed". If a semester ever runs in parallel this banner
+    // is the natural place to put a per-world count back.
     return `<button type="button" class="wm-banner" data-world-card="${escapeHtml(world.id)}"
       style="left:${mass.cx}px;top:${Math.max(6, mass.top - 58)}px"
       aria-haspopup="dialog" aria-controls="wm-world-popup-${escapeHtml(world.id)}"
@@ -569,7 +578,6 @@ export const GAME_KIND_FACES = {
         world.unitsDone} units placed. Open the world record.">
       <span class="eyebrow" aria-hidden="true">WORLD ${numeral} // ${state}</span>
       <span class="wm-banner__name" aria-hidden="true">${escapeHtml(world.name)}</span>
-      <span class="numeric quiet" aria-hidden="true">${world.unitsDone} units placed</span>
       ${nextTasks.length
         ? `<span class="wm-banner__next" aria-hidden="true">Next: ${nextTasks.map(escapeHtml).join(" · ")}</span>`
         : ""}

@@ -1601,6 +1601,13 @@ html.motion-paused *::after {
   text-align: center;
 }
 
+/* The hours total, asked for directly under the effort line 2026-07-26. Same
+   voice and same centring; it sits closer to the line above than to the charts
+   below so the two read as one pair of statements about him. */
+.effort-line--hours {
+  margin-top: -8px;
+}
+
 /* ---- Charts -------------------------------------------------------------- */
 /* Both effort charts share these classes as well as their geometry. */
 .chart-block {
