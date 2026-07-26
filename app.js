@@ -1,4 +1,4 @@
-import { effortStats as questEffort, computePace, dashboard, openTime, planTrack } from "./js/quest.mjs";
+import { effortStats as questEffort, computePace, dashboard, openTime, planTrack, evaluateUnlocks } from "./js/quest.mjs";
 
 (() => {
   "use strict";
@@ -225,52 +225,9 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
       item.state !== "not_started" && item.submittedDate === today).length;
   }
 
-  function evaluateUnlocks(data) {
-    const sem1 = data.semesters.find(semester => semester.id === "sem1");
-    const sem2 = data.semesters.find(semester => semester.id === "sem2");
-    const recent = submittedAfterBaseline(data);
-    const sem2Submitted = sem2?.activities.filter(item => item.state !== "not_started") ?? [];
-    const sectionDone = number => {
-      const rows = sem2?.activities.filter(item => item.sectionNumber === number) ?? [];
-      return rows.length > 0 && rows.every(item => item.state !== "not_started");
-    };
-    // Retroactive: already earned by the work behind him. Without these the vault is
-    // empty on first load and the reveal has nothing to reveal — 97 finished
-    // activities would have bought him nothing.
-    const sem1SectionsSealed = sem1
-      ? new Set(sem1.activities.filter(item => item.sectionNumber > 0).map(item => item.sectionNumber))
-          .size - new Set(sem1.activities
-            .filter(item => item.sectionNumber > 0 && item.state === "not_started")
-            .map(item => item.sectionNumber)).size
-      : 0;
-    // Ids must match vault/manifest.json exactly, or a milestone silently unlocks
-    // nothing.
-    const conditions = {
-      "algebra-miner-skin": (sem1?.allDone ?? 0) >= 90,
-      "momentum-cursor-pet": sem1SectionsSealed >= 4,
-      "sem1-victory-pack": (sem1?.percent ?? 0) >= 80,
-      // Six rows from now. Checkable against the Semester 1 list itself: every row
-      // in it submitted, nothing modelled or estimated.
-      "photo-skin-studio": (sem1?.activities.length ?? 0) > 0
-        && sem1.activities.every(item => item.state !== "not_started"),
-      // The skins are the reward strand, so the first one has to land in days, not
-      // weeks: one Semester 2 row opens it. Each is a palette in
-      // vault/tools/make-skins.mjs — new ones he asks for are cheap to add.
-      "ignition-skin": sem2Submitted.length >= 1,
-      "nether-skin": sectionDone(1),
-      "end-skin": sectionDone(3),
-      "nether-theme": sem2Submitted.length >= 3,
-      "auto-breeding-pen": sectionDone(1),
-      "ballistics-workbench": sectionDone(2),
-      "target-practice": sectionDone(3),
-      "surveyor": sectionDone(4),
-      "farm-rate-optimizer": sectionDone(5),
-      "youtube-analytics-template": sectionDone(6),
-      "end-theme-final": data.semesters.every(semester =>
-        semester.activities.every(item => item.state !== "not_started"))
-    };
-    return new Set(Object.keys(conditions).filter(id => conditions[id]));
-  }
+  // evaluateUnlocks now lives in js/quest.mjs. It used to be defined here while
+  // quest.mjs exported a divergent implementation that matched almost none of the
+  // manifest ids — see the comment there.
 
   function unionEarned(data) {
     const stored = storageGet("vault.earned", []);
