@@ -1850,13 +1850,29 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     function setCollapsed(section, want) {
       // hidden would take the section out of the flow entirely, controls and all. The
       // heading has to stay reachable or there is no way back.
-      section.querySelector(".sec-fold")?.setAttribute("aria-expanded", String(!want));
-      // Repairs is already a <details>, and its heading is the <summary> inside it.
-      // Hiding the panel's children would take that summary with it and leave no way
-      // back, so that section collapses through its own open state instead.
-      const details = section.querySelector("details");
-      if (details) details.open = !want;
-      else section.dataset.collapsed = want ? "1" : "";
+      const fold = section.querySelector(".sec-fold");
+      if (fold) {
+        fold.setAttribute("aria-expanded", String(!want));
+        // Open is a V pointing down at the content; closed is a > pointing at a heading
+        // that is now all there is. The glyph is the state, not a decoration.
+        fold.innerHTML = want ? "&#9656;" : "&#9662;";
+        fold.title = want ? "Expand" : "Collapse";
+      }
+      // Only the panel whose OWN heading is a <summary> folds through its details: hiding
+      // that panel's children would take the summary with it and leave no way back.
+      //
+      // The test used to be "does this section contain a <details> anywhere", which was
+      // true of five panels that merely have one further down — the world map's territory
+      // table, the dashboard's open-time note. For those, this toggled an unrelated inner
+      // disclosure and never set `dataset.collapsed`, which is the flag both the CSS and
+      // the click handler read. Their fold button flipped aria-expanded and collapsed
+      // nothing, and because the flag never moved, the next click asked to collapse again.
+      const heading = section.querySelector(".section-heading");
+      if (heading && heading.tagName === "SUMMARY" && heading.parentElement.tagName === "DETAILS") {
+        heading.parentElement.open = !want;
+      } else {
+        section.dataset.collapsed = want ? "1" : "";
+      }
       if (want) collapsed.add(section.id); else collapsed.delete(section.id);
       storageSet(COLLAPSED_KEY, [...collapsed]);
     }
@@ -1876,7 +1892,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       section.prepend(bar);
 
       bar.querySelector(".sec-fold").addEventListener("click", () => {
-        setCollapsed(section, section.dataset.collapsed !== "1");
+        setCollapsed(section, !collapsed.has(section.id));
       });
       bar.querySelector(".sec-up").addEventListener("click", () => {
         const previous = section.previousElementSibling;
@@ -1891,7 +1907,28 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       if (heading.tagName !== "SUMMARY") {
         heading.style.cursor = "pointer";
         heading.addEventListener("click", () => {
-          setCollapsed(section, section.dataset.collapsed !== "1");
+          setCollapsed(section, !collapsed.has(section.id));
+        });
+      } else {
+        // That heading is a real <summary>, so the browser folds the panel on its own.
+        // Mirror the result into the set and the glyph rather than adding a second
+        // listener, or the fold button reads the opposite state and appears to be dead.
+        const sync = () => {
+          const want = !heading.parentElement.open;
+          if (want) collapsed.add(section.id); else collapsed.delete(section.id);
+          const fold = section.querySelector(".sec-fold");
+          if (!fold) return;
+          fold.setAttribute("aria-expanded", String(!want));
+          fold.innerHTML = want ? "&#9656;" : "&#9662;";
+          fold.title = want ? "Expand" : "Collapse";
+        };
+        // Seeded once from the markup: both of these panels ship closed, so a button
+        // born reading "expanded" spent its first click collapsing an already-closed
+        // section, and he had to press it twice to get anything to happen.
+        sync();
+        heading.parentElement.addEventListener("toggle", () => {
+          sync();
+          storageSet(COLLAPSED_KEY, [...collapsed]);
         });
       }
     }
@@ -1900,7 +1937,62 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     for (const section of sections) if (collapsed.has(section.id)) setCollapsed(section, true);
   }
 
+  // Coming back from a mini-lesson should land where he left, not at the top of the page.
+  //
+  // A mini-lesson is a real page, so Back is a real navigation. The browser does try to
+  // restore his scroll position, but this page renders from fetched JSON after load: at
+  // the moment the browser restores, the document is a few hundred pixels of empty
+  // sections, there is nothing at y=3706 to scroll to, and he lands at the top with the
+  // whole page between him and the lesson he was reading. Measured: scrollY 0 after Back,
+  // with "Current lesson" 3738px below the fold.
+  //
+  // So we remember the panel he left from, and put him back once the content that makes
+  // that position meaningful actually exists.
+  const RETURN_KEY = "mc.returnTo";
+
+  function sessionSet(key, value) {
+    try { sessionStorage.setItem(key, value); } catch { /* private mode; scroll is cosmetic */ }
+  }
+
+  function sessionTake(key) {
+    try {
+      const value = sessionStorage.getItem(key);
+      sessionStorage.removeItem(key);
+      return value;
+    } catch { return null; }
+  }
+
+  function initReturnToSection() {
+    // Delegated, and registered once: lesson and lab links are inserted asynchronously
+    // after their target file is confirmed, so there is no element to bind to up front.
+    document.addEventListener("click", event => {
+      const link = event.target.closest?.("a[href]");
+      if (!link) return;
+      if (!/(^|\/)(lessons|labs)\//.test(link.getAttribute("href") || "")) return;
+      const panel = link.closest("section.panel");
+      if (panel?.id) sessionSet(RETURN_KEY, panel.id);
+    });
+
+    // bfcache restores the live document, scroll included, and nothing needs doing —
+    // acting there would fight a browser that already got it right.
+    const nav = performance.getEntriesByType?.("navigation")?.[0];
+    if (nav && nav.type !== "back_forward") { sessionTake(RETURN_KEY); return; }
+
+    const id = sessionTake(RETURN_KEY);
+    const section = id && document.querySelector(`#${CSS.escape(id)}`);
+    if (!section) return;
+
+    // Twice: once when the first render settles, and again after the lesson links have
+    // resolved, because each one that appears changes the height above this section.
+    const land = () => section.scrollIntoView({ block: "start", behavior: "auto" });
+    requestAnimationFrame(() => requestAnimationFrame(land));
+    setTimeout(land, 700);
+  }
+
   // finally, not then: if the data load fails the page still renders its last known
   // good state, and the controls have to come with it.
-  Promise.all([loadManifest(), loadGames(), loadActivity()]).then(loadData).finally(initSectionControls);
+  Promise.all([loadManifest(), loadGames(), loadActivity()]).then(loadData).finally(() => {
+    initSectionControls();
+    initReturnToSection();
+  });
 })();
