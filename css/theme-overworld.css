@@ -309,7 +309,7 @@ meter,
    blocks it is built out of. */
 .wm-region {
   display: grid;
-  grid-template-rows: 34px auto auto 1fr auto auto auto;
+  grid-template-rows: 34px auto auto 1fr auto auto auto auto;
   gap: 4px;
   align-content: start;
   min-height: 0;
@@ -332,9 +332,8 @@ meter,
   transform: translateY(-2px);
 }
 
-.wm-region[aria-expanded="true"] {
-  border-color: var(--accent);
-  outline: 1px solid var(--accent);
+.wm-region__split {
+  font-size: 11px;
 }
 
 /* Settled ground is lit: the sky brightens and the chunk sits on solid rock. */
@@ -428,6 +427,13 @@ meter,
 @keyframes wm-beacon {
   0%, 100% { opacity: 1; }
   50%      { opacity: .45; }
+}
+
+/* A battle block is notched at the corners so quizzes and tests read as a
+   different kind of place from training, without a second colour. */
+.wm-block.is-battle,
+.wm-key__block.is-battle {
+  border-width: 1px 3px;
 }
 
 .wm-block.reveal-hidden {
