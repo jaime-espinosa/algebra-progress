@@ -2010,3 +2010,47 @@ html.motion-paused *::after {
 .open-time__asof {
   font-size: 11px;
 }
+
+/* ---- Rolling-window control ---------------------------------------------- *
+ * Sets the site-wide window every rolling figure is measured over. It sits with
+ * the dashboard rather than in a settings panel because the number it changes is
+ * printed on the dial right beside it — you can see what you just did. */
+.window-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 12px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.window-control button {
+  min-width: 22px;
+  height: 22px;
+  border: 1px solid var(--line);
+  background: var(--panel-solid);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.window-control button:hover {
+  border-color: var(--accent-dim);
+  color: var(--accent);
+}
+
+.window-control input {
+  width: 44px;
+  border: 1px solid var(--line);
+  padding: 2px 4px;
+  background: var(--panel-solid);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  text-align: center;
+}

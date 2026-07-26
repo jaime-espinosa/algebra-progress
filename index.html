@@ -29,6 +29,14 @@
 
     <section id="effort" class="panel" aria-labelledby="effort-heading" hidden>
       <h2 id="effort-heading" class="section-heading">Dashboard // what you've actually put in</h2>
+      <div class="window-control">
+        <label for="window-days">Rolling window</label>
+        <button type="button" id="window-down" aria-label="Shorten the rolling window by one day">&minus;</button>
+        <input id="window-days" type="number" min="1" max="14" step="1" value="3"
+               inputmode="numeric" aria-describedby="window-days-hint">
+        <span id="window-days-hint">days</span>
+        <button type="button" id="window-up" aria-label="Lengthen the rolling window by one day">+</button>
+      </div>
       <div id="effort-content"></div>
     </section>
 

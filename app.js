@@ -10,6 +10,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
   const MOMENTUM_CURSOR_ID = "momentum-cursor-pet";
   const MOMENTUM_CURSOR_KEY = "mc.momentumCursor";
   const PARENT_VIEW_KEY = "mc.parentView";
+  const WINDOW_DAYS_KEY = "mc.windowDays";
   const PARENT_PHRASE = [104, 101, 108, 108, 111]
     .map(code => String.fromCharCode(code))
     .join("");
@@ -916,7 +917,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
 
   function renderEffort(data) {
     const today = localIsoDate();
-    const s = dashboard(data, today);
+    const s = dashboard(data, today, windowDays());
     const perDay = effortStats(data, today).perDay;
     const track = planTrack(data, today);
     const series = currentActivity ? openTimeSeries(currentActivity, today) : null;
@@ -977,15 +978,15 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
         })}
 
         ${gaugeDial({
-          label: "LAST 3 DAYS",
+          label: `LAST ${s.windowDays} DAYS`,
           hint: `A raw count of units submitted ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}. Not a rate. The inner amber scale is that same count as a percentage of the ${s.rowsLeft} units still to do.`,
           scale: recentScale,
-          secondary: { unit: "% OF 3-DAY SCALE", ticks: percentTicks(recentScale.max, recentScale.max) },
+          secondary: { unit: `% OF ${s.windowDays}-DAY SCALE`, ticks: percentTicks(recentScale.max, recentScale.max) },
           faceUnit: "UNITS / 3 DAYS",
           readout: String(s.recent3),
-          readoutSub: `PREV 3: ${s.prior3}`,
+          readoutSub: `PREV ${s.windowDays}: ${s.prior3}`,
           bandTo: 1,
-          ariaText: `${s.recent3} units submitted from ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}, on a dial reading 0 to ${recentScale.max} units. The three days before that were ${s.prior3}. The inner amber percentage scale reads those three days as ${recentPercent} percent of the ${s.rowsLeft} units still to do. ${BAND_TEXT}`
+          ariaText: `${s.recent3} units submitted from ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}, on a dial reading 0 to ${recentScale.max} units. The ${s.windowDays} days before that were ${s.prior3}. The inner amber percentage scale reads those ${s.windowDays} days as ${recentPercent} percent of the ${s.rowsLeft} units still to do. ${BAND_TEXT}`
         })}
 
         ${gaugeDial({
@@ -1438,6 +1439,24 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     }
   }
 
+  // The site-wide rolling window. Three days by default — that is the horizon he was
+  // asked to hold in his head. Clamped on read as well as on write, because localStorage
+  // is user-editable and a garbage value here would silently reshape every dial.
+  function windowDays() {
+    const raw = Number(storageGet(WINDOW_DAYS_KEY, 3));
+    if (!Number.isFinite(raw)) return 3;
+    return Math.max(1, Math.min(14, Math.round(raw)));
+  }
+
+  function setWindowDays(days) {
+    const next = Math.max(1, Math.min(14, Math.round(Number(days) || 3)));
+    storageSet(WINDOW_DAYS_KEY, next);
+    const field = document.querySelector("#window-days");
+    if (field) field.value = String(next);
+    if (currentData) render(currentData);
+    return next;
+  }
+
   function render(data) {
     const previousSnapshot = storageGet("mc.lastSnapshot", null);
     const previousSeen = storageGet("mc.lastSeen", null);
@@ -1686,6 +1705,13 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       setParentView(false);
       document.querySelector("#refresh")?.focus();
     });
+    const windowField = document.querySelector("#window-days");
+    if (windowField) {
+      windowField.value = String(windowDays());
+      windowField.addEventListener("change", () => setWindowDays(windowField.value));
+    }
+    document.querySelector("#window-up")?.addEventListener("click", () => setWindowDays(windowDays() + 1));
+    document.querySelector("#window-down")?.addEventListener("click", () => setWindowDays(windowDays() - 1));
     document.querySelector("#cursor-toggle").addEventListener("click", () => {
       storageSet(MOMENTUM_CURSOR_KEY, storageGet(MOMENTUM_CURSOR_KEY, true) === false);
       updateMomentumCursor();
