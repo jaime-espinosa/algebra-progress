@@ -1028,7 +1028,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
               <g class="gauge__scale2-ticks" shape-rendering="crispEdges">${ticks2}</g>
               <g class="gauge__scale2-numbers">${numbers2}</g>
             </g>
-            <text class="gauge__scale2-unit" x="50" y="56" text-anchor="middle">${escapeHtml(secondary.unit)}</text>` : "";
+            <text class="gauge__scale2-unit" x="50" y="94" text-anchor="middle">${escapeHtml(secondary.unit)}</text>` : "";
 
     // The rim band, from the tachometer reference — but with its meaning removed.
     // A tacho band shades green/amber/red to say "fine / careful / you are
@@ -1058,7 +1058,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
             <g class="gauge__majors" shape-rendering="crispEdges">${majors}</g>
             <g class="gauge__numbers">${numbers}</g>
             ${scale2}
-            <text class="gauge__face-unit" x="50" y="90" text-anchor="middle">${escapeHtml(faceUnit)}</text>
+            <text class="gauge__face-unit" x="50" y="87" text-anchor="middle">${escapeHtml(faceUnit)}</text>
             <g class="gauge__needle" style="transform: rotate(${angle}deg)">
               <polygon points="42,48.8 92,50 42,51.2 40,50"></polygon>
             </g>
