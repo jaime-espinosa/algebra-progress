@@ -997,3 +997,538 @@ export function percentTicks(scaleMax, basis, { maxTicks = 6 } = {}) {
   }
   return ticks;
 }
+
+// ---- World terrain -------------------------------------------------------
+// A Minecraft-style top-down world map, generated from worldMap() and nothing
+// else. Every shape in here is DECORATION: the only facts it carries are the
+// ones worldMap() already established — how many regions there are, which
+// semester each belongs to, how many units are in it and how many are done.
+// No number is invented here and none is displayed from here; the counts on
+// screen come from the region objects themselves.
+//
+// WHY IT IS DETERMINISTIC. The coastline is a function of (constant seed,
+// region identity, unit counts). Reloading the page, or finishing one unit,
+// must not hand him a differently-shaped world — a map that reshuffles is not a
+// place, it is a screensaver. Terrain GROWS (more units done => more lit
+// ground); it never rearranges. `terrainSignature()` exists so a test can
+// assert exactly that.
+//
+// WHY IT IS PATHS AND NOT CELLS. The blocky look wants a ~8px cell grid, which
+// is ~15,000 cells. One node per cell would be unshippable on the 2018 machine
+// this has to pan smoothly on. So cells are bucketed into a few dozen layers by
+// colour, merged into horizontal runs, and emitted as ONE <path> per layer.
+// Node count lands in the low hundreds regardless of grid size.
+//
+// NO RED. Minecraft maps are full of it — badlands, mesa, red sand, lava. None
+// of those biomes exist on this map and no colour below hue 25 appears in any
+// palette. TERRAIN_HUE_FLOOR and the palette test enforce it rather than trust.
+
+export const TERRAIN_SEED = 0x5eed1a;
+export const TERRAIN_CELL = 8;
+export const TERRAIN_COLS = 150;
+export const TERRAIN_ROWS = 105;
+// Ground per gradebook row. This is the whole reason a 14-unit region is
+// visibly bigger than a 2-unit one: area is bought with units, not assigned.
+const CELLS_PER_UNIT = 40;
+// Anything below this hue reads as red. Nothing in the palettes may cross it.
+export const TERRAIN_HUE_FLOOR = 25;
+
+function hash2(x, y, seed) {
+  let h = Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(seed | 0, 1274126177);
+  h = (h ^ (h >>> 13)) >>> 0;
+  h = Math.imul(h, 1274126177) >>> 0;
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+}
+
+function smoothstep(t) { return t * t * (3 - 2 * t); }
+
+function valueNoise(x, y, seed) {
+  const x0 = Math.floor(x);
+  const y0 = Math.floor(y);
+  const fx = smoothstep(x - x0);
+  const fy = smoothstep(y - y0);
+  const a = hash2(x0, y0, seed);
+  const b = hash2(x0 + 1, y0, seed);
+  const c = hash2(x0, y0 + 1, seed);
+  const d = hash2(x0 + 1, y0 + 1, seed);
+  const top = a + (b - a) * fx;
+  return top + ((c + (d - c) * fx) - top) * fy;
+}
+
+// Fractal noise in [0,1]. Three octaves is enough for a coastline at this
+// cell size; more just costs milliseconds nobody sees.
+function fbm(x, y, seed, octaves = 3) {
+  let value = 0;
+  let amplitude = 0.5;
+  let frequency = 1;
+  let norm = 0;
+  for (let i = 0; i < octaves; i += 1) {
+    value += amplitude * valueNoise(x * frequency, y * frequency, seed + i * 1013);
+    norm += amplitude;
+    amplitude *= 0.5;
+    frequency *= 2;
+  }
+  return value / norm;
+}
+
+// Biome palettes. Three shades each, light to dark, the way a Minecraft map
+// shades a slope. `tree` is the canopy colour where trees are drawn, null where
+// the biome has none. Every hue here is >= 25 (checked by test).
+const BIOMES = {
+  plains:   { name: "plains",        shades: ["#8cbb5f", "#7cab52", "#6d9a48"], tree: "#4d7a37" },
+  forest:   { name: "forest",        shades: ["#5d9046", "#4f7f3c", "#436d33"], tree: "#33582a" },
+  birch:    { name: "birch forest",  shades: ["#a3c47a", "#93b86a", "#82a65c"], tree: "#5f8a45" },
+  meadow:   { name: "meadow",        shades: ["#9ec96a", "#8bba5c", "#7aa851"], tree: "#5c8b3f" },
+  hills:    { name: "stony hills",   shades: ["#b3b8b0", "#9aa096", "#868d83"], tree: "#5b7a4c" },
+  swamp:    { name: "swamp",         shades: ["#6d8a52", "#5f7a4a", "#526a3f"], tree: "#3d5c33" },
+  taiga:    { name: "taiga",         shades: ["#7fa07f", "#6c8c74", "#5c7a66"], tree: "#3f6b52" },
+  savanna:  { name: "savanna",       shades: ["#c4bb62", "#b3ab4e", "#a09843"], tree: "#8a9440" },
+  jungle:   { name: "jungle",        shades: ["#4b8f44", "#3f7a3a", "#356831"], tree: "#2c5a2b" },
+  dunes:    { name: "dunes",         shades: ["#e6d9ab", "#d8c896", "#c6b582"], tree: null },
+  darkwood: { name: "dark forest",   shades: ["#4a6b3e", "#3e5b34", "#334c2b"], tree: "#2a4224" },
+  tundra:   { name: "snowy tundra",  shades: ["#e7eef2", "#d3dee4", "#bccbd3"], tree: "#5e7f6b" },
+  peaks:    { name: "stone peaks",   shades: ["#c3c8cc", "#a7adb2", "#8e959b"], tree: null },
+  fungal:   { name: "mushroom flats",shades: ["#b5a8bd", "#a08fa8", "#8c7b94"], tree: "#7a6a86" },
+};
+
+// Which biome each territory gets, in route order, per landmass. Sem 1 reads as
+// the settled home continent; Sem 2 as somewhere else entirely, so that
+// "another continent" is legible before a single word is read. Neighbours in
+// route order never repeat, which is what stops two adjacent territories
+// merging into one green smear.
+const BIOME_ORDER = {
+  sem1: ["meadow", "plains", "forest", "birch", "hills", "swamp", "taiga"],
+  sem2: ["dunes", "savanna", "jungle", "darkwood", "peaks", "tundra", "fungal"],
+};
+const BIOME_FALLBACK = ["plains", "forest", "hills", "taiga", "savanna", "jungle", "tundra"];
+
+function biomeFor(worldId, index) {
+  const order = BIOME_ORDER[worldId] ?? BIOME_FALLBACK;
+  return BIOMES[order[index % order.length]] ?? BIOMES.plains;
+}
+
+const OCEAN_DEEP = "#274a72";
+const OCEAN_MID = "#356089";
+const OCEAN_SHALLOW = "#4a7ba8";
+const SAND_LIGHT = "#e3d5a6";
+const SAND_DARK = "#cfbf8d";
+const RIVER = "#5a8cba";
+const TRUNK = "#6b533b";
+const FOG = "#101b24";
+
+// Where each landmass sits, in fractions of the grid. Sem 1 is the near
+// continent; Sem 2 is across open water to the south-east, deliberately far
+// enough that the two never fuse into one blob no matter how the counts move.
+const LANDMASS_PLACEMENT = [
+  { cx: 0.30, cy: 0.38, halfW: 0.185, halfH: 0.150 },
+  { cx: 0.725, cy: 0.645, halfW: 0.185, halfH: 0.150 },
+];
+
+// Quantile without sorting the whole array twice over: a plain sort of a
+// Float32Array copy is fine at this size and is exactly reproducible.
+function quantileAt(values, count) {
+  if (values.length === 0) return 0;
+  const sorted = Float64Array.from(values).sort();
+  const index = Math.max(0, Math.min(sorted.length - 1, count - 1));
+  return sorted[index];
+}
+
+/**
+ * Terrain geometry for a worldMap() result.
+ *
+ * Returns plain data — layer fills plus SVG path strings, marker positions in
+ * SVG user units, and one entry per territory carrying the SAME counts the
+ * region object has. The renderer draws this and adds no facts of its own.
+ */
+export function worldTerrain(map, options = {}) {
+  const cols = options.cols ?? TERRAIN_COLS;
+  const rows = options.rows ?? TERRAIN_ROWS;
+  const cell = options.cell ?? TERRAIN_CELL;
+  const seed = options.seed ?? TERRAIN_SEED;
+  const width = cols * cell;
+  const height = rows * cell;
+  const empty = {
+    width, height, cell, cols, rows,
+    ocean: OCEAN_DEEP, layers: [], territories: [], landmasses: [], nodeEstimate: 0,
+  };
+  const worlds = map?.worlds ?? [];
+  if (worlds.length === 0) return empty;
+
+  // --- 1. Seed one point per territory, laid out on the same serpentine the
+  // route already uses, so the map's geography and the course order agree.
+  const territories = [];
+  const landmasses = [];
+  worlds.forEach((world, worldIndex) => {
+    const place = LANDMASS_PLACEMENT[worldIndex] ?? LANDMASS_PLACEMENT[LANDMASS_PLACEMENT.length - 1];
+    const bands = Math.max(1, Math.max(...world.regions.map((region) => region.row)) - world.rowStart + 1);
+    const start = territories.length;
+    world.regions.forEach((region, index) => {
+      const band = region.row - world.rowStart;
+      const u = (region.col + 0.5) / Math.max(1, map.grid?.cols ?? 4);
+      const v = (band + 0.5) / bands;
+      // A little seeded jitter so the territories do not read as a lattice.
+      const jx = (hash2(region.number + 7, worldIndex * 31 + 3, seed) - 0.5) * 0.20;
+      const jy = (hash2(region.number + 19, worldIndex * 31 + 11, seed) - 0.5) * 0.20;
+      const x = (place.cx + (u - 0.5) * 2 * place.halfW + jx * place.halfW) * cols;
+      const y = (place.cy + (v - 0.5) * 2 * place.halfH + jy * place.halfH) * rows;
+      territories.push({
+        key: region.key,
+        name: region.name,
+        number: region.number,
+        worldId: region.worldId,
+        worldIndex,
+        status: region.status,
+        unitsDone: region.unitsDone,
+        unitsTotal: region.unitsTotal,
+        // Area is bought with units: weight is sqrt(units), and a weighted
+        // Voronoi cell's area goes as the square of the weight.
+        weight: Math.sqrt(Math.max(1, region.unitsTotal)),
+        biome: biomeFor(region.worldId, index),
+        seedX: x,
+        seedY: y,
+        cells: [],
+        cx: x * cell,
+        cy: y * cell,
+      });
+    });
+    landmasses.push({
+      worldId: world.id,
+      name: world.name,
+      index: worldIndex,
+      from: start,
+      to: territories.length,
+      unitsTotal: world.unitsTotal,
+      unitsDone: world.unitsDone,
+      targetCells: world.unitsTotal * CELLS_PER_UNIT,
+    });
+  });
+
+  const size = cols * rows;
+  const owner = new Int16Array(size).fill(-1);
+  const massOf = new Int8Array(size).fill(-1);
+  const score = new Float64Array(size);
+
+  // --- 2. Weighted-Voronoi field. For every cell, the nearest territory once
+  // distance is divided by that territory's weight, plus a noise wobble so the
+  // eventual coastline is organic rather than a polygon.
+  for (let gy = 0; gy < rows; gy += 1) {
+    for (let gx = 0; gx < cols; gx += 1) {
+      const i = gy * cols + gx;
+      let best = Infinity;
+      let bestIndex = -1;
+      for (let t = 0; t < territories.length; t += 1) {
+        const territory = territories[t];
+        const dx = gx + 0.5 - territory.seedX;
+        const dy = gy + 0.5 - territory.seedY;
+        const d = Math.sqrt(dx * dx + dy * dy) / territory.weight;
+        if (d < best) { best = d; bestIndex = t; }
+      }
+      owner[i] = bestIndex;
+      massOf[i] = territories[bestIndex].worldIndex;
+      const wobble = fbm(gx * 0.055, gy * 0.055, seed + 71) - 0.5;
+      score[i] = best / (1 + 0.62 * wobble);
+    }
+  }
+
+  // --- 3. Cut the coastline so that every territory keeps exactly the ground
+  // its unit count has earned: units x CELLS_PER_UNIT cells, taken nearest-
+  // first out of its own Voronoi cell. Cutting per TERRITORY rather than per
+  // landmass is what makes "more units => physically larger" literally true
+  // instead of approximately true — an earlier version cut one global coastline
+  // per continent and a 13-unit territory came out smaller than a 12-unit one,
+  // which is a lie the map is not allowed to tell.
+  const land = new Uint8Array(size);
+  const pools = territories.map(() => []);
+  for (let i = 0; i < size; i += 1) pools[owner[i]].push(i);
+  territories.forEach((territory, t) => {
+    const pool = pools[t];
+    pool.sort((a, b) => score[a] - score[b] || a - b);
+    const quota = Math.min(pool.length, Math.round(territory.unitsTotal * CELLS_PER_UNIT));
+    for (let k = 0; k < quota; k += 1) land[pool[k]] = 1;
+  });
+  // Quotas are taken outward from each seed, so two neighbours can leave an
+  // unclaimed pocket between them. A lake in the middle of a continent reads as
+  // a hole in the world, so anything water cannot reach from the map edge is
+  // filled back in. Flood from the border; whatever is not reached is land.
+  {
+    const sea = new Uint8Array(size);
+    const stack = [];
+    for (let gx = 0; gx < cols; gx += 1) { stack.push(gx, (rows - 1) * cols + gx); }
+    for (let gy = 0; gy < rows; gy += 1) { stack.push(gy * cols, gy * cols + cols - 1); }
+    while (stack.length) {
+      const i = stack.pop();
+      if (sea[i] || land[i]) continue;
+      sea[i] = 1;
+      const gx = i % cols;
+      if (gx > 0) stack.push(i - 1);
+      if (gx < cols - 1) stack.push(i + 1);
+      if (i >= cols) stack.push(i - cols);
+      if (i < size - cols) stack.push(i + cols);
+    }
+    for (let i = 0; i < size; i += 1) if (!sea[i]) land[i] = 1;
+  }
+
+  // --- 4. Rivers. Ridged noise near its own midline, which reads as a channel
+  // wandering across the continent instead of a drawn line.
+  const river = new Uint8Array(size);
+  for (let gy = 0; gy < rows; gy += 1) {
+    for (let gx = 0; gx < cols; gx += 1) {
+      const i = gy * cols + gx;
+      if (!land[i]) continue;
+      const n = fbm(gx * 0.042, gy * 0.042, seed + 907, 2);
+      if (Math.abs(n - 0.5) < 0.016) river[i] = 1;
+    }
+  }
+
+  const at = (gx, gy) => (gx < 0 || gy < 0 || gx >= cols || gy >= rows ? 0 : land[gy * cols + gx]);
+  // --- 5. Beaches: land within one cell of water. One ring, so a coast reads as
+  // a coast and not as a desert.
+  const sand = new Uint8Array(size);
+  for (let gy = 0; gy < rows; gy += 1) {
+    for (let gx = 0; gx < cols; gx += 1) {
+      const i = gy * cols + gx;
+      if (!land[i]) continue;
+      if (!at(gx - 1, gy) || !at(gx + 1, gy) || !at(gx, gy - 1) || !at(gx, gy + 1)
+        || !at(gx - 1, gy - 1) || !at(gx + 1, gy + 1)) sand[i] = 1;
+    }
+  }
+  // Shallows: water near land, two bands of it, which is the single cheapest
+  // thing that makes an ocean look like an ocean. Built by dilating the coast
+  // three cells rather than scanning a 7x7 window per cell — same picture, a
+  // fifth of the work, and the work is on the machine that has to stay smooth.
+  const shallow = new Uint8Array(size);
+  {
+    let frontier = new Uint8Array(land);
+    for (let ring = 0; ring < 3; ring += 1) {
+      const next = new Uint8Array(size);
+      for (let gy = 0; gy < rows; gy += 1) {
+        for (let gx = 0; gx < cols; gx += 1) {
+          const i = gy * cols + gx;
+          if (land[i] || shallow[i]) continue;
+          if ((gx > 0 && frontier[i - 1]) || (gx < cols - 1 && frontier[i + 1])
+            || (i >= cols && frontier[i - cols]) || (i < size - cols && frontier[i + cols])) {
+            shallow[i] = ring < 2 ? 2 : 1;
+            next[i] = 1;
+          }
+        }
+      }
+      frontier = next;
+    }
+  }
+
+  // --- 6. Which ground is settled. Explored terrain grows outward from the
+  // territory's own seed, so completing a unit LIGHTS more ground and never
+  // moves ground that was already lit. `explored` count is floor of the real
+  // fraction: a region with nothing done shows nothing lit, and only a region
+  // that is genuinely finished is lit edge to edge.
+  const explored = new Uint8Array(size);
+  for (let i = 0; i < size; i += 1) if (land[i]) territories[owner[i]].cells.push(i);
+  for (const territory of territories) {
+    const total = territory.cells.length;
+    territory.area = total;
+    const share = territory.unitsTotal > 0 ? territory.unitsDone / territory.unitsTotal : 0;
+    const lit = territory.unitsDone === territory.unitsTotal && territory.unitsTotal > 0
+      ? total
+      : Math.floor(total * share);
+    territory.lit = lit;
+    if (lit <= 0) continue;
+    const ranked = territory.cells.map((i) => {
+      const gx = i % cols;
+      const gy = (i - gx) / cols;
+      const dx = gx + 0.5 - territory.seedX;
+      const dy = gy + 0.5 - territory.seedY;
+      const wobble = fbm(gx * 0.09, gy * 0.09, seed + 311) - 0.5;
+      return { i, d: Math.sqrt(dx * dx + dy * dy) * (1 + 0.45 * wobble) };
+    }).sort((a, b) => a.d - b.d || a.i - b.i);
+    for (let k = 0; k < lit; k += 1) explored[ranked[k].i] = 1;
+  }
+
+  // --- 7. Bucket every cell into a colour layer, then merge horizontal runs.
+  // This is the step that keeps the node count in the hundreds.
+  const buckets = new Map();
+  const push = (id, fill, opacity, gx, gy, run) => {
+    let layer = buckets.get(id);
+    if (!layer) { layer = { id, fill, opacity, parts: [] }; buckets.set(id, layer); }
+    layer.parts.push(`M${gx * cell} ${gy * cell}h${run * cell}v${cell}h${-run * cell}z`);
+  };
+
+  const keyOf = new Array(size);
+  for (let i = 0; i < size; i += 1) {
+    const gx = i % cols;
+    const gy = (i - gx) / cols;
+    if (!land[i]) {
+      keyOf[i] = shallow[i] === 2 ? "sea2" : shallow[i] === 1 ? "sea1" : null;
+      continue;
+    }
+    if (river[i] && !sand[i]) { keyOf[i] = "river"; continue; }
+    if (sand[i]) {
+      keyOf[i] = fbm(gx * 0.3, gy * 0.3, seed + 55) > 0.5 ? "sandA" : "sandB";
+      continue;
+    }
+    const t = owner[i];
+    const n = fbm(gx * 0.26, gy * 0.26, seed + 13);
+    const shade = n < 0.42 ? 2 : n < 0.60 ? 1 : 0;
+    keyOf[i] = `t${t}.${shade}`;
+  }
+
+  const fillFor = (key) => {
+    if (key === "sea1") return [OCEAN_MID, 1];
+    if (key === "sea2") return [OCEAN_SHALLOW, 1];
+    if (key === "river") return [RIVER, 1];
+    if (key === "sandA") return [SAND_LIGHT, 1];
+    if (key === "sandB") return [SAND_DARK, 1];
+    const [t, shade] = key.slice(1).split(".");
+    return [territories[Number(t)].biome.shades[Number(shade)], 1];
+  };
+
+  for (let gy = 0; gy < rows; gy += 1) {
+    let gx = 0;
+    while (gx < cols) {
+      const key = keyOf[gy * cols + gx];
+      if (key === null) { gx += 1; continue; }
+      let run = 1;
+      while (gx + run < cols && keyOf[gy * cols + gx + run] === key) run += 1;
+      const [fill, opacity] = fillFor(key);
+      push(key, fill, opacity, gx, gy, run);
+      gx += run;
+    }
+  }
+
+  // --- 8. Fog of the unexplored. One flat veil over every unlit land cell plus
+  // a dithered second pass, which is what gives the ragged black edge of an
+  // unfilled Minecraft map instead of a hard rectangle. It dims; it never
+  // marks. There is no word or count of anything missed anywhere in this map.
+  for (let gy = 0; gy < rows; gy += 1) {
+    let gx = 0;
+    while (gx < cols) {
+      const i = gy * cols + gx;
+      if (!land[i] || explored[i]) { gx += 1; continue; }
+      let run = 1;
+      while (gx + run < cols && land[i + run] && !explored[i + run]) run += 1;
+      push("fog", FOG, 0.52, gx, gy, run);
+      gx += run;
+    }
+  }
+  for (let gy = 0; gy < rows; gy += 1) {
+    for (let gx = 0; gx < cols; gx += 1) {
+      const i = gy * cols + gx;
+      if (!land[i] || explored[i]) continue;
+      if (hash2(gx, gy, seed + 4242) < 0.34) push("fog2", FOG, 0.34, gx, gy, 1);
+    }
+  }
+
+  // --- 9. Trees and peaks, on settled ground only. Unexplored ground carries no
+  // detail because he has not been there yet; that is the invitation.
+  const canopy = new Map();
+  const trunks = [];
+  const snow = [];
+  for (let gy = 1; gy < rows - 1; gy += 1) {
+    for (let gx = 1; gx < cols - 1; gx += 1) {
+      const i = gy * cols + gx;
+      if (!land[i] || !explored[i] || sand[i] || river[i]) continue;
+      const territory = territories[owner[i]];
+      const x = gx * cell;
+      const y = gy * cell;
+      if (territory.biome.tree && hash2(gx, gy, seed + 1717) < 0.11) {
+        const list = canopy.get(territory.biome.tree) ?? [];
+        list.push(`M${x} ${y - cell}h${cell}v${cell}h${-cell}z`);
+        canopy.set(territory.biome.tree, list);
+        trunks.push(`M${x + cell * 0.25} ${y}h${cell * 0.5}v${cell * 0.5}h${-cell * 0.5}z`);
+      } else if (!territory.biome.tree && fbm(gx * 0.2, gy * 0.2, seed + 88) > 0.66) {
+        snow.push(`M${x} ${y}h${cell}v${cell}h${-cell}z`);
+      }
+    }
+  }
+
+  const layers = [];
+  const order = ["sea1", "sea2", "sandA", "sandB", "river"];
+  for (const key of [...buckets.keys()].sort((a, b) => {
+    const rank = (k) => (k === "fog" ? 90 : k === "fog2" ? 91 : order.indexOf(k) >= 0 ? order.indexOf(k) : 50);
+    return rank(a) - rank(b);
+  })) {
+    const layer = buckets.get(key);
+    layers.push({ id: key, fill: layer.fill, opacity: layer.opacity, d: layer.parts.join("") });
+  }
+  if (snow.length) layers.push({ id: "snow", fill: "#eef3f6", opacity: 0.85, d: snow.join("") });
+  for (const [fill, parts] of canopy) {
+    layers.push({ id: `tree-${fill}`, fill, opacity: 1, d: parts.join("") });
+  }
+  if (trunks.length) layers.push({ id: "trunk", fill: TRUNK, opacity: 0.9, d: trunks.join("") });
+
+  // --- 10. Where the labels, landmarks and the "you are here" marker go: the
+  // centre of mass of the territory's own ground, so a label never floats in
+  // the sea and never leaves its own territory.
+  for (const territory of territories) {
+    if (territory.cells.length === 0) continue;
+    let sx = 0;
+    let sy = 0;
+    for (const i of territory.cells) { sx += i % cols; sy += (i - (i % cols)) / cols; }
+    territory.cx = ((sx / territory.cells.length) + 0.5) * cell;
+    territory.cy = ((sy / territory.cells.length) + 0.5) * cell;
+    territory.biomeName = territory.biome.name;
+    delete territory.cells;
+    delete territory.biome;
+  }
+
+  return {
+    width, height, cell, cols, rows, ocean: OCEAN_DEEP,
+    layers,
+    territories,
+    landmasses: landmasses.map((mass) => {
+      const own = territories.filter((territory) => territory.worldIndex === mass.index);
+      const cx = own.reduce((sum, territory) => sum + territory.cx, 0) / Math.max(1, own.length);
+      const cy = own.reduce((sum, territory) => sum + territory.cy, 0) / Math.max(1, own.length);
+      const top = Math.min(...own.map((territory) => territory.cy));
+      return { ...mass, cx, cy, top };
+    }),
+    // Nodes the renderer will emit for terrain: one <path> per layer, plus the
+    // ocean rect. Reported so the budget is measured, not assumed.
+    nodeEstimate: layers.length + 1,
+  };
+}
+
+// A stable fingerprint of the generated world. Two runs on the same data must
+// produce the same string; that is the whole test for "the coastline does not
+// reshuffle". Deliberately cheap and order-sensitive.
+export function terrainSignature(terrain) {
+  let h = 2166136261;
+  const eat = (text) => {
+    for (let i = 0; i < text.length; i += 1) {
+      h ^= text.charCodeAt(i);
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+  };
+  for (const layer of terrain.layers) { eat(layer.id); eat(layer.fill); eat(layer.d); }
+  for (const territory of terrain.territories) {
+    eat(`${territory.key}|${Math.round(territory.cx)}|${Math.round(territory.cy)}|${territory.area}|${territory.lit}`);
+  }
+  return h.toString(16).padStart(8, "0");
+}
+
+// Hue of a #rrggbb colour, 0-360. Used by the palette test to prove no red,
+// rather than by reading the source and hoping.
+export function hexHue(hex) {
+  const value = String(hex).replace("#", "");
+  const r = parseInt(value.slice(0, 2), 16) / 255;
+  const g = parseInt(value.slice(2, 4), 16) / 255;
+  const b = parseInt(value.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  if (max === min) return null;
+  const c = max - min;
+  let hue;
+  if (max === r) hue = ((g - b) / c) % 6;
+  else if (max === g) hue = (b - r) / c + 2;
+  else hue = (r - g) / c + 4;
+  hue *= 60;
+  return hue < 0 ? hue + 360 : hue;
+}
+
+export function terrainPalette() {
+  const colours = [OCEAN_DEEP, OCEAN_MID, OCEAN_SHALLOW, SAND_LIGHT, SAND_DARK, RIVER, TRUNK, "#eef3f6"];
+  for (const biome of Object.values(BIOMES)) {
+    colours.push(...biome.shades);
+    if (biome.tree) colours.push(biome.tree);
+  }
+  return colours;
+}
