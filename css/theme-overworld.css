@@ -116,7 +116,10 @@ a.action:focus-visible {
 
 .numeric,
 time,
-meter,
+meter {
+  font-variant-numeric: tabular-nums;
+}
+
 .f3-header {
   position: sticky;
   z-index: 20;
