@@ -1,4 +1,4 @@
-import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, worldMap, mapLandmarks, worldTerrain, worldRoute, UNIT_TYPE_LABELS } from "./js/quest.mjs";
+import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, worldMap, mapLandmarks, worldTerrain, worldRoute, UNIT_TYPE_LABELS, UNIT_TYPE_PLURALS } from "./js/quest.mjs";
 
 (() => {
   "use strict";
@@ -511,7 +511,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     const breakdown = region.types
       .filter((entry) => entry.total > 0)
       .map((entry) => `${entry.done} of ${entry.total} ${
-        entry.total === 1 ? UNIT_TYPE_LABELS[entry.type] : `${UNIT_TYPE_LABELS[entry.type]}s`}`)
+        entry.total === 1 ? UNIT_TYPE_LABELS[entry.type] : UNIT_TYPE_PLURALS[entry.type]}`)
       .join(", ");
     // Distance is stated as discovery, never as a lock. A section he has not
     // reached is somewhere he has not been yet, and that is all it is.
