@@ -981,7 +981,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
   // `scale` and `secondary` come from quest.mjs (dialScale / percentTicks). This
   // function does geometry and markup only, and computes no reading of its own.
   const GAUGE = {
-    track: 45.5, tickOuter: 44, majorInner: 37, minorInner: 40.5, numbers: 33.5,
+    track: 46.5, tickOuter: 44, majorInner: 37, minorInner: 40.5, numbers: 33.5,
     scale2Arc: 25.5, scale2Outer: 27.5, scale2Inner: 23.5, scale2Numbers: 18,
     needle: 42,
   };

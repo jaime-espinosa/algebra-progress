@@ -93,7 +93,7 @@
  * separating the hues, and neither segment means anything is wrong. */
 .gauge__progress {
   stroke: var(--accent);
-  stroke-width: 5.5;
+  stroke-width: 5;
   stroke-linecap: butt;
 }
 
