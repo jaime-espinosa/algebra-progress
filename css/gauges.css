@@ -250,7 +250,12 @@
   font-size: 6.5px;
   letter-spacing: .02em;
   line-height: 1.1;
-  white-space: nowrap;
+  /* Wraps rather than nowrap: "NEEDS 3.55 TO FINISH ON TIME" is longer than the 38%
+     window and ran straight off both edges of the box. Wrapping keeps it inside and
+     readable; shrinking the type far enough to fit on one line did not. The other
+     three dials' subs are short enough that they still render on a single line. */
+  text-align: center;
+  text-wrap: balance;
 }
 
 /* Each dial's text equivalent. Present for a screen reader at all times; the
