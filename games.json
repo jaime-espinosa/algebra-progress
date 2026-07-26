@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T23:33:03Z",
+  "generatedAt": "2026-07-26T02:50:55Z",
   "sections": [
     {
       "semester": "sem1",
@@ -52,6 +52,18 @@
           "account": false,
           "verifiedAt": "2026-07-25",
           "hookForHim": "One puzzle a day, sixty seconds, no account, no ads. Small enough to become a habit rather than a chore, and easy to play against friends by comparing guess counts."
+        },
+        {
+          "title": "Project Euler: the first ten problems",
+          "url": "https://projecteuler.net/archives",
+          "kind": "puzzle",
+          "why": "Problems 1 to 10 are algebra problems that happen to want a program: multiples and divisibility, a Fibonacci rule, and problem 6, which is the sum of the squares against the square of the sum. You write about four lines of Python; the algebra is in working out which four, and in noticing that a formula beats a loop.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false,
+          "hookForHim": "Reading a problem needs nothing at all, and the pages have no comments and nothing social on them. A free login only if you want the site to mark your answer. Problem 6 is worth doing twice: once by brute force, once by finding the formula, and then comparing how long each takes."
         }
       ]
     },
@@ -219,6 +231,18 @@
           "remixable": true,
           "hookForHim": "View-source on this is a complete, readable lesson in how to draw a graph with <canvas> from nothing. This is exactly the '300-line HTML file that draws a parabola' he can actually finish reading.",
           "source": true
+        },
+        {
+          "title": "tixy.land",
+          "url": "https://tixy.land/",
+          "kind": "tool",
+          "why": "The entire page is one function. You type the right-hand side of (t,i,x,y) => and a 16 by 16 grid of dots shows what it returns everywhere at once: the sign picks the colour, the size shows how big the value is. Change y/8 to y/4 and the pattern halves. It is the clearest thing here for what a function of x and y actually means, because you see all of its outputs together instead of one at a time.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": true,
+          "hookForHim": "Thirty-two characters of JavaScript, no account, no sign-up, and every pattern he makes is a URL he can paste to a friend. It is a code-golf toy first and a maths toy second, which is exactly why it works."
         }
       ]
     },
@@ -276,6 +300,19 @@
           "account": false,
           "verifiedAt": "2026-07-25",
           "hookForHim": "It was built by teenagers at Hack Club and the whole thing is open source, so it is simultaneously the best argument that graphing is fun and proof that kids his age ship real games. Equation input is a proper MathQuill field and levels share as URLs — trivially recordable."
+        },
+        {
+          "title": "Nature of Code, Chapter 1: Vectors",
+          "url": "https://natureofcode.com/vectors/",
+          "kind": "tool",
+          "why": "The free full text of Daniel Shiffman's book, with every example running live in the page as an editable p5.js sketch. A ball moving at constant velocity is position as a linear function of time, and the chapter builds that up from x = x + 1. Honest note: this teaches motion, not equation-solving. The linear function is the thing he builds, not the thing he rearranges.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "Every sketch in the chapter has its code next to it and opens in the p5 editor, which he already has on this page. The book is the standard reference for the exact kind of graphics-and-motion coding he is heading towards anyway.",
+          "source": true
         }
       ]
     },
@@ -429,6 +466,19 @@
           "account": false,
           "verifiedAt": "2026-07-25",
           "hookForHim": "Verified HTML5 canvas with zero Java left in it — these are MIT's course applets, rebuilt and still maintained. Also: this is the maths under every arrow shot and TNT cannon he has ever aimed."
+        },
+        {
+          "title": "A Primer on Bézier Curves",
+          "url": "https://pomax.github.io/bezierinfo/",
+          "kind": "tool",
+          "why": "A quadratic Bézier curve is a quadratic. The article writes the expression out in full, then lets you drag the control points and edit the code that draws the curve, in the page, and watch the shape follow. Honest note: sections 1 to 6 are the Algebra I part; the later ones use calculus and can wait.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "Every graphic on the page has a source toggle you can edit and re-run in place. Bézier curves are also what every drawing program, font and game path is actually made of, so this is the rare case where the school topic and the thing he wants to build are the same object.",
+          "source": true
         }
       ]
     },
@@ -648,6 +698,18 @@
           "account": false,
           "verifiedAt": "2026-07-25",
           "hookForHim": "Short, hands-on, and immediately practical if he ever charts his own numbers. Also a good inoculation against misleading graphs."
+        },
+        {
+          "title": "Try Jupyter: Python in the browser",
+          "url": "https://jupyter.org/try-jupyter/lab/",
+          "kind": "tool",
+          "why": "A real Python notebook running entirely inside the browser tab: no install, no upload, no account. Type numbers into a list, plot them, and fit a line through them, which is the same line of best fit this section asks for by hand. It takes about twenty seconds to start the first time.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": true,
+          "hookForHim": "This is the actual tool working scientists use, running on a school laptop with nothing installed. Everything he types stays in his own browser."
         }
       ]
     },
@@ -749,6 +811,41 @@
           "account": false,
           "verifiedAt": "2026-07-25",
           "hookForHim": "Genuinely hypnotic and about ten seconds to understand. Factoring is the skill his whole quadratics unit rests on, and this is the only thing here that makes the idea of a factor visually obvious."
+        },
+        {
+          "title": "Bret Victor: Up and Down the Ladder of Abstraction",
+          "url": "https://worrydream.com/LadderOfAbstraction/",
+          "kind": "tool",
+          "why": "A car steers itself down a road, and the essay slowly turns one single run into a variable, then into a function, then into a picture of every possible run at once. It is the best argument anywhere for why you would graph a function instead of computing one answer at a time.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": false
+        },
+        {
+          "title": "futurecoder",
+          "url": "https://futurecoder.io/",
+          "kind": "tool",
+          "why": "A free, open-source Python course that runs in the browser with no account, with a step-through debugger built in so you can watch a line of code take each value in turn. Honest note: this is not algebra. It is the Python you need before the algebra-by-code things on this list get fun.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": true,
+          "remixable": true,
+          "hookForHim": "No sign-up, no ads, no comments section, and the whole thing is on GitHub so he can read how the exercise checker works. There is a Just Code button that drops straight into an editor if he does not want the course.",
+          "source": true
+        },
+        {
+          "title": "Explorable Explanations",
+          "url": "https://explorabl.es/math/",
+          "kind": "tool",
+          "why": "A curated index of interactive explainers, filtered to the maths ones. Quality varies by author and it is a shelf rather than a single thing, but it is the place to browse when nothing else on this page appeals, and most entries ship their source.",
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-25",
+          "sourceAvailable": false,
+          "remixable": false
         }
       ]
     }
