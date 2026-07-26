@@ -1,4 +1,4 @@
-import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, worldMap, mapLandmarks, worldTerrain } from "./js/quest.mjs";
+import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, worldMap, mapLandmarks, worldTerrain, worldRoute, UNIT_TYPE_LABELS } from "./js/quest.mjs";
 
 (() => {
   "use strict";
