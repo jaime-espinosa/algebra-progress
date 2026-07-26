@@ -1628,7 +1628,7 @@ html.motion-paused *::after {
   gap: 0;
 }
 
-/* The today marker: TWO of them, one per graph, each drawn INSIDE its own SVG.
+/* The today marker: TWO of them, one per graph, each inside its own plot box.
  *
  * 2026-07-26 — this REVERSES the previous design, a single 3px-wide HTML line
  * positioned over `.chart-pair__plots` and spanning both grids, which was itself
@@ -1636,31 +1636,64 @@ html.motion-paused *::after {
  * graph, and only inside the graph... make it the thickness of an actual day".
  * If you are about to restore the one-line version, this is the note saying the
  * later instruction won. The old machinery went with it: the `--today-*` custom
- * properties, `--chart-frame`, and the DAY_PLOT / CUM_PLOT exports that existed
- * only so CSS could do the geometry.
+ * properties and `--chart-frame`.
  *
- * Nothing here does geometry any more. The marker is a <rect> in viewBox units
- * (see chartToday in js/render/shared.mjs) whose width is one day on the x-scale,
- * so it scales with the SVG and stays one day wide at every viewport. This file
- * only says what colour it is. */
+ * It is an HTML div over the SVG, not a <rect> inside it. That was also ruled on
+ * 2026-07-26, AFTER a first pass had moved it into the SVG in viewBox units:
+ * "use html, best effort. this thickness can be calculated at every beginning
+ * session, and not scale with window, but assume it's full screen". So the width
+ * is a fixed px figure computed once per render for a full-screen viewport (see
+ * chartTodayWidthPx in js/render/shared.mjs) and is deliberately NOT corrected on
+ * resize. Do not add a resize listener or a ResizeObserver here; their absence is
+ * the requirement, not an oversight.
+ *
+ * Geometry that IS still exact at every width: the marker's centre and its top
+ * and bottom, all percentages of `.chart-plot` — which is the SVG's own box, so
+ * the two markers stay on the same x and neither can leave its own grid into the
+ * label gutters or the seam between the charts. */
+.chart-plot {
+  position: relative;
+}
+
+/* Inset to one chart's grid box, and it CLIPS. This is what makes "only inside the
+   graph" structural: the band's width is a fixed px figure that can be wrong for
+   the current viewport, and this is what stops a wrong figure from ever reaching
+   the label gutters or the seam. */
+.chart-today-mark {
+  position: absolute;
+  overflow: hidden;
+  /* Non-negotiable: this div covers the whole grid, so without this it eats every
+     hover on the series below it and the per-day <title> tooltips stop appearing.
+     They are the only place the hours figures are explained. */
+  pointer-events: none;
+}
+
 .chart-today {
-  fill: var(--text);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
   /* Under the series, not over them: at one day wide this is a band, and an
      opaque band would hide the very lines it is dating. Kept high enough to read
      as deliberate rather than as another gridline. */
+  background: var(--text);
   opacity: .32;
+  pointer-events: none;
 }
 
-/* Inside the SVG now, so it scales with the drawing instead of being the largest
-   thing on the chart at phone width, which is what the old HTML label did. One
-   label, on the upper chart only: the lower marker is on the same x and needs no
-   second caption. */
+/* One label, on the upper chart only: the lower marker is on the same x and
+   needs no second caption. Sits just inside the top of its own plot. */
 .chart-today__label {
-  fill: var(--text);
+  position: absolute;
+  transform: translateX(-50%);
+  color: var(--text);
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 700;
+  line-height: 1;
   text-shadow: none;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 /* No min-height. It bought nothing — the viewBox scales to fit the width either
@@ -1688,8 +1721,11 @@ html.motion-paused *::after {
 .chart-open,
 .chart-steady,
 .chart-adjusted,
-.chart-actual,
-.chart-today {
+.chart-actual {
+  /* .chart-today is NOT in this list. It was, left over from the days when the
+     marker was a stroked line, and it silently won over the marker's own `fill`
+     because it is further down this file — the band rendered invisible. It is an
+     HTML div now and cannot come back here. */
   fill: none;
   vector-effect: non-scaling-stroke;
 }

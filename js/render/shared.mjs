@@ -101,11 +101,13 @@ export const ICON_GLYPH = {
 // number here it changes in both charts or in neither.
 export const CHART = { width: 760, left: 58, right: 46 };
 
-// The plot box of each chart, in viewBox units. These used to be exported so CSS
-// could place a single today marker sitting OUTSIDE both SVGs on the GRID rather
-// than on the label gutters. As of 2026-07-26 there are two markers and each is
-// drawn INSIDE its own SVG (see chartToday), so this is local geometry again —
-// each chart hands its own box to chartToday and nothing outside this file needs it.
+// The plot box of each chart, in viewBox units. These used to be EXPORTED so that
+// app.js could hand them to CSS, which placed a single today marker over both SVGs
+// at once. As of 2026-07-26 there are two markers, one per chart, and each chart
+// passes its OWN box straight to chartToday — so these are still live and still
+// load-bearing (the marker's top and bottom are percentages of them), but nothing
+// outside this file reads them any more. Keep them un-exported: the export was how
+// the geometry leaked into CSS in the first place.
 const DAY_PLOT = { height: 196, top: 20, bottom: 148 };
 const CUM_PLOT = { height: 200, top: 36, bottom: 150 };
 
@@ -785,6 +787,32 @@ export const GAME_KIND_FACES = {
     return (CHART.width - CHART.left - CHART.right) / last;
   }
 
+  // How wide one day is IN PIXELS, for a full-screen viewport, computed once per
+  // render and never corrected afterwards. That is the instruction, verbatim:
+  // "this thickness can be calculated at every beginning session, and not scale
+  // with window, but assume it's full screen" (2026-07-26). No resize listener,
+  // no ResizeObserver, no live measurement — if the window is not full screen the
+  // band is off, and that is the accepted trade, not a bug to fix here.
+  //
+  // The chain below is the CSS box model between the viewport and the plot, and it
+  // is written out rather than measured so that this stays a pure function:
+  //   .page    max-width 1400, padding 16       -> -32
+  //   .panel   padding 16 + border 1            -> -34
+  //   .chart-block padding 8 + border 1         -> -18
+  // At 1400 that gives 1316px of SVG for 760 viewBox units; measured: 1316. If any
+  // of those three paddings changes, this figure drifts and only the harness in
+  // _sprint/review-tonight/ will notice, so it is asserted there.
+  const PAGE_MAX = 1400;
+  const PAGE_CHROME = 32 + 34 + 18;
+
+  export function chartTodayWidthPx(track) {
+    const viewport = typeof screen !== "undefined" && screen.width
+      ? Math.min(screen.width, PAGE_MAX)
+      : PAGE_MAX;
+    const svgPx = Math.max(1, viewport - PAGE_CHROME);
+    return chartDay(track) * (svgPx / CHART.width);
+  }
+
   // ---- Today ----------------------------------------------------------------
   // TWO markers, one per chart, each confined to its own plot box. This REVERSES
   // the earlier one-continuous-line-across-both-graphs design, which was itself an
@@ -792,37 +820,44 @@ export const GAME_KIND_FACES = {
   // graph, and only inside the graph"). If you are about to restore the single
   // spanning line, this is the sentence saying not to.
   //
-  // Drawn INSIDE the SVG in viewBox units rather than as HTML positioned over it,
-  // because the width has to be the thickness of an actual day rather than a fixed
-  // number of pixels. One day is chartDay(track) viewBox units, so a rect of that
-  // width scales with the SVG for free and stays exactly one day wide at every
-  // viewport with nothing measured in JS and no resize listener. The HTML overlay
-  // could only have said "3px". Being inside the SVG is also what clips it to the
-  // plot: y runs top..bottom, so it never reaches the date-label gutter, the
-  // units/hours label gutters, or the seam between the two charts.
+  // HTML positioned over the SVG, not a <rect> inside it. A first pass did put it
+  // in the SVG in viewBox units; that was overruled on 2026-07-26 in favour of the
+  // easier build: "use html, best effort. this thickness can be calculated at every
+  // beginning session, and not scale with window, but assume it's full screen".
+  // Hence the width is the fixed px figure from chartTodayWidthPx and nothing here
+  // reacts to a resize. Do not "fix" that.
   //
-  // x is the CENTRE of today's column, so both charts put their marker on the same
-  // x — they share chartX and the same track.
-  export function chartToday(track, top, bottom, label = "") {
+  // What IS exact at every width is everything except the thickness. The outer div
+  // is inset to this chart's GRID box in percentages — left/right from the axis
+  // columns, top/bottom from this chart's own plot box — and it clips its contents.
+  // So the band physically cannot reach the date-label gutter, the units/hours
+  // label gutters, or the seam between the two charts, whatever its px width comes
+  // out as. The inner div's centre is a percentage of that grid box, and both
+  // charts derive it from the same chartX and the same track, so the two markers
+  // land on the same x at any viewport.
+  //
+  // `plot` is this chart's own { height, top, bottom } in viewBox units. The SVG is
+  // width:100% height:auto with a viewBox, so it never letterboxes and a percentage
+  // of the rendered box is the same fraction of the viewBox.
+  export function chartToday(track, plot, label = "") {
     const index = track.points.findIndex(point => point.date === track.today);
     if (index < 0) return "";
-    const day = chartDay(track);
-    const centre = chartX(track, index);
-    // Clamped so a today at either end of the span cannot bleed past the axis.
-    const left = Math.min(
-      Math.max(CHART.left, centre - day / 2),
-      CHART.width - CHART.right - day,
-    );
+    const gridWidth = CHART.width - CHART.left - CHART.right;
+    const centre = (chartX(track, index) - CHART.left) / gridWidth * 100;
+    const inset = {
+      left: CHART.left / CHART.width * 100,
+      right: CHART.right / CHART.width * 100,
+      top: plot.top / plot.height * 100,
+      bottom: (plot.height - plot.bottom) / plot.height * 100,
+    };
     const caption = label
       ? `
-          <text class="chart-today__label" x="${(left + day / 2).toFixed(1)}" y="${top + 10}"
-            text-anchor="middle">${escapeHtml(label)}</text>`
+        <span class="chart-today__label" style="left: ${centre.toFixed(2)}%; top: 2px">${escapeHtml(label)}</span>`
       : "";
     return `
-        <g class="chart-today-mark">
-          <rect class="chart-today" x="${left.toFixed(1)}" y="${top}"
-            width="${day.toFixed(2)}" height="${bottom - top}"></rect>${caption}
-        </g>`;
+      <div class="chart-today-mark" aria-hidden="true" style="left: ${inset.left.toFixed(2)}%; right: ${inset.right.toFixed(2)}%; top: ${inset.top.toFixed(2)}%; bottom: ${inset.bottom.toFixed(2)}%">
+        <div class="chart-today" style="left: ${centre.toFixed(2)}%; width: ${chartTodayWidthPx(track).toFixed(1)}px"></div>${caption}
+      </div>`;
   }
 
   export function chartDayTicks(track) {
@@ -909,21 +944,23 @@ export const GAME_KIND_FACES = {
         const day = series.byDay.get(point.date);
         const x = chartX(track, index);
         const y = openY(day.seconds);
-        const stretch = day.longestStretch;
         // The fact, and nothing after it. This used to end with "Nothing logs you out, so
         // a tab left open keeps counting" — an explanation of our own bookkeeping, on a
         // page that is his, not ours.
-        const why = day.marked
-          ? `${formatDay(point.date)}: the course page was open ${day.text}${stretch
-            ? `, including one unbroken ${stretch.text}${stretch.startTime ? ` from ${stretch.startTime}` : ""}` : ""}`
-          : `${formatDay(point.date)}: the course page was open ${day.text}`;
+        //
+        // The ", including one unbroken 10h 8m from 12:07 AM" clause went the same way
+        // on 2026-07-26, and for a second reason that outranks the first: startTime
+        // published a CLOCK TIME FOR A NAMED MINOR on a public repo. This was the last
+        // thing the rendered page read out of activity.json's per-entry data. Do not
+        // reintroduce a stretch, a start time or an end time here.
+        const why = `${formatDay(point.date)}: the course page was open ${day.text}`;
         // The diamonds that used to mark a flagged day are gone by request
         // (2026-07-26, #31: "delete the triangles"). day.marked did NOT become
-        // dead with them — it still picks the tooltip that names the unbroken
-        // stretch, still feeds `markedDays` in this chart's aria-label, and still
-        // draws a flagged day hollow. Only the diamond shape went: a flagged day
-        // is now a hollow dot on the same line as every other day, so the chart
-        // has no polygon markers on it and still says which days were flagged.
+        // dead with them: it still draws a flagged day as a HOLLOW DOT on the same
+        // line as every other day, and that hollow dot is what `markedDays` in this
+        // chart's aria-label describes. Checked when the stretch tooltip was removed
+        // above — the aria-label is not describing a marker that no longer exists.
+        // If the hollow dot ever goes too, the aria-label clause must go with it.
         const shape = `<circle class="chart-open__dot${day.marked ? " is-marked" : ""}"
           cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2"></circle>`;
         return `<g>${shape}<title>${escapeHtml(why)}</title></g>`;
@@ -940,11 +977,11 @@ export const GAME_KIND_FACES = {
 
     return `
       <div class="chart-block">
+        <div class="chart-plot">
         <svg viewBox="0 0 ${CHART.width} ${height}" preserveAspectRatio="xMidYMid meet" role="img"
           aria-label="${escapeHtml(`Units submitted per calendar day from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, with a reference line at ${requiredPerDay.toFixed(2)} units per day. A second line on the right axis shows how long the course page was open each day, in hours; ${series ? series.markedDays : 0} days are flagged as a tab left open and drawn hollow. A band one day wide marks today, ${formatDay(track.today)}.`)}">
           ${yTicks}
           ${chartFridayGrid(track, top, bottom)}
-          ${chartToday(track, top, bottom, "today")}
           <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
           <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
           ${openAxis}
@@ -959,6 +996,8 @@ export const GAME_KIND_FACES = {
           ${openFlags}
           ${chartDayAxis(track, bottom, bottom + 20)}
         </svg>
+        ${chartToday(track, DAY_PLOT, "today")}
+        </div>
       </div>`;
   }
 
@@ -1057,10 +1096,10 @@ export const GAME_KIND_FACES = {
 
     return `
       <div class="chart-block">
+        <div class="chart-plot">
         <svg viewBox="0 0 ${CHART.width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${escapeHtml(ariaLabel)}">
           ${grid}
           ${chartFridayGrid(track, top, bottom)}
-          ${chartToday(track, top, bottom)}
           <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
           <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
           <text class="chart-axis-title chart-axis-title--done" x="14" y="${(top + bottom) / 2}" text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">units done</text>
@@ -1072,6 +1111,8 @@ export const GAME_KIND_FACES = {
           ${overallMark}
           ${chartDayAxis(track, bottom, bottom + 20)}
         </svg>
+        ${chartToday(track, CUM_PLOT)}
+        </div>
       </div>`;
   }
 

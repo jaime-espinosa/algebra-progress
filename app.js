@@ -1040,7 +1040,13 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     document.querySelector("#effort-content").innerHTML = `
       <div class="effort-gauges">
         ${gaugeDial({
-          label: "UNITS PER DAY",
+          // "WORKED" is not decoration: it is the DIVISOR, and it used to live in
+          // the white text on the glass that #93 removed. Deleting that text without
+          // moving the divisor up here would leave this dial reading 3.65 next to a
+          // dial reading 0.67 with nothing on the page explaining why both are true.
+          // The rolling dial needs no such qualifier — "average of 3 days" already
+          // says it divides by all three. (2026-07-26)
+          label: "UNITS PER DAY WORKED",
           hint: `Units submitted divided by the number of days you actually submitted something. Days you never opened the course are not in the divisor: ${s.odometer} units over ${s.activeDays} days. The inner amber scale is the same needle as a percentage of the ${s.requiredPerDay.toFixed(2)} a day Aug 15 needs.`,
           scale: paceScale,
           secondary: { unit: "% OF NEEDED", ticks: percentTicks(paceScale.max, s.requiredPerDay) },
