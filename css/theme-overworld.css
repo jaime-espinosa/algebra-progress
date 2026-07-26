@@ -1661,6 +1661,52 @@ html.motion-paused *::after {
   stroke-dasharray: 2 4;
 }
 
+/* ---- Sections closed out, on the cumulative chart ------------------------- *
+ * A stem and a short name at the day a section's last unit landed, plus its
+ * grade against the right-hand percent scale. The stem is quieter than the
+ * Friday grid on purpose: it marks a fact, it is not a ruler, and there are only
+ * ever a handful of them. Nothing here is red and nothing here is a warning —
+ * these are the four times so far that something got finished. */
+.chart-milestone__stem {
+  fill: none;
+  stroke: var(--accent-dim);
+  stroke-width: 1;
+  stroke-dasharray: 1 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.chart-milestone__label {
+  fill: var(--dim);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-shadow: none;
+}
+
+.chart-axis--grade {
+  stroke: var(--warn);
+  opacity: .55;
+}
+
+.chart-label--grade,
+.chart-axis-title--grade {
+  fill: var(--warn);
+}
+
+/* Points, never a line: four section grades are four facts, not a trend. Filled
+   for a section, hollow for the running overall figure. */
+.chart-grade-dot {
+  fill: var(--warn);
+  stroke: var(--panel-solid);
+  stroke-width: 1;
+}
+
+.chart-grade-dot.is-overall {
+  fill: none;
+  stroke: var(--warn);
+  stroke-width: 2;
+}
+
 .chart-unit {
   stroke: var(--accent);
   stroke-width: 2;

@@ -897,9 +897,16 @@ export const GAME_KIND_FACES = {
   // Moved under the dials, on the per-day chart's own x-scale, so the two read
   // as one picture: a bar on the day chart and the step it produces on this one
   // sit on the same vertical.
-  export function cumulativeChart(track) {
+  // `milestones` and `overall` are optional: the chart drew nothing but the staircase
+  // before them, and it still does if they are not passed. Nothing here recomputes a
+  // grade — every percent arrives already true from quest.mjs.
+  export function cumulativeChart(track, milestones = [], overall = null) {
     const height = 200;
-    const top = 24;
+    // 36 rather than 24: the section labels sit in this margin on two rows, and at 24
+    // the upper row's glyphs were clipped by the top of the SVG. The plot loses 12
+    // units of height, which the day chart above does not share and does not need to —
+    // only the x scale has to match between the two, and that is untouched.
+    const top = 36;
     const bottom = 150;
     const yMax = Math.max(1, track.totalRows);
     const yAt = value => top + (1 - value / yMax) * (bottom - top);
@@ -916,7 +923,70 @@ export const GAME_KIND_FACES = {
         <line class="chart-grid" x1="${CHART.left}" y1="${y}" x2="${CHART.width - CHART.right}" y2="${y}"></line>
         <text class="chart-label" x="${CHART.left - 8}" y="${Number(y) + 4}" text-anchor="end">${escapeHtml(value)}</text>`;
     }).join("");
-    const ariaLabel = `Cumulative units done from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, on the same Friday-at-5-PM day scale as the chart above. The plain actual line is compared with the steady route and with the adjusted route, which finishes all ${track.totalRows} units by ${formatDay(track.finishesOn)}.`;
+    // ---- Sections closed out, and what each scored ---------------------------
+    // Two things on one x-axis, both anchored to the day the section's last unit
+    // landed: a tick with the section's short name along the top, and its grade
+    // read against a percent scale on the right. Points only, no line — a line
+    // between section grades would imply a trend across four numbers that are not
+    // a series, and it would be the third line on this chart.
+    const indexOf = day => track.points.findIndex(point => point.date === day);
+    const marks = milestones
+      .map(milestone => ({ milestone, index: indexOf(milestone.finishedOn) }))
+      .filter(({ index }) => index >= 0);
+    const gradeAt = percent => top + (1 - Math.min(100, Math.max(0, percent)) / 100) * (bottom - top);
+    const rightX = CHART.width - CHART.right;
+
+    const gradeAxis = marks.length === 0 ? "" : `
+      <line class="chart-axis chart-axis--grade" x1="${rightX}" y1="${top}" x2="${rightX}" y2="${bottom}"></line>
+      ${[0, 50, 100].map(percent => `
+        <text class="chart-label chart-label--grade" x="${rightX + 6}" y="${(gradeAt(percent) + 3).toFixed(1)}"
+          text-anchor="start">${percent}%</text>`).join("")}
+      <text class="chart-axis-title chart-axis-title--grade" x="${rightX + 40}" y="${(top + bottom) / 2}"
+        text-anchor="middle" transform="rotate(90 ${rightX + 40} ${(top + bottom) / 2})">grade</text>`;
+
+    // Two sections finished a day apart put their labels 12px apart on a 760-wide
+    // viewBox, and a label is about 28px wide, so they overlapped into mush. Anything
+    // landing within a label's width of the one before it goes up a row instead.
+    let lastLabelX = -Infinity;
+    let lastLabelRow = 1;
+    const sectionMarks = marks.map(({ milestone, index }) => {
+      const at = chartX(track, index);
+      const row = at - lastLabelX < 30 && lastLabelRow === 1 ? 0 : 1;
+      lastLabelX = at;
+      lastLabelRow = row;
+      const labelY = row === 1 ? top - 6 : top - 20;
+      const x = at.toFixed(1);
+      const why = `${milestone.name} — last unit in it submitted ${formatDay(milestone.finishedOn)}${
+        milestone.grade === null ? "" : `, section grade ${milestone.grade.toFixed(1)}%`}`;
+      const dot = milestone.grade === null ? "" : `
+        <circle class="chart-grade-dot" cx="${x}" cy="${gradeAt(milestone.grade).toFixed(1)}" r="3"></circle>`;
+      return `
+        <g class="chart-milestone">
+          <line class="chart-milestone__stem" x1="${x}" y1="${top}" x2="${x}" y2="${bottom}"></line>
+          <text class="chart-milestone__label" x="${x}" y="${labelY}" text-anchor="middle">${escapeHtml(milestone.label)}</text>
+          ${dot}
+          <title>${escapeHtml(why)}</title>
+        </g>`;
+    }).join("");
+
+    // The overall grade sits on the same right-hand scale at today, drawn hollow so it
+    // reads as the running figure rather than as a fifth section.
+    const overallMark = overall === null || marks.length === 0 ? "" : (() => {
+      const index = indexOf(track.today);
+      if (index < 0) return "";
+      return `
+        <g class="chart-grade-overall">
+          <circle class="chart-grade-dot is-overall" cx="${chartX(track, index).toFixed(1)}"
+            cy="${gradeAt(overall).toFixed(1)}" r="4"></circle>
+          <title>${escapeHtml(`Grade across everything graded so far: ${overall.toFixed(1)}%`)}</title>
+        </g>`;
+    })();
+
+    const gradeSaid = marks.length === 0 ? "" : ` Sections finished so far are marked along the top and scored against a percent scale on the right, as points only: ${
+      marks.filter(({ milestone }) => milestone.grade !== null)
+        .map(({ milestone }) => `${milestone.name} finished ${formatDay(milestone.finishedOn)} at ${milestone.grade.toFixed(1)}%`)
+        .join("; ")}${overall === null ? "" : `. Across everything graded so far: ${overall.toFixed(1)}%`}.`;
+    const ariaLabel = `Cumulative units done from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, on the same Friday-at-5-PM day scale as the chart above. The plain actual line is compared with the steady route and with the adjusted route, which finishes all ${track.totalRows} units by ${formatDay(track.finishesOn)}.${gradeSaid}`;
 
     return `
       <div class="chart-block">
@@ -926,9 +996,12 @@ export const GAME_KIND_FACES = {
           <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
           <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
           <text class="chart-axis-title" x="14" y="${(top + bottom) / 2}" text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">units done</text>
+          ${gradeAxis}
+          ${sectionMarks}
           <polyline class="chart-steady" points="${pointList(past, point => point.steady)}"></polyline>
           <polyline class="chart-adjusted" points="${pointList(adjusted, point => point.adjusted)}"></polyline>
           <polyline class="chart-actual" points="${pointList(past, point => point.cumDone)}"></polyline>
+          ${overallMark}
           ${chartDayAxis(track, bottom, bottom + 20)}
         </svg>
       </div>`;

@@ -1,4 +1,4 @@
-import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, worldMap, mapLandmarks, worldTerrain, worldRoute, regionHorizon, headerSegments, questBoard, UNIT_TYPE_LABELS, UNIT_TYPE_PLURALS } from "./js/quest.mjs";
+import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, sectionMilestones, overallGrade, worldMap, mapLandmarks, worldTerrain, worldRoute, regionHorizon, headerSegments, questBoard, UNIT_TYPE_LABELS, UNIT_TYPE_PLURALS } from "./js/quest.mjs";
 import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, formatDay, formatTime, nextScrapeTime, summarySnapshot, snapshotsEqual, remainingActivities, submittedAfterBaseline, submissionsByDay, effortStats, todayCompleted, landmarkGlyph, terrainSvg, landmarkStructure, hereMarker, compassRose, mapLegend, territoryPlaque, routePaths, landmassBanner, renderWorldCard, renderWorldPopup, renderTerritoryTable, unitNode, spriteSvg, validSkinCache, skinPlaceholderSvg, blobDataUrl, gaugePoint, gaugeArc, tip, gaugeText, chartX, chartLegend, perDayChart, cumulativeChart, openTimePanel, calendarReward, calendarCell, questDays, lessonSlug, lessonCatalog, gameKindIcon, DAY_MS, CHART } from "./js/render/shared.mjs";
 
 (() => {
@@ -1024,7 +1024,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
         <div class="chart-pair__plots" style="--today-left: ${(chartX(track, Math.max(0, track.points.findIndex(point => point.date === track.today))) / CHART.width * 100).toFixed(4)}%">
           <div class="chart-today-span" aria-hidden="true"><span>today</span></div>
           ${perDayChart(track, perDay, s.requiredPerDay, series)}
-          ${cumulativeChart(track)}
+          ${cumulativeChart(track, sectionMilestones(data), overallGrade(data))}
         </div>
       </div>
       ${openTimePanel(series)}`;

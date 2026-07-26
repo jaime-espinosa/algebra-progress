@@ -388,6 +388,64 @@ export function dashboard(data, today, windowDays = 3) {
 //     anchored at where he actually stands today. This is the live plan.
 // Nothing here returns "days behind" or any negative quantity: surplus is
 // clamped at zero on the way out, so no caller can render a deficit.
+// Which sections are actually finished, the day the last unit in them landed, and what
+// each one scored.
+//
+// The cumulative line is a staircase of units and every step looks the same, so it says
+// nothing about the shape of the course. These are the handful of steps that also closed
+// something out, which is what he asked to see marked. A section counts as finished only
+// when every one of its rows has a submitted date — the LMS's own `complete` flag on the
+// section is not used, because it moves for reasons that have nothing to do with what he
+// handed in, and this page has one definition of a unit.
+//
+// Grades come off the section's own percent, never recomputed here. Nothing in the return
+// value is a projection: every field is something already true.
+export function sectionMilestones(data) {
+  const milestones = [];
+  for (const semester of data.semesters ?? []) {
+    const rows = new Map();
+    for (const activity of semester.activities ?? []) {
+      const entry = rows.get(activity.sectionNumber) ?? { total: 0, submitted: 0, last: null };
+      entry.total += 1;
+      if (activity.submittedDate) {
+        entry.submitted += 1;
+        if (!entry.last || activity.submittedDate > entry.last) entry.last = activity.submittedDate;
+      }
+      rows.set(activity.sectionNumber, entry);
+    }
+    const numeral = semester.id === "sem1" ? "S1" : "S2";
+    for (const section of semester.sections ?? []) {
+      const entry = rows.get(section.number);
+      if (!entry || !entry.last || entry.submitted < entry.total) continue;
+      milestones.push({
+        key: `${semester.id}:${section.number}`,
+        label: `${numeral}·${section.number}`,
+        name: section.name,
+        finishedOn: entry.last,
+        units: entry.total,
+        grade: typeof section.percent === "number" ? section.percent : null,
+      });
+    }
+  }
+  milestones.sort((left, right) => left.finishedOn.localeCompare(right.finishedOn)
+    || left.key.localeCompare(right.key));
+  return milestones;
+}
+
+// The grade across everything graded so far, from the LMS's own points rather than an
+// average of the section percents — sections hold different numbers of points, so
+// averaging their percents would quietly invent a number he cannot find in Red Comet.
+export function overallGrade(data) {
+  let earned = 0;
+  let possible = 0;
+  for (const semester of data.semesters ?? []) {
+    if (typeof semester.pointsEarned === "number") earned += semester.pointsEarned;
+    if (typeof semester.pointsPossible === "number") possible += semester.pointsPossible;
+  }
+  if (possible <= 0) return null;
+  return (earned / possible) * 100;
+}
+
 export function planTrack(data, today) {
   const perDay = submissionsByDay(data);
   const todayKey = parseDateKey(today);
