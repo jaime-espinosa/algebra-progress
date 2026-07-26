@@ -1,4 +1,4 @@
-import { effortStats as questEffort, computePace, dashboard, openTime, planTrack, evaluateUnlocks } from "./js/quest.mjs";
+import { effortStats as questEffort, computePace, dashboard, openTimeSeries, planTrack, evaluateUnlocks, semesterFocus } from "./js/quest.mjs";
 
 (() => {
   "use strict";
@@ -300,16 +300,17 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
     }).join("");
     // total > 0 guard: a zeroed payload makes done === total trivially true, which
     // would tell him he sealed the semester while the page shows 0/0.
-    const completeCopy = total > 0 && done === total
+    const nearFinish = total > 0 && focus?.sealed
       ? "Semester 1 sealed. Every activity is loaded."
-      : `${total - done} activities remain in Semester 1.`;
+      : `${focus?.unitsLeft ?? total - done} units from sealing Semester 1.`;
     document.querySelector("#trophy-content").innerHTML = `
       <div class="trophy-summary">
         <div class="trophy-stats">
           <span class="eyebrow">YOU BUILT THIS</span>
-          <strong class="big-number numeric">${safeNumber(semester.percent)?.toString()}%</strong>
-          <span>${escapeHtml(semester.letter || "in progress")} · ${completeSections} sections sealed</span>
-          <span class="quiet">${escapeHtml(completeCopy)}</span>
+          <strong class="big-number numeric">${safeNumber(focus?.percent)?.toString()}%</strong>
+          <span>${done} of ${total} Semester 1 activities done · ${completeSections} sections sealed</span>
+          <strong class="trophy-near">${escapeHtml(nearFinish)}</strong>
+          <span class="quiet">Grade so far ${safeNumber(semester.percent)?.toString()}%${semester.letter ? ` · ${escapeHtml(semester.letter)}` : ""}</span>
         </div>
         <div>
           <div class="chunk-map" aria-label="${done} of ${total} activities finished">${tiles}</div>
@@ -547,121 +548,280 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
     return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${radius} ${radius} 0 ${largeArc} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
   }
 
-  function gaugeSvg({ ariaLabel, fraction, targetFrom = null, fillArc = false }) {
+  // A tooltip carries HOW a number is computed, never WHAT it is. Anything a
+  // reading means has to be legible with the pointer nowhere near it. Opens on
+  // hover, on tap, and on keyboard focus, so a trackpad, a touchscreen and Tab
+  // all reach it; the text is in the DOM at all times, so a screen reader does
+  // too.
+  function tip(text) {
+    return `<span class="tip" tabindex="0"><span class="tip__mark" aria-hidden="true">?</span><span class="tip__body" role="note">${escapeHtml(text)}</span></span>`;
+  }
+
+  // The all-time count used plate numerals and he liked them, so every dial
+  // reads in the same numerals. Non-digits (a decimal point, a percent sign)
+  // sit between plates rather than getting a plate of their own.
+  function numeralPlate(text, modifier = "") {
+    const glyphs = String(text).split("").map(character => /\d/.test(character)
+      ? `<span class="plate__digit">${character}</span>`
+      : `<span class="plate__mark">${escapeHtml(character)}</span>`).join("");
+    return `<span class="plate numeric${modifier ? ` plate--${modifier}` : ""}">${glyphs}</span>`;
+  }
+
+  // Dial anatomy, in the order he asked for it: a label above, tick numbers
+  // around the arc, the reading and its unit inside the face. Nothing is
+  // captioned underneath — the numbers under the old dials were the part he
+  // said nobody reads.
+  function gaugeDial({ label, hint, reading, unit, sub, ticks, fraction, targetFrom = null, ariaLabel }) {
     const clamped = Math.max(0, Math.min(1, fraction));
-    const ticks = Array.from({ length: 11 }, (_, index) => {
+    const tickMarks = Array.from({ length: 11 }, (_, index) => {
       const outer = gaugePoint(index / 10, 42);
       const inner = gaugePoint(index / 10, index % 5 === 0 ? 35 : 38);
       return `<line x1="${inner.x.toFixed(2)}" y1="${inner.y.toFixed(2)}" x2="${outer.x.toFixed(2)}" y2="${outer.y.toFixed(2)}"></line>`;
     }).join("");
-    const needle = gaugePoint(clamped, 31);
+    const tickLabels = ticks.map(({ at, text }) => {
+      const point = gaugePoint(at, 49);
+      return `<text class="gauge__tick-label" x="${point.x.toFixed(2)}" y="${point.y.toFixed(2)}"
+        text-anchor="middle" dominant-baseline="middle">${escapeHtml(text)}</text>`;
+    }).join("");
+    const marker = gaugePoint(clamped, 0);
+    const markerFrom = gaugePoint(clamped, 33);
+    const markerTo = gaugePoint(clamped, 45);
     const target = targetFrom === null ? "" : `
-      <path class="gauge__target" d="${gaugeArc(Math.max(0, Math.min(1, targetFrom)), 1, 34)}"></path>`;
-    const progress = fillArc && clamped > 0 ? `
+      <path class="gauge__target" d="${gaugeArc(Math.max(0, Math.min(1, targetFrom)), 1, 31)}"></path>`;
+    const progress = clamped > 0 ? `
       <path class="gauge__progress" d="${gaugeArc(0, clamped)}"></path>` : "";
+    void marker;
     return `
-      <svg class="gauge__svg" viewBox="0 0 100 100" role="img"
-        aria-label="${escapeHtml(ariaLabel)}">
-        <path class="gauge__track" d="${gaugeArc(0, 1)}"></path>
-        ${target}
-        ${progress}
-        <g class="gauge__ticks" shape-rendering="crispEdges">${ticks}</g>
-        <line class="gauge__needle" x1="50" y1="50"
-          x2="${needle.x.toFixed(2)}" y2="${needle.y.toFixed(2)}"
-          shape-rendering="crispEdges"></line>
-        <rect class="gauge__hub" x="47" y="47" width="6" height="6"></rect>
-      </svg>`;
+      <article class="gauge">
+        <h3 class="gauge__title">${escapeHtml(label)}${hint ? tip(hint) : ""}</h3>
+        <div class="gauge__face">
+          <svg class="gauge__svg" viewBox="0 -8 100 108" role="img" aria-label="${escapeHtml(ariaLabel)}">
+            <path class="gauge__track" d="${gaugeArc(0, 1)}"></path>
+            ${target}
+            ${progress}
+            <g class="gauge__ticks" shape-rendering="crispEdges">${tickMarks}</g>
+            ${tickLabels}
+            <line class="gauge__marker" x1="${markerFrom.x.toFixed(2)}" y1="${markerFrom.y.toFixed(2)}"
+              x2="${markerTo.x.toFixed(2)}" y2="${markerTo.y.toFixed(2)}"></line>
+          </svg>
+          <div class="gauge__reading">
+            ${numeralPlate(reading, "dial")}
+            <span class="gauge__unit">${escapeHtml(unit)}</span>
+            ${sub ? `<span class="gauge__sub">${escapeHtml(sub)}</span>` : ""}
+          </div>
+        </div>
+      </article>`;
   }
 
-  function effortGraph(perDay, today, requiredPerDay) {
-    const activeDates = [...perDay.keys()].sort();
-    const firstDate = activeDates[0] ?? today;
-    const dayCount = Math.max(1, dateDiff(firstDate, today) + 1);
-    const days = Array.from({ length: dayCount }, (_, index) => addDays(firstDate, index));
-    const values = days.map(date => perDay.get(date) ?? 0);
-    const maxDaily = Math.max(...values, 0);
-    const yDivisor = Math.max(1, maxDaily);
-    const left = 54;
-    const right = 700;
-    const top = 18;
-    const bottom = 135;
-    const width = right - left;
-    const height = bottom - top;
-    const xAt = index => left + (days.length === 1 ? 0 : index / (days.length - 1)) * width;
-    const yAt = value => bottom - (value / yDivisor) * height;
-    const points = values.map((value, index) =>
-      `${xAt(index).toFixed(2)},${yAt(value).toFixed(2)}`).join(" ");
-    const squares = values.map((value, index) => value > 0
-      ? `<rect class="effort-graph__point" x="${(xAt(index) - 2).toFixed(2)}" y="${(yAt(value) - 2).toFixed(2)}" width="4" height="4">
-          <title>${escapeHtml(formatDay(days[index]))}: ${value} rows</title>
+  // ---- Shared chart geometry ------------------------------------------------
+  // The per-day chart and the cumulative chart are one picture in two SVGs. They
+  // share the x domain (planTrack's points: first working day through Aug 15),
+  // the viewBox width, and both side margins, so day N is the same pixel on
+  // both. Aligning them by eye is what he asked us not to do — if you change a
+  // number here it changes in both charts or in neither.
+  const CHART = { width: 760, left: 58, right: 46 };
+
+  function chartX(track, index) {
+    const last = Math.max(1, track.points.length - 1);
+    return CHART.left + (index / last) * (CHART.width - CHART.left - CHART.right);
+  }
+
+  function chartDayTicks(track) {
+    const step = Math.max(1, Math.round(track.points.length / 6));
+    const last = track.points.length - 1;
+    const ticks = [];
+    track.points.forEach((point, index) => {
+      if (index % step === 0) ticks.push({ index, date: point.date });
+    });
+    // Keep the deadline labelled without letting it collide with the tick before it.
+    while (ticks.length && last - ticks.at(-1).index < step * 0.6) ticks.pop();
+    if (last >= 0) ticks.push({ index: last, date: track.points[last].date });
+    return ticks;
+  }
+
+  function chartDayAxis(track, y, labelY) {
+    return chartDayTicks(track).map(({ index, date }, order, all) => {
+      const x = chartX(track, index).toFixed(1);
+      const anchor = order === 0 ? "start" : order === all.length - 1 ? "end" : "middle";
+      return `
+        <line class="chart-axis__tick" x1="${x}" y1="${y}" x2="${x}" y2="${y + 4}"></line>
+        <text class="chart-label" x="${x}" y="${labelY}" text-anchor="${anchor}">${escapeHtml(formatDay(date))}</text>`;
+    }).join("");
+  }
+
+  // ---- Per-day chart --------------------------------------------------------
+  // Two series on one x-axis, and they are deliberately NOT combined into a
+  // rate. The right-hand line is the LMS's own clock on how long the course page
+  // was open; nothing logs him out, so Jul 24 reads 10h 19m against one unit,
+  // and 10h 8m of it is a single entry that started at 12:07 AM. Dividing one
+  // series by the other produces "619 minutes per unit", which is false and is
+  // the exact discouraging message this page exists to undo. Flagged days are
+  // drawn hollow and say so on hover, so a spike reads as a tab left open.
+  function perDayChart(track, perDay, requiredPerDay, series) {
+    const height = 196;
+    const top = 20;
+    const bottom = 148;
+    const past = track.points.map((point, index) => ({ point, index })).filter(({ point }) => !point.future);
+    const values = past.map(({ point }) => perDay.get(point.date) ?? 0);
+    const maxDaily = Math.max(1, ...values, Math.ceil(requiredPerDay));
+    const yAt = value => bottom - (value / maxDaily) * (bottom - top);
+    const unitPoints = past.map(({ index }, order) =>
+      `${chartX(track, index).toFixed(1)},${yAt(values[order]).toFixed(1)}`).join(" ");
+    const unitDots = past.map(({ point, index }, order) => values[order] > 0
+      ? `<rect class="chart-unit__dot" x="${(chartX(track, index) - 2).toFixed(1)}" y="${(yAt(values[order]) - 2).toFixed(1)}" width="4" height="4">
+          <title>${escapeHtml(`${formatDay(point.date)}: ${values[order]} ${values[order] === 1 ? "unit" : "units"} submitted`)}</title>
         </rect>`
       : "").join("");
     const yTicks = Array.from({ length: 4 }, (_, index) => {
-      const value = index === 3 ? maxDaily : Math.round(maxDaily * index / 3);
-      const y = yAt(value);
+      const value = Math.round(maxDaily * index / 3);
+      const y = yAt(value).toFixed(1);
       return `
-        <line class="effort-graph__grid" x1="${left}" y1="${y.toFixed(2)}" x2="${right}" y2="${y.toFixed(2)}"></line>
-        <text class="effort-graph__label" x="${left - 8}" y="${(y + 3).toFixed(2)}" text-anchor="end">${value}</text>`;
+        <line class="chart-grid" x1="${CHART.left}" y1="${y}" x2="${CHART.width - CHART.right}" y2="${y}"></line>
+        <text class="chart-label" x="${CHART.left - 8}" y="${(Number(y) + 3).toFixed(1)}" text-anchor="end">${value}</text>`;
     }).join("");
-    const xLabels = days.map((date, index) => {
-      if (index % 7 !== 0 && index !== days.length - 1) return "";
-      return `<text class="effort-graph__label" x="${xAt(index).toFixed(2)}" y="153"
-        text-anchor="${index === 0 ? "start" : index === days.length - 1 ? "end" : "middle"}">${escapeHtml(formatDay(date))}</text>`;
-    }).join("");
-    const requiredY = yAt(Math.min(requiredPerDay, yDivisor));
+    const requiredY = yAt(Math.min(requiredPerDay, maxDaily));
+
+    // Open time, on its own axis, in its own hours.
+    let openAxis = "";
+    let openSeries = "";
+    let openFlags = "";
+    if (series && series.maxSeconds > 0) {
+      const maxHours = Math.max(1, Math.ceil(series.maxSeconds / 3600));
+      const openY = seconds => bottom - (seconds / (maxHours * 3600)) * (bottom - top);
+      const withOpen = past.filter(({ point }) => series.byDay.has(point.date));
+      openSeries = `<polyline class="chart-open" points="${withOpen
+        .map(({ point, index }) => `${chartX(track, index).toFixed(1)},${openY(series.byDay.get(point.date).seconds).toFixed(1)}`)
+        .join(" ")}"></polyline>`;
+      openFlags = withOpen.map(({ point, index }) => {
+        const day = series.byDay.get(point.date);
+        const x = chartX(track, index);
+        const y = openY(day.seconds);
+        const stretch = day.longestStretch;
+        const why = day.marked
+          ? `${formatDay(point.date)}: the course page was open ${day.text}${stretch
+            ? `, including one unbroken ${stretch.text}${stretch.startTime ? ` from ${stretch.startTime}` : ""}` : ""}. Nothing logs you out, so a tab left open keeps counting.`
+          : `${formatDay(point.date)}: the course page was open ${day.text}`;
+        const shape = day.marked
+          ? `<polygon class="chart-open__flag" points="${x.toFixed(1)},${(y - 5).toFixed(1)} ${(x + 5).toFixed(1)},${y.toFixed(1)} ${x.toFixed(1)},${(y + 5).toFixed(1)} ${(x - 5).toFixed(1)},${y.toFixed(1)}"></polygon>`
+          : `<circle class="chart-open__dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2"></circle>`;
+        return `<g>${shape}<title>${escapeHtml(why)}</title></g>`;
+      }).join("");
+      const right = CHART.width - CHART.right;
+      openAxis = `
+        <line class="chart-axis chart-axis--open" x1="${right}" y1="${top}" x2="${right}" y2="${bottom}"></line>
+        ${[0, Math.round(maxHours / 2), maxHours].map(hours => `
+          <text class="chart-label chart-label--open" x="${right + 6}" y="${(openY(hours * 3600) + 3).toFixed(1)}"
+            text-anchor="start">${hours}h</text>`).join("")}
+        <text class="chart-axis-title chart-axis-title--open" x="${right + 40}" y="${(top + bottom) / 2}"
+          text-anchor="middle" transform="rotate(90 ${right + 40} ${(top + bottom) / 2})">hours open</text>`;
+    }
 
     return `
-      <div class="effort-graph">
-        <svg viewBox="0 0 760 172" preserveAspectRatio="xMidYMid meet" role="img"
-          aria-label="${escapeHtml(`Rows submitted per calendar day from ${formatDay(firstDate)} through ${formatDay(today)}. Zero-work days are plotted as zero. A reference line marks ${requiredPerDay.toFixed(1)} rows per day.`)}">
+      <div class="chart-block">
+        <div class="chart-key numeric">
+          <span><b class="chart-key__swatch is-units"></b>units submitted that day</span>
+          <span><b class="chart-key__swatch is-open"></b>time the course page was open — the LMS clock, not time worked</span>
+          <span><b class="chart-key__swatch is-flag"></b>a tab was probably left open${tip("A day flagged here has one unbroken entry of 3 hours or more, or 8 hours or more in total. The seconds are still counted — they are just named. This time is never divided by units.")}</span>
+        </div>
+        <svg viewBox="0 0 ${CHART.width} ${height}" preserveAspectRatio="xMidYMid meet" role="img"
+          aria-label="${escapeHtml(`Units submitted per calendar day from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, with a reference line at ${requiredPerDay.toFixed(1)} units per day. A second line on the right axis shows how long the course page was open each day, in hours; ${series ? series.markedDays : 0} days are flagged as a tab left open.`)}">
           ${yTicks}
-          <line class="effort-graph__axis" x1="${left}" y1="${top}" x2="${left}" y2="${bottom}"></line>
-          <line class="effort-graph__axis" x1="${right}" y1="${top}" x2="${right}" y2="${bottom}"></line>
-          <line class="effort-graph__axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"></line>
-          <text class="effort-graph__axis-title" x="14" y="${(top + bottom) / 2}"
-            text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">rows/day</text>
-          <line class="effort-graph__reference" x1="${left}" y1="${requiredY.toFixed(2)}"
-            x2="${right}" y2="${requiredY.toFixed(2)}"></line>
-          <text class="effort-graph__reference-label" x="${left + 6}" y="${(requiredY - 5).toFixed(2)}"
+          <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
+          <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
+          ${openAxis}
+          <text class="chart-axis-title" x="14" y="${(top + bottom) / 2}"
+            text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">units/day</text>
+          <line class="chart-reference" x1="${CHART.left}" y1="${requiredY.toFixed(1)}"
+            x2="${CHART.width - CHART.right}" y2="${requiredY.toFixed(1)}"></line>
+          <text class="chart-reference__label" x="${CHART.left + 6}" y="${(requiredY - 5).toFixed(1)}"
             text-anchor="start">${requiredPerDay.toFixed(1)}/day — what Aug 15 needs</text>
-          <polyline class="effort-graph__series" points="${points}"></polyline>
-          ${squares}
-          ${xLabels}
+          ${openSeries}
+          <polyline class="chart-unit" points="${unitPoints}"></polyline>
+          ${unitDots}
+          ${openFlags}
+          ${chartDayAxis(track, bottom, bottom + 20)}
         </svg>
       </div>`;
   }
 
-  // Deliberately NOT a second axis on the graph above. Pairing open time with rows
-  // per day would imply a relationship the data does not support: Jul 20 was 13
-  // rows in 7.5 hours, Jul 24 was 1 row in 10.3 hours, and one of those 10.3 hours
-  // is a browser tab left open from 12:07 AM. A rate built from that reads "619
-  // minutes per row", which is both wrong and the exact discouraging message this
-  // page exists to undo. The honest, motivating figure is the lifetime total, so
-  // that leads, sits beside the show-up gauge, and is never divided by anything.
-  function openTimePanel(activity, today) {
-    if (!activity) return "";
-    const open = openTime(activity, today);
-    if (!open.totalSeconds) return "";
-    const marked = open.stretches.slice(0, 3).map(stretch =>
+  // ---- Cumulative chart -----------------------------------------------------
+  // Moved under the dials, on the per-day chart's own x-scale, so the two read
+  // as one picture: a bar on the day chart and the step it produces on this one
+  // sit on the same vertical.
+  function cumulativeChart(track) {
+    const height = 200;
+    const top = 24;
+    const bottom = 150;
+    const yMax = Math.max(1, track.totalRows);
+    const yAt = value => top + (1 - value / yMax) * (bottom - top);
+    const pointList = (points, valueFor) => points
+      .map(({ point, index }) => `${chartX(track, index).toFixed(1)},${yAt(valueFor(point)).toFixed(1)}`)
+      .join(" ");
+    const indexed = track.points.map((point, index) => ({ point, index }));
+    const past = indexed.filter(({ point }) => !point.future);
+    const adjusted = indexed.filter(({ point }) => point.adjusted !== null);
+    const ticks = [...new Set([0, Math.round(track.totalRows / 2), track.totalRows])];
+    const grid = ticks.map(value => {
+      const y = yAt(value).toFixed(1);
+      return `
+        <line class="chart-grid" x1="${CHART.left}" y1="${y}" x2="${CHART.width - CHART.right}" y2="${y}"></line>
+        <text class="chart-label" x="${CHART.left - 8}" y="${Number(y) + 4}" text-anchor="end">${escapeHtml(value)}</text>`;
+    }).join("");
+    const todayIndex = track.points.findIndex(point => point.date === track.today);
+    const todayX = chartX(track, Math.max(0, todayIndex)).toFixed(1);
+    const markers = past.filter(({ point }) => point.beatPlan).map(({ point, index }) => {
+      const x = chartX(track, index);
+      const y = yAt(point.cumDone);
+      const surplus = Math.round(point.surplus);
+      const title = `${formatDay(point.date)}: ${point.done} units, ${surplus} more than the steady route asked for`;
+      return `<polygon class="chart-marker" points="${x.toFixed(1)},${(y - 8).toFixed(1)} ${(x - 7).toFixed(1)},${(y + 5).toFixed(1)} ${(x + 7).toFixed(1)},${(y + 5).toFixed(1)}" shape-rendering="crispEdges"><title>${escapeHtml(title)}</title></polygon>`;
+    }).join("");
+    const ariaLabel = `Cumulative units done from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, on the same day scale as the chart above. The actual line is compared with the steady route and with the adjusted route, which finishes all ${track.totalRows} units by ${formatDay(track.finishesOn)}. Triangles mark days that beat the steady route.`;
+
+    return `
+      <div class="chart-block">
+        <div class="chart-key numeric">
+          <span><b class="chart-key__swatch is-actual"></b>done so far</span>
+          <span><b class="chart-key__swatch is-steady"></b>steady route${tip(`All ${track.totalRows} units spread evenly from ${formatDay(track.firstDay)} to Aug 15 — about ${track.steadyRate.toFixed(1)} a day.`)}</span>
+          <span><b class="chart-key__swatch is-adjusted"></b>plan — all ${escapeHtml(track.totalRows)} done by ${escapeHtml(formatDay(track.finishesOn))}${tip("The dates the quest board actually assigns, started from where you stand today.")}</span>
+        </div>
+        <svg viewBox="0 0 ${CHART.width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${escapeHtml(ariaLabel)}">
+          ${grid}
+          <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
+          <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
+          <text class="chart-axis-title" x="14" y="${(top + bottom) / 2}" text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">units done</text>
+          <line class="chart-today" x1="${todayX}" y1="${top}" x2="${todayX}" y2="${bottom}"></line>
+          <text class="chart-today__label" x="${todayX}" y="17" text-anchor="middle">today</text>
+          <polyline class="chart-steady" points="${pointList(past, point => point.steady)}"></polyline>
+          <polyline class="chart-adjusted" points="${pointList(adjusted, point => point.adjusted)}"></polyline>
+          <polyline class="chart-actual" points="${pointList(past, point => point.cumDone)}"></polyline>
+          ${markers}
+          ${chartDayAxis(track, bottom, bottom + 20)}
+        </svg>
+      </div>`;
+  }
+
+  // The honest, motivating figure is the lifetime total, so it leads and is
+  // never divided by anything. The paragraph that used to explain that lives in
+  // the tooltip now; what the number IS stays on screen.
+  function openTimePanel(series) {
+    if (!series || !series.totalSeconds) return "";
+    const marked = series.stretches.slice(0, 3).map(stretch =>
       `<li>${formatDay(stretch.date)} — ${escapeHtml(stretch.text)}${
         stretch.startTime ? ` starting ${escapeHtml(stretch.startTime)}` : ""}</li>`).join("");
     return `
       <section class="open-time" aria-label="Time the course was open">
-        <strong class="open-time__total numeric">${escapeHtml(open.totalText)}</strong>
-        <span class="open-time__caption">TIME THE COURSE HAS BEEN OPEN</span>
-        <span class="quiet">across ${open.dayCount} days, ${formatDay(open.firstDay)} to ${formatDay(open.lastDay)}</span>
-        <p class="open-time__note quiet">
-          This is what the LMS actually measures: how long the course page was open.
-          It is not a measure of how hard you worked, and it is never divided by rows.
-        </p>
+        <strong class="open-time__total numeric">${escapeHtml(series.totalText)}</strong>
+        <span class="open-time__caption">TIME THE COURSE PAGE HAS BEEN OPEN${tip("The LMS's own clock, summed straight off its Activity report. It measures the page being open, not work, so it is never divided by units.")}</span>
+        <span class="quiet">across ${series.dayCount} days, ${formatDay(series.firstDay)} to ${formatDay(series.lastDay)}</span>
         ${marked ? `
         <details class="open-time__marked">
-          <summary>${open.stretches.length} long stretch${open.stretches.length === 1 ? "" : "es"} counted in that total</summary>
-          <p class="quiet">Nothing logs you out, so a tab left open keeps counting.
-            These are still inside the ${escapeHtml(open.totalText)} above — nothing has been removed:</p>
+          <summary>${series.stretches.length} long stretch${series.stretches.length === 1 ? "" : "es"} counted in that total</summary>
+          <p class="quiet">Nothing logs you out, so a tab left open keeps counting. These are
+            still inside the ${escapeHtml(series.totalText)} above — nothing has been removed:</p>
           <ul>${marked}</ul>
         </details>` : ""}
-        ${open.asOf ? `<span class="quiet open-time__asof">Activity report read ${formatDay(open.asOf)}.</span>` : ""}
+        ${series.asOf ? `<span class="quiet open-time__asof">Activity report read ${formatDay(series.asOf)}.</span>` : ""}
       </section>`;
   }
 
@@ -669,79 +829,67 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
     const today = localIsoDate();
     const s = dashboard(data, today);
     const perDay = effortStats(data, today).perDay;
-    const odometerDigits = String(s.odometer).split("").map(digit =>
-      `<span class="effort-odometer__digit">${digit}</span>`).join("");
+    const track = planTrack(data, today);
+    const series = currentActivity ? openTimeSeries(currentActivity, today) : null;
     const tachMax = Math.max(28, s.recent7);
+    const totalUnits = s.odometer + s.rowsLeft;
+    const calendarSpan = Math.max(1, Math.round(s.activeDays / Math.max(s.showUpRate, 0.01)));
 
     document.querySelector("#effort-content").innerHTML = `
-      <section class="effort-odometer" aria-label="${s.odometer} rows submitted all time">
-        <div class="effort-odometer__digits numeric">${odometerDigits}</div>
-        <strong class="effort-odometer__caption">ROWS SUBMITTED — ALL TIME</strong>
-        <span class="quiet">across ${s.activeDays} days you sat down</span>
-        <span class="effort-odometer__promise">This number only ever goes up.</span>
-      </section>
-
       <div class="effort-gauges">
-        <article class="gauge">
-          <h3>SPEEDOMETER</h3>
-          ${gaugeSvg({
-            ariaLabel: `Speedometer: ${s.activePace.toFixed(1)} rows per working day on a scale from 0 to 6. Aug 15 needs ${s.requiredPerDay.toFixed(1)} per day.`,
-            fraction: s.activePace / 6,
-            targetFrom: s.requiredPerDay / 6
-          })}
-          <div class="gauge__scale" aria-hidden="true"><span>0</span><span>3</span><span>6</span></div>
-          <strong class="gauge__readout numeric">${s.activePace.toFixed(1)} /day</strong>
-          <span class="gauge__label">rows per day, on days you work</span>
-          <span class="gauge__note quiet">Aug 15 needs ${s.requiredPerDay.toFixed(1)}/day</span>
-        </article>
+        ${gaugeDial({
+          label: "UNITS PER DAY",
+          hint: "Units submitted divided by the number of days you actually submitted something. Days you never opened the course are not in the divisor.",
+          ariaLabel: `${s.activePace.toFixed(1)} units per working day on a scale from 0 to 6. Aug 15 needs ${s.requiredPerDay.toFixed(1)} per day.`,
+          reading: s.activePace.toFixed(1),
+          unit: "on days you work",
+          sub: `Aug 15 needs ${s.requiredPerDay.toFixed(1)}`,
+          ticks: [{ at: 0, text: "0" }, { at: 0.5, text: "3" }, { at: 1, text: "6" }],
+          fraction: s.activePace / 6,
+          targetFrom: s.requiredPerDay / 6
+        })}
 
-        <article class="gauge">
-          <h3>TACHOMETER</h3>
-          ${gaugeSvg({
-            ariaLabel: `Tachometer: ${s.recent7} raw rows from ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}, on a scale from 0 to ${tachMax}.`,
-            fraction: s.recent7 / tachMax
-          })}
-          <div class="gauge__scale" aria-hidden="true"><span>0</span><span>${Math.round(tachMax / 2)}</span><span>${tachMax}</span></div>
-          <strong class="gauge__readout numeric">${s.recent7} rows · last 7 days</strong>
-          <span class="gauge__label quiet">the 7 days before that: ${s.prior7}</span>
-        </article>
+        ${gaugeDial({
+          label: "LAST 7 DAYS",
+          hint: `A raw count of units submitted ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}. Not a rate.`,
+          ariaLabel: `${s.recent7} units submitted from ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}, on a scale from 0 to ${tachMax}.`,
+          reading: String(s.recent7),
+          unit: "units this week",
+          sub: `the 7 days before: ${s.prior7}`,
+          ticks: [{ at: 0, text: "0" }, { at: 0.5, text: String(Math.round(tachMax / 2)) }, { at: 1, text: String(tachMax) }],
+          fraction: s.recent7 / tachMax
+        })}
 
-        <article class="gauge">
-          <h3>TRIP</h3>
-          ${gaugeSvg({
-            ariaLabel: `Trip progress: ${Math.round(s.tripDone * 100)} percent of the course, with ${s.rowsLeft} rows to go and ${s.daysLeft} days left.`,
-            fraction: s.tripDone,
-            fillArc: true
-          })}
-          <div class="gauge__scale" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
-          <strong class="gauge__readout numeric">${Math.round(s.tripDone * 100)}% of the course</strong>
-          <span class="gauge__label quiet">${s.rowsLeft} rows to go · ${s.daysLeft} days left</span>
-        </article>
+        ${gaugeDial({
+          label: "UNITS DONE",
+          hint: `Every unit you have submitted, out of ${totalUnits} across both semesters. It only ever goes up.`,
+          ariaLabel: `${s.odometer} of ${totalUnits} units submitted across both semesters, ${Math.round(s.tripDone * 100)} percent.`,
+          reading: String(s.odometer),
+          unit: "units submitted",
+          sub: `${s.rowsLeft} left · ${Math.round(s.tripDone * 100)}% of both semesters`,
+          ticks: [{ at: 0, text: "0" }, { at: 0.5, text: String(Math.round(totalUnits / 2)) }, { at: 1, text: String(totalUnits) }],
+          fraction: s.tripDone
+        })}
 
-        <article class="gauge">
-          <h3>SHOW-UP</h3>
-          ${gaugeSvg({
-            ariaLabel: `Show-up gauge: ${s.activeDays} working days, ${Math.round(s.showUpRate * 100)} percent of calendar days since work began.`,
-            fraction: s.showUpRate,
-            fillArc: true
-          })}
-          <div class="gauge__scale" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
-          <strong class="gauge__readout numeric">${s.activeDays} working days</strong>
-          <span class="gauge__label">days the engine ran</span>
-        </article>
+        ${gaugeDial({
+          label: "DAYS YOU SAT DOWN",
+          hint: `Calendar days since your first submission on which you submitted at least one unit — ${s.activeDays} out of ${calendarSpan}.`,
+          ariaLabel: `${s.activeDays} working days out of the ${calendarSpan} calendar days since work began.`,
+          reading: String(s.activeDays),
+          unit: "days worked",
+          sub: `of ${calendarSpan} since you started`,
+          ticks: [{ at: 0, text: "0" }, { at: 0.5, text: String(Math.round(calendarSpan / 2)) }, { at: 1, text: String(calendarSpan) }],
+          fraction: s.showUpRate
+        })}
       </div>
 
-      ${openTimePanel(currentActivity, today)}
-
-      <p class="effort-copy">
-        You have submitted <strong>${s.odometer} rows across ${s.activeDays} days</strong>.
-        On the days you work you average <strong>${s.activePace.toFixed(1)} a day</strong>,
-        and Aug 15 needs <strong>${s.requiredPerDay.toFixed(1)}</strong>.
-        ${s.fastEnough ? "<strong>You are already fast enough.</strong>" : ""}
-        You need about <strong>${s.daysNeeded} working days</strong> out of the ${s.daysLeft} left.
-        That is the whole game — show up, and the speed takes care of itself.
+      <p class="effort-line numeric">
+        ${s.odometer} units in ${s.activeDays} days · ${s.activePace.toFixed(1)} a day when you sit down · Aug 15 needs ${s.requiredPerDay.toFixed(1)}${s.fastEnough ? " — <strong>you are already fast enough</strong>" : ""}.
       </p>
-      ${effortGraph(perDay, today, s.requiredPerDay)}`;
+
+      ${perDayChart(track, perDay, s.requiredPerDay, series)}
+      ${cumulativeChart(track)}
+      ${openTimePanel(series)}`;
   }
 
   function calendarReward(track) {
@@ -757,70 +905,6 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
       return `Your biggest push: ${biggestPush.done} rows on ${formatDay(biggestPush.date)}.`;
     }
     return "Every row you finish moves the route forward.";
-  }
-
-  function calendarChart(track) {
-    const width = 760;
-    const height = 220;
-    const left = 58;
-    const right = 18;
-    const top = 24;
-    const bottom = 38;
-    const plotWidth = width - left - right;
-    const plotHeight = height - top - bottom;
-    const lastIndex = Math.max(1, track.points.length - 1);
-    const yMax = Math.max(1, track.totalRows);
-    const xAt = index => left + (index / lastIndex) * plotWidth;
-    const yAt = value => top + (1 - value / yMax) * plotHeight;
-    const pointList = (points, valueFor) => points
-      .map(({ point, index }) => `${xAt(index).toFixed(1)},${yAt(valueFor(point)).toFixed(1)}`)
-      .join(" ");
-    const indexed = track.points.map((point, index) => ({ point, index }));
-    const past = indexed.filter(({ point }) => !point.future);
-    const adjusted = indexed.filter(({ point }) => point.adjusted !== null);
-    const actualPoints = pointList(past, point => point.cumDone);
-    const steadyPoints = pointList(past, point => point.steady);
-    const adjustedPoints = pointList(adjusted, point => point.adjusted);
-    const ticks = [...new Set([0, Math.round(track.totalRows / 2), track.totalRows])];
-    const grid = ticks.map(value => {
-      const y = yAt(value).toFixed(1);
-      return `
-        <line class="calendar-chart__grid" x1="${left}" y1="${y}" x2="${width - right}" y2="${y}"></line>
-        <text class="calendar-chart__label" x="${left - 8}" y="${Number(y) + 5}" text-anchor="end">${escapeHtml(value)}</text>`;
-    }).join("");
-    const todayIndex = track.points.findIndex(point => point.date === track.today);
-    const todayX = xAt(Math.max(0, todayIndex)).toFixed(1);
-    const markers = past.filter(({ point }) => point.beatPlan).map(({ point, index }) => {
-      const x = xAt(index);
-      const y = yAt(point.cumDone);
-      const surplus = Math.round(point.surplus);
-      const title = `${formatDay(point.date)}: ${point.done} rows, ${surplus} more than the steady route asked for`;
-      return `<polygon class="calendar-chart__marker" points="${x.toFixed(1)},${(y - 8).toFixed(1)} ${(x - 7).toFixed(1)},${(y + 5).toFixed(1)} ${(x + 7).toFixed(1)},${(y + 5).toFixed(1)}" shape-rendering="crispEdges"><title>${escapeHtml(title)}</title></polygon>`;
-    }).join("");
-    const ariaLabel = `Cumulative rows done from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}. The actual work line is compared with the steady route and the adjusted route finishing all ${track.totalRows} rows by ${formatDay(track.finishesOn)}. Triangles mark days that beat the steady route.`;
-
-    return `
-      <div class="calendar-chart">
-        <div class="calendar-chart__key numeric" aria-hidden="true">
-          <span><b class="calendar-chart__swatch is-actual"></b>actual</span>
-          <span><b class="calendar-chart__swatch is-steady"></b>steady route</span>
-          <span><b class="calendar-chart__swatch is-adjusted"></b>adjusted route — all ${escapeHtml(track.totalRows)} done by ${escapeHtml(formatDay(track.finishesOn))}</span>
-        </div>
-        <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${escapeHtml(ariaLabel)}">
-          ${grid}
-          <line class="calendar-chart__axis" x1="${left}" y1="${top}" x2="${left}" y2="${height - bottom}"></line>
-          <line class="calendar-chart__axis" x1="${left}" y1="${height - bottom}" x2="${width - right}" y2="${height - bottom}"></line>
-          <text class="calendar-chart__axis-title" x="18" y="${top + plotHeight / 2}" text-anchor="middle" transform="rotate(-90 18 ${top + plotHeight / 2})">rows done</text>
-          <text class="calendar-chart__label" x="${left}" y="${height - 10}">${escapeHtml(formatDay(track.firstDay))}</text>
-          <text class="calendar-chart__label" x="${width - right}" y="${height - 10}" text-anchor="end">${escapeHtml(formatDay(track.deadline))}</text>
-          <line class="calendar-chart__today" x1="${todayX}" y1="${top}" x2="${todayX}" y2="${height - bottom}"></line>
-          <text class="calendar-chart__today-label" x="${todayX}" y="17" text-anchor="middle">today</text>
-          <polyline class="calendar-chart__steady" points="${steadyPoints}"></polyline>
-          <polyline class="calendar-chart__adjusted" points="${adjustedPoints}"></polyline>
-          <polyline class="calendar-chart__actual" points="${actualPoints}"></polyline>
-          ${markers}
-        </svg>
-      </div>`;
   }
 
   function calendarCell(point, track) {
@@ -862,16 +946,13 @@ import { effortStats as questEffort, computePace, dashboard, openTime, planTrack
     const daysLeft = Math.max(0, dateDiff(today, data.deadline.date));
     const track = planTrack(data, today);
     const cells = track.points.map(point => calendarCell(point, track));
-    const rowsLeft = track.totalRows - track.submitted;
-    const plannedDaily = Math.max(0, ...track.points.map(point => point.planned));
-    const daysInside = Math.max(0, dateDiff(track.finishesOn, track.deadline));
-    const caption = `steady route: all ${track.totalRows} rows spread evenly from ${formatDay(track.firstDay)} to ${formatDay(track.deadline)}, about ${track.steadyRate.toFixed(1)} a day. adjusted route: the ${rowsLeft} rows still to do, ${plannedDaily} a day from today, finished ${formatDay(track.finishesOn)} — ${daysInside} days inside the deadline.`;
+    // The cumulative chart used to live here. It moved into the effort panel, under
+    // the dials, so it shares an x-scale with the per-day chart and the two read as
+    // one picture. The strip below is the day-by-day view and stays.
     document.querySelector("#calendar-content").innerHTML = `
       <div class="big-number numeric">${daysLeft} days</div>
       <div class="quiet">${escapeHtml(data.deadline.label)}</div>
       <div class="calendar-comeback">${escapeHtml(calendarReward(track))}</div>
-      ${calendarChart(track)}
-      <p class="calendar-chart__caption quiet numeric">${escapeHtml(caption)}</p>
       <div class="cal-strip" aria-label="Working days through Aug 15">${cells.join("")}</div>
       <div class="cal-key quiet numeric">
         <span><b class="k k--done"></b> worked</span>
