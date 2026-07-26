@@ -101,6 +101,15 @@ export const ICON_GLYPH = {
 // number here it changes in both charts or in neither.
 export const CHART = { width: 760, left: 58, right: 46 };
 
+// The plot box of each chart, in viewBox units, exported because the today
+// marker outside the SVGs has to land on the GRID and not on the label gutters
+// above and below it. Both SVGs are drawn `width: 100%; height: auto` off these
+// viewBoxes, so an inset of `top` viewBox units is always `top / CHART.width`
+// of the SVG's rendered WIDTH — which is what lets CSS place the marker exactly
+// at any viewport size without measuring anything.
+export const DAY_PLOT = { height: 196, top: 20, bottom: 148 };
+export const CUM_PLOT = { height: 200, top: 36, bottom: 150 };
+
 export const GAME_KIND_FACES = {
   game: {
     ink: "#7cab52",
@@ -448,6 +457,12 @@ export const GAME_KIND_FACES = {
         chest — the end-of-section assignment</span>
       <span>${mapLegendGlyph("sword", ICON_GLYPH.test(12, 12, TYPE_INK.test))}
         sword — the section test</span>
+      <span>${mapLegendGlyph("scroll", ICON_GLYPH.quiz(12, 12, TYPE_INK.quiz))}
+        scroll — a practice quiz</span>
+      <span>${mapLegendGlyph("gem", ICON_GLYPH.activity(12, 12, TYPE_INK.activity))}
+        gem — an activity</span>
+      <span>${mapLegendGlyph("marker", ICON_GLYPH.orientation(12, 12, TYPE_INK.orientation))}
+        marker — the orientation</span>
       <span>${mapLegendGlyph("settled",
         `<rect x="2" y="2" width="20" height="20" fill="${ground?.fill ?? "#7cab52"}"/>`)}
         settled ground</span>
@@ -542,20 +557,29 @@ export const GAME_KIND_FACES = {
         : world.unitsDone > 0
           ? "UNDER WAY"
           : "NEWLY SIGHTED";
-    return `<div class="wm-banner" style="left:${mass.cx}px;top:${Math.max(6, mass.top - 58)}px"
-      aria-hidden="true">
-      <span class="eyebrow">WORLD ${numeral} // ${state}</span>
-      <span class="wm-banner__name">${escapeHtml(world.name)}</span>
-      <span class="numeric quiet">${world.unitsDone} units placed</span>
+    // The banner is also the way into the world record. It is a button rather
+    // than a card above the map because the map is the only thing in this panel
+    // now: the trigger lives on the landmass it describes. Its own text is the
+    // label a sighted reader gets, so the accessible name is stated in full
+    // here and the decorative innards are left to the aria-label to summarise.
+    return `<button type="button" class="wm-banner" data-world-card="${escapeHtml(world.id)}"
+      style="left:${mass.cx}px;top:${Math.max(6, mass.top - 58)}px"
+      aria-haspopup="dialog" aria-controls="wm-world-popup-${escapeHtml(world.id)}"
+      aria-expanded="false"
+      aria-label="${escapeHtml(world.name)}, world ${numeral}, ${state.toLowerCase()}, ${
+        world.unitsDone} units placed. Open the world record.">
+      <span class="eyebrow" aria-hidden="true">WORLD ${numeral} // ${state}</span>
+      <span class="wm-banner__name" aria-hidden="true">${escapeHtml(world.name)}</span>
+      <span class="numeric quiet" aria-hidden="true">${world.unitsDone} units placed</span>
       ${nextTasks.length
-        ? `<span class="wm-banner__next">Next: ${nextTasks.map(escapeHtml).join(" · ")}</span>`
+        ? `<span class="wm-banner__next" aria-hidden="true">Next: ${nextTasks.map(escapeHtml).join(" · ")}</span>`
         : ""}
-    </div>`;
+    </button>`;
   }
 
-  // The summary that used to sit in the map's left gutter as a band. It is the
-  // same figures, above the map instead of inside it, because the map is now
-  // terrain and text laid over terrain is text nobody can read.
+  // The one-line standing of a world, as an eyebrow. It heads the world record
+  // dialog; the same wording is built inline by landmassBanner for the banner
+  // that opens that dialog.
   export function worldEyebrow(world) {
     const numeral = WORLD_NUMERAL[world.index] ?? String(world.index);
     return world.sealed
@@ -565,17 +589,6 @@ export const GAME_KIND_FACES = {
         : world.unitsDone > 0
           ? `WORLD ${numeral} // UNDER WAY`
           : `WORLD ${numeral} // NEWLY SIGHTED CONTINENT`;
-  }
-
-  export function renderWorldCard(world) {
-    const popupId = `wm-world-popup-${world.id}`;
-    return `
-      <button type="button" class="wm-world-card" data-world-card="${escapeHtml(world.id)}"
-        aria-haspopup="dialog" aria-controls="${popupId}" aria-expanded="false">
-        <span class="eyebrow">${escapeHtml(worldEyebrow(world))}</span>
-        <span class="wm-world__name">${escapeHtml(world.name)}</span>
-        <span class="wm-world-card__action">Open world record</span>
-      </button>`;
   }
 
   export function renderWorldPopup(world, landmarks) {
@@ -798,7 +811,7 @@ export const GAME_KIND_FACES = {
         <span><b class="chart-key__swatch is-open"></b>hours open</span>
         <span><b class="chart-key__swatch is-actual"></b>cumulative units submitted</span>
         <span><b class="chart-key__swatch is-steady"></b>steady route</span>
-        <span><b class="chart-key__swatch is-adjusted"></b>plan to ${escapeHtml(formatDay(track.finishesOn))}</span>
+        <span><b class="chart-key__swatch is-adjusted"></b>same line dotted past today: plan to ${escapeHtml(formatDay(track.finishesOn))}</span>
       </div>`;
   }
 
@@ -811,9 +824,7 @@ export const GAME_KIND_FACES = {
   // the exact discouraging message this page exists to undo. Flagged days are
   // drawn hollow and say so on hover, so a spike reads as a tab left open.
   export function perDayChart(track, perDay, requiredPerDay, series) {
-    const height = 196;
-    const top = 20;
-    const bottom = 148;
+    const { height, top, bottom } = DAY_PLOT;
     const past = track.points.map((point, index) => ({ point, index })).filter(({ point }) => !point.future);
     const values = past.map(({ point }) => perDay.get(point.date) ?? 0);
     const maxDaily = Math.max(1, ...values, Math.ceil(requiredPerDay));
@@ -830,7 +841,7 @@ export const GAME_KIND_FACES = {
       const y = yAt(value).toFixed(1);
       return `
         <line class="chart-grid" x1="${CHART.left}" y1="${y}" x2="${CHART.width - CHART.right}" y2="${y}"></line>
-        <text class="chart-label" x="${CHART.left - 8}" y="${(Number(y) + 3).toFixed(1)}" text-anchor="end">${value}</text>`;
+        <text class="chart-label chart-label--unit" x="${CHART.left - 8}" y="${(Number(y) + 3).toFixed(1)}" text-anchor="end">${value}</text>`;
     }).join("");
     const requiredY = yAt(Math.min(requiredPerDay, maxDaily));
 
@@ -881,7 +892,7 @@ export const GAME_KIND_FACES = {
           <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
           <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
           ${openAxis}
-          <text class="chart-axis-title" x="14" y="${(top + bottom) / 2}"
+          <text class="chart-axis-title chart-axis-title--unit" x="14" y="${(top + bottom) / 2}"
             text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">units/day</text>
           <line class="chart-reference" x1="${CHART.left}" y1="${requiredY.toFixed(1)}"
             x2="${CHART.width - CHART.right}" y2="${requiredY.toFixed(1)}"
@@ -903,13 +914,11 @@ export const GAME_KIND_FACES = {
   // before them, and it still does if they are not passed. Nothing here recomputes a
   // grade — every percent arrives already true from quest.mjs.
   export function cumulativeChart(track, milestones = [], overall = null) {
-    const height = 200;
-    // 36 rather than 24: the section labels sit in this margin on two rows, and at 24
-    // the upper row's glyphs were clipped by the top of the SVG. The plot loses 12
-    // units of height, which the day chart above does not share and does not need to —
-    // only the x scale has to match between the two, and that is untouched.
-    const top = 36;
-    const bottom = 150;
+    // CUM_PLOT.top is 36 rather than 24: the section labels sit in this margin on two
+    // rows, and at 24 the upper row's glyphs were clipped by the top of the SVG. The plot
+    // loses 12 units of height, which the day chart above does not share and does not need
+    // to — only the x scale has to match between the two, and that is untouched.
+    const { height, top, bottom } = CUM_PLOT;
     const yMax = Math.max(1, track.totalRows);
     const yAt = value => top + (1 - value / yMax) * (bottom - top);
     const pointList = (points, valueFor) => points
@@ -923,7 +932,7 @@ export const GAME_KIND_FACES = {
       const y = yAt(value).toFixed(1);
       return `
         <line class="chart-grid" x1="${CHART.left}" y1="${y}" x2="${CHART.width - CHART.right}" y2="${y}"></line>
-        <text class="chart-label" x="${CHART.left - 8}" y="${Number(y) + 4}" text-anchor="end">${escapeHtml(value)}</text>`;
+        <text class="chart-label chart-label--done" x="${CHART.left - 8}" y="${Number(y) + 4}" text-anchor="end">${escapeHtml(value)}</text>`;
     }).join("");
     // ---- Sections closed out, and what each scored ---------------------------
     // Two things on one x-axis, both anchored to the day the section's last unit
@@ -988,7 +997,7 @@ export const GAME_KIND_FACES = {
       marks.filter(({ milestone }) => milestone.grade !== null)
         .map(({ milestone }) => `${milestone.name} finished ${formatDay(milestone.finishedOn)} at ${milestone.grade.toFixed(1)}%`)
         .join("; ")}${overall === null ? "" : `. Across everything graded so far: ${overall.toFixed(1)}%`}.`;
-    const ariaLabel = `Cumulative units done from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, on the same Friday-at-5-PM day scale as the chart above. The plain actual line is compared with the steady route and with the adjusted route, which finishes all ${track.totalRows} units by ${formatDay(track.finishesOn)}.${gradeSaid}`;
+    const ariaLabel = `Cumulative units done from ${formatDay(track.firstDay)} through ${formatDay(track.deadline)}, on the same Friday-at-5-PM day scale as the chart above. The solid line is what you have actually submitted; past today the same line continues dotted as the plan, which finishes all ${track.totalRows} units by ${formatDay(track.finishesOn)}; a separate long-dashed line is the steady route.${gradeSaid}`;
 
     return `
       <div class="chart-block">
@@ -997,7 +1006,7 @@ export const GAME_KIND_FACES = {
           ${chartFridayGrid(track, top, bottom)}
           <line class="chart-axis" x1="${CHART.left}" y1="${top}" x2="${CHART.left}" y2="${bottom}"></line>
           <line class="chart-axis" x1="${CHART.left}" y1="${bottom}" x2="${CHART.width - CHART.right}" y2="${bottom}"></line>
-          <text class="chart-axis-title" x="14" y="${(top + bottom) / 2}" text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">units done</text>
+          <text class="chart-axis-title chart-axis-title--done" x="14" y="${(top + bottom) / 2}" text-anchor="middle" transform="rotate(-90 14 ${(top + bottom) / 2})">units done</text>
           ${gradeAxis}
           ${sectionMarks}
           <polyline class="chart-steady" points="${pointList(past, point => point.steady)}"></polyline>
@@ -1010,25 +1019,24 @@ export const GAME_KIND_FACES = {
   }
 
   // The honest, motivating figure is the lifetime total, so it leads and is
-  // never divided by anything. The paragraph that used to explain that lives in
-  // the tooltip now; what the number IS stays on screen.
-  export function openTimePanel(series) {
+  // never divided by anything.
+  //
+  // This used to be a block of its own under the charts. It is a counter now and
+  // it sits in the dial grid, because that is where the other counters live and
+  // it is the same kind of thing: one number he can check, with the span it was
+  // measured over. The long-stretch <details> did not come with it — a list of
+  // "one unbroken 10h 8m from 12:07 AM" entries is our bookkeeping explaining
+  // itself, and every one of those stretches is still on the day chart, hollow
+  // and named, on hover. Same for "Activity report read ...": the top bar now
+  // carries when the data was checked.
+  export function openTimeCounter(series) {
     if (!series || !series.totalSeconds) return "";
-    const marked = series.stretches.slice(0, 3).map(stretch =>
-      `<li>${formatDay(stretch.date)} — ${escapeHtml(stretch.text)}${
-        stretch.startTime ? ` starting ${escapeHtml(stretch.startTime)}` : ""}</li>`).join("");
     return `
-      <section class="open-time" aria-label="Time the course was open">
-        <strong class="open-time__total numeric">${escapeHtml(series.totalText)}</strong>
-        <span class="open-time__caption">TIME THE COURSE PAGE HAS BEEN OPEN</span>
-        <span class="quiet">across ${series.dayCount} days, ${formatDay(series.firstDay)} to ${formatDay(series.lastDay)}</span>
-        ${marked ? `
-        <details class="open-time__marked">
-          <summary>${series.stretches.length} long stretch${series.stretches.length === 1 ? "" : "es"} counted in that total</summary>
-          <ul>${marked}</ul>
-        </details>` : ""}
-        ${series.asOf ? `<span class="quiet open-time__asof">Activity report read ${formatDay(series.asOf)}.</span>` : ""}
-      </section>`;
+      <article class="counter" aria-label="Time the course was open">
+        <h3 class="counter__title">TIME ON COURSE</h3>
+        <strong class="counter__value numeric">${escapeHtml(series.totalText)}</strong>
+        <span class="counter__sub numeric">${series.dayCount} DAYS · ${escapeHtml(formatDay(series.firstDay))} TO ${escapeHtml(formatDay(series.lastDay))}</span>
+      </article>`;
   }
 
   export function calendarReward(track) {
@@ -1059,6 +1067,10 @@ export const GAME_KIND_FACES = {
     } else if (!point.future) {
       classes.push("is-idle");
     }
+    // Drawn on top of whatever the day itself was, never instead of it: the run
+    // is the achievement, so a blank day inside it keeps the bar and loses
+    // nothing. There is no class for the opposite kind of stretch.
+    if (point.inComeback) classes.push("is-comeback");
 
     // A worked day now reads back only the count he logged. The old surplus wording
     // ("N more than the steady route asked for") measured his day against our plan;
@@ -1070,6 +1082,9 @@ export const GAME_KIND_FACES = {
     } else if (point.planned > 0 && (point.future || isToday)) {
       tooltip = `planned: ${point.planned} ${point.planned === 1 ? "unit" : "units"}`;
     }
+    // Two words, not a sentence. The bar under the run is the thing that says it;
+    // this only makes the same fact reachable by a screen reader and on hover.
+    if (point.inComeback) tooltip = `${tooltip} · best run`;
 
     if (point.date === track.deadline) {
       return `<div class="${classes.join(" ")}" title="${escapeHtml(tooltip)}"><strong>AUG 15</strong></div>`;

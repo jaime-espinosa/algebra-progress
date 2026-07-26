@@ -64,18 +64,88 @@ test("territoryPlaque and renderTerritoryTable stay free of junk and keep their 
 });
 
 // The indentation guard. Every line these functions emit carries its leading whitespace into
-// the page, so a wholesale indent shift is a rendering change. This pins the exact leading
-// whitespace of the table's own lines.
+// the page, so a wholesale indent shift is a rendering change.
+//
+// This used to pin `indents.slice(0, 12)` as a comma-joined string, and that window was the
+// bug. Deleting one emitted line slid the window and dragged a previously-unguarded 13th
+// line into it, so the pinned slice could not tell "a caption line was legitimately deleted"
+// from "something de-indented AND a line was deleted" — the exact confusion it exists to
+// prevent. It also meant any legitimate line deletion forced someone to hand-edit a magic
+// number, which is how the string came to be edited in the first place.
+//
+// So the pin is now on the property that actually matters — NO LINE'S INDENTATION CHANGED —
+// expressed against semantic landmarks instead of line positions. Each emitted line is
+// reduced to its tag skeleton (tags and attribute NAMES; text and attribute values dropped),
+// and each skeleton is pinned to the one indent it is emitted at. Adding or removing lines
+// cannot shift this. A de-indent cannot hide behind a deletion: a de-indented line keeps its
+// skeleton and lands on a different indent, which fails.
+const INDENT_BY_SHAPE = {
+  "<details class=_>": 6,
+  "<summary></summary>": 8,
+  "<table class=_>": 8,
+  "<caption class=_></caption>": 10,
+  "<thead><tr><th scope=_></th><th scope=_></th>": 10,
+  "<th scope=_></th><th scope=_></th>": 12,
+  "<th scope=_></th><th scope=_></th></tr></thead>": 12,
+  "<tbody>": 10,
+  "<tr>": 6,
+  "<th scope=_></th>": 8,
+  "<td class=_></td>": 8,
+  "<td></td>": 8,
+  "</tr>": 6,
+  "</tr></tbody>": 6,
+  "</table>": 8,
+  "</details>": 6,
+};
+
+// Content-free structural fingerprint of a line: what it IS, not what it says. Stable across
+// data changes, so this guard never needs a refresh when the fixture's numbers move.
+function tagShape(line) {
+  return line.trim()
+    .replace(/="[^"]*"/g, "=_")  // attribute values carry data; names carry structure
+    .replace(/>[^<>]+</g, "><")  // text between tags
+    .replace(/^[^<]+/, "")       // text before the first tag
+    .replace(/[^>]+$/, "");      // text after the last tag
+}
+
+const DE_INDENT_WARNING =
+  "This is the de-indent defect class. Do not update these numbers to make the test pass — " +
+  "find out why the emitted indentation changed.";
+
 test("rendered markup keeps its exact leading whitespace", () => {
   const table = renderTerritoryTable(map);
-  const indents = table.split("\n").filter((l) => l.trim()).map((l) => l.match(/^ */)[0].length);
-  const signature = indents.slice(0, 12).join(",");
-  // Updated 2026-07-26: caption in renderTerritoryTable changed from two lines to one line
-  // (first sentence "Every section on the map, with the same counts the map draws." removed
-  // per owner request, verified by full-array comparison proving only the 12-indent
-  // continuation line was removed, no re-indentation occurred).
-  assert.equal(signature, "6,8,8,10,10,12,12,12,12,10,6,8",
-    `leading-whitespace signature moved (got ${signature}).\n` +
-    "This is the de-indent defect class. Do not update this string to make the test pass — " +
-    "find out why the emitted indentation changed.");
+  const lines = table.split("\n").filter((l) => l.trim());
+  assert.ok(lines.length > 20, `expected a populated table, got ${lines.length} lines`);
+
+  // Every line, whatever its position, sits at the indent its shape is pinned to.
+  const seen = new Map();
+  for (const [index, line] of lines.entries()) {
+    const shape = tagShape(line);
+    const indent = line.match(/^ */)[0].length;
+    if (!seen.has(shape)) seen.set(shape, new Set());
+    seen.get(shape).add(indent);
+    const pinned = INDENT_BY_SHAPE[shape];
+    assert.ok(pinned !== undefined,
+      `unpinned markup shape at line ${index}: ${JSON.stringify(shape)} (indent ${indent}).\n` +
+      "New markup needs its indent added to INDENT_BY_SHAPE. " + DE_INDENT_WARNING);
+    assert.equal(indent, pinned,
+      `line ${index} moved: ${JSON.stringify(shape)} is emitted at indent ${indent}, ` +
+      `pinned at ${pinned}.\n` + DE_INDENT_WARNING);
+  }
+
+  // Independent of any pinned constant: one shape may never appear at two indents. This
+  // catches a partial de-indent even in markup nobody has pinned yet.
+  for (const [shape, indents] of seen) {
+    assert.equal(indents.size, 1,
+      `${JSON.stringify(shape)} is emitted at ${indents.size} different indents ` +
+      `(${[...indents].sort((a, b) => a - b).join(", ")}).\n` + DE_INDENT_WARNING);
+  }
+
+  // And the guard itself must not rot into a no-op: the table's structural spine has to be
+  // present and still under the pin. If markup is removed, delete its entry deliberately.
+  for (const spine of ["<details class=_>", "<table class=_>", "<tbody>", "<tr>", "</table>"]) {
+    assert.ok(seen.has(spine),
+      `${JSON.stringify(spine)} is no longer emitted — the guard is measuring nothing. ` +
+      "If that removal is intended, remove its INDENT_BY_SHAPE entry in the same change.");
+  }
 });

@@ -395,17 +395,33 @@ export function evaluateUnlocks(data, earnedSet) {
 // been scraped, and inventing one would repeat the "best day: 7" mistake.
 
 // Rows submitted inside a trailing window of CALENDAR days, inclusive of today.
-// This is the only instantaneous reading we have: it is a raw count, not a rate,
-// and it says how warm the last week has been.
+// This is the only instantaneous reading we have: how warm the last few days
+// have been.
+//
+// It returns both the raw `total` and `perDay`, the total divided by the number
+// of CALENDAR days in the window. `perDay` is what the rolling dial reads, and
+// the divisor is deliberately the calendar length of the window and not the
+// number of days he actually submitted something:
+//   * a total is not comparable across window sizes — widen the window from 3
+//     days to 7 and the number roughly doubles without him working any harder,
+//     so the dial means something different every time the stepper moves. A
+//     per-calendar-day rate is invariant to the window length, which is the
+//     whole point of a rolling window.
+//   * dividing by days he worked would just be the UNITS PER DAY dial over a
+//     shorter horizon. This dial answers a different question: "how have the
+//     last N days actually gone", and a day he never opened the course is part
+//     of that answer, so it belongs in the divisor.
+// Both are checkable by hand from the gradebook: `total` is a row count and
+// `days` is printed on the face.
 export function recentVolume(data, today, days = 7) {
-  const perDay = submissionsByDay(data);
+  const byDay = submissionsByDay(data);
   const to = parseDateKey(today);
   const from = addDays(to, -(days - 1));
   let total = 0;
-  for (const [date, count] of perDay) {
+  for (const [date, count] of byDay) {
     if (date >= from && date <= to) total += count;
   }
-  return { days, total, from, to };
+  return { days, total, perDay: total / days, from, to };
 }
 
 // One call for the whole instrument cluster, so app.js never recomputes pace.
@@ -430,13 +446,22 @@ export function dashboard(data, today, windowDays = 3) {
     activePace: stats.activePace,
     requiredPerDay: stats.requiredPerDay,
     fastEnough: stats.fastEnough,
-    // Rolling dial: raw rows in the last three calendar days, and the three
-    // before that. Both are counts, never rates.
+    // Rolling dial: the window is the last `windowDays` CALENDAR days, and the
+    // same number of calendar days before that.
+    //   * recent3 / prior3 are the raw row counts in each window.
+    //   * recentPerDay / priorPerDay are those counts divided by the calendar
+    //     length of the window — units per day. The dial reads the RATE, so it
+    //     means the same thing at every stepper position; the counts stay here
+    //     because the rate is only checkable by hand alongside them.
+    // Both windows are measured the same way, so the dial's sub-line compares a
+    // rate against a rate and never a rate against a count.
     windowDays: days,
     recent3: recent.total,
     recent3From: recent.from,
     recent3To: recent.to,
+    recentPerDay: recent.perDay,
     prior3: prior.total,
+    priorPerDay: prior.perDay,
     // Trip / distance to go.
     rowsLeft: stats.rowsLeft,
     daysLeft: stats.daysLeft,
@@ -608,6 +633,16 @@ export function planTrack(data, today) {
       .filter((point) => point.date >= comeback.from && point.date <= comeback.to)
       .reduce((total, point) => total + point.done, 0);
     if (comeback.gain < 1) comeback = null;
+  }
+
+  // Catching up is a property of a RUN of days, not of any one day, so the flag
+  // that draws it belongs on every day inside the window — including the quiet
+  // ones. A stretch that recovered is the achievement; no single tile inside it
+  // is a verdict, and a blank day in the middle of a winning run is proof of
+  // that rather than an exception to it. There is no counterpart flag for a
+  // window that lost ground, and there must not be one.
+  for (const point of points) {
+    point.inComeback = Boolean(comeback) && point.date >= comeback.from && point.date <= comeback.to;
   }
 
   const finishesOn = [...plannedByDay.keys()].sort().at(-1) ?? todayKey;
@@ -846,6 +881,64 @@ export function activityType(title) {
   // Anything the school invents next is training-shaped and lands here rather
   // than being dropped, so the bands always still sum to the section total.
   return "orientation";
+}
+
+// Where the grade actually comes from, by kind of work.
+//
+// Every other count on this page treats one gradebook row as one unit, which is
+// the right unit for "how much is left" and the wrong unit for "what is this
+// worth". Six section tests and twenty-six practice quizzes are 6 rows and 26
+// rows; they are not 6 units and 26 units of grade. This is the one place that
+// weighs the rows instead of counting them.
+//
+// The weight is `score.possible`, summed per type from the SAME taxonomy the
+// map fills its nodes with (activityType / UNIT_TYPE_LABELS), so there is no
+// second classification to drift from the first.
+//
+// Red Comet only publishes `possible` on a row it has graded, so the point
+// totals are the points that exist so far and the share moves as more rows are
+// graded. That is why the renderer's column says "points so far" and why a
+// semester with nothing graded reports `graded: false` and no kinds at all —
+// six zeroes and six "0.0%" would read as a finding rather than an absence.
+export function pointWeights(data) {
+  return orderedSemesters(data).map((semester) => {
+    const activities = semester.activities ?? [];
+    const pointsOf = (item) => {
+      const possible = Number(item.score?.possible);
+      return Number.isFinite(possible) && possible > 0 ? possible : 0;
+    };
+    const totalPoints = activities.reduce((sum, item) => sum + pointsOf(item), 0);
+    const kinds = UNIT_TYPES
+      .map((type) => {
+        const rows = activities.filter((item) => activityType(item.title) === type);
+        const points = rows.reduce((sum, item) => sum + pointsOf(item), 0);
+        return {
+          type,
+          label: UNIT_TYPE_LABELS[type],
+          // Every row of the kind, graded or not, because that is the number he
+          // can count in the gradebook himself. The points column is the one
+          // that is "so far".
+          rows: rows.length,
+          points,
+          share: totalPoints > 0 ? points / totalPoints : 0,
+        };
+      })
+      // A kind with no rows in this semester is not a zero, it is absent.
+      .filter((entry) => entry.rows > 0)
+      // Heaviest first: the whole point of the table is the top line.
+      .sort((left, right) =>
+        right.points - left.points
+        || right.rows - left.rows
+        || UNIT_TYPES.indexOf(left.type) - UNIT_TYPES.indexOf(right.type));
+    return {
+      id: semester.id,
+      name: semester.name ?? semester.id,
+      rows: activities.length,
+      totalPoints,
+      graded: totalPoints > 0,
+      kinds: totalPoints > 0 ? kinds : [],
+    };
+  });
 }
 
 function regionKey(worldId, number) {

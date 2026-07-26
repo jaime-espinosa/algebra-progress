@@ -1,5 +1,5 @@
-import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, sectionMilestones, overallGrade, worldMap, mapLandmarks, worldTerrain, worldRoute, regionHorizon, headerSegments, questBoard, UNIT_TYPE_LABELS, UNIT_TYPE_PLURALS } from "./js/quest.mjs";
-import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, formatDay, formatTime, nextScrapeTime, summarySnapshot, snapshotsEqual, remainingActivities, submittedAfterBaseline, submissionsByDay, effortStats, todayCompleted, landmarkGlyph, terrainSvg, landmarkStructure, hereMarker, compassRose, mapLegend, territoryPlaque, routePaths, landmassBanner, renderWorldCard, renderWorldPopup, renderTerritoryTable, unitNode, spriteSvg, validSkinCache, skinPlaceholderSvg, blobDataUrl, gaugePoint, gaugeArc, tip, gaugeText, chartX, chartLegend, perDayChart, cumulativeChart, openTimePanel, calendarReward, calendarCell, questDays, lessonSlug, lessonCatalog, gameKindIcon, DAY_MS, CHART } from "./js/render/shared.mjs";
+import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, sectionMilestones, overallGrade, worldMap, mapLandmarks, worldTerrain, worldRoute, regionHorizon, headerSegments, questBoard, pointWeights, UNIT_TYPE_LABELS, UNIT_TYPE_PLURALS } from "./js/quest.mjs";
+import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, formatDay, formatTime, nextScrapeTime, summarySnapshot, snapshotsEqual, remainingActivities, submittedAfterBaseline, submissionsByDay, effortStats, todayCompleted, landmarkGlyph, terrainSvg, landmarkStructure, hereMarker, compassRose, mapLegend, territoryPlaque, routePaths, landmassBanner, renderWorldPopup, renderTerritoryTable, unitNode, spriteSvg, validSkinCache, skinPlaceholderSvg, blobDataUrl, gaugePoint, gaugeArc, tip, gaugeText, chartX, chartLegend, perDayChart, cumulativeChart, openTimeCounter, calendarReward, calendarCell, questDays, lessonSlug, lessonCatalog, gameKindIcon, DAY_MS, CHART, DAY_PLOT, CUM_PLOT } from "./js/render/shared.mjs";
 
 (() => {
   "use strict";
@@ -25,7 +25,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
   // lesson slugs come from data.json, and lessonExists() checks the file is really there
   // before anything becomes a link.
   const lessonFileCache = new Map();
-  const sectionIds = ["worldmap", "effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request", "games"];
+  const sectionIds = ["worldmap", "effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "insights", "request", "games"];
 
   // vault/manifest.json is the single source of truth for artifacts. Hardcoding a
   // second copy here drifted immediately: it advertised the victory pack as 1.21.x
@@ -213,23 +213,25 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     const today = localIsoDate();
     const segments = headerSegments(data, today);
     document.querySelector("#f3-line").textContent =
-      `algebra_quest 1.0 | ${segments.join(" | ")} | checked ${formatTime(data.generatedAt)}`;
+      `algebra_quest 1.0 | ${segments.join(" | ")}`;
+    document.querySelector("#f3-check").textContent =
+      `checked ${formatTime(data.generatedAt)} / next ${nextScrapeTime()}`;
   }
 
-  function renderStatus(data, previousSeen, unchanged) {
+  function renderStatus(data, previousSeen) {
     const banner = document.querySelector("#status-banner");
-    const generated = `last checked ${formatDay(data.generatedAt?.slice(0, 10) || localIsoDate())} ${formatTime(data.generatedAt)}`;
     let message = refreshMessage;
     if (data.scrapeOk === false) {
-      message = `Saved telemetry shown · ${generated}`;
+      message = "Saved telemetry shown";
     } else if (previousSeen && (Date.now() - new Date(previousSeen).valueOf()) >= 2 * DAY_MS) {
       const next = remainingActivities(data)[0];
       message = next
         ? `Pick up where you left off · next: ${next.title}`
         : "Pick up where you left off · route clear";
-    } else if (unchanged) {
-      message = `${generated} · next scheduled check ${nextScrapeTime()}`;
     }
+    // Nothing when the scrape found nothing new. That case used to print
+    // "last checked Jul 26 08:01 · next scheduled check 15:00" in a bar of its
+    // own; both clocks are in the top bar now and one copy is enough.
     banner.textContent = message;
     banner.hidden = !message;
   }
@@ -247,6 +249,10 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
   // Only the first: a later redraw must not yank the map out from under a pan
   // he is in the middle of.
   let panInitialised = false;
+  // Where he left the map last time. "Don't move the map around, whatever the
+  // user did last is fine" — so the centre-on-here framing is the FIRST-EVER
+  // framing only, and after that the map opens exactly where he left it.
+  const MAP_PAN_KEY = "mc.mapPan.v1";
 
 
 
@@ -286,31 +292,6 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     opener?.setAttribute("aria-expanded", "false");
     if (restoreFocus && opener?.isConnected) opener.focus();
   }
-
-  function renderWholePicture(map, data) {
-    const remaining = remainingActivities(data);
-    const worldTotals = map.worlds.map(world => `
-      <li><strong>${escapeHtml(world.name)}</strong>:
-        <span class="numeric">${world.unitsDone} done · ${world.unitsLeft} remaining · ${world.unitsTotal} total</span>
-      </li>`).join("");
-    const upcoming = remaining.map(item => `
-      <li><strong>${escapeHtml(item.title)}</strong>
-        <span class="meta">${escapeHtml(item.semesterId.toUpperCase())} · Section ${item.sectionNumber}</span>
-      </li>`).join("");
-    return `
-      <details id="whole-picture" class="whole-picture parent-expanded"${parentViewActive() ? " open" : ""}>
-        <summary>The whole picture</summary>
-        <div class="whole-picture__summary">
-          <strong class="whole-picture__done numeric">${map.totalDone} units done</strong>
-          <span class="whole-picture__remaining numeric">${map.totalUnits - map.totalDone} remaining · ${map.totalUnits} total</span>
-          <ul class="whole-picture__worlds">${worldTotals}</ul>
-        </div>
-        <h3>All upcoming work</h3>
-        <ol class="whole-picture__tasks">${upcoming || "<li>Every named unit is submitted.</li>"}</ol>
-      </details>`;
-  }
-
-
 
   function renderRegionMap(region, world, landmarksHere) {
     const training = region.units.filter(unit => unit.kind === "training");
@@ -442,6 +423,43 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     clampPan();
   }
 
+  // Saved AFTER clampPan, so what is stored is a pan the map could actually
+  // hold. Rounded because sub-pixel drag remainders are noise, not a position.
+  function savePan() {
+    if (!panInitialised) return;
+    storageSet(MAP_PAN_KEY, { x: Math.round(panX), y: Math.round(panY) });
+  }
+
+  // Anything that is not a pair of finite numbers is treated as nothing stored,
+  // which falls back to the first-load framing rather than to the corner.
+  function savedPan() {
+    const saved = storageGet(MAP_PAN_KEY, null);
+    if (!saved || typeof saved !== "object") return null;
+    if (!Number.isFinite(saved.x) || !Number.isFinite(saved.y)) return null;
+    return { x: saved.x, y: saved.y };
+  }
+
+  // Keyboard focus can land on a chunk or a world banner that the current pan
+  // has pushed outside the viewport, which clips (overflow: hidden) rather than
+  // scrolls — so the browser's own scroll-into-view cannot help and focus lands
+  // on something invisible. Pan the minimum needed to bring it back inside.
+  function revealInViewport(element) {
+    const viewport = document.querySelector("#wm-viewport");
+    if (!viewport || !element || viewport.clientWidth === 0) return;
+    const frame = viewport.getBoundingClientRect();
+    const box = element.getBoundingClientRect();
+    const pad = 12;
+    let dx = 0;
+    let dy = 0;
+    if (box.left < frame.left + pad) dx = frame.left + pad - box.left;
+    else if (box.right > frame.right - pad) dx = Math.min(0, frame.right - pad - box.right);
+    if (box.top < frame.top + pad) dy = frame.top + pad - box.top;
+    else if (box.bottom > frame.bottom - pad) dy = Math.min(0, frame.bottom - pad - box.bottom);
+    if (!dx && !dy) return;
+    panBy(dx, dy);
+    savePan();
+  }
+
   function wireViewport() {
     const viewport = document.querySelector("#wm-viewport");
     if (!viewport || viewport.dataset.wired === "1") return;
@@ -478,6 +496,10 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       // with a time rather than a flag, so the suppression belongs to THIS
       // gesture and cannot linger and eat a real click made later.
       if (moved > 6) viewport.dataset.dragEndedAt = String(Date.now());
+      // Where he left it. Written once per gesture rather than once per
+      // pointermove: localStorage on every frame of a drag is the one way this
+      // could cost anything on his machine.
+      if (moved > 0) savePan();
     };
 
     viewport.addEventListener("pointerdown", event => {
@@ -508,6 +530,20 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       // left alone so he can still walk the chunks one at a time.
       event.preventDefault();
       panBy(step[0], step[1]);
+      savePan();
+    });
+
+    // Tab walking the map counts as moving it: bring the focused control inside
+    // the clipping window. The viewport itself is skipped — pointerdown focuses
+    // it at the start of every drag, and it is never the thing that is hidden.
+    viewport.addEventListener("focusin", event => {
+      if (event.target === viewport) return;
+      // A mouse press focuses whatever it pressed BEFORE the click lands, and
+      // this handler runs inside that press. Panning there would move the
+      // target out from under his finger and eat the click, and the drag we are
+      // inside of has already cached the pan it started from. Keyboard only.
+      if (dragging) return;
+      revealInViewport(event.target);
     });
   }
 
@@ -569,8 +605,6 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
 
     document.querySelector("#worldmap-content").innerHTML = map.worlds.length
       ? `
-      ${renderWholePicture(map, data)}
-      <div class="wm-worlds">${map.worlds.map(world => renderWorldCard(world)).join("")}</div>
       ${map.worlds.map(world =>
         renderWorldPopup(world, landmarksFor(world.id))).join("")}
       <div id="wm-viewport" class="wm-viewport" tabindex="0" role="group"
@@ -594,23 +628,32 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       : `<p class="quiet">Saved telemetry is thin right now — the map redraws on the next check.</p>`;
 
     wireViewport();
-    // Open on the ground he is standing on rather than on the top-left corner
-    // of the ocean. Deferred a frame because the panel is still hidden while it
-    // is being drawn, and a hidden panel cannot be measured. Once only: a later
-    // redraw must not yank the map out of a pan he is in the middle of.
-    if (hereSpot && !panInitialised) {
+    // Open where he left it. Only when nothing has ever been stored does the
+    // map frame itself, on the ground he is standing on rather than on the
+    // top-left corner of the ocean. Deferred a frame because the panel is still
+    // hidden while it is being drawn, and a hidden panel cannot be measured.
+    // Once only: a later redraw must not yank the map out of a pan he is in the
+    // middle of.
+    const restored = savedPan();
+    if ((hereSpot || restored) && !panInitialised) {
       panInitialised = true;
-      const centre = () => {
+      const frame = () => {
         const viewport = document.querySelector("#wm-viewport");
         if (!viewport || viewport.clientWidth === 0) {
-          window.requestAnimationFrame(centre);
+          window.requestAnimationFrame(frame);
           return;
         }
-        panX = -(hereSpot.cx - viewport.clientWidth / 2);
-        panY = -(hereSpot.cy - viewport.clientHeight / 2);
+        if (restored) {
+          // Whatever he did last. Never re-centred on top of it.
+          panX = restored.x;
+          panY = restored.y;
+        } else {
+          panX = -(hereSpot.cx - viewport.clientWidth / 2);
+          panY = -(hereSpot.cy - viewport.clientHeight / 2);
+        }
         clampPan();
       };
-      window.requestAnimationFrame(centre);
+      window.requestAnimationFrame(frame);
     }
     clampPan();
     if (openKey && findRegion(openKey)) openRegion(openKey);
@@ -919,6 +962,24 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
 
 
 
+  // Full scale of the LAST N DAYS dial, in UNITS PER CALENDAR DAY. A face
+  // constant, not a derived value: nothing in the data decides it, which is
+  // exactly the property being asked for. It is deliberately NOT coupled to the
+  // rolling window — the window is his (1 to 14 days, mc.windowDays) and the
+  // face is fixed either way.
+  //
+  // The face is 10, by owner's ruling ("81 keep at 10"). It was briefly re-picked
+  // to 6 when the dial changed from a TOTAL to a rate, so that it would share a
+  // full scale with the UNITS PER DAY dial beside it; he overruled that and asked
+  // for 10 back. He knows what it costs: at a rate like 0.67 a day the needle sits
+  // near the bottom of its sweep. It is his dial and his call.
+  //
+  // The dial still reports units per CALENDAR day — only the full-scale value is
+  // 10. Everything downstream reads this constant, so the numbered ring, the minor
+  // ticks, the inner amber percentage scale and its unit, the screen-reader text
+  // and the past-full-scale clamp all follow it and none of them can lie about it.
+  const RECENT_DIAL_MAX = 10;
+
   function renderEffort(data) {
     const today = localIsoDate();
     const s = dashboard(data, today, windowDays());
@@ -932,7 +993,14 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     // neither can disagree with the other. Percentages are rounded the same way
     // everywhere on the site (nearest whole).
     const paceScale = dialScale(s.activePace, 6);
-    const recentScale = dialScale(s.recent3, Math.max(1, s.recent3));
+    // Fixed face by request. This dial used to auto-scale to whatever the window
+    // held, so 2 units in 3 days drew a full-face needle and read exactly like a
+    // brilliant week — the needle carried no information at all. A face that never
+    // moves is the whole point of a dial: the same reading is always the same angle,
+    // and a good day looks different from a bad one. A rate past the end of the face
+    // clamps the needle to full scale rather than swinging it off the face; the
+    // digital window still shows the true rate, so nothing is hidden or invented.
+    const recentScale = dialScale(Math.min(s.recentPerDay, RECENT_DIAL_MAX), RECENT_DIAL_MAX);
     const doneScale = dialScale(s.odometer, totalUnits);
     const daysScale = dialScale(s.activeDays, calendarSpan);
     // Owner-granted dial-only exception: the current Aug 15 pace boundary is 3.38/day.
@@ -942,7 +1010,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     // dial only needs to say one thing, which is whether today clears the bar.
     const paceBandNeeded = 3.38;
     const pacePercent = s.requiredPerDay > 0 ? Math.round((s.activePace / s.requiredPerDay) * 100) : 0;
-    const recentPercent = s.rowsLeft > 0 ? Math.round((s.recent3 / s.rowsLeft) * 100) : 0;
+    const recentPercent = Math.round((Math.min(s.recentPerDay, RECENT_DIAL_MAX) / RECENT_DIAL_MAX) * 100);
     const donePercent = Math.round(s.tripDone * 100);
     const daysPercent = Math.round(s.showUpRate * 100);
     // Said the same way on every dial: the rim band is range shading, never a
@@ -956,7 +1024,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
           hint: `Units submitted divided by the number of days you actually submitted something. Days you never opened the course are not in the divisor: ${s.odometer} units over ${s.activeDays} days. The inner amber scale is the same needle as a percentage of the ${s.requiredPerDay.toFixed(2)} a day Aug 15 needs.`,
           scale: paceScale,
           secondary: { unit: "% OF NEEDED", ticks: percentTicks(paceScale.max, s.requiredPerDay) },
-          faceUnit: "UNITS / DAY",
+          faceUnit: "UNITS / DAY WORKED",
           readout: s.activePace.toFixed(2),
           readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)} TO FINISH ON TIME`,
           bandTo: 1,
@@ -979,14 +1047,14 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
 
         ${gaugeDial({
           label: `LAST ${s.windowDays} DAYS`,
-          hint: `A raw count of units submitted ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}. Not a rate. The inner amber scale is that same count as a percentage of the ${s.rowsLeft} units still to do.`,
+          hint: `Units a day over the last ${s.windowDays} days: the ${s.recent3} units you submitted ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}, divided by all ${s.windowDays} of those calendar days — days you did not open the course included. That is why it reads lower than UNITS PER DAY, which only divides by the days you sat down. Because it is a rate, moving the day stepper changes the horizon and not the meaning. The face always reads 0 to ${RECENT_DIAL_MAX} a day, so the same rate is always the same needle. The inner amber scale is that same needle as a percentage of the ${RECENT_DIAL_MAX} a day the face holds.`,
           scale: recentScale,
-          secondary: { unit: `% OF ${s.windowDays}-DAY SCALE`, ticks: percentTicks(recentScale.max, recentScale.max) },
-          faceUnit: `UNITS / ${s.windowDays} DAYS`,
-          readout: String(s.recent3),
-          readoutSub: `PREV ${s.windowDays}: ${s.prior3}`,
+          secondary: { unit: `% OF ${RECENT_DIAL_MAX} A DAY`, ticks: percentTicks(recentScale.max, RECENT_DIAL_MAX) },
+          faceUnit: `UNITS / CALENDAR DAY`,
+          readout: s.recentPerDay.toFixed(2),
+          readoutSub: `PREV ${s.windowDays}: ${s.priorPerDay.toFixed(2)} / DAY`,
           bandTo: 1,
-          ariaText: `${s.recent3} units submitted from ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}, on a dial reading 0 to ${recentScale.max} units. The ${s.windowDays} days before that were ${s.prior3}. The inner amber percentage scale reads those ${s.windowDays} days as ${recentPercent} percent of the ${s.rowsLeft} units still to do. ${BAND_TEXT}`
+          ariaText: `${s.recentPerDay.toFixed(2)} units a day over the last ${s.windowDays} days: ${s.recent3} units submitted from ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}, divided by all ${s.windowDays} calendar days in the window, whether or not you worked on them. The dial always reads 0 to ${RECENT_DIAL_MAX} units a day. The ${s.windowDays} days before that ran at ${s.priorPerDay.toFixed(2)} a day. The inner amber percentage scale reads the needle as ${recentPercent} percent of the ${RECENT_DIAL_MAX} a day the face holds.${s.recentPerDay > RECENT_DIAL_MAX ? ` The rate is past the end of the face, so the needle rests on ${RECENT_DIAL_MAX} and the inner scale on 100 percent; the window shows the true ${s.recentPerDay.toFixed(2)}.` : ""} ${BAND_TEXT}`
         })}
 
         ${gaugeDial({
@@ -1013,21 +1081,21 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
           bandTo: calendarSpan / daysScale.max,
           ariaText: `${s.activeDays} days worked out of the ${calendarSpan} calendar days since ${formatDay(track.firstDay)}, on a dial reading 0 to ${daysScale.max} days. The inner amber percentage scale reads ${daysPercent} percent of those ${calendarSpan} days. The thick band on the rim covers the ${s.activeDays} days you worked and the thin dashed band runs on to the ${calendarSpan}th day since you started.`
         })}
+        ${openTimeCounter(series)}
       </div>
 
       <p class="effort-line numeric">
-        ${s.odometer} units in ${s.activeDays} days · ${s.activePace.toFixed(2)} a day when you sit down · Aug 15 needs ${s.requiredPerDay.toFixed(2)}${s.fastEnough ? " — <strong>you are already fast enough</strong>" : ""}.
+        ${s.odometer} units in ${s.activeDays} days · ${s.activePace.toFixed(2)} a day when you sit down · Aug 15 needs ${s.requiredPerDay.toFixed(2)}${s.fastEnough ? " — <strong>you have proven that you can be fast enough</strong>" : ""}.
       </p>
 
       <div class="chart-pair">
         ${chartLegend(s, series, track)}
-        <div class="chart-pair__plots" style="--today-left: ${(chartX(track, Math.max(0, track.points.findIndex(point => point.date === track.today))) / CHART.width * 100).toFixed(4)}%">
+        <div class="chart-pair__plots" style="--today-left: ${(chartX(track, Math.max(0, track.points.findIndex(point => point.date === track.today))) / CHART.width).toFixed(6)}; --today-top: ${(DAY_PLOT.top / CHART.width).toFixed(6)}; --today-bottom: ${((CUM_PLOT.height - CUM_PLOT.bottom) / CHART.width).toFixed(6)}">
           <div class="chart-today-span" aria-hidden="true"><span>today</span></div>
           ${perDayChart(track, perDay, s.requiredPerDay, series)}
           ${cumulativeChart(track, sectionMilestones(data), overallGrade(data))}
         </div>
-      </div>
-      ${openTimePanel(series)}`;
+      </div>`;
   }
 
 
@@ -1050,6 +1118,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       <div class="cal-key quiet numeric">
         <span><b class="k k--done"></b> worked</span>
         <span><b class="k k--push"></b> &#9650; beat the plan (${track.bestDays.length} days)</span>
+        ${track.comeback ? `<span><b class="k k--run"></b> best run (${track.comeback.days} days)</span>` : ""}
         <span><b class="k k--plan"></b> planned</span>
         <span><b class="k k--idle"></b> nothing logged</span>
       </div>`;
@@ -1173,6 +1242,93 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
         </article>`;
       }).join("")
       : `<p class="quiet">No scored repairs are available.</p>`;
+  }
+
+
+  // The request box collects what an issue needs — a title, a body, and when it
+  // was written — and keeps it here, in this browser. It no longer opens GitHub:
+  // it used to hand off to a prefilled issue form, which meant leaving the page,
+  // signing in, and pressing submit again before anything was actually recorded,
+  // and most of the time nothing was.
+  //
+  // Where the queue goes after this is deliberately not decided here. There is no
+  // network call and no third-party service in this file; inventing either one
+  // would be inventing a decision that has not been made.
+  const REQUEST_KEY = "mc.requests";
+  const REQUEST_LIMIT = 50;
+
+  function requestQueue() {
+    const stored = storageGet(REQUEST_KEY, []);
+    return Array.isArray(stored)
+      ? stored.filter(entry => entry && typeof entry.text === "string")
+      : [];
+  }
+
+  // Returns whether it actually stored. localStorage can be full or blocked, and
+  // saying "saved" when nothing was saved is the one outcome worse than failing.
+  function saveRequest(text) {
+    const entry = {
+      // The first line is the issue title, the whole thing is the body — the same
+      // split the GitHub hand-off used, so nothing about the shape has changed.
+      title: text.split("\n")[0].slice(0, 70),
+      text,
+      at: new Date().toISOString(),
+    };
+    const next = [entry, ...requestQueue()].slice(0, REQUEST_LIMIT);
+    storageSet(REQUEST_KEY, next);
+    return requestQueue().length === next.length;
+  }
+
+  function renderSavedRequests() {
+    const list = document.querySelector("#request-saved");
+    if (!list) return;
+    list.innerHTML = requestQueue().map(entry => `<li>
+        <span class="numeric">${escapeHtml(formatDay(entry.at.slice(0, 10)))}</span>
+        · ${escapeHtml(entry.title)}
+      </li>`).join("");
+  }
+
+  // The one section on this page that does not count rows.
+  //
+  // Everything above it treats a gradebook row as a unit and every unit as equal,
+  // which is the right way to answer "how much is left" and a misleading way to
+  // answer "what is this worth". Six section tests carry more of Semester 1 than
+  // twenty-six practice quizzes do. The arithmetic is all in quest.pointWeights;
+  // this only prints it, and prints the raw point totals next to the shares so
+  // every percentage can be divided back out against the gradebook by hand.
+  function renderInsights(data) {
+    const host = document.querySelector("#insights-content");
+    if (!host) return;
+    const percent = value => `${(value * 100).toFixed(1)}%`;
+    host.innerHTML = pointWeights(data).map(semester => {
+      if (!semester.graded) {
+        // Nothing graded yet. One line saying so, rather than six rows of zeroes
+        // that would read as a verdict on a semester he has not started.
+        return `<p class="quiet">${escapeHtml(semester.name)} · not graded yet</p>`;
+      }
+      const rows = semester.kinds.map(kind => `<tr>
+            <th scope="row">${escapeHtml(kind.label)}</th>
+            <td class="numeric">${kind.rows}</td>
+            <td class="numeric">${kind.points}</td>
+            <td class="numeric">${percent(kind.share)}</td>
+            <td aria-hidden="true"><span class="insights__bar"><i style="width:${percent(kind.share)}"></i></span></td>
+          </tr>`).join("");
+      return `<table class="insights__table">
+          <caption>${escapeHtml(semester.name)}</caption>
+          <thead><tr>
+            <th scope="col">Kind of work</th><th scope="col">Units</th>
+            <th scope="col">Points so far</th><th scope="col" colspan="2">Share</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+          <tfoot><tr>
+            <th scope="row">all work</th>
+            <td class="numeric">${semester.rows}</td>
+            <td class="numeric">${semester.totalPoints}</td>
+            <td class="numeric">100.0%</td>
+            <td></td>
+          </tr></tfoot>
+        </table>`;
+    }).join("");
   }
 
 
@@ -1466,7 +1622,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     currentData = safeData;
     applyTheme(safeData, earned);
     renderHeader(safeData);
-    renderStatus(safeData, previousSeen, Boolean(unchanged));
+    renderStatus(safeData, previousSeen);
     renderWorldMap(safeData, previousSnapshot, isNewSnapshot);
     renderEffort(safeData);
     renderVault(safeData, earned, newlyEarned, isNewSnapshot);
@@ -1477,6 +1633,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     renderPace(safeData);
     renderRepairs(safeData);
     renderLesson(safeData);
+    renderInsights(safeData);
     showSections();
 
     if (reducedMotion() && newlyEarned.length) {
@@ -1544,8 +1701,17 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       // then throws mid-render, leaving a half-mutated DOM.
       if (!data.semesters.length || data.semesters.every(s => !(s.activities?.length > 0))) throw new Error("Empty payload");
       const oldSnapshot = currentData ? summarySnapshot(currentData) : null;
-      refreshMessage = force && snapshotsEqual(oldSnapshot, summarySnapshot(data))
-        ? `No new units yet · last checked ${formatTime(data.generatedAt)} · next ${nextScrapeTime()}`
+      // Both outcomes of a hand refresh are said out loud. "Nothing changed" used
+      // to be the only one with a message, so the successful case — the one worth
+      // pressing the button for — was the silent one.
+      // With no previous load to compare against — a refresh after the first
+      // attempt failed — there is no honest verdict, so it reports only the read.
+      refreshMessage = force
+        ? (!oldSnapshot
+          ? "Saved progress re-read"
+          : snapshotsEqual(oldSnapshot, summarySnapshot(data))
+            ? "Saved progress re-read · no new units yet"
+            : "Saved progress re-read · new units found")
         : "";
       render(data);
     } catch (error) {
@@ -1556,6 +1722,38 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       document.querySelector("#f3-line").textContent = "algebra_quest 1.0 | telemetry unavailable";
       document.querySelector("#main").setAttribute("aria-busy", "false");
       console.error(error);
+    }
+  }
+
+  // Pressing ↻ has to look like it did something. Re-reading a local file is far
+  // too fast to see, so the button holds its working state for a beat: long
+  // enough to register as an action, short enough that it never feels like a
+  // wait. The button is disabled only while that beat lasts — this reads one
+  // JSON file off the same site, so there is no remote system to be polite to
+  // and no reason for a lockout beyond it.
+  const REFRESH_MIN_MS = 450;
+  let refreshing = false;
+
+  async function refreshNow() {
+    if (refreshing) return;
+    refreshing = true;
+    const button = document.querySelector("#refresh");
+    const header = document.querySelector(".f3-header");
+    button.dataset.state = "busy";
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    if (header) header.dataset.busy = "1";
+    const started = Date.now();
+    try {
+      await loadData(true);
+    } finally {
+      const remaining = REFRESH_MIN_MS - (Date.now() - started);
+      if (remaining > 0) await new Promise(resolve => setTimeout(resolve, remaining));
+      delete button.dataset.state;
+      button.disabled = false;
+      button.setAttribute("aria-busy", "false");
+      if (header) delete header.dataset.busy;
+      refreshing = false;
     }
   }
 
@@ -1666,6 +1864,12 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       }
       const worldCard = event.target.closest("[data-world-card]");
       if (worldCard) {
+        // The opener is the banner inside the pannable canvas now, so it needs
+        // the same guard a region node has: a drag that happens to end on a
+        // banner is a pan, not a click.
+        const viewport = document.querySelector("#wm-viewport");
+        const draggedAt = Number(viewport?.dataset.dragEndedAt ?? 0);
+        if (draggedAt && Date.now() - draggedAt < 300) return;
         openWorldPopup(worldCard.dataset.worldCard);
         return;
       }
@@ -1697,7 +1901,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       }
     });
 
-    document.querySelector("#refresh").addEventListener("click", () => loadData(true));
+    document.querySelector("#refresh").addEventListener("click", refreshNow);
     document.querySelector("#exit-parent").addEventListener("click", () => {
       setParentView(false);
       document.querySelector("#refresh")?.focus();
@@ -1733,22 +1937,22 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       if (currentData) renderVault(currentData, unionEarned(currentData).earned, [], false);
       if (currentData) renderSkinCard();
     });
-    document.querySelector("#request-form").addEventListener("submit", async event => {
+    document.querySelector("#request-form").addEventListener("submit", event => {
       event.preventDefault();
-      const text = document.querySelector("#request-text").value.trim();
+      const field = document.querySelector("#request-text");
+      const text = field.value.trim();
       const status = document.querySelector("#request-status");
       if (!text) {
         status.textContent = "Write one idea first.";
         return;
       }
-      // Opens a prefilled GitHub issue. No token in the page, and filing issues on
-      // his own site is a real thing an engineer does.
-      const title = text.split("\n")[0].slice(0, 70);
-      const body = `${text}\n\n---\nFiled from the vault request box.`;
-      const url = "https://github.com/jaime-espinosa/algebra-progress/issues/new"
-        + `?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
-      window.open(url, "_blank", "noopener");
-      status.textContent = "Opening GitHub. Hit submit there and it lands in the queue.";
+      const saved = saveRequest(text);
+      field.value = "";
+      renderSavedRequests();
+      status.textContent = saved
+        ? `Saved on this device · ${requestQueue().length} waiting`
+        : "This browser will not let the page save. Nothing was lost — the text is still above.";
+      if (!saved) field.value = text;
     });
   }
 
@@ -1768,6 +1972,9 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
   });
 
   setParentView(sessionGet(PARENT_VIEW_KEY, false) === true);
+  // Anything he wrote on a previous visit is on screen before the data loads, so
+  // the box is never an empty form that ate his last idea.
+  renderSavedRequests();
   bindEvents();
   // He is going to hit F12 and poke at this. That is the correct instinct for someone
   // who wants to build software, so the console rewards it instead of hiding from it.
@@ -1812,7 +2019,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     source: () => {
       console.log("site + scraper: https://github.com/jaime-espinosa/algebra-progress");
       console.log("the scraper is Playwright against Red Comet, run 3x a day by cron.");
-      console.log("found a bug or want a reward? the request box files a real issue.");
+      console.log("found a bug or want a reward? the request box saves it here, in this browser.");
       return "https://github.com/jaime-espinosa/algebra-progress";
     }
   };
@@ -1838,6 +2045,10 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
       const saved = storageGet(ORDER_KEY, []).filter(id => byId.has(id));
       const rest = sections.filter(section => !saved.includes(section.id)).map(s => s.id);
       for (const id of [...saved, ...rest]) page.append(byId.get(id));
+      // A section that did not exist when he last dragged his layout lands at the
+      // bottom of it — which would put it under the request box, and the request
+      // box is last by an explicit request. His saved order is otherwise untouched.
+      if (rest.length && byId.has("request")) page.append(byId.get("request"));
     }
 
     function saveOrder() {

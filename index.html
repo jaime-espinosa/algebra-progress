@@ -13,8 +13,17 @@
 <body>
   <header class="f3-header" aria-label="Algebra quest telemetry">
     <div id="f3-line" class="f3-header__line">algebra_quest 1.0 | loading telemetry</div>
+    <!-- The scrape clock lives up here now, not in a line of its own under the bar.
+         It never shrinks and never ellipsises: it is the shortest thing in the bar
+         and the telemetry line beside it is the part that can afford to truncate. -->
+    <div id="f3-check" class="f3-header__check numeric"></div>
     <button id="exit-parent" class="parent-exit" type="button" hidden>Exit parent view</button>
-    <button id="refresh" type="button" aria-label="Refresh progress">↻</button>
+    <!-- This button re-reads the saved progress file this page is built from. It
+         does NOT reach Red Comet — that is the scraper, on cron, and the clock to
+         the left of this button is the one that says when it last ran. The title
+         says so out loud because the arrow on its own implies otherwise. -->
+    <button id="refresh" type="button" aria-label="Reload saved progress"
+      title="Reload the saved progress file. Red Comet itself is checked on a schedule — see the clock."><span>↻</span></button>
   </header>
 
   <div id="status-banner" class="status-banner" role="status" hidden></div>
@@ -22,11 +31,9 @@
   <main id="main" class="page" aria-busy="true">
     <div id="loading" class="loading">loading saved progress…</div>
 
-    <section id="worldmap" class="panel" aria-labelledby="worldmap-heading" hidden>
-      <h1 id="worldmap-heading" class="section-heading">World map</h1>
-      <div id="worldmap-content"></div>
-    </section>
-
+    <!-- Dials first by request (2026-07-26): the dashboard is the default top
+         section and the world map sits under it. A saved order in
+         mc.sectionOrder.v2 still wins over this — that is his layout, not ours. -->
     <section id="effort" class="panel" aria-labelledby="effort-heading" hidden>
       <h2 id="effort-heading" class="section-heading">Dashboard // what you've actually put in</h2>
       <div class="window-control">
@@ -38,6 +45,11 @@
         <button type="button" id="window-up" aria-label="Lengthen the rolling window by one day">+</button>
       </div>
       <div id="effort-content"></div>
+    </section>
+
+    <section id="worldmap" class="panel" aria-labelledby="worldmap-heading" hidden>
+      <h1 id="worldmap-heading" class="section-heading">World map</h1>
+      <div id="worldmap-content"></div>
     </section>
 
     <section id="vault" class="panel" aria-labelledby="vault-heading" hidden>
@@ -90,6 +102,14 @@
       <div id="games-content"></div>
     </section>
 
+    <!-- Everything else on this page counts rows: one gradebook row, one unit. This
+         section is the one place that weighs them instead, so it sits below all of
+         them and above the request box. -->
+    <section id="insights" class="panel" aria-labelledby="insights-heading" hidden>
+      <h2 id="insights-heading" class="section-heading">Insights // where the points are</h2>
+      <div id="insights-content"></div>
+    </section>
+
     <!-- Last on the page by request: it is the one section that is not about today's work,
          and it should be what he scrolls past everything else to reach. A saved section
          order still wins over this — that is his layout, not ours. -->
@@ -99,10 +119,11 @@
         <label for="request-text">What should the next reward do?</label>
         <textarea id="request-text" maxlength="500" placeholder="Describe a skin, tool, or build idea."></textarea>
         <div class="request-actions">
-          <button type="submit">File issue &#8599;</button>
+          <button type="submit">Save request</button>
           <span id="request-status" class="quiet" role="status"></span>
         </div>
       </form>
+      <ul id="request-saved" class="request-saved"></ul>
     </section>
   </main>
 

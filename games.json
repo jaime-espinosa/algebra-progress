@@ -120,6 +120,17 @@
           "remixable": true,
           "hookForHim": "This is scripting, in a browser, with a visible simulation and a scoreboard — the exact thing he is already trying to do with his friends, except the feedback loop is thirty seconds long. A run-by-run 'can I beat challenge 18' series is a ready-made YouTube format.",
           "source": true
+        },
+        {
+          "title": "Interactivate — Slope Slider",
+          "url": "https://appstate-math.github.io/interactivate/activities/SlopeSlider/",
+          "kind": "tool",
+          "why": "You drag sliders for m and b to tilt and shift a line across the grid, so slope and y-intercept stop being abstract letters and become the physical steepness and starting height of the graph.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-26"
         }
       ]
     },
@@ -410,6 +421,17 @@
           "account": false,
           "verifiedAt": "2026-07-25",
           "hookForHim": "Written by Inigo Quilez, the demoscene/shader legend, as his own scratchpad. The animation variable makes an equation into a moving thing, which is the difference between a graph and something worth recording."
+        },
+        {
+          "title": "Interactivate — Function Flyer",
+          "url": "https://appstate-math.github.io/interactivate/activities/FunctionFlyer/",
+          "kind": "tool",
+          "why": "You enter an exponential function and drag sliders for the base, multiplier, and constant, watching the curve warp and shift live on the grid so you see how each parameter transforms exponential growth.",
+          "sourceAvailable": false,
+          "remixable": false,
+          "free": true,
+          "account": false,
+          "verifiedAt": "2026-07-26"
         }
       ]
     },

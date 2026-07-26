@@ -16,9 +16,12 @@
  * Motion is transform-only, and stops entirely under prefers-reduced-motion.
  */
 
+/* Five tiles: four dials and the time-on-course counter, which used to be a
+   block of its own under the charts. It is a counter, the dials are counters,
+   so it sits in the cluster with them. */
 .effort-gauges {
   display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  grid-template-columns: repeat(5, minmax(140px, 1fr));
   gap: 14px;
 }
 
