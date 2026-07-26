@@ -1719,7 +1719,7 @@ export function worldRoute(terrain) {
       index,
       x: territory.cx,
       y: territory.cy,
-      mass: territory.mass ?? 0,
+      mass: territory.worldId,
       status: territory.status,
       ahead: territory.ahead ?? 0,
     }))
