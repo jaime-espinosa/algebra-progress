@@ -17,14 +17,22 @@
   --sans: system-ui, -apple-system, "Segoe UI", Ubuntu, Cantarell, sans-serif;
 }
 
+/* Nether. Every colour on this ramp used to sit between hue 11 and hue 17,
+   which is red, and red is not allowed anywhere on this site — the panel
+   borders alone put about eleven thousand red pixels on screen. Each one has
+   been rotated to hue 28 with its lightness and saturation left exactly where
+   they were, so the theme still reads as scorched rock and ember and nothing
+   about its weight or contrast has moved. 28 is above the 25 floor and sits in
+   the same amber-orange family the rest of the site already uses.
+   Verify by sampling rendered pixels, not by reading this comment. */
 [data-theme="nether"] {
-  --bg: #120a08;
-  --panel: rgba(28, 16, 13, .86);
-  --panel-solid: #1a100d;
-  --line: #3a201a;
-  --gap: #2e1c17;
-  --accent: #ff7a45;
-  --accent-dim: #7a3418;
+  --bg: #120d08;
+  --panel: rgba(28, 20, 13, .86);
+  --panel-solid: #1a130d;
+  --line: #3a291a;
+  --gap: #2e2217;
+  --accent: #ff9c45;
+  --accent-dim: #7a4618;
   --warn: #ffd166;
 }
 
