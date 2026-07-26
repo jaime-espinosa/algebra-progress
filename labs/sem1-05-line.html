@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code lab: Move the Line</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="status">S1 // SECTION 05 // LINEAR FUNCTIONS // CODE LAB</p>
+      <h1>Move the Line</h1>
+      <p class="prose">Two numbers decide everything a line does. Change one, run it, watch.</p>
+    </header>
+
+    <section>
+      <h2>The idea</h2>
+      <div class="prose">
+        <p>A linear function is <code>y = mx + b</code>.</p>
+        <p><code>m</code> is the slope: how much y changes for one step right in x.</p>
+        <p><code>b</code> is the intercept: the value of y when x is 0.</p>
+        <p>The code below draws that function. It already works — press Run, then start changing numbers.</p>
+      </div>
+      <p class="small-screen status">This lab wants a wide screen. It works here, but the editor and picture are stacked.</p>
+    </section>
+
+    <div class="bench">
+      <section aria-labelledby="editor-heading">
+        <h2 id="editor-heading">The code</h2>
+        <label class="label" for="code">JavaScript — edit freely</label>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+          aria-describedby="api"></textarea>
+        <div class="controls">
+          <button id="run" type="button">Run</button>
+          <button id="reset" type="button" class="secondary">Back to the start</button>
+          <span id="run-status" role="status" aria-live="polite"></span>
+        </div>
+        <p class="api" id="api">
+          Ctrl+Enter also runs it. This page gives you three things:
+          <code>graph(xMin, xMax, yMin, yMax)</code>,
+          then <code>.plot(f)</code> and <code>.point(x, y, "label")</code> on what it returns,
+          and <code>say(...)</code> to print a line.
+        </p>
+      </section>
+
+      <section aria-labelledby="output-heading">
+        <h2 id="output-heading">What it drew</h2>
+        <div id="picture"></div>
+        <div id="description" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <section>
+      <h2>Challenges</h2>
+      <ol class="challenges">
+        <li>Change <code>m</code> to <code>-1</code> and run. Which way does the line tilt now?</li>
+        <li>Set <code>m = 0</code>. What kind of function is left, and what is its range?</li>
+        <li>Leave <code>m</code> alone and change <code>b</code> to <code>4</code>. The line does not tilt — it slides. That is the whole difference between the two numbers.</li>
+        <li>Try <code>m = 0.5</code>. Slope does not have to be a whole number.</li>
+        <li>Add a second line. Write <code>function steep(x) { return 8 * x; }</code> under the first function, then add <code>g.plot(steep, "O = 8N");</code> before the <code>say</code> lines. That is the Nether portal rule from the mini-lesson, drawn next to yours.</li>
+        <li>Make the code find the slope instead of being told it. Add
+          <code>say("slope from two points:", (line(5) - line(1)) / (5 - 1));</code>
+          and check it equals <code>m</code>. That fraction is rise over run.</li>
+      </ol>
+    </section>
+
+    <aside class="python">
+      <span class="label">Why JavaScript and not Python</span>
+      <div class="prose">
+        <p>Python in a browser means downloading about ten megabytes before anything happens, every time. JavaScript is already here, so the picture appears instantly and works offline. The algebra is identical; only the punctuation moves.</p>
+        <p>Three differences worth carrying back to Python:</p>
+        <p><code>let m = 2;</code> in JS is just <code>m = 2</code> in Python — JS wants you to declare a name the first time.</p>
+        <p><code>function line(x) { return m * x + b; }</code> is <code>def line(x): return m * x + b</code> — braces instead of a colon and indentation, and <code>return</code> is required in both.</p>
+        <p><code>2 ** 3</code> means the same thing in both languages. <code>Math.pow(2, 3)</code> is the older JS way and still common.</p>
+      </div>
+    </aside>
+
+    <section>
+      <h2>Nearby</h2>
+      <p class="prose">
+        <a href="../lessons/sem1-05.html">Mini-lesson: Linear Functions</a> ·
+        <a href="sem1-03-crossing.html">Code lab: Where Two Lines Cross</a> ·
+        <a href="../index.html">Back to the quest board</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="text/plain" id="starter-code">
+// y = m*x + b  — a line, in code.
+let m = 2;    // slope: how much y changes for one step right in x
+let b = -3;   // intercept: the value of y when x is 0
+
+function line(x) {
+  return m * x + b;
+}
+
+const g = graph(-10, 10, -10, 10);
+g.plot(line, "y = m*x + b");
+g.point(0, line(0), "intercept");
+g.point(1, line(1), "one step right");
+
+say("slope", m, "intercept", b);
+say("one step right changed y by", line(1) - line(0));
+</script>
+  <script type="module">
+    import { mountLab } from "./lab-runtime.mjs";
+    mountLab();
+  </script>
+</body>
+</html>
