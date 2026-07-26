@@ -143,10 +143,15 @@
   text-shadow: none;
 }
 
+/* The inner scale's name sits directly under the main unit at the foot of the
+   face — the same stacking the reference uses for MPH with km/h beneath it.
+   It used to sit mid-face, where it touched the hub and the inner numerals at
+   narrow widths. Down here it is clear of the needle, the hub, both numeral
+   rings and the window at every width. */
 .gauge__scale2-unit {
   fill: var(--warn);
   font-family: var(--mono);
-  font-size: 3.6px;
+  font-size: 4.2px;
   letter-spacing: .04em;
   text-shadow: none;
 }
