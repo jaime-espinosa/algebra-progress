@@ -1,4 +1,4 @@
-import { effortStats as questEffort, computePace, dashboard, openTimeSeries, planTrack, evaluateUnlocks, semesterFocus } from "./js/quest.mjs";
+import { effortStats as questEffort, computePace, dashboard, openTimeSeries, planTrack, evaluateUnlocks, worldMap, mapLandmarks } from "./js/quest.mjs";
 
 (() => {
   "use strict";
@@ -14,7 +14,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
   // lesson slugs come from data.json, and lessonExists() checks the file is really there
   // before anything becomes a link.
   const lessonFileCache = new Map();
-  const sectionIds = ["trophy", "effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request", "games"];
+  const sectionIds = ["effort", "vault", "calendar", "quests", "pace", "repairs", "lesson", "request", "games", "worldmap"];
 
   // vault/manifest.json is the single source of truth for artifacts. Hardcoding a
   // second copy here drifted immediately: it advertised the victory pack as 1.21.x
@@ -24,6 +24,11 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
 
   let currentData = null;
   let currentActivity = null;
+  // The validated games list, kept so the world map can pin the same items to a
+  // region without a second copy of the catalog.
+  let currentGames = null;
+  let currentMap = null;
+  let currentLandmarks = [];
   let intervalId = null;
   let revealQueue = [];
   // Set when a batch of tiles is queued to reveal; cleared once the vault slots
@@ -137,6 +142,10 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       {
         gradableDone: semester.gradableDone,
         allDone: semester.allDone,
+        // Units, so the map's reveal can tell new blocks from ones he has
+        // already looked at. allDone counts a different list and would hold
+        // back the wrong number of blocks.
+        rowsDone: (semester.activities ?? []).filter(item => item.state !== "not_started").length,
         percent: semester.percent
       }
     ]));
@@ -261,15 +270,17 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
   function renderHeader(data) {
     const today = localIsoDate();
     const days = Math.max(0, dateDiff(today, data.deadline.date));
-    const counts = data.semesters.map(semester =>
-      `${semester.id === "sem1" ? "S1" : "S2"} ${safeNumber(semester.allDone)}/${safeNumber(semester.allTotal)}`
+    // Units — gradebook rows — because that is what every other number on the
+    // page counts. This line used to print allDone/allTotal, which are LMS
+    // activities: it said "S2 5/103" while the map, the dials and the vault all
+    // agreed he had not started Semester 2, and 105 minus 99 landed one away
+    // from the countdown right beside it.
+    const map = worldMap(data);
+    const counts = map.worlds.map(world =>
+      `${world.id === "sem1" ? "S1" : "S2"} ${world.unitsDone}/${world.unitsTotal}u`
     ).join("  ");
     document.querySelector("#f3-line").textContent =
       `algebra_quest 1.0 | ${counts} | D-${days} | scraped ${formatTime(data.generatedAt)}  next ${nextScrapeTime()}`;
-  }
-
-  function safeNumber(value) {
-    return Number.isFinite(value) ? value : "—";
   }
 
   function renderStatus(data, previousSeen, unchanged) {
@@ -290,78 +301,305 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
     banner.hidden = !message;
   }
 
+  // ---- World map ------------------------------------------------------------
+  // This panel replaced the trophy wall. The two were the same picture drawn
+  // twice: a grid of tiles saying "this much is done". The map says the same
+  // thing and also says WHERE, WHAT IS IN IT, and WHAT IS AT THE END OF IT, so
+  // keeping both would have left two progress visuals arguing about the same
+  // work. Everything the trophy wall carried that was not the tile grid — the
+  // headline percent, the sections sealed, the grade so far, the countdown to
+  // sealing Semester 1 — is on the World I header below, and nothing else of it
+  // survives.
+  //
   // WHICH DENOMINATOR LEADS, and why. A request came in to "lie that we are past
   // 50% so he doesn't get unmotivated". The fabrication was declined — nothing on
   // this page may be a number he cannot check — but the point underneath it was
   // real. 46% was never more true than 93%: it is the same work, counted against
-  // the most discouraging denominator available.
+  // the most discouraging denominator available. So World I leads: Semester 1 is
+  // the nearest real finish line he has, and it is the first thing on the page.
   //
-  // So the trophy wall leads with Semester 1, which is checkable in his gradebook
-  // and is the nearest real finish line he has. The whole-course figure did not
-  // disappear; it moved to the course-progress dial and stopped being the
-  // headline. The numbers come from semesterFocus() in quest.mjs. If you change
-  // the denominator, change it there, pick one he can verify, and say on screen
-  // which one you picked.
+  // THE UNIT IS THE GRADEBOOK ROW AND ONLY THE GRADEBOOK ROW. Every block, every
+  // count, every percent in here comes off worldMap() in quest.mjs, which counts
+  // rows. That makes the map reconcile by hand with the effort dials (62 done,
+  // 71 left, 133 total), the quest board and the calendar. The trophy wall used
+  // allDone/allTotal — LMS *activities*, 105 in Semester 1 against 67 rows — and
+  // had to print a disclaimer beside every figure to stop the two reading as an
+  // arithmetic error. Rows removed the need for the disclaimer. If you ever put
+  // an activities figure back on this page, it must say "activities" out loud.
   //
-  // EVERY FIGURE IN THIS PANEL IS THE SAME UNIT — a Semester 1 activity row, named
-  // "unit" on screen — and comes off the one allDone/allTotal pair. He can subtract
-  // the headline pair and land exactly on the line below it. Do not mix in a count
-  // from a different array here, however correct that count is on its own: two
-  // numbers a subtraction apart is read as an error, not as two units.
-  function renderTrophy(data, previousSnapshot, isNewSnapshot) {
-    const semester = data.semesters.find(item => item.id === "sem1") ?? data.semesters[0];
-    const focus = semesterFocus(data);
-    const total = Math.max(0, semester.allTotal || 0);
-    const done = Math.min(total, Math.max(0, semester.allDone || 0));
-    const completeSections = semester.sections.filter(section => section.complete).length;
-    const tiles = Array.from({ length: total }, (_, index) => {
-      const status = index < done ? " is-complete" : "";
-      const reveal = isNewSnapshot && index < done ? " reveal-hidden" : "";
-      return `<span class="chunk-tile${status}${reveal}" aria-hidden="true"></span>`;
+  // There is no count of missed, late or overdue work anywhere in here, and
+  // lmsDue is deliberately never rendered: most of those dates are in the past
+  // and would turn an inviting map into a list of things he is behind on.
+  // "Unexplored" is the strongest word used about ground he has not reached.
+  const REGION_STATE_COPY = {
+    settled: "settled",
+    here: "you are here",
+    started: "in progress",
+    ahead: "unexplored"
+  };
+
+  const WORLD_NUMERAL = ["", "I", "II", "III"];
+
+  // A region drawn as blocks: one block per gradebook row, filled if submitted.
+  // Blocky geometry and hard edges only — no images, no canvas.
+  function regionBlocks(region, revealFrom) {
+    return region.units.map((unit, index) => {
+      const classes = ["wm-block"];
+      if (unit.done) classes.push("is-placed");
+      if (unit.isNext) classes.push("is-next");
+      if (unit.done && revealFrom !== null && index >= revealFrom) classes.push("reveal-hidden");
+      return `<span class="${classes.join(" ")}" aria-hidden="true"></span>`;
     }).join("");
-    // total > 0 guard: a zeroed payload makes done === total trivially true, which
-    // would tell him he sealed the semester while the page shows 0/0.
-    // The countdown is in gradebook rows — the unit the quest board schedules, the
-    // dials count, the 71-left figure uses, and the one whose last submission fires
-    // photo-skin-studio. The percent and the tile map beside it are LMS activities
-    // and say so out loud, because 105 tiles is the better wall and 94% is honest.
-    // Two named things, not one word meaning two: a countdown of 6 here would run
-    // past the reward landing at 5 and read as the site being broken.
-    // Both figures carry their noun on screen, because stacking a 6 and a 5 with
-    // the same word between them reads as an arithmetic slip no matter how right
-    // each one is. "units" is always the gradebook row; anything counted in LMS
-    // activities says "activities".
-    const nearFinish = total > 0 && focus?.sealed
-      ? "Semester 1 sealed. Every gradebook row is submitted."
-      : `${focus?.rowsLeft ?? total - done} units — gradebook rows — from sealing Semester 1.`;
-    document.querySelector("#trophy-content").innerHTML = `
-      <div class="trophy-summary">
-        <div class="trophy-stats">
-          <span class="eyebrow">YOU BUILT THIS</span>
-          <strong class="big-number numeric">${safeNumber(focus?.percent)?.toString()}%</strong>
-          <span>${done} of ${total} Semester 1 activities done · ${completeSections} sections sealed</span>
-          <strong class="trophy-near">${escapeHtml(nearFinish)}</strong>
-          <span class="quiet">Grade so far ${safeNumber(semester.percent)?.toString()}%${semester.letter ? ` · ${escapeHtml(semester.letter)}` : ""}</span>
+  }
+
+  function landmarkGlyph(item, earned) {
+    return `<span class="wm-landmark${earned ? " is-earned" : ""}" title="${escapeHtml(
+      earned ? `${item.name} — earned` : `${item.name} — unlocks here`)}">
+      <span class="wm-landmark__post" aria-hidden="true"></span>
+      <span class="wm-landmark__flag" aria-hidden="true"></span>
+    </span>`;
+  }
+
+  function renderRegionCard(region, landmarksHere, isNewSnapshot, previousDone) {
+    // Only blocks beyond what he had last time are held back to reveal, so the
+    // map never animates in from empty on a page he has already seen.
+    const revealFrom = isNewSnapshot && !reducedMotion()
+      ? Math.min(previousDone, region.unitsDone)
+      : null;
+    const state = REGION_STATE_COPY[region.status] ?? "";
+    const grade = region.grade === null
+      ? ""
+      : `<span class="wm-region__grade quiet numeric">${region.grade.toFixed(1)}%${
+          region.letter ? ` · ${escapeHtml(region.letter)}` : ""}</span>`;
+    const marker = region.status === "here"
+      ? `<span class="wm-here" aria-hidden="true"><span class="wm-here__body"></span><span class="wm-here__head"></span></span>`
+      : "";
+    const flags = landmarksHere.length
+      ? `<span class="wm-region__landmarks">${landmarksHere
+          .map(entry => landmarkGlyph(entry.artifact, false)).join("")}</span>`
+      : "";
+    const label = `${region.name}, ${region.unitsDone} of ${region.unitsTotal} units placed, ${state}`;
+    return `
+      <button type="button" class="wm-region is-${region.status}" data-region="${escapeHtml(region.key)}"
+        aria-expanded="false" aria-controls="wm-detail-${escapeHtml(region.worldId)}"
+        aria-label="${escapeHtml(label)}">
+        <span class="wm-region__sky" aria-hidden="true">${marker}${flags}</span>
+        <span class="wm-region__id numeric" aria-hidden="true">${String(region.number).padStart(2, "0")}</span>
+        <span class="wm-region__name">${escapeHtml(region.name)}</span>
+        <span class="wm-region__blocks" aria-hidden="true">${regionBlocks(region, revealFrom)}</span>
+        <span class="wm-region__count numeric" aria-hidden="true">${region.unitsDone}/${region.unitsTotal} units</span>
+        <span class="wm-region__state" aria-hidden="true">${escapeHtml(state)}</span>
+        ${grade}
+      </button>`;
+  }
+
+  function renderWorld(world, landmarks, isNewSnapshot, previousDoneByRegion) {
+    const numeral = WORLD_NUMERAL[world.index] ?? String(world.index);
+    // Semester 1 keeps the line the trophy wall led with; Semester 2 gets the
+    // one true thing about it — it is open, and it is new ground, which is an
+    // invitation rather than a backlog.
+    const eyebrow = world.sealed
+      ? `WORLD ${numeral} // SEALED`
+      : world.holdsNext
+        ? `WORLD ${numeral} // YOU BUILT THIS`
+        : world.unitsDone > 0
+          ? `WORLD ${numeral} // UNDER WAY`
+          : `WORLD ${numeral} // NEWLY OPENED TERRITORY`;
+    const near = world.sealed
+      ? `${escapeHtml(world.name)} is sealed. Every unit in it is submitted.`
+      : `${world.unitsLeft} unit${world.unitsLeft === 1 ? "" : "s"} from sealing ${escapeHtml(world.name)}.`;
+    const grade = world.grade === null
+      ? ""
+      : `<span class="quiet numeric">Grade so far ${world.grade.toFixed(1)}%${
+          world.letter ? ` · ${escapeHtml(world.letter)}` : ""}</span>`;
+    const byRegion = new Map();
+    for (const entry of landmarks) {
+      if (!entry.regionKey) continue;
+      if (!byRegion.has(entry.regionKey)) byRegion.set(entry.regionKey, []);
+      byRegion.get(entry.regionKey).push(entry);
+    }
+    const standing = landmarks.filter(entry => entry.earned);
+    return `
+      <section class="wm-world" data-world="${escapeHtml(world.id)}">
+        <header class="wm-world__head">
+          <span class="eyebrow">${escapeHtml(eyebrow)}</span>
+          <h3 class="wm-world__name">${escapeHtml(world.name)}</h3>
+          <strong class="big-number numeric">${world.unitsDone}<span class="wm-world__of"> of ${world.unitsTotal} units placed</span></strong>
+          <span class="numeric">${world.percent}% · ${world.regionsSettled} of ${world.regionsTotal} regions settled</span>
+          <strong class="wm-world__near">${near}</strong>
+          ${grade}
+          ${standing.length ? `<span class="wm-world__standing quiet">${standing.length} landmark${
+            standing.length === 1 ? "" : "s"} already standing here: ${escapeHtml(
+              standing.map(entry => entry.artifact.name).join(", "))}</span>` : ""}
+        </header>
+        <div class="wm-grid">${world.regions.map(region => renderRegionCard(
+          region,
+          byRegion.get(region.key) ?? [],
+          isNewSnapshot,
+          previousDoneByRegion.get(region.key) ?? 0
+        )).join("")}</div>
+        <div class="wm-detail" id="wm-detail-${escapeHtml(world.id)}" hidden></div>
+      </section>`;
+  }
+
+  // What is inside a region, opened on click. Three things: the units themselves,
+  // the mini-lesson for that section if the file is really there, and the games
+  // pinned to it in games.json. Nothing here is computed — the units come
+  // straight off worldMap(), which counts rows in data.json.
+  function renderRegionDetail(region, world, landmarksHere) {
+    const units = region.units.map(unit => {
+      const score = unit.done && unit.score && Number.isFinite(unit.score.percent)
+        ? `<span class="wm-unit__score numeric quiet">${unit.score.percent}%</span>`
+        : "";
+      const when = unit.submittedDate
+        ? `<span class="wm-unit__when quiet numeric">${escapeHtml(formatDay(unit.submittedDate))}</span>`
+        : "";
+      const mark = unit.done ? "placed" : (unit.isNext ? "next" : "");
+      return `<li class="wm-unit${unit.done ? " is-placed" : ""}${unit.isNext ? " is-next" : ""}">
+        <span class="wm-unit__block" aria-hidden="true"></span>
+        <span class="wm-unit__title">${escapeHtml(unit.title)}</span>
+        ${score}${when}
+        ${mark ? `<span class="wm-unit__mark">${mark}</span>` : ""}
+      </li>`;
+    }).join("");
+
+    const games = regionGames(region);
+    const gamesHtml = games.length
+      ? `<ul class="wm-links">${games.map(item => `
+          <li><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a>
+            <span class="meta">${escapeHtml(item.kind)}</span></li>`).join("")}</ul>`
+      : `<p class="quiet">No games pinned to this region yet.</p>`;
+
+    const landmarksHtml = landmarksHere.length
+      ? `<ul class="wm-links wm-links--landmarks">${landmarksHere.map(entry => `
+          <li>${landmarkGlyph(entry.artifact, false)}<span>${escapeHtml(entry.artifact.name)}</span>
+            <span class="meta">unlocks when this region is settled</span></li>`).join("")}</ul>`
+      : `<p class="quiet">No landmark unlocks in this region.</p>`;
+
+    const lesson = region.lessonSlug
+      ? `<p class="wm-detail__lesson"><span data-slug="${escapeHtml(region.lessonSlug)}">${escapeHtml(region.name)}</span></p>`
+      : `<p class="quiet">Orientation — there is no mini-lesson for this one.</p>`;
+
+    return `
+      <div class="wm-detail__inner">
+        <div class="wm-detail__head">
+          <span class="eyebrow">${escapeHtml(world.name)} // REGION ${String(region.number).padStart(2, "0")}</span>
+          <h4>${escapeHtml(region.name)}</h4>
+          <span class="numeric">${region.unitsDone} of ${region.unitsTotal} units placed${
+            region.grade === null ? "" : ` · section grade ${region.grade.toFixed(1)}%`}</span>
+          <button type="button" class="wm-detail__close">close</button>
         </div>
-        <div>
-          <div class="chunk-map" aria-label="${done} of ${total} Semester 1 activities done">${tiles}</div>
-          <div id="trophy-footer" class="trophy-footer numeric">${done} activities loaded</div>
+        <div class="wm-detail__cols">
+          <div class="wm-detail__col">
+            <h5>Units in this region</h5>
+            <ol class="wm-units">${units}</ol>
+          </div>
+          <div class="wm-detail__col">
+            <h5>Mini-lesson</h5>
+            ${lesson}
+            <h5>Landmarks</h5>
+            ${landmarksHtml}
+            <h5>Games and puzzles</h5>
+            ${gamesHtml}
+          </div>
         </div>
       </div>`;
+  }
+
+  // Games pinned to a syllabus section, out of the same validated list the games
+  // panel renders. A second, hand-kept copy is exactly the drift this project has
+  // already been bitten by twice, so this reads the one list or renders nothing.
+  function regionGames(region) {
+    if (!Array.isArray(currentGames)) return [];
+    return currentGames
+      .filter(section => section.semester === region.worldId && section.number === region.number)
+      .flatMap(section => section.items);
+  }
+
+  function openRegion(key) {
+    const map = currentMap;
+    if (!map) return;
+    const region = map.worlds.flatMap(world => world.regions).find(item => item.key === key);
+    if (!region) return;
+    const world = map.worlds.find(item => item.id === region.worldId);
+    const panel = document.querySelector(`#wm-detail-${region.worldId}`);
+    if (!panel) return;
+    const button = document.querySelector(`.wm-region[data-region="${CSS.escape(key)}"]`);
+    const alreadyOpen = panel.dataset.region === key && !panel.hidden;
+
+    document.querySelectorAll(".wm-region[aria-expanded='true']")
+      .forEach(node => node.setAttribute("aria-expanded", "false"));
+    document.querySelectorAll(".wm-detail").forEach(node => {
+      if (node !== panel) { node.hidden = true; node.textContent = ""; delete node.dataset.region; }
+    });
+
+    if (alreadyOpen) {
+      panel.hidden = true;
+      panel.textContent = "";
+      delete panel.dataset.region;
+      return;
+    }
+    const landmarksHere = currentLandmarks.filter(entry => entry.regionKey === key);
+    panel.innerHTML = renderRegionDetail(region, world, landmarksHere);
+    panel.hidden = false;
+    panel.dataset.region = key;
+    button?.setAttribute("aria-expanded", "true");
+    linkExistingLessons(panel);
+    panel.querySelector(".wm-detail__close")?.addEventListener("click", () => {
+      panel.hidden = true;
+      panel.textContent = "";
+      delete panel.dataset.region;
+      button?.setAttribute("aria-expanded", "false");
+      button?.focus();
+    });
+  }
+
+  function renderWorldMap(data, previousSnapshot, isNewSnapshot) {
+    const map = worldMap(data);
+    currentMap = map;
+    // Artifact names come from vault/manifest.json, the one catalog. An anchor
+    // whose id is not in the manifest is dropped rather than drawn nameless.
+    currentLandmarks = mapLandmarks(data)
+      .map(entry => ({ ...entry, artifact: artifacts.find(item => item.id === entry.id) }))
+      .filter(entry => entry.artifact);
+
+    // How many blocks in each region he had already seen, so only genuinely new
+    // ones animate. Falls back to none, which reveals nothing rather than
+    // replaying the whole map.
+    const previousDoneByRegion = new Map();
+    for (const world of map.worlds) {
+      const priorDone = previousSnapshot?.[world.id]?.rowsDone;
+      let budget = Number.isFinite(priorDone) ? priorDone : world.unitsDone;
+      for (const region of world.regions) {
+        const seen = Math.max(0, Math.min(region.unitsDone, budget));
+        previousDoneByRegion.set(region.key, seen);
+        budget -= seen;
+      }
+    }
+
+    const openKey = document.querySelector(".wm-detail:not([hidden])")?.dataset.region ?? null;
+    const worldLandmarks = worldId => currentLandmarks.filter(entry =>
+      entry.worldId === worldId || (entry.earned && worldId === map.worlds[0]?.id));
+
+    document.querySelector("#worldmap-content").innerHTML = map.worlds.length
+      ? `
+      <p class="wm-intro">Every block is one unit from the gradebook. ${map.totalDone} of
+        ${map.totalUnits} placed across both worlds — the same ${map.totalDone} the dials count.
+        Click a region to see what is in it.</p>
+      ${map.worlds.map(world => renderWorld(
+          world, worldLandmarks(world.id), isNewSnapshot, previousDoneByRegion)).join("")}
+      <div class="wm-key quiet numeric">
+        <span><b class="wm-key__block is-placed"></b> unit placed</span>
+        <span><b class="wm-key__block"></b> not built yet</span>
+        <span><b class="wm-key__block is-next"></b> your next unit</span>
+        <span><b class="wm-key__block is-landmark"></b> a landmark unlocks in that region</span>
+      </div>`
+      : `<p class="quiet">Saved telemetry is thin right now — the map redraws on the next check.</p>`;
+
+    if (openKey) openRegion(openKey);
 
     if (isNewSnapshot && !reducedMotion()) {
-      const oldDone = previousSnapshot?.sem1?.allDone ?? 0;
-      const completedTiles = [...document.querySelectorAll(".chunk-tile.is-complete")];
-      completedTiles.slice(0, Math.min(oldDone, done)).forEach(tile => {
-        tile.classList.remove("reveal-hidden");
-        tile.classList.add("reveal-visible");
-      });
-      // #trophy-footer used to count up to done as these tiles revealed. It now
-      // renders its final value straight away: tick() returns early on a hidden tab
-      // and under prefers-reduced-motion, so anyone who never sees the animation was
-      // left looking at "0 activities loaded" under a headline about finished work.
-      // The tiles still reveal in batches; only the number stopped waiting for them.
-      revealQueue = completedTiles.slice(Math.min(oldDone, done));
+      revealQueue = [...document.querySelectorAll("#worldmap-content .wm-block.reveal-hidden")];
       revealPending = true;
     }
   }
@@ -1207,8 +1445,9 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
 
   // Links are added only after the file has been confirmed, so a missing lesson stays
   // plain text and never becomes a 404 he clicks on.
-  async function linkExistingLessons() {
-    const targets = [...document.querySelectorAll("#lesson-content [data-slug]")];
+  async function linkExistingLessons(root = null) {
+    const scope = root ?? document.querySelector("#lesson-content");
+    const targets = [...scope.querySelectorAll("[data-slug]")];
     await Promise.all(targets.map(async node => {
       const slug = node.dataset.slug;
       if (!/^sem[12]-\d{2}$/.test(slug)) return;
@@ -1264,6 +1503,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
       return items.length ? [{ ...section, items }] : [];
     });
     if (!sections.length) return;
+    currentGames = sections;
 
     content.innerHTML = `<div class="quest-days">${sections.map(section => {
       // Free-standing groups have no section number; the heading is just their name.
@@ -1310,7 +1550,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
     applyTheme(safeData, earned);
     renderHeader(safeData);
     renderStatus(safeData, previousSeen, Boolean(unchanged));
-    renderTrophy(safeData, previousSnapshot, isNewSnapshot);
+    renderWorldMap(safeData, previousSnapshot, isNewSnapshot);
     renderEffort(safeData);
     renderVault(safeData, earned, newlyEarned, isNewSnapshot);
     renderSkinCard();
@@ -1497,6 +1737,11 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
           slot.classList.remove("reveal-hidden");
         });
       }
+      const regionButton = event.target.closest(".wm-region");
+      if (regionButton) {
+        openRegion(regionButton.dataset.region);
+        return;
+      }
       const themeButton = event.target.closest("[data-set-theme]");
       if (themeButton && !themeButton.disabled) {
         const theme = themeButton.dataset.setTheme;
@@ -1559,6 +1804,8 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
   }
 
   window.AlgebraQuest = Object.freeze({
+    worldMap,
+    mapLandmarks,
     remainingActivities,
     evaluateUnlocks,
     questDays,
@@ -1579,6 +1826,7 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
   console.log("%c  quest.data()      the raw scrape driving this page", consoleStyle);
   console.log("%c  quest.pace()      how the projection is calculated", consoleStyle);
   console.log("%c  quest.effort()    your real numbers, per day", consoleStyle);
+  console.log("%c  quest.map()       the world map, region by region", consoleStyle);
   console.log("%c  quest.vault()     what is unlocked and why", consoleStyle);
   console.log("%c  quest.source()    where the code and the scraper live", consoleStyle);
   window.quest = {
@@ -1590,6 +1838,16 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
         "\nyour pace on working days =", stats.activePace.toFixed(2),
         "\nworking days needed =", stats.daysNeeded, "of", stats.daysLeft, "left");
       return stats;
+    },
+    map: () => {
+      const map = worldMap(currentData);
+      console.table(map.worlds.flatMap(world => world.regions).map(region => ({
+        region: region.key, name: region.name,
+        units: `${region.unitsDone}/${region.unitsTotal}`, status: region.status
+      })));
+      console.log("every block is one gradebook row —", map.totalDone, "of", map.totalUnits,
+        "placed, the same total the UNITS DONE dial reads.");
+      return map;
     },
     effort: () => Object.fromEntries([...submissionsByDay(currentData).entries()].sort()),
     vault: () => artifacts.map(item => ({
@@ -1609,7 +1867,10 @@ import { effortStats as questEffort, computePace, dashboard, openTimeSeries, pla
   // he cares about, the layout should obey him rather than the order we happened to
   // pick. Order lives in storage as a list of ids, so a section added later simply
   // lands at the bottom instead of breaking the saved layout.
-  const ORDER_KEY = "mc.sectionOrder";
+  // Bumped when the panel set changed: a saved order from before the world map
+  // existed would have filtered "trophy" out and appended "worldmap" last,
+  // burying the headline feature at the bottom of his page.
+  const ORDER_KEY = "mc.sectionOrder.v2";
   const COLLAPSED_KEY = "mc.collapsed";
 
   function initSectionControls() {

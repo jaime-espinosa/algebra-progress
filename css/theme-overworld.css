@@ -195,11 +195,17 @@ meter,
   font-size: 13px;
 }
 
-.trophy-near {
-  color: var(--accent);
-  font-size: 15px;
-  line-height: 1.35;
-}
+/* ---- World map ----------------------------------------------------------- */
+/* Minecraft out of geometry, not pictures: no images, no canvas, no gradients
+   with soft stops. Everything here is a hard-edged rectangle, a 1px border, or
+   a repeating-linear-gradient with zero-width colour stops, which is what makes
+   a stepped band instead of a smooth one. Motion is opacity and transform only,
+   and the reduced-motion block at the end of this file turns all of it off.
+
+   No red, in any theme: the palette is --accent / --accent-dim for built ground,
+   --warn for the marker of where he is standing, --gap / --line / --faint for
+   ground he has not reached. Unexplored terrain is drawn quieter than settled
+   terrain, never darker or hostile, because it is an invitation. */
 
 .big-number {
   font-size: 28px;
@@ -207,55 +213,452 @@ meter,
   font-variant-numeric: tabular-nums;
 }
 
-.trophy-summary {
-  display: grid;
-  grid-template-columns: minmax(170px, .6fr) 2fr;
-  gap: 16px;
-  align-items: start;
+.wm-intro {
+  margin: 0 0 16px;
+  max-width: 68ch;
+  color: var(--dim);
+  font-size: 14px;
+  line-height: 1.45;
 }
 
-.trophy-stats {
-  display: grid;
-  gap: 8px;
-}
-
-.chunk-map {
-  display: grid;
-  grid-template-columns: repeat(18, var(--tile));
-  grid-auto-rows: var(--tile);
-  gap: 4px;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.chunk-tile {
-  width: var(--tile);
-  height: var(--tile);
+.wm-world {
+  margin: 0 0 24px;
   border: 1px solid var(--line);
-  background: var(--gap);
+  background: var(--panel-solid);
 }
 
-.chunk-tile.is-complete {
-  background: var(--accent);
+/* A stepped sky. Hard stops, so the bands are blocks rather than a fade. The
+   band is drawn on a ::before at low opacity rather than with color-mix(): the
+   theme tokens are opaque hex, and this has to render on whatever browser is on
+   a 2018 Surface Pro without depending on a 2023 colour function. */
+.wm-world__head {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
 }
 
-.chunk-tile.is-pending {
+.wm-world__head::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .14;
+  background: repeating-linear-gradient(180deg, var(--accent-dim) 0 8px, transparent 8px 16px);
+  pointer-events: none;
+}
+
+.wm-world__head > * {
+  position: relative;
+}
+
+.wm-world__name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.wm-world__of {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--dim);
+}
+
+.wm-world__near {
+  color: var(--accent);
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.wm-world__standing {
+  line-height: 1.4;
+}
+
+.wm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 2px;
+  padding: 2px;
+}
+
+/* A region is a chunk of terrain: sky on top, an id plate and a name, then the
+   blocks it is built out of. */
+.wm-region {
+  display: grid;
+  grid-template-rows: 34px auto auto 1fr auto auto;
+  gap: 4px;
+  align-content: start;
+  min-height: 0;
+  padding: 0 10px 10px;
+  border: 1px solid var(--line);
+  background: var(--panel-solid);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 120ms steps(2), border-color 120ms;
+}
+
+.wm-region:hover,
+.wm-region:focus-visible {
+  border-color: var(--accent);
+}
+
+.wm-region:hover {
+  transform: translateY(-2px);
+}
+
+.wm-region[aria-expanded="true"] {
+  border-color: var(--accent);
+  outline: 1px solid var(--accent);
+}
+
+/* Settled ground is lit: the sky brightens and the chunk sits on solid rock. */
+.wm-region.is-settled {
+  background:
+    linear-gradient(180deg, transparent 0 60%, var(--accent-dim) 60% 100%),
+    var(--panel-solid);
+}
+
+.wm-region.is-here {
+  border-color: var(--warn);
+}
+
+/* Unexplored is quieter, never darker or warning-coloured. */
+.wm-region.is-ahead {
+  border-style: dashed;
+}
+
+.wm-region.is-ahead .wm-region__name {
+  color: var(--dim);
+}
+
+.wm-region__sky {
+  position: relative;
+  display: block;
+  margin: 0 -10px;
+  height: 34px;
+  border-bottom: 1px solid var(--line);
+  background: repeating-linear-gradient(180deg, var(--gap) 0 6px, transparent 6px 12px);
+}
+
+.wm-region.is-settled .wm-region__sky {
+  background: repeating-linear-gradient(180deg, var(--accent-dim) 0 6px, transparent 6px 12px);
+}
+
+.wm-region__id {
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--faint);
+}
+
+.wm-region__name {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.wm-region__blocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px 0;
+}
+
+.wm-block,
+.wm-key__block {
+  width: 11px;
+  height: 11px;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  background: transparent;
+}
+
+/* A placed block is grass on dirt: solid body, bright hard top edge. */
+.wm-block.is-placed,
+.wm-key__block.is-placed {
+  border-color: var(--accent-dim);
+  border-top: 3px solid var(--accent);
+  background: var(--accent-dim);
+}
+
+.wm-block.is-next,
+.wm-key__block.is-next {
+  border-color: var(--warn);
+  border-top: 3px solid var(--warn);
+  background: transparent;
+  animation: wm-beacon 1.8s steps(2, end) infinite;
+}
+
+.wm-key__block.is-landmark {
+  border-color: var(--accent);
+  background:
+    linear-gradient(180deg, var(--accent) 0 4px, transparent 4px 100%),
+    linear-gradient(90deg, transparent 0 4px, var(--accent) 4px 6px, transparent 6px 100%);
+}
+
+@keyframes wm-beacon {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .45; }
+}
+
+.wm-block.reveal-hidden {
+  opacity: .18;
+  transform: scale(.7);
+}
+
+.wm-block.reveal-visible {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms, transform 200ms steps(3);
+}
+
+.wm-region__count {
+  font-size: 12px;
+  color: var(--dim);
+}
+
+.wm-region__state {
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.wm-region.is-settled .wm-region__state {
+  color: var(--accent);
+}
+
+.wm-region.is-here .wm-region__state {
+  color: var(--warn);
+}
+
+.wm-region__grade {
+  font-size: 12px;
+}
+
+/* "You are here": a two-block figure standing on the skyline. */
+.wm-here {
+  position: absolute;
+  left: 12px;
+  bottom: 0;
+  width: 8px;
+  height: 20px;
+}
+
+.wm-here__head,
+.wm-here__body {
+  position: absolute;
+  left: 0;
+  width: 8px;
   background: var(--warn);
 }
 
-.chunk-tile.reveal-hidden {
-  opacity: .18;
-  transform: scale(.75);
+.wm-here__head {
+  bottom: 12px;
+  height: 8px;
 }
 
-.chunk-tile.reveal-visible {
-  opacity: 1;
-  transform: scale(1);
+.wm-here__body {
+  bottom: 0;
+  height: 11px;
+  background: var(--accent);
 }
 
-.trophy-footer {
-  margin-top: 12px;
+/* A landmark is a banner on a post, planted where the reward unlocks. */
+.wm-region__landmarks {
+  position: absolute;
+  right: 8px;
+  bottom: 0;
+  display: flex;
+  gap: 6px;
+}
+
+.wm-landmark {
+  position: relative;
+  display: inline-block;
+  width: 10px;
+  height: 20px;
+  vertical-align: bottom;
+}
+
+.wm-landmark__post {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+  height: 20px;
+  background: var(--faint);
+}
+
+.wm-landmark__flag {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 8px;
+  height: 7px;
+  background: var(--gap);
+  border: 1px solid var(--faint);
+}
+
+.wm-landmark.is-earned .wm-landmark__flag {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.wm-landmark.is-earned .wm-landmark__post {
+  background: var(--accent-dim);
+}
+
+/* ---- Region detail ------------------------------------------------------- */
+
+.wm-detail {
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.wm-detail__inner {
+  padding: 14px 16px;
+}
+
+.wm-detail__head {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding-right: 80px;
+  position: relative;
+}
+
+.wm-detail__head h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.wm-detail__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-height: 28px;
+  height: 28px;
+  padding: 2px 10px;
+  border: 1px solid var(--line);
+  background: transparent;
   color: var(--dim);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.wm-detail__close:hover,
+.wm-detail__close:focus-visible {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.wm-detail__cols {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.wm-detail__col h5 {
+  margin: 14px 0 6px;
+  font-size: 12px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.wm-detail__col h5:first-child {
+  margin-top: 0;
+}
+
+.wm-units {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+
+.wm-unit {
+  display: grid;
+  grid-template-columns: 12px 1fr auto auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--dim);
+}
+
+.wm-unit.is-placed {
+  color: var(--text);
+}
+
+.wm-unit__block {
+  width: 10px;
+  height: 10px;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+}
+
+.wm-unit.is-placed .wm-unit__block {
+  border-color: var(--accent-dim);
+  border-top: 3px solid var(--accent);
+  background: var(--accent-dim);
+}
+
+.wm-unit.is-next .wm-unit__block {
+  border-color: var(--warn);
+  border-top: 3px solid var(--warn);
+}
+
+.wm-unit__mark {
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.wm-unit.is-next .wm-unit__mark {
+  color: var(--warn);
+}
+
+.wm-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.wm-links li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.wm-detail__lesson {
+  margin: 0;
+  font-size: 13px;
+}
+
+.wm-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.wm-key span {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
 }
 
 .vault-toolbar,
@@ -657,12 +1060,12 @@ html.motion-paused *::after {
     padding: 12px;
   }
 
-  .trophy-summary {
-    grid-template-columns: 1fr;
+  .wm-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 
-  .chunk-map {
-    grid-template-columns: repeat(9, var(--tile));
+  .wm-detail__cols {
+    grid-template-columns: 1fr;
   }
 
   .hotbar {
@@ -704,6 +1107,18 @@ html.motion-paused *::after {
   .reveal-hidden {
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  /* The one looping animation on the page. It is the marker for where he is
+     standing, so it has to stay visible with the motion removed, not disappear
+     with it. */
+  .wm-block.is-next {
+    animation: none !important;
+    opacity: 1;
+  }
+
+  .wm-region:hover {
+    transform: none;
   }
 }
 
