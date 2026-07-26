@@ -768,6 +768,7 @@ export function worldMap(data) {
           submittedDate: typeof item.submittedDate === "string" ? item.submittedDate : null,
           isNext: item.id === nextId,
           kind: activityKind(item.title),
+          type: activityType(item.title),
         }));
       const training = units.filter((unit) => unit.kind === "training");
       const battles = units.filter((unit) => unit.kind === "battle");
@@ -797,6 +798,22 @@ export function worldMap(data) {
         trainingDone: training.filter((unit) => unit.done).length,
         battleTotal: battles.length,
         battleCleared: battles.filter((unit) => unit.done).length,
+        // The same rows again, split six ways for the node fill. A type with
+        // no rows in this section is present with total 0 so the renderer can
+        // skip it rather than guess; the totals across types always sum back
+        // to unitsTotal. `single` marks a type with exactly one row, which the
+        // map draws as an icon over the node instead of a one-pixel band —
+        // that is every section's end-of-section assignment and final test.
+        types: UNIT_TYPES.map((type) => {
+          const rows = units.filter((unit) => unit.type === type);
+          return {
+            type,
+            label: UNIT_TYPE_LABELS[type],
+            total: rows.length,
+            done: rows.filter((unit) => unit.done).length,
+            single: rows.length === 1,
+          };
+        }),
         // settled — every row in it submitted. here — it holds the next row.
         // started — some rows in, not the current one. ahead — not visited yet,
         // which is a neutral statement of fact and never a shortfall.
