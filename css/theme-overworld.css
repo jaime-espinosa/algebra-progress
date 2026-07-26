@@ -234,7 +234,10 @@ meter,
     repeating-linear-gradient(180deg, var(--gap) 0 1px, transparent 1px 48px),
     var(--panel-solid);
   cursor: grab;
-  touch-action: none;
+  /* pan-y, never none: a finger swiped up over the map scrolls the PAGE, the
+     same as everywhere else. Dragging the map is a mouse/pen gesture and the
+     arrow keys; the map must never swallow the page's own scrolling. */
+  touch-action: pan-y;
 }
 
 .wm-viewport.is-dragging {

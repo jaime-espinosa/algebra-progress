@@ -131,8 +131,8 @@
 .gauge__scale2-unit {
   fill: var(--warn);
   font-family: var(--mono);
-  font-size: 4px;
-  letter-spacing: .06em;
+  font-size: 3.6px;
+  letter-spacing: .04em;
   text-shadow: none;
 }
 
@@ -168,7 +168,7 @@
    odometer window. The needle sweeps 135deg to 405deg and never crosses it. */
 .gauge__window {
   position: absolute;
-  top: 61%;
+  top: 58%;
   left: 50%;
   transform: translateX(-50%);
   display: grid;

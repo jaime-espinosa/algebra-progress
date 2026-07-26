@@ -655,7 +655,9 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       };
       const step = steps[event.key];
       if (!step) return;
-      if (event.target.closest(".wm-region")) return;
+      // Arrows pan wherever focus sits inside the map, including on a chunk:
+      // buttons have no arrow behaviour of their own to take away, and Tab is
+      // left alone so he can still walk the chunks one at a time.
       event.preventDefault();
       panBy(step[0], step[1]);
     });
@@ -1040,7 +1042,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
             <g class="gauge__majors" shape-rendering="crispEdges">${majors}</g>
             <g class="gauge__numbers">${numbers}</g>
             ${scale2}
-            <text class="gauge__face-unit" x="50" y="86" text-anchor="middle">${escapeHtml(faceUnit)}</text>
+            <text class="gauge__face-unit" x="50" y="90" text-anchor="middle">${escapeHtml(faceUnit)}</text>
             <g class="gauge__needle" style="transform: rotate(${angle}deg)">
               <polygon points="42,48.8 92,50 42,51.2 40,50"></polygon>
             </g>
