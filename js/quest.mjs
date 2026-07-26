@@ -78,6 +78,19 @@ function excusedRow(item, activities) {
   return sectionOf(item) === ORIENTATION_SECTION && orientationCleared(activities);
 }
 
+// TWO COLLECTIONS, ON PURPOSE — do not merge them back into one.
+//
+// `remainingRows` is the gradebook: every row Red Comet still lists as
+// unsubmitted, no policy applied. Every COUNT on the page derives from it —
+// rowsLeft, requiredPerDay, the dials, the projected finish, the 133 total, both
+// charts — so each of those reconciles with the gradebook by hand, row for row.
+// Nothing may be filtered out of it. Excusing a row here would quietly tell him
+// he has less left to do than his own gradebook says he does.
+//
+// `actionableRows` is the queue: what to hand him NEXT. It is the same list with
+// `excusedRow` applied, and it feeds only ordering and selection — buildSchedule
+// / questBoard, world-map region status, and next-task pick. Those are
+// statements about where to point him, never about how much is left.
 function remainingRows(data) {
   const semesters = (data.semesters ?? []).map((semester, inputIndex) => ({
     semester,
@@ -93,7 +106,6 @@ function remainingRows(data) {
   return semesters.flatMap(({ semester }) =>
     (semester.activities ?? [])
       .filter((activity) => activity.state === "not_started")
-      .filter((activity) => !excusedRow(activity, semester.activities))
       .map((activity) => ({ activity, semesterId: semester.id }))
       .sort(
         (left, right) =>
@@ -101,6 +113,17 @@ function remainingRows(data) {
             (right.activity.sectionNumber ?? 0) ||
           (left.activity.rowIndex ?? 0) - (right.activity.rowIndex ?? 0),
       ),
+  );
+}
+
+// Ordering and next-task selection only. Never a count on the page.
+function actionableRows(data) {
+  const bySemester = new Map(
+    (data.semesters ?? []).map((semester) => [semester.id, semester.activities]),
+  );
+  return remainingRows(data).filter(
+    ({ activity, semesterId }) =>
+      !excusedRow(activity, bySemester.get(semesterId)),
   );
 }
 
@@ -259,7 +282,8 @@ export function headerSegments(data, today) {
 
 export function buildSchedule(data, today) {
   const todayKey = parseDateKey(today);
-  const rows = remainingRows(data);
+  // Ordering, so: actionable. A cleared Orientation stops being queued.
+  const rows = actionableRows(data);
   const daysLeft = Math.max(
     dayDifference(todayKey, parseDateKey(data.deadline.date)),
     0,
@@ -501,6 +525,7 @@ export function planTrack(data, today) {
   const dates = [...perDay.keys()].sort();
   const firstDay = dates[0] ?? todayKey;
   const submitted = [...perDay.values()].reduce((sum, n) => sum + n, 0);
+  // A count that has to add up to 133 against the gradebook, so: remaining.
   const rows = remainingRows(data);
   const totalRows = submitted + rows.length;
 
@@ -841,7 +866,8 @@ function orderedSemesters(data) {
 }
 
 export function worldMap(data) {
-  const nextRows = remainingRows(data).slice(0, 3);
+  // Next-task selection, so: actionable.
+  const nextRows = actionableRows(data).slice(0, 3);
   const nextRow = nextRows[0] ?? null;
   const horizonIds = new Set(nextRows.map((entry) => entry.activity.id));
   const nextId = nextRow?.activity?.id ?? null;
