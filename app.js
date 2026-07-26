@@ -395,37 +395,157 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     </g>`;
   }
 
-  // "You are here": a beacon column and a small figure standing on the ground of
-  // the territory that holds his next unit. It is a position, not a score.
+  // "You are here": a planted flag on the ground of the section that holds his
+  // next unit, with a beacon column behind it so it is findable from across the
+  // map without zooming. It is a position, not a score.
   function hereMarker(x, y) {
     return `<g class="wm-you">
-      <path class="wm-you__beam" fill="#ffd67a" d="M${x - 9} ${y - 230}h18v230h-18z"/>
+      <path class="wm-you__beam" fill="#ffd67a" d="M${x - 8} ${y - 230}h16v230h-16z"/>
       <path class="wm-you__beam" fill="#fff2cf" opacity=".55" d="M${x - 3} ${y - 230}h6v230h-6z"/>
-      <path fill="#ffd67a" d="M${x - 14} ${y + 1}h28v4h-28zM${x - 5} ${y - 250}h10v6h-10z
-        M${x - 11} ${y - 244}h22v5h-22z"/>
-      <path fill="#1d2830" opacity=".5" d="M${x - 11} ${y + 5}h22v4h-22z"/>
-      <path fill="#3b6ea8" d="M${x - 8} ${y - 16}h16v17h-16z"/>
-      <path fill="#d9a066" d="M${x - 8} ${y - 30}h16v14h-16z"/>
-      <path fill="#22303a" d="M${x - 6} ${y - 26}h4v4h-4zm8 0h4v4h-4z"/>
+      <path fill="#1d2830" opacity=".5" d="M${x - 12} ${y + 1}h24v5h-24z"/>
+      <path fill="#c9b48f" d="M${x - 2} ${y - 44}h4v45h-4z"/>
+      <path fill="#3b6ea8" d="M${x + 2} ${y - 44}h26v7h-26zm0 7h22v7h-22zm0 7h18v7h-18z"/>
+      <path fill="#254a72" d="M${x + 2} ${y - 44}h26v2h-26z"/>
     </g>`;
   }
 
-  // The name plaque on a territory. This is the focusable control — a real
-  // <button> in the DOM over the SVG, carrying the region's own counts in its
-  // accessible name, so the map is never a picture a screen reader cannot read.
+  // A compass rose in open water. Blocky, four-pointed, no filigree — it is
+  // there so the map reads as a map, and it carries no information at all.
+  function compassRose(x, y) {
+    return `<g class="wm-compass" opacity=".55">
+      <path fill="#9fc0d8" d="M${x - 3} ${y - 34}h6v68h-6zM${x - 34} ${y - 3}h68v6h-68z"/>
+      <path fill="#e3eef6" d="M${x - 5} ${y - 34}h10v12h-10z"/>
+      <path fill="#cfe0ec" d="M${x - 8} ${y - 8}h16v16h-16z"/>
+      <path fill="#24405c" d="M${x - 4} ${y - 4}h8v8h-8z"/>
+    </g>`;
+  }
+
+  // Which colour each kind of work is drawn in, everywhere on the map: the
+  // bands inside a node, the icons over it, and the legend below it. Literal
+  // values rather than theme tokens, so the map cannot inherit a colour from a
+  // theme and quietly break the no-red rule. Every hue here is 40 or above.
+  const TYPE_INK = {
+    lesson: "#f0c86a",
+    quiz: "#79c0a4",
+    activity: "#a89ad6",
+    check: "#c8b48a",
+    test: "#ffd67a",
+    orientation: "#9fb6c4",
+  };
+  const TYPE_EMPTY = "#31414e";
+
+  // The node's insides: one horizontal band per kind of work that has more than
+  // one row in this section, each band as tall as that kind is numerous, filled
+  // left-to-right by how much of it is done.
+  //
+  // A kind with exactly ONE row does not get a band — a single row would be a
+  // sliver two pixels tall that reads as noise. It gets an icon over the node
+  // instead, which is Jaime's rule and it lands exactly on the two kinds that
+  // are always one-per-section: the end-of-section assignment and the section
+  // test. A kind with no rows in this section is drawn as nothing at all rather
+  // than as an empty band, so the node never implies work that does not exist.
+  function nodeBands(region, x, y, size) {
+    const bands = region.types.filter((entry) => entry.total > 1);
+    if (!bands.length) return "";
+    const totalRows = bands.reduce((sum, entry) => sum + entry.total, 0);
+    const inner = size - 8;
+    let cursor = y - inner / 2;
+    const out = [];
+    bands.forEach((entry, index) => {
+      // Last band absorbs the rounding so the stack always fills the node
+      // exactly and never leaves a one-pixel gap at the bottom.
+      const height = index === bands.length - 1
+        ? (y + inner / 2) - cursor
+        : Math.max(3, Math.round((entry.total / totalRows) * inner));
+      const width = inner * (entry.done / entry.total);
+      out.push(`<path fill="${TYPE_EMPTY}" d="M${x - inner / 2} ${r1(cursor)}h${inner}v${r1(height)}h-${inner}z"/>`);
+      if (width > 0.5) {
+        out.push(`<path fill="${TYPE_INK[entry.type]}" d="M${x - inner / 2} ${r1(cursor)}h${
+          r1(width)}v${r1(height)}h-${r1(width)}z"/>`);
+      }
+      cursor += height;
+    });
+    return out.join("");
+  }
+
+  function r1(value) {
+    return Math.round(value * 10) / 10;
+  }
+
+  // The single-row kinds, as small blocky icons sitting on the node's corners:
+  // a chest for the end-of-section assignment, a sword for the section test.
+  // Filled when done, hollow and quiet when not — never crossed out, never
+  // padlocked.
+  function nodeIcons(region, x, y, size) {
+    const half = size / 2;
+    const out = [];
+    const check = region.types.find((entry) => entry.type === "check" && entry.total === 1);
+    const test = region.types.find((entry) => entry.type === "test" && entry.total === 1);
+    if (check) {
+      const ink = check.done ? TYPE_INK.check : "#5b6874";
+      const cx = x - half - 1;
+      const cy = y - half - 1;
+      out.push(`<path fill="#1d2830" opacity=".65" d="M${cx - 8} ${cy - 8}h16v16h-16z"/>`);
+      out.push(`<path fill="${ink}" d="M${cx - 6} ${cy - 5}h12v4h-12zm0 5h12v6h-12z"/>`);
+      if (check.done) out.push(`<path fill="#2c3a44" d="M${cx - 1} ${cy - 1}h2v4h-2z"/>`);
+    }
+    if (test) {
+      const ink = test.done ? TYPE_INK.test : "#5b6874";
+      const cx = x + half + 1;
+      const cy = y - half - 1;
+      out.push(`<path fill="#1d2830" opacity=".65" d="M${cx - 8} ${cy - 8}h16v16h-16z"/>`);
+      out.push(`<path fill="${ink}" d="M${cx - 1} ${cy - 6}h3v9h-3z"/>`);
+      out.push(`<path fill="${ink}" d="M${cx - 4} ${cy + 2}h9v3h-9z"/>`);
+    }
+    return out.join("");
+  }
+
+  // A node on the route. This is the focusable control — a real <button> in the
+  // DOM over the SVG, carrying the section's own counts AND its work-type
+  // breakdown AND how far off it is in its accessible name, so everything the
+  // fill and the haze say out loud is also said in words. The map is never a
+  // picture a screen reader cannot read.
   function territoryPlaque(region, spot) {
     const state = REGION_STATE_COPY[region.status] ?? "";
-    const split = `${region.trainingDone} of ${region.trainingTotal} training and ${
-      region.battleCleared} of ${region.battleTotal} battles`;
     const grade = region.grade === null ? "" : `, section grade ${region.grade.toFixed(1)}%`;
-    const label = `${region.name}. ${region.unitsDone} of ${region.unitsTotal} units placed, ${
-      split}, ${state}${grade}. Zoom in.`;
+    const breakdown = region.types
+      .filter((entry) => entry.total > 0)
+      .map((entry) => `${entry.done} of ${entry.total} ${
+        entry.total === 1 ? UNIT_TYPE_LABELS[entry.type] : `${UNIT_TYPE_LABELS[entry.type]}s`}`)
+      .join(", ");
+    // Distance is stated as discovery, never as a lock. A section he has not
+    // reached is somewhere he has not been yet, and that is all it is.
+    const where = region.ahead === 0 ? "" : `, ${region.discovery}`;
+    const label = `${region.name}. ${region.unitsDone} of ${region.unitsTotal} units placed: ${
+      breakdown}. ${state}${where}${grade}. Zoom in.`;
+    const size = 34;
+    const node = `<svg class="wm-node" width="${size + 20}" height="${size + 20}"
+      viewBox="${-size / 2 - 10} ${-size / 2 - 10} ${size + 20} ${size + 20}"
+      aria-hidden="true" focusable="false" shape-rendering="crispEdges">
+      <path fill="#1d2830" opacity=".55" d="M${-size / 2 - 3} ${-size / 2 - 3}h${size + 6}v${size + 6}h-${size + 6}z"/>
+      <path class="wm-node__frame" d="M${-size / 2} ${-size / 2}h${size}v${size}h-${size}z"/>
+      ${nodeBands(region, 0, 0, size)}
+      ${nodeIcons(region, 0, 0, size)}
+    </svg>`;
     return `
       <button type="button" class="wm-region is-${region.status}" data-region="${escapeHtml(region.key)}"
-        style="left:${spot.cx}px;top:${spot.cy}px" aria-label="${escapeHtml(label)}">
-        <span class="wm-region__name">${escapeHtml(region.name)}</span>
-        <span class="wm-region__count numeric" aria-hidden="true">${region.unitsDone}/${region.unitsTotal}</span>
+        data-ahead="${region.ahead}" style="left:${spot.cx}px;top:${spot.cy}px"
+        aria-label="${escapeHtml(label)}">
+        ${node}
+        <span class="wm-region__plaque" aria-hidden="true">
+          <span class="wm-region__name">${escapeHtml(region.name)}</span>
+          <span class="wm-region__count numeric">${region.unitsDone}/${region.unitsTotal}</span>
+        </span>
       </button>`;
+  }
+
+  // The dashed road threading the sections in the order he actually does them.
+  // Road behind him is solid and settled; road ahead is faint. The sea leg
+  // between the two semesters gets a longer dash — a crossing, not a walk.
+  function routePaths(route) {
+    const leg = (entry) => `<path class="wm-route${entry.walked ? " is-walked" : ""}${
+      entry.sea ? " is-sea" : ""}" d="${entry.d}"/>`;
+    return [...route.crossings, ...route.legs].map(leg).join("");
   }
 
   // The banner naming a landmass, pinned above its northern coast.
