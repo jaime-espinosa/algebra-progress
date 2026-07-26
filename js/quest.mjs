@@ -893,10 +893,12 @@ export function worldMap(data) {
     // he has already covered is never veiled at all, at any distance, so a
     // finished section always reads clear. A section he is standing in keeps a
     // thin haze on its remaining ground — near, and plainly still there to go.
+    // Past three out it closes completely, so the ground under a section he is not
+    // being asked about yet reads as fog rather than as a queue.
     region.fog = ahead === 0 ? 0.24
       : ahead === 1 ? 0.5
-        : ahead === 2 ? 0.68
-          : 0.8;
+        : ahead === 2 ? 0.72
+          : 1;
     // What a screen reader is told, so the haze never carries information the
     // text does not. Deliberately never "locked" or "blocked".
     region.discovery = ahead === 0 ? "explored"

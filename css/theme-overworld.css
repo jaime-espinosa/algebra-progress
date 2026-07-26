@@ -650,14 +650,23 @@ summary.section-heading::-webkit-details-marker {
    terrain under them is drawn with, so a node never floats bright over ground
    that is meant to read as undiscovered. It stays fully legible on hover and
    focus, and its accessible name is never dimmed at all. */
-.wm-region[data-ahead="1"] { opacity: .85; }
-.wm-region[data-ahead="2"] { opacity: .72; }
-.wm-region[data-ahead="3"],
-.wm-region[data-ahead="4"],
-.wm-region[data-ahead="5"],
-.wm-region[data-ahead="6"],
-.wm-region[data-ahead="7"],
-.wm-region[data-ahead="8"] { opacity: .62; }
+.wm-region[data-ahead="1"] { opacity: .78; }
+.wm-region[data-ahead="2"] { opacity: .5; }
+
+/* Past three sections out, the fog closes: invisible, by request. Three is the
+   most he is ever asked to hold at once, and a map that keeps eleven more
+   sections legible behind it is a map that says "look how much is left" every
+   time he opens the page.
+ *
+ * Invisible, not removed. The button is still in the DOM, still focusable, and
+ * still carries its full accessible name, so a keyboard or a screen reader loses
+ * nothing — and the territory table below the map spells all of it out in words
+ * regardless. Hover and focus bring it back at full strength: this is fog he can
+ * walk into, not a lock. Written as a :not() chain rather than a list of numbers
+ * so it keeps working when Semester 2 adds sections. */
+.wm-region:not([data-ahead="0"]):not([data-ahead="1"]):not([data-ahead="2"]) {
+  opacity: 0;
+}
 
 .wm-region:hover,
 .wm-region:focus-visible { opacity: 1; }
