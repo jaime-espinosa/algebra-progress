@@ -236,6 +236,17 @@ meter,
   color: var(--dim);
 }
 
+/* <summary class="section-heading"> (repairs) already gets its arrow from the
+   ::before above; suppress the browser's own disclosure triangle so there is
+   only one. */
+summary.section-heading {
+  list-style: none;
+}
+
+summary.section-heading::-webkit-details-marker {
+  display: none;
+}
+
 .eyebrow,
 .meta,
 .quiet,
