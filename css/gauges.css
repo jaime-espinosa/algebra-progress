@@ -72,6 +72,7 @@
 
 .gauge__track,
 .gauge__progress,
+.gauge__ahead,
 .gauge__majors,
 .gauge__minors,
 .gauge__scale2-arc,
@@ -85,9 +86,23 @@
   stroke-width: 3;
 }
 
+/* ---- The rim band -------------------------------------------------------- *
+ * Two segments, never three: covered and ahead. A tachometer's band shades
+ * toward a redline; this one carries no verdict at all. The segments differ in
+ * WIDTH and in DASHING as well as in colour, so the split is readable without
+ * separating the hues, and neither segment means anything is wrong. */
 .gauge__progress {
   stroke: var(--accent);
-  stroke-width: 3;
+  stroke-width: 5.5;
+  stroke-linecap: butt;
+}
+
+.gauge__ahead {
+  stroke: var(--dim);
+  stroke-width: 2;
+  stroke-dasharray: 2 3;
+  stroke-linecap: butt;
+  opacity: .8;
 }
 
 /* High-contrast numerals and ticks, as on the reference face. */

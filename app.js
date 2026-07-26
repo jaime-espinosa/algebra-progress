@@ -1002,7 +1002,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
       text-anchor="${anchor}" dominant-baseline="central">${escapeHtml(text)}</text>`;
   }
 
-  function gaugeDial({ label, hint, scale, secondary, faceUnit, readout, readoutSub, ariaText }) {
+  function gaugeDial({ label, hint, scale, secondary, faceUnit, readout, readoutSub, ariaText, bandTo = 1, bandAheadLabel }) {
     const clamped = Math.max(0, Math.min(1, scale.fraction));
     const majors = scale.majors.map(({ at }) => gaugeTick(at, GAUGE.majorInner, GAUGE.tickOuter)).join("");
     const minors = scale.minors.map((at) => gaugeTick(at, GAUGE.minorInner, GAUGE.tickOuter)).join("");
@@ -1030,8 +1030,19 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
             </g>
             <text class="gauge__scale2-unit" x="50" y="56" text-anchor="middle">${escapeHtml(secondary.unit)}</text>` : "";
 
+    // The rim band, from the tachometer reference — but with its meaning removed.
+    // A tacho band shades green/amber/red to say "fine / careful / you are
+    // redlining". There is no danger state on this site, so the band here is
+    // plain range shading: a thick solid arc for the part of the range he has
+    // covered, and a thin dashed arc for the part still ahead. The two are told
+    // apart by THICKNESS and by DASHES as well as by colour, so the split still
+    // reads for anyone who cannot separate the hues. Ahead is simply the rest of
+    // the range; nothing anywhere says a reading is bad.
+    const bandEnd = Math.max(clamped, Math.min(1, bandTo));
     const progress = clamped > 0 ? `
             <path class="gauge__progress" d="${gaugeArc(0, clamped, GAUGE.track)}"></path>` : "";
+    const ahead = bandEnd > clamped ? `
+            <path class="gauge__ahead" d="${gaugeArc(clamped, bandEnd, GAUGE.track)}"></path>` : "";
     const angle = (135 + clamped * 270).toFixed(2);
 
     return `
@@ -1041,6 +1052,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           <svg class="gauge__svg" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
             <circle class="gauge__disc" cx="50" cy="50" r="49"></circle>
             <path class="gauge__track" d="${gaugeArc(0, 1, GAUGE.track)}"></path>
+            ${ahead}
             ${progress}
             <g class="gauge__minors" shape-rendering="crispEdges">${minors}</g>
             <g class="gauge__majors" shape-rendering="crispEdges">${majors}</g>
@@ -1294,6 +1306,9 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     const weekPercent = s.rowsLeft > 0 ? Math.round((s.recent7 / s.rowsLeft) * 100) : 0;
     const donePercent = Math.round(s.tripDone * 100);
     const daysPercent = Math.round(s.showUpRate * 100);
+    // Said the same way on every dial: the rim band is range shading, never a
+    // verdict. Nothing here calls a reading good or bad.
+    const BAND_TEXT = "The thick band on the rim covers what you have done; the thin dashed band past the needle is just the rest of the dial, not a target.";
 
     document.querySelector("#effort-content").innerHTML = `
       <div class="effort-gauges">
@@ -1305,7 +1320,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           faceUnit: "UNITS / DAY",
           readout: s.activePace.toFixed(2),
           readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)}`,
-          ariaText: `Units per day on the days you work: ${s.activePace.toFixed(2)}, on a dial reading 0 to ${paceScale.max} units per day — ${s.odometer} units over ${s.activeDays} working days. Aug 15 needs ${s.requiredPerDay.toFixed(2)} a day, so the inner amber percentage scale reads ${pacePercent} percent of that pace.`
+          bandTo: 1,
+          ariaText: `Units per day on the days you work: ${s.activePace.toFixed(2)}, on a dial reading 0 to ${paceScale.max} units per day — ${s.odometer} units over ${s.activeDays} working days. Aug 15 needs ${s.requiredPerDay.toFixed(2)} a day, so the inner amber percentage scale reads ${pacePercent} percent of that pace. ${BAND_TEXT}`
         })}
 
         ${gaugeDial({
@@ -1316,7 +1332,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           faceUnit: "UNITS / 7 DAYS",
           readout: String(s.recent7),
           readoutSub: `PREV 7: ${s.prior7}`,
-          ariaText: `${s.recent7} units submitted from ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}, on a dial reading 0 to ${weekScale.max} units. The seven days before that were ${s.prior7}. The inner amber percentage scale reads that week as ${weekPercent} percent of the ${s.rowsLeft} units still to do.`
+          bandTo: 1,
+          ariaText: `${s.recent7} units submitted from ${formatDay(s.recent7From)} through ${formatDay(s.recent7To)}, on a dial reading 0 to ${weekScale.max} units. The seven days before that were ${s.prior7}. The inner amber percentage scale reads that week as ${weekPercent} percent of the ${s.rowsLeft} units still to do. ${BAND_TEXT}`
         })}
 
         ${gaugeDial({
@@ -1327,7 +1344,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           faceUnit: "UNITS SUBMITTED",
           readout: String(s.odometer),
           readoutSub: `${s.rowsLeft} LEFT`,
-          ariaText: `${s.odometer} of ${totalUnits} units submitted across both semesters, ${s.rowsLeft} still to do, on a dial reading 0 to ${doneScale.max} units. The inner amber percentage scale reads ${donePercent} percent of all ${totalUnits}.`
+          bandTo: totalUnits / doneScale.max,
+          ariaText: `${s.odometer} of ${totalUnits} units submitted across both semesters, ${s.rowsLeft} still to do, on a dial reading 0 to ${doneScale.max} units. The inner amber percentage scale reads ${donePercent} percent of all ${totalUnits}. The thick band on the rim covers the ${s.odometer} you have done and the thin dashed band runs on to the ${totalUnits}th unit.`
         })}
 
         ${gaugeDial({
@@ -1338,7 +1356,8 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
           faceUnit: "DAYS WORKED",
           readout: String(s.activeDays),
           readoutSub: `OF ${calendarSpan} DAYS`,
-          ariaText: `${s.activeDays} days worked out of the ${calendarSpan} calendar days since ${formatDay(track.firstDay)}, on a dial reading 0 to ${daysScale.max} days. The inner amber percentage scale reads ${daysPercent} percent of those ${calendarSpan} days.`
+          bandTo: calendarSpan / daysScale.max,
+          ariaText: `${s.activeDays} days worked out of the ${calendarSpan} calendar days since ${formatDay(track.firstDay)}, on a dial reading 0 to ${daysScale.max} days. The inner amber percentage scale reads ${daysPercent} percent of those ${calendarSpan} days. The thick band on the rim covers the ${s.activeDays} days you worked and the thin dashed band runs on to the ${calendarSpan}th day since you started.`
         })}
       </div>
 
