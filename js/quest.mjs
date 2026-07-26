@@ -167,15 +167,46 @@ export function computePace(data, today) {
     rowsLeft === 0
       ? 0
       : Math.ceil(rowsLeft / Math.max(provenPerDay, 0.1));
+  const projectedFinish = addDays(todayKey, projectedDays);
 
   return {
     daysLeft,
     rowsLeft,
     requiredPerDay,
     provenPerDay,
-    projectedFinish: addDays(todayKey, projectedDays),
+    projectedFinish: projectedFinish <= deadlineKey ? projectedFinish : null,
     dailyAsk: Math.min(Math.ceil(requiredPerDay), 4),
   };
+}
+
+export function boundedRemainingCount(remaining) {
+  const count = Math.max(0, Number(remaining) || 0);
+  return count <= 3 ? count : null;
+}
+
+export function regionHorizon(region) {
+  return {
+    remainingCount: boundedRemainingCount(region.unitsLeft),
+    nextTasks: (region.units ?? [])
+      .filter((unit) => !unit.done)
+      .slice(0, 3)
+      .map((unit) => unit.title),
+  };
+}
+
+export function headerSegments(data, today) {
+  const stats = effortStats(data, today);
+  const pace = computePace(data, today);
+  const paceSlot = pace.projectedFinish
+    ? `on pace for ${pace.projectedFinish}`
+    : stats.best
+      ? `best day ${stats.best.count} units on ${stats.best.date}`
+      : `${stats.submitted} units done`;
+  return [
+    `${stats.submitted} units done`,
+    `${stats.activePace.toFixed(2)} per working day`,
+    paceSlot,
+  ];
 }
 
 export function buildSchedule(data, today) {
@@ -187,8 +218,9 @@ export function buildSchedule(data, today) {
   );
   const perDay = scheduleRate(rows.length, daysLeft);
 
-  return rows.map(({ activity }, index) => ({
+  return rows.map(({ activity, semesterId }, index) => ({
     ...activity,
+    semesterId,
     ourTarget: addDays(todayKey, Math.floor(index / perDay)),
   }));
 }
@@ -196,16 +228,11 @@ export function buildSchedule(data, today) {
 export function questBoard(data, today) {
   const todayKey = parseDateKey(today);
   const schedule = buildSchedule(data, todayKey);
-
-  return Array.from({ length: 3 }, (_, dayOffset) => {
-    const date = addDays(todayKey, dayOffset);
-    return {
-      date,
-      items: schedule
-        .filter((activity) => activity.ourTarget === date)
-        .slice(0, 4),
-    };
-  });
+  const items = schedule.slice(0, 3);
+  return [{
+    date: items[0]?.ourTarget ?? todayKey,
+    items,
+  }];
 }
 
 function completionEvents(history) {
@@ -754,7 +781,9 @@ function orderedSemesters(data) {
 }
 
 export function worldMap(data) {
-  const nextRow = remainingRows(data)[0] ?? null;
+  const nextRows = remainingRows(data).slice(0, 3);
+  const nextRow = nextRows[0] ?? null;
+  const horizonIds = new Set(nextRows.map((entry) => entry.activity.id));
   const nextId = nextRow?.activity?.id ?? null;
   const nextWorldId = nextRow?.semesterId ?? null;
 
@@ -778,6 +807,7 @@ export function worldMap(data) {
           score: item.score ?? null,
           submittedDate: typeof item.submittedDate === "string" ? item.submittedDate : null,
           isNext: item.id === nextId,
+          isHorizon: horizonIds.has(item.id),
           kind: activityKind(item.title),
           type: activityType(item.title),
         }));
