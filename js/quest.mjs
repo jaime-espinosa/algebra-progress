@@ -150,7 +150,7 @@ export function effortStats(data, today) {
   const best = [...perDay.entries()]
     .map(([date, count]) => ({ date, count }))
     .sort((left, right) => right.count - left.count || left.date.localeCompare(right.date))[0] || null;
-  return { perDay, activeDays, submitted, activePace, showUpRate, rowsLeft,
+  return { perDay, activeDays, submitted, activePace, showUpRate, spanDays, rowsLeft,
            daysLeft, requiredPerDay, daysNeeded, showUpNeeded, onTrack, best,
            fastEnough: activePace >= requiredPerDay };
 }
@@ -389,6 +389,10 @@ export function dashboard(data, today) {
     daysLeft: stats.daysLeft,
     daysNeeded: stats.daysNeeded,
     activeDays: stats.activeDays,
+    // Calendar days from his first submission through today, inclusive. The
+    // dial used to reconstruct this by dividing activeDays by showUpRate and
+    // rounding, which could land a day off; it is the real span now.
+    spanDays: stats.spanDays,
     showUpRate: stats.showUpRate,
     showUpNeeded: stats.showUpNeeded,
     best: stats.best,
