@@ -992,10 +992,14 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     return `<line x1="${from.x.toFixed(2)}" y1="${from.y.toFixed(2)}" x2="${to.x.toFixed(2)}" y2="${to.y.toFixed(2)}"></line>`;
   }
 
-  function gaugeText(at, radius, text, className) {
+  // The two numbers at the ends of the arc sit either side of the digital
+  // window at the bottom, so they are anchored AWAY from it: a three-digit
+  // end label centred on the arc would have its inner half swallowed.
+  function gaugeText(at, radius, text, className, endAware = false) {
     const point = gaugePoint(at, radius);
+    const anchor = !endAware ? "middle" : at <= 0.001 ? "end" : at >= 0.999 ? "start" : "middle";
     return `<text class="${className}" x="${point.x.toFixed(2)}" y="${point.y.toFixed(2)}"
-      text-anchor="middle" dominant-baseline="central">${escapeHtml(text)}</text>`;
+      text-anchor="${anchor}" dominant-baseline="central">${escapeHtml(text)}</text>`;
   }
 
   function gaugeDial({ label, hint, scale, secondary, faceUnit, readout, readoutSub, ariaText }) {
@@ -1003,7 +1007,7 @@ import { effortStats as questEffort, computePace, dashboard, dialScale, percentT
     const majors = scale.majors.map(({ at }) => gaugeTick(at, GAUGE.majorInner, GAUGE.tickOuter)).join("");
     const minors = scale.minors.map((at) => gaugeTick(at, GAUGE.minorInner, GAUGE.tickOuter)).join("");
     const numbers = scale.majors
-      .map(({ at, text }) => gaugeText(at, GAUGE.numbers, text, "gauge__number")).join("");
+      .map(({ at, text }) => gaugeText(at, GAUGE.numbers, text, "gauge__number", true)).join("");
 
     // The inner scale is drawn from its first non-zero tick, like the reference
     // dial's second scale, which starts short of the zero end. That also keeps
