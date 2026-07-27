@@ -1,11 +1,21 @@
 {
-  "generatedAt": "2026-07-26T21:20:47.754Z",
+  "generatedAt": "2026-07-27T15:00:59.639Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-07-26T21:20:47.753Z",
+      "parsedAt": "2026-07-27T15:00:59.633Z",
       "reportedTotalSeconds": 339720,
       "days": [
+        {
+          "date": "2026-07-26",
+          "reportedSeconds": 7,
+          "entryCount": 1,
+          "sumSeconds": 7,
+          "credibleSeconds": 7,
+          "idleSuspectCount": 0,
+          "longestSeconds": 7,
+          "totalsAgree": true
+        },
         {
           "date": "2026-07-25",
           "reportedSeconds": 12300,
@@ -277,16 +287,26 @@
           "totalsAgree": true
         }
       ],
-      "dayCount": 27,
-      "entryCount": 276,
+      "dayCount": 28,
+      "entryCount": 277,
       "idleSuspectCount": 2,
       "daysWithMismatchedTotals": []
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-07-26T21:20:47.754Z",
-      "reportedTotalSeconds": 1314,
+      "parsedAt": "2026-07-27T15:00:59.639Z",
+      "reportedTotalSeconds": 2940,
       "days": [
+        {
+          "date": "2026-07-26",
+          "reportedSeconds": 1626,
+          "entryCount": 10,
+          "sumSeconds": 1626,
+          "credibleSeconds": 1626,
+          "idleSuspectCount": 0,
+          "longestSeconds": 903,
+          "totalsAgree": true
+        },
         {
           "date": "2026-07-25",
           "reportedSeconds": 1309,
@@ -308,8 +328,8 @@
           "totalsAgree": true
         }
       ],
-      "dayCount": 2,
-      "entryCount": 7,
+      "dayCount": 3,
+      "entryCount": 17,
       "idleSuspectCount": 0,
       "daysWithMismatchedTotals": []
     }
