@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-28T04:01:20.996Z",
+  "generatedAt": "2026-07-28T15:01:35.343Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-07-28T04:01:20.990Z",
+      "parsedAt": "2026-07-28T15:01:35.341Z",
       "reportedTotalSeconds": 339720,
       "days": [
         {
@@ -294,7 +294,7 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-07-28T04:01:20.996Z",
+      "parsedAt": "2026-07-28T15:01:35.343Z",
       "reportedTotalSeconds": 2963,
       "days": [
         {
