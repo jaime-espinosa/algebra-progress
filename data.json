@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T11:15:00-07:00",
+  "generatedAt": "2026-07-27T21:01:21-07:00",
   "scrapeOk": true,
   "deadline": {
     "date": "2026-08-15",
@@ -1185,10 +1185,10 @@
       "id": "sem2",
       "courseId": "264459139",
       "name": "Algebra I Semester 2",
-      "percent": null,
-      "letter": null,
-      "pointsEarned": null,
-      "pointsPossible": null,
+      "percent": 100,
+      "letter": "A",
+      "pointsEarned": 1,
+      "pointsPossible": 1,
       "gradableDone": 1,
       "gradableTotal": 41,
       "allDone": 10,
@@ -1245,11 +1245,16 @@
           "title": "Contacting your Teacher",
           "sectionNumber": 0,
           "sectionName": null,
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 1,
+            "possible": 1,
+            "percent": 100,
+            "letter": "A"
+          },
           "submittedDate": "2026-07-26",
           "lmsDue": "2026-07-02",
-          "rowIndex": 1,
+          "rowIndex": 0,
           "ourTarget": null
         },
         {
@@ -1266,7 +1271,7 @@
           },
           "submittedDate": "2026-07-26",
           "lmsDue": "2026-07-03",
-          "rowIndex": 2,
+          "rowIndex": 1,
           "ourTarget": null
         },
         {
@@ -1278,7 +1283,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-08-01",
-          "rowIndex": 4,
+          "rowIndex": 3,
           "ourTarget": "2026-08-10"
         },
         {
@@ -1295,7 +1300,7 @@
           },
           "submittedDate": "2026-07-26",
           "lmsDue": "2026-07-03",
-          "rowIndex": 6,
+          "rowIndex": 5,
           "ourTarget": null
         },
         {
@@ -1307,7 +1312,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-04",
-          "rowIndex": 7,
+          "rowIndex": 6,
           "ourTarget": "2026-07-28"
         },
         {
@@ -1319,7 +1324,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-04",
-          "rowIndex": 8,
+          "rowIndex": 7,
           "ourTarget": "2026-07-28"
         },
         {
@@ -1331,7 +1336,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-05",
-          "rowIndex": 9,
+          "rowIndex": 8,
           "ourTarget": "2026-07-28"
         },
         {
@@ -1343,7 +1348,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-05",
-          "rowIndex": 10,
+          "rowIndex": 9,
           "ourTarget": "2026-07-29"
         },
         {
@@ -1355,7 +1360,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-05",
-          "rowIndex": 11,
+          "rowIndex": 10,
           "ourTarget": "2026-07-29"
         },
         {
@@ -1367,7 +1372,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-06",
-          "rowIndex": 12,
+          "rowIndex": 11,
           "ourTarget": "2026-07-29"
         },
         {
@@ -1379,7 +1384,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-06",
-          "rowIndex": 13,
+          "rowIndex": 12,
           "ourTarget": "2026-07-29"
         },
         {
@@ -1391,7 +1396,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-07",
-          "rowIndex": 14,
+          "rowIndex": 13,
           "ourTarget": "2026-07-30"
         },
         {
@@ -1403,7 +1408,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-08",
-          "rowIndex": 15,
+          "rowIndex": 14,
           "ourTarget": "2026-07-30"
         },
         {
@@ -1415,7 +1420,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-08",
-          "rowIndex": 17,
+          "rowIndex": 16,
           "ourTarget": "2026-07-30"
         },
         {
@@ -1427,7 +1432,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-09",
-          "rowIndex": 18,
+          "rowIndex": 17,
           "ourTarget": "2026-07-30"
         },
         {
@@ -1439,7 +1444,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-09",
-          "rowIndex": 19,
+          "rowIndex": 18,
           "ourTarget": "2026-07-31"
         },
         {
@@ -1451,7 +1456,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-09",
-          "rowIndex": 20,
+          "rowIndex": 19,
           "ourTarget": "2026-07-31"
         },
         {
@@ -1463,7 +1468,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-10",
-          "rowIndex": 21,
+          "rowIndex": 20,
           "ourTarget": "2026-07-31"
         },
         {
@@ -1475,7 +1480,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-10",
-          "rowIndex": 22,
+          "rowIndex": 21,
           "ourTarget": "2026-07-31"
         },
         {
@@ -1487,7 +1492,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-11",
-          "rowIndex": 23,
+          "rowIndex": 22,
           "ourTarget": "2026-08-01"
         },
         {
@@ -1499,7 +1504,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-11",
-          "rowIndex": 24,
+          "rowIndex": 23,
           "ourTarget": "2026-08-01"
         },
         {
@@ -1511,7 +1516,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-11",
-          "rowIndex": 25,
+          "rowIndex": 24,
           "ourTarget": "2026-08-01"
         },
         {
@@ -1523,7 +1528,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-12",
-          "rowIndex": 26,
+          "rowIndex": 25,
           "ourTarget": "2026-08-01"
         },
         {
@@ -1535,7 +1540,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-13",
-          "rowIndex": 27,
+          "rowIndex": 26,
           "ourTarget": "2026-08-02"
         },
         {
@@ -1547,7 +1552,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-14",
-          "rowIndex": 29,
+          "rowIndex": 28,
           "ourTarget": "2026-08-02"
         },
         {
@@ -1559,7 +1564,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-14",
-          "rowIndex": 30,
+          "rowIndex": 29,
           "ourTarget": "2026-08-02"
         },
         {
@@ -1571,7 +1576,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-14",
-          "rowIndex": 31,
+          "rowIndex": 30,
           "ourTarget": "2026-08-02"
         },
         {
@@ -1583,7 +1588,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-15",
-          "rowIndex": 32,
+          "rowIndex": 31,
           "ourTarget": "2026-08-03"
         },
         {
@@ -1595,7 +1600,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-15",
-          "rowIndex": 33,
+          "rowIndex": 32,
           "ourTarget": "2026-08-03"
         },
         {
@@ -1607,7 +1612,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-15",
-          "rowIndex": 34,
+          "rowIndex": 33,
           "ourTarget": "2026-08-03"
         },
         {
@@ -1619,7 +1624,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-16",
-          "rowIndex": 35,
+          "rowIndex": 34,
           "ourTarget": "2026-08-03"
         },
         {
@@ -1631,7 +1636,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-16",
-          "rowIndex": 36,
+          "rowIndex": 35,
           "ourTarget": "2026-08-04"
         },
         {
@@ -1643,7 +1648,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-17",
-          "rowIndex": 37,
+          "rowIndex": 36,
           "ourTarget": "2026-08-04"
         },
         {
@@ -1655,7 +1660,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-17",
-          "rowIndex": 38,
+          "rowIndex": 37,
           "ourTarget": "2026-08-04"
         },
         {
@@ -1667,7 +1672,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-17",
-          "rowIndex": 39,
+          "rowIndex": 38,
           "ourTarget": "2026-08-04"
         },
         {
@@ -1679,7 +1684,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-18",
-          "rowIndex": 40,
+          "rowIndex": 39,
           "ourTarget": "2026-08-05"
         },
         {
@@ -1691,7 +1696,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-19",
-          "rowIndex": 41,
+          "rowIndex": 40,
           "ourTarget": "2026-08-05"
         },
         {
@@ -1703,7 +1708,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-19",
-          "rowIndex": 42,
+          "rowIndex": 41,
           "ourTarget": "2026-08-05"
         },
         {
@@ -1715,7 +1720,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-20",
-          "rowIndex": 44,
+          "rowIndex": 43,
           "ourTarget": "2026-08-05"
         },
         {
@@ -1727,7 +1732,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-20",
-          "rowIndex": 45,
+          "rowIndex": 44,
           "ourTarget": "2026-08-06"
         },
         {
@@ -1739,7 +1744,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-20",
-          "rowIndex": 46,
+          "rowIndex": 45,
           "ourTarget": "2026-08-06"
         },
         {
@@ -1751,7 +1756,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-21",
-          "rowIndex": 47,
+          "rowIndex": 46,
           "ourTarget": "2026-08-06"
         },
         {
@@ -1763,7 +1768,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-21",
-          "rowIndex": 48,
+          "rowIndex": 47,
           "ourTarget": "2026-08-06"
         },
         {
@@ -1775,7 +1780,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-22",
-          "rowIndex": 49,
+          "rowIndex": 48,
           "ourTarget": "2026-08-07"
         },
         {
@@ -1787,7 +1792,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-22",
-          "rowIndex": 50,
+          "rowIndex": 49,
           "ourTarget": "2026-08-07"
         },
         {
@@ -1799,7 +1804,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-22",
-          "rowIndex": 51,
+          "rowIndex": 50,
           "ourTarget": "2026-08-07"
         },
         {
@@ -1811,7 +1816,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-23",
-          "rowIndex": 52,
+          "rowIndex": 51,
           "ourTarget": "2026-08-07"
         },
         {
@@ -1823,7 +1828,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-24",
-          "rowIndex": 53,
+          "rowIndex": 52,
           "ourTarget": "2026-08-08"
         },
         {
@@ -1835,7 +1840,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-24",
-          "rowIndex": 55,
+          "rowIndex": 54,
           "ourTarget": "2026-08-08"
         },
         {
@@ -1847,7 +1852,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-25",
-          "rowIndex": 56,
+          "rowIndex": 55,
           "ourTarget": "2026-08-08"
         },
         {
@@ -1859,7 +1864,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-25",
-          "rowIndex": 57,
+          "rowIndex": 56,
           "ourTarget": "2026-08-08"
         },
         {
@@ -1871,7 +1876,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-26",
-          "rowIndex": 58,
+          "rowIndex": 57,
           "ourTarget": "2026-08-09"
         },
         {
@@ -1883,7 +1888,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-26",
-          "rowIndex": 59,
+          "rowIndex": 58,
           "ourTarget": "2026-08-09"
         },
         {
@@ -1895,7 +1900,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-27",
-          "rowIndex": 60,
+          "rowIndex": 59,
           "ourTarget": "2026-08-09"
         },
         {
@@ -1907,7 +1912,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-27",
-          "rowIndex": 61,
+          "rowIndex": 60,
           "ourTarget": "2026-08-09"
         },
         {
@@ -1919,7 +1924,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-27",
-          "rowIndex": 62,
+          "rowIndex": 61,
           "ourTarget": "2026-08-10"
         },
         {
@@ -1931,7 +1936,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-28",
-          "rowIndex": 63,
+          "rowIndex": 62,
           "ourTarget": "2026-08-10"
         },
         {
@@ -1943,7 +1948,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-29",
-          "rowIndex": 64,
+          "rowIndex": 63,
           "ourTarget": "2026-08-10"
         },
         {
@@ -1955,7 +1960,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-30",
-          "rowIndex": 66,
+          "rowIndex": 65,
           "ourTarget": "2026-08-11"
         },
         {
@@ -1967,7 +1972,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-30",
-          "rowIndex": 67,
+          "rowIndex": 66,
           "ourTarget": "2026-08-11"
         },
         {
@@ -1979,7 +1984,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-30",
-          "rowIndex": 68,
+          "rowIndex": 67,
           "ourTarget": "2026-08-11"
         },
         {
@@ -1991,7 +1996,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-31",
-          "rowIndex": 69,
+          "rowIndex": 68,
           "ourTarget": "2026-08-11"
         },
         {
@@ -2003,7 +2008,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-07-31",
-          "rowIndex": 70,
+          "rowIndex": 69,
           "ourTarget": "2026-08-12"
         },
         {
@@ -2015,7 +2020,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-08-01",
-          "rowIndex": 71,
+          "rowIndex": 70,
           "ourTarget": "2026-08-12"
         },
         {
@@ -2027,7 +2032,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-08-02",
-          "rowIndex": 72,
+          "rowIndex": 71,
           "ourTarget": "2026-08-12"
         },
         {
@@ -2039,7 +2044,7 @@
           "score": null,
           "submittedDate": null,
           "lmsDue": "2026-08-02",
-          "rowIndex": 73,
+          "rowIndex": 72,
           "ourTarget": "2026-08-12"
         }
       ]
