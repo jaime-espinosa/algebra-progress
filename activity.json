@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-31T23:39:11.719Z",
+  "generatedAt": "2026-07-31T23:48:25.885Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-07-31T23:39:11.719Z",
+      "parsedAt": "2026-07-31T23:48:25.884Z",
       "reportedTotalSeconds": 339720,
       "days": [
         {
@@ -1984,23 +1984,35 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-07-31T23:39:11.719Z",
-      "reportedTotalSeconds": 6780,
+      "parsedAt": "2026-07-31T23:48:25.885Z",
+      "reportedTotalSeconds": 7440,
       "days": [
         {
           "date": "2026-07-31",
-          "reportedSeconds": 2,
+          "reportedSeconds": 670,
           "entries": [
+            {
+              "title": "Lesson 2: Combining Radical Expressions Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "4:48 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Graphing Radical Functions Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "4:41 PM",
+              "seconds": 352,
+              "idleSuspect": false
+            },
             {
               "title": "Lesson 5: Solve Non-Linear Systems Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
               "startTime": "4:36 PM",
-              "seconds": 2,
+              "seconds": 316,
               "idleSuspect": false
             }
           ],
-          "entryCount": 1,
-          "sumSeconds": 2,
-          "credibleSeconds": 2,
+          "entryCount": 3,
+          "sumSeconds": 670,
+          "credibleSeconds": 670,
           "idleSuspectCount": 0,
           "totalsAgree": true
         },
@@ -2258,7 +2270,7 @@
         }
       ],
       "dayCount": 7,
-      "entryCount": 32,
+      "entryCount": 34,
       "idleSuspectCount": 0,
       "daysWithMismatchedTotals": []
     }
