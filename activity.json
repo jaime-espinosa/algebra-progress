@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-01T15:53:22.983Z",
+  "generatedAt": "2026-08-01T22:45:36.210Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-01T15:53:22.982Z",
+      "parsedAt": "2026-08-01T22:45:36.210Z",
       "reportedTotalSeconds": 339720,
       "days": [
         {
@@ -1984,9 +1984,38 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-01T15:53:22.983Z",
-      "reportedTotalSeconds": 14700,
+      "parsedAt": "2026-08-01T22:45:36.210Z",
+      "reportedTotalSeconds": 22080,
       "days": [
+        {
+          "date": "2026-08-01",
+          "reportedSeconds": 7320,
+          "entries": [
+            {
+              "title": "Quadratic Functions (Transformations): Practice Quiz Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "2:23 PM",
+              "seconds": 3780,
+              "idleSuspect": false
+            },
+            {
+              "title": "Quadratic Functions (Introduction): Practice Quiz Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "1:40 PM",
+              "seconds": 2568,
+              "idleSuspect": false
+            },
+            {
+              "title": "Geometric Sequences: Practice Quiz Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "1:23 PM",
+              "seconds": 990,
+              "idleSuspect": false
+            }
+          ],
+          "entryCount": 3,
+          "sumSeconds": 7338,
+          "credibleSeconds": 7338,
+          "idleSuspectCount": 0,
+          "totalsAgree": true
+        },
         {
           "date": "2026-07-31",
           "reportedSeconds": 7920,
@@ -2317,8 +2346,8 @@
           "totalsAgree": true
         }
       ],
-      "dayCount": 7,
-      "entryCount": 42,
+      "dayCount": 8,
+      "entryCount": 45,
       "idleSuspectCount": 0,
       "daysWithMismatchedTotals": []
     }
