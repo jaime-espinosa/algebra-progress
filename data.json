@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-31T16:48:25-07:00",
+  "generatedAt": "2026-07-31T21:01:12-07:00",
   "scrapeOk": true,
   "deadline": {
     "date": "2026-08-15",
@@ -1191,7 +1191,7 @@
       "pointsPossible": 1,
       "gradableDone": 1,
       "gradableTotal": 41,
-      "allDone": 23,
+      "allDone": 29,
       "allTotal": 103,
       "lmsStart": "2026-06-30",
       "lmsEnd": "2026-08-25",
@@ -1320,12 +1320,17 @@
           "title": "Graphing Exponential Functions: Practice Quiz",
           "sectionNumber": 1,
           "sectionName": "Exponential Functions",
-          "state": "not_started",
-          "score": null,
-          "submittedDate": null,
+          "state": "graded",
+          "score": {
+            "earned": 8,
+            "possible": 8,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-07-31",
           "lmsDue": "2026-07-04",
           "rowIndex": 7,
-          "ourTarget": "2026-08-01"
+          "ourTarget": null
         },
         {
           "id": "sem2:section-1:assignment-graphing-exponential-functions",
@@ -1373,7 +1378,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-06",
           "rowIndex": 11,
-          "ourTarget": "2026-08-02"
+          "ourTarget": "2026-08-01"
         },
         {
           "id": "sem2:section-1:assignment-geometric-sequences",
@@ -1433,7 +1438,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-09",
           "rowIndex": 17,
-          "ourTarget": "2026-08-03"
+          "ourTarget": "2026-08-02"
         },
         {
           "id": "sem2:section-2:quadratic-functions-transformations-practice-quiz",
@@ -1493,7 +1498,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-11",
           "rowIndex": 22,
-          "ourTarget": "2026-08-04"
+          "ourTarget": "2026-08-03"
         },
         {
           "id": "sem2:section-2:modeling-with-quadratic-functions-practice-quiz",
@@ -1553,7 +1558,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-14",
           "rowIndex": 28,
-          "ourTarget": "2026-08-05"
+          "ourTarget": "2026-08-04"
         },
         {
           "id": "sem2:section-3:activity-solve-quadratics-by-graphing",
@@ -1613,7 +1618,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-15",
           "rowIndex": 33,
-          "ourTarget": "2026-08-06"
+          "ourTarget": "2026-08-05"
         },
         {
           "id": "sem2:section-3:solve-by-square-root-method-practice-quiz",
@@ -1673,7 +1678,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-17",
           "rowIndex": 38,
-          "ourTarget": "2026-08-07"
+          "ourTarget": "2026-08-06"
         },
         {
           "id": "sem2:section-3:assignment-solve-non-linear-systems",
@@ -1733,7 +1738,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-20",
           "rowIndex": 44,
-          "ourTarget": "2026-08-08"
+          "ourTarget": "2026-08-07"
         },
         {
           "id": "sem2:section-4:combining-radical-expressions-practice-quiz",
@@ -1793,7 +1798,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-22",
           "rowIndex": 49,
-          "ourTarget": "2026-08-09"
+          "ourTarget": "2026-08-08"
         },
         {
           "id": "sem2:section-4:assignment-solve-radical-equations",
@@ -1853,7 +1858,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-25",
           "rowIndex": 55,
-          "ourTarget": "2026-08-10"
+          "ourTarget": "2026-08-09"
         },
         {
           "id": "sem2:section-5:multiply-and-divide-rational-expressions-practice-test",
@@ -1913,7 +1918,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-27",
           "rowIndex": 60,
-          "ourTarget": "2026-08-11"
+          "ourTarget": "2026-08-10"
         },
         {
           "id": "sem2:section-5:assignment-solve-rational-equations",
@@ -1961,7 +1966,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-30",
           "rowIndex": 65,
-          "ourTarget": "2026-08-12"
+          "ourTarget": "2026-08-11"
         },
         {
           "id": "sem2:section-6:assignment-categorical-data",
@@ -2021,7 +2026,7 @@
           "submittedDate": null,
           "lmsDue": "2026-08-01",
           "rowIndex": 70,
-          "ourTarget": "2026-08-13"
+          "ourTarget": "2026-08-12"
         },
         {
           "id": "sem2:section-6:section-6-final-test",
