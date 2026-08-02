@@ -271,7 +271,7 @@ export function headerSegments(data, today) {
   const paceSlot = pace.projectedFinish
     ? `on pace for ${pace.projectedFinish}`
     : stats.best
-      ? `best day ${stats.best.count} units on ${stats.best.date}`
+      ? `record ${stats.best.count} units done on ${stats.best.date}`
       : `${stats.submitted} units done`;
   return [
     `${stats.submitted} units done`,
