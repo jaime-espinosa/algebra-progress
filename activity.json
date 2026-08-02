@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-02T06:11:46.228Z",
+  "generatedAt": "2026-08-02T06:26:24.480Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-02T06:11:46.226Z",
+      "parsedAt": "2026-08-02T06:26:24.479Z",
       "reportedTotalSeconds": 339720,
       "days": [
         {
@@ -294,17 +294,17 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-02T06:11:46.228Z",
-      "reportedTotalSeconds": 38760,
+      "parsedAt": "2026-08-02T06:26:24.480Z",
+      "reportedTotalSeconds": 39960,
       "days": [
         {
           "date": "2026-08-01",
-          "reportedSeconds": 24000,
+          "reportedSeconds": 25200,
           "entryCount": 10,
-          "sumSeconds": 23953,
-          "credibleSeconds": 23953,
+          "sumSeconds": 25153,
+          "credibleSeconds": 25153,
           "idleSuspectCount": 0,
-          "longestSeconds": 5400,
+          "longestSeconds": 6600,
           "totalsAgree": true
         },
         {
