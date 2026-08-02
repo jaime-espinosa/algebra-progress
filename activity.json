@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-02T15:53:49.815Z",
+  "generatedAt": "2026-08-02T17:25:44.372Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-02T15:53:49.814Z",
+      "parsedAt": "2026-08-02T17:25:44.364Z",
       "reportedTotalSeconds": 339720,
       "days": [
         {
@@ -1984,30 +1984,17 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-02T15:53:49.815Z",
-      "reportedTotalSeconds": 73680,
+      "parsedAt": "2026-08-02T17:25:44.372Z",
+      "reportedTotalSeconds": 77280,
       "days": [
         {
           "date": "2026-08-02",
-          "reportedSeconds": 4860,
-          "entries": [
-            {
-              "title": "Solve by Square Root Method: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
-              "startTime": "8:21 AM",
-              "seconds": 1883,
-              "idleSuspect": false
-            },
-            {
-              "title": "Solve by Square Root Method: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
-              "startTime": "7:29 AM",
-              "seconds": 3005,
-              "idleSuspect": false
-            }
-          ],
-          "entryCount": 2,
-          "sumSeconds": 4888,
-          "credibleSeconds": 4888,
+          "reportedSeconds": 8460,
+          "entryCount": 5,
+          "sumSeconds": 8460,
+          "credibleSeconds": 8460,
           "idleSuspectCount": 0,
+          "longestSeconds": 3005,
           "totalsAgree": true
         },
         {
@@ -2412,7 +2399,7 @@
         }
       ],
       "dayCount": 9,
-      "entryCount": 54,
+      "entryCount": 57,
       "idleSuspectCount": 1,
       "daysWithMismatchedTotals": []
     }
