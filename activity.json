@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-03T17:05:33.150Z",
+  "generatedAt": "2026-08-03T22:52:47.401Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-03T17:05:33.149Z",
+      "parsedAt": "2026-08-03T22:52:47.400Z",
       "reportedTotalSeconds": 339720,
       "days": [
         {
@@ -1984,13 +1984,61 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-03T17:05:33.150Z",
-      "reportedTotalSeconds": 97080,
+      "parsedAt": "2026-08-03T22:52:47.401Z",
+      "reportedTotalSeconds": 108780,
       "days": [
         {
           "date": "2026-08-03",
-          "reportedSeconds": 3,
+          "reportedSeconds": 11700,
           "entries": [
+            {
+              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "2:56 PM",
+              "seconds": 3334,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Writing Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "2:31 PM",
+              "seconds": 1482,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Writing Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "12:42 PM",
+              "seconds": 1693,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Graphing Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "12:19 PM",
+              "seconds": 1386,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Properties of Exponents Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "11:51 AM",
+              "seconds": 1495,
+              "idleSuspect": false
+            },
+            {
+              "title": "Bivariate Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:34 AM",
+              "seconds": 996,
+              "idleSuspect": false
+            },
+            {
+              "title": "Univariate Statistics: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:22 AM",
+              "seconds": 490,
+              "idleSuspect": false
+            },
+            {
+              "title": "Categorical Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:08 AM",
+              "seconds": 842,
+              "idleSuspect": false
+            },
             {
               "title": "Categorical Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
               "startTime": "9:30 AM",
@@ -1998,9 +2046,9 @@
               "idleSuspect": false
             }
           ],
-          "entryCount": 1,
-          "sumSeconds": 3,
-          "credibleSeconds": 3,
+          "entryCount": 9,
+          "sumSeconds": 11721,
+          "credibleSeconds": 11721,
           "idleSuspectCount": 0,
           "totalsAgree": true
         },
@@ -2519,7 +2567,7 @@
         }
       ],
       "dayCount": 10,
-      "entryCount": 70,
+      "entryCount": 78,
       "idleSuspectCount": 1,
       "daysWithMismatchedTotals": []
     }
