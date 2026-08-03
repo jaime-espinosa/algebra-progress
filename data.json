@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-02T20:01:10-07:00",
+  "generatedAt": "2026-08-02T21:01:08-07:00",
   "scrapeOk": true,
   "deadline": {
     "date": "2026-08-15",
@@ -1885,7 +1885,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-22",
           "rowIndex": 50,
-          "ourTarget": "2026-08-08"
+          "ourTarget": "2026-08-09"
         },
         {
           "id": "sem2:section-4:section-4-final-test",
@@ -1897,7 +1897,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-23",
           "rowIndex": 51,
-          "ourTarget": "2026-08-08"
+          "ourTarget": "2026-08-09"
         },
         {
           "id": "sem2:section-4:end-of-section-assignment-radical-functions",
@@ -1967,7 +1967,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-26",
           "rowIndex": 57,
-          "ourTarget": "2026-08-09"
+          "ourTarget": "2026-08-10"
         },
         {
           "id": "sem2:section-5:add-and-subtract-rational-expressions-practice-test",
@@ -2025,7 +2025,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-27",
           "rowIndex": 61,
-          "ourTarget": "2026-08-10"
+          "ourTarget": "2026-08-11"
         },
         {
           "id": "sem2:section-5:section-5-final-test",
@@ -2037,7 +2037,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-28",
           "rowIndex": 62,
-          "ourTarget": "2026-08-10"
+          "ourTarget": "2026-08-11"
         },
         {
           "id": "sem2:section-5:end-of-section-assignment-rational-expressions",
@@ -2049,7 +2049,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-29",
           "rowIndex": 63,
-          "ourTarget": "2026-08-10"
+          "ourTarget": "2026-08-11"
         },
         {
           "id": "sem2:section-6:categorical-data-practice-quiz",
@@ -2073,7 +2073,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-30",
           "rowIndex": 66,
-          "ourTarget": "2026-08-11"
+          "ourTarget": "2026-08-12"
         },
         {
           "id": "sem2:section-6:univariate-statistics-practice-quiz",
@@ -2085,7 +2085,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-30",
           "rowIndex": 67,
-          "ourTarget": "2026-08-11"
+          "ourTarget": "2026-08-12"
         },
         {
           "id": "sem2:section-6:assignment-univariate-statistics",
@@ -2097,7 +2097,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-31",
           "rowIndex": 68,
-          "ourTarget": "2026-08-11"
+          "ourTarget": "2026-08-12"
         },
         {
           "id": "sem2:section-6:bivariate-data-practice-quiz",
@@ -2133,7 +2133,7 @@
           "submittedDate": null,
           "lmsDue": "2026-08-02",
           "rowIndex": 71,
-          "ourTarget": "2026-08-12"
+          "ourTarget": "2026-08-13"
         },
         {
           "id": "sem2:section-6:end-of-section-assignment-data-analysis",
@@ -2145,7 +2145,7 @@
           "submittedDate": null,
           "lmsDue": "2026-08-02",
           "rowIndex": 72,
-          "ourTarget": "2026-08-12"
+          "ourTarget": "2026-08-13"
         }
       ]
     }
