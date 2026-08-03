@@ -8,3 +8,7 @@ vault/artifacts/*.test.mjs
 # js/render/, and labs/ was never covered at all. Both were tracked in this public
 # repo and the scrub warned on them every run.
 **/*.test.mjs
+
+# One-off finish-line report: unlinked, embeds the LMS gradebook URL. Kept
+# locally, never published to the public Pages repo.
+8-2-report.html
