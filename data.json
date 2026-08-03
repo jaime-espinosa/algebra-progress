@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-02T15:46:02-07:00",
+  "generatedAt": "2026-08-02T20:01:10-07:00",
   "scrapeOk": true,
   "deadline": {
     "date": "2026-08-15",
@@ -1177,7 +1177,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-14",
           "rowIndex": 66,
-          "ourTarget": "2026-08-02"
+          "ourTarget": "2026-08-03"
         }
       ]
     },
@@ -1191,7 +1191,7 @@
       "pointsPossible": 1,
       "gradableDone": 1,
       "gradableTotal": 41,
-      "allDone": 43,
+      "allDone": 49,
       "allTotal": 103,
       "lmsStart": "2026-06-30",
       "lmsEnd": "2026-08-25",
@@ -1400,7 +1400,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-06",
           "rowIndex": 12,
-          "ourTarget": "2026-08-03"
+          "ourTarget": "2026-08-04"
         },
         {
           "id": "sem2:section-1:section-1-final-test",
@@ -1412,7 +1412,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-07",
           "rowIndex": 13,
-          "ourTarget": "2026-08-03"
+          "ourTarget": "2026-08-04"
         },
         {
           "id": "sem2:section-1:end-of-section-assignment-exponential-functions",
@@ -1482,7 +1482,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-09",
           "rowIndex": 19,
-          "ourTarget": "2026-08-04"
+          "ourTarget": "2026-08-05"
         },
         {
           "id": "sem2:section-2:assignment-quadratic-functions-transformations",
@@ -1494,7 +1494,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-10",
           "rowIndex": 20,
-          "ourTarget": "2026-08-04"
+          "ourTarget": "2026-08-05"
         },
         {
           "id": "sem2:section-2:writing-quadratic-functions-practice-quiz",
@@ -1523,7 +1523,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-11",
           "rowIndex": 22,
-          "ourTarget": "2026-08-04"
+          "ourTarget": "2026-08-05"
         },
         {
           "id": "sem2:section-2:modeling-with-quadratic-functions-practice-quiz",
@@ -1564,7 +1564,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-12",
           "rowIndex": 25,
-          "ourTarget": "2026-08-05"
+          "ourTarget": "2026-08-06"
         },
         {
           "id": "sem2:section-2:end-of-section-assignment-quadratic-functions",
@@ -1576,7 +1576,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-13",
           "rowIndex": 26,
-          "ourTarget": "2026-08-05"
+          "ourTarget": "2026-08-06"
         },
         {
           "id": "sem2:section-3:solve-by-graphing-practice-quiz",
@@ -1605,7 +1605,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-14",
           "rowIndex": 29,
-          "ourTarget": "2026-08-05"
+          "ourTarget": "2026-08-06"
         },
         {
           "id": "sem2:section-3:assignment-solve-by-graphing",
@@ -1617,7 +1617,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-14",
           "rowIndex": 30,
-          "ourTarget": "2026-08-05"
+          "ourTarget": "2026-08-06"
         },
         {
           "id": "sem2:section-3:activity-algebra-tiles-factoring",
@@ -1629,7 +1629,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-15",
           "rowIndex": 31,
-          "ourTarget": "2026-08-06"
+          "ourTarget": "2026-08-07"
         },
         {
           "id": "sem2:section-3:solve-by-factoring-practice-quiz",
@@ -1658,7 +1658,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-15",
           "rowIndex": 33,
-          "ourTarget": "2026-08-06"
+          "ourTarget": "2026-08-07"
         },
         {
           "id": "sem2:section-3:solve-by-square-root-method-practice-quiz",
@@ -1687,7 +1687,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-16",
           "rowIndex": 35,
-          "ourTarget": "2026-08-06"
+          "ourTarget": "2026-08-07"
         },
         {
           "id": "sem2:section-3:solve-using-quadratic-formula-practice-quiz",
@@ -1716,7 +1716,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-17",
           "rowIndex": 37,
-          "ourTarget": "2026-08-06"
+          "ourTarget": "2026-08-07"
         },
         {
           "id": "sem2:section-3:solve-non-linear-systems-practice-quiz",
@@ -1745,7 +1745,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-18",
           "rowIndex": 39,
-          "ourTarget": "2026-08-06"
+          "ourTarget": "2026-08-08"
         },
         {
           "id": "sem2:section-3:section-3-final-test",
@@ -1757,7 +1757,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-19",
           "rowIndex": 40,
-          "ourTarget": "2026-08-07"
+          "ourTarget": "2026-08-08"
         },
         {
           "id": "sem2:section-3:end-of-section-assignment-solve-quadratic-equations",
@@ -1769,7 +1769,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-19",
           "rowIndex": 41,
-          "ourTarget": "2026-08-07"
+          "ourTarget": "2026-08-08"
         },
         {
           "id": "sem2:section-4:graphing-radical-functions-practice-quiz",
@@ -1798,7 +1798,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-20",
           "rowIndex": 44,
-          "ourTarget": "2026-08-07"
+          "ourTarget": "2026-08-08"
         },
         {
           "id": "sem2:section-4:combining-radical-expressions-practice-quiz",
@@ -1827,19 +1827,24 @@
           "submittedDate": null,
           "lmsDue": "2026-07-21",
           "rowIndex": 46,
-          "ourTarget": "2026-08-07"
+          "ourTarget": "2026-08-09"
         },
         {
           "id": "sem2:section-4:multiply-and-divide-radical-expressions-practice-quiz",
           "title": "Multiply and Divide Radical Expressions: Practice Quiz",
           "sectionNumber": 4,
           "sectionName": "Radical Functions",
-          "state": "not_started",
-          "score": null,
-          "submittedDate": null,
+          "state": "graded",
+          "score": {
+            "earned": 5,
+            "possible": 6,
+            "percent": 83.33,
+            "letter": "B"
+          },
+          "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-21",
           "rowIndex": 47,
-          "ourTarget": "2026-08-07"
+          "ourTarget": null
         },
         {
           "id": "sem2:section-4:assignment-multiply-and-divide-radical-expressions",
@@ -1851,19 +1856,24 @@
           "submittedDate": null,
           "lmsDue": "2026-07-22",
           "rowIndex": 48,
-          "ourTarget": "2026-08-08"
+          "ourTarget": "2026-08-09"
         },
         {
           "id": "sem2:section-4:solve-radical-equations-practice-quiz",
           "title": "Solve Radical Equations: Practice Quiz",
           "sectionNumber": 4,
           "sectionName": "Radical Functions",
-          "state": "not_started",
-          "score": null,
-          "submittedDate": null,
+          "state": "graded",
+          "score": {
+            "earned": 13,
+            "possible": 13,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-22",
           "rowIndex": 49,
-          "ourTarget": "2026-08-08"
+          "ourTarget": null
         },
         {
           "id": "sem2:section-4:assignment-solve-radical-equations",
@@ -1899,19 +1909,24 @@
           "submittedDate": null,
           "lmsDue": "2026-07-24",
           "rowIndex": 52,
-          "ourTarget": "2026-08-08"
+          "ourTarget": "2026-08-10"
         },
         {
           "id": "sem2:section-5:simplify-rational-expressions-practice-test",
           "title": "Simplify Rational Expressions: Practice Test",
           "sectionNumber": 5,
           "sectionName": "Rational Expressions",
-          "state": "not_started",
-          "score": null,
-          "submittedDate": null,
+          "state": "graded",
+          "score": {
+            "earned": 7,
+            "possible": 8,
+            "percent": 87.5,
+            "letter": "B"
+          },
+          "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-24",
           "rowIndex": 54,
-          "ourTarget": "2026-08-09"
+          "ourTarget": null
         },
         {
           "id": "sem2:section-5:assignment-solve-rational-expressions",
@@ -1923,19 +1938,24 @@
           "submittedDate": null,
           "lmsDue": "2026-07-25",
           "rowIndex": 55,
-          "ourTarget": "2026-08-09"
+          "ourTarget": "2026-08-10"
         },
         {
           "id": "sem2:section-5:multiply-and-divide-rational-expressions-practice-test",
           "title": "Multiply and Divide Rational Expressions: Practice Test",
           "sectionNumber": 5,
           "sectionName": "Rational Expressions",
-          "state": "not_started",
-          "score": null,
-          "submittedDate": null,
+          "state": "graded",
+          "score": {
+            "earned": 10,
+            "possible": 10,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-25",
           "rowIndex": 56,
-          "ourTarget": "2026-08-09"
+          "ourTarget": null
         },
         {
           "id": "sem2:section-5:assignment-multiply-and-divide-rational-expressions",
@@ -1954,12 +1974,17 @@
           "title": "Add and Subtract Rational Expressions: Practice Test",
           "sectionNumber": 5,
           "sectionName": "Rational Expressions",
-          "state": "not_started",
-          "score": null,
-          "submittedDate": null,
+          "state": "graded",
+          "score": {
+            "earned": 10,
+            "possible": 10,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-26",
           "rowIndex": 58,
-          "ourTarget": "2026-08-09"
+          "ourTarget": null
         },
         {
           "id": "sem2:section-5:assignment-add-and-subtract-rational-expressions",
@@ -1978,12 +2003,17 @@
           "title": "Solve Rational Equations: Practice Test",
           "sectionNumber": 5,
           "sectionName": "Rational Expressions",
-          "state": "not_started",
-          "score": null,
-          "submittedDate": null,
+          "state": "graded",
+          "score": {
+            "earned": 10,
+            "possible": 10,
+            "percent": 100,
+            "letter": "A"
+          },
+          "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-27",
           "rowIndex": 60,
-          "ourTarget": "2026-08-10"
+          "ourTarget": null
         },
         {
           "id": "sem2:section-5:assignment-solve-rational-equations",
@@ -2031,7 +2061,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-30",
           "rowIndex": 65,
-          "ourTarget": "2026-08-11"
+          "ourTarget": "2026-08-12"
         },
         {
           "id": "sem2:section-6:assignment-categorical-data",
@@ -2079,7 +2109,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-31",
           "rowIndex": 69,
-          "ourTarget": "2026-08-12"
+          "ourTarget": "2026-08-13"
         },
         {
           "id": "sem2:section-6:assignment-bivariate-data",
@@ -2091,7 +2121,7 @@
           "submittedDate": null,
           "lmsDue": "2026-08-01",
           "rowIndex": 70,
-          "ourTarget": "2026-08-12"
+          "ourTarget": "2026-08-13"
         },
         {
           "id": "sem2:section-6:section-6-final-test",
