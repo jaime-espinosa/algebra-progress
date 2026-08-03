@@ -45,6 +45,13 @@
         <button type="button" id="window-up" aria-label="Lengthen the rolling window by one day">+</button>
       </div>
       <div id="effort-content"></div>
+      <!-- The streak he owns. It is deliberately a run and a total, never a count
+           of visits and never a count of days missed: "you have opened this page
+           23 times" reads as being watched. Empty and hidden until there is
+           something to say — a zero here would be a worse greeting than silence.
+           The raw numbers behind it go to the parent-view copy control in the
+           request box, not onto this line. -->
+      <p id="streak-line" class="streak-line" hidden></p>
     </section>
 
     <section id="worldmap" class="panel" aria-labelledby="worldmap-heading" hidden>
@@ -119,6 +126,24 @@
         </div>
       </form>
       <ul id="request-saved" class="request-saved"></ul>
+      <!-- The drain (#12). Everything he saves — requests and site usage — lives in
+           localStorage on his laptop and reaches nobody by itself; the site is
+           static, there is no backend and there will not be one. This copies both
+           to the clipboard as plain text so it can be pasted into whatever channel
+           the two of them already use. It sits in the request box because that is
+           the same "get this off his laptop" problem, and it is hidden outside
+           parent view so it is not part of his daily page. -->
+      <div id="request-drain" class="request-drain" hidden>
+        <div class="request-actions">
+          <button id="request-copy" type="button">Copy usage and requests</button>
+          <span id="request-copy-status" class="quiet" role="status"></span>
+        </div>
+        <!-- Shown only when the clipboard is refused (insecure context, or opened
+             from a file:// path). Copying by hand still beats needing devtools. -->
+        <label id="request-drain-fallback" hidden>Select all and copy
+          <textarea id="request-drain-text" readonly rows="8"></textarea>
+        </label>
+      </div>
     </section>
   </main>
 

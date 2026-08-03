@@ -207,6 +207,10 @@
   transition: transform .9s cubic-bezier(.2, .8, .2, 1);
 }
 
+.gauge__needle--ungraded {
+  fill: var(--dim);
+}
+
 .gauge__hub {
   fill: #1b2027;
   stroke: var(--line);
@@ -291,6 +295,15 @@
   white-space: nowrap;
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
+}
+
+.gauge__caption,
+.counter__caption {
+  margin: 8px 0 0;
+  color: var(--dim);
+  font-size: 11px;
+  line-height: 1.35;
+  text-wrap: balance;
 }
 
 @media (max-width: 760px) {

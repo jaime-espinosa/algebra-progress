@@ -11,10 +11,10 @@ export const DAY_MS = 86_400_000;
 
 export const ZONE = "America/Los_Angeles";
 
-// Must match the crontab entry in _redcomet/cron-refresh.sh (0 8,15,21 * * *).
-// This previously returned 14:00/06:00, which was simply not when the scraper runs,
-// so the header told him a time that was never true.
-export const SCRAPE_HOURS = [8, 15, 21];
+// LA-local display hours matching the GitHub Action's every-two-hours daytime
+// cadence. The action cron is UTC and intentionally drifts by one hour in winter;
+// this course ends during PDT, so these are the times the kid will actually see.
+export const SCRAPE_HOURS = [0, 6, 8, 10, 12, 14, 16, 18, 20, 22];
 
 // ---- World map ------------------------------------------------------------
 // This panel replaced the trophy wall. The two were the same picture drawn
@@ -205,6 +205,30 @@ export const GAME_KIND_FACES = {
     const hour = Number(parts.find(item => item.type === "hour")?.value ?? 0);
     const next = SCRAPE_HOURS.find(h => h > hour) ?? SCRAPE_HOURS[0];
     return `${String(next).padStart(2, "0")}:00`;
+  }
+
+  export function todayDialStats(data, today = localIsoDate()) {
+    const submittedToday = (data.semesters ?? [])
+      .flatMap(semester => semester.activities ?? [])
+      .filter(item => item.submittedDate === today &&
+        (item.state === "graded" || item.state === "submitted_ungraded"));
+    const whiteToday = submittedToday.filter(item => item.gradable === true).length;
+    // Old feeds have no flag at all. Unknown is deliberately practice/grey rather
+    // than silently counting toward the gradeable needle.
+    const greyToday = submittedToday.filter(item => item.gradable !== true).length;
+    return {
+      whiteToday,
+      greyToday,
+      totalToday: whiteToday + greyToday,
+      max: Math.max(10, whiteToday, greyToday),
+    };
+  }
+
+  export function gaugeNeedle(fraction, extraClass = "") {
+    const clamped = Math.max(0, Math.min(1, Number(fraction) || 0));
+    const angle = (135 + clamped * 270).toFixed(2);
+    const className = `gauge__needle${extraClass ? ` ${extraClass}` : ""}`;
+    return `<path class="${escapeHtml(className)}" d="M42 48.3 L92 50 L42 51.7 L40 50 Z" style="transform: rotate(${angle}deg)"></path>`;
   }
 
   export function summarySnapshot(data) {
@@ -1134,6 +1158,7 @@ export const GAME_KIND_FACES = {
         <h3 class="counter__title">TIME ON COURSE</h3>
         <strong class="counter__value numeric">${escapeHtml(series.totalText)}</strong>
         <span class="counter__sub numeric">${series.dayCount} DAYS · ${escapeHtml(formatDay(series.firstDay))} TO ${escapeHtml(formatDay(series.lastDay))}</span>
+        <p class="counter__caption">This is how long the course stayed open across all tracked days.</p>
       </article>`;
   }
 

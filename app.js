@@ -1,5 +1,7 @@
 import { effortStats as questEffort, computePace, dashboard, dialScale, percentTicks, openTimeSeries, planTrack, evaluateUnlocks, sectionMilestones, overallGrade, worldMap, mapLandmarks, worldTerrain, worldRoute, regionHorizon, headerSegments, questBoard, pointWeights, UNIT_TYPE_LABELS, UNIT_TYPE_PLURALS } from "./js/quest.mjs";
-import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, formatDay, formatTime, nextScrapeTime, summarySnapshot, snapshotsEqual, remainingActivities, submittedAfterBaseline, submissionsByDay, effortStats, todayCompleted, landmarkGlyph, terrainSvg, landmarkStructure, hereMarker, compassRose, mapLegend, territoryPlaque, routePaths, landmassBanner, renderWorldPopup, renderTerritoryTable, unitNode, spriteSvg, validSkinCache, skinPlaceholderSvg, blobDataUrl, gaugePoint, gaugeArc, tip, gaugeText, perDayChart, cumulativeChart, openTimeCounter, questDays, lessonSlug, lessonCatalog, gameKindIcon, DAY_MS } from "./js/render/shared.mjs";
+import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, formatDay, formatTime, nextScrapeTime, summarySnapshot, snapshotsEqual, remainingActivities, submittedAfterBaseline, submissionsByDay, effortStats, todayCompleted, todayDialStats, landmarkGlyph, terrainSvg, landmarkStructure, hereMarker, compassRose, mapLegend, territoryPlaque, routePaths, landmassBanner, renderWorldPopup, renderTerritoryTable, unitNode, spriteSvg, validSkinCache, skinPlaceholderSvg, blobDataUrl, gaugePoint, gaugeArc, gaugeNeedle, tip, gaugeText, perDayChart, cumulativeChart, openTimeCounter, questDays, lessonSlug, lessonCatalog, gameKindIcon, DAY_MS } from "./js/render/shared.mjs";
+import { USAGE_KEY, achievementLine, drainText, noteToday, noteVisit, usageSummary }
+  from "./js/usage.mjs";
 
 (() => {
   "use strict";
@@ -111,6 +113,11 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     sessionSet(PARENT_VIEW_KEY, active);
     const exit = document.querySelector("#exit-parent");
     if (exit) exit.hidden = !active;
+    // The copy-out is an owner tool. `hidden` rather than a CSS rule so it is out
+    // of the tab order too — it should not be something he lands on by pressing
+    // Tab through the request box.
+    const drain = document.querySelector("#request-drain");
+    if (drain) drain.hidden = !active;
     document.querySelectorAll("details.parent-expanded").forEach(details => {
       details.open = active;
     });
@@ -912,7 +919,8 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
 
 
   function gaugeDial({
-    label, scale, secondary, readout, readoutSub, ariaText,
+    label, scale, secondary = null, readout, readoutSub, ariaText, caption,
+    greyFraction = null, showRangeBand = true,
     bandTo = 1, outOfRangeFrom = null, thresholdBands = [],
   }) {
     const clamped = Math.max(0, Math.min(1, scale.fraction));
@@ -924,7 +932,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     // The inner scale is drawn from its first non-zero tick, like the reference
     // dial's second scale, which starts short of the zero end. That also keeps
     // its numbers clear of the digital window in the gap at the bottom.
-    const ticks2list = secondary.ticks.filter(({ percent }) => percent > 0);
+    const ticks2list = secondary?.ticks.filter(({ percent }) => percent > 0) ?? [];
     const ticks2 = ticks2list.map(({ at }) => gaugeTick(at, GAUGE.scale2Inner, GAUGE.scale2Outer)).join("");
     // A label in the last few degrees of the inner arc would land on top of the
     // digital window in the gap at the bottom. Its tick still gets drawn; only
@@ -951,9 +959,9 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     // reads for anyone who cannot separate the hues. Ahead is simply the rest of
     // the range; nothing anywhere says a reading is bad.
     const bandEnd = Math.max(clamped, Math.min(1, bandTo));
-    const progress = clamped > 0 ? `
+    const progress = showRangeBand && clamped > 0 ? `
             <path class="gauge__progress" d="${gaugeArc(0, clamped, GAUGE.track)}"></path>` : "";
-    const ahead = bandEnd > clamped ? `
+    const ahead = showRangeBand && bandEnd > clamped ? `
             <path class="gauge__ahead" d="${gaugeArc(clamped, bandEnd, GAUGE.track)}"></path>` : "";
     const outOfRange = Number.isFinite(outOfRangeFrom) && outOfRangeFrom < 1 ? `
             <path class="gauge__out-of-range" d="${gaugeArc(Math.max(0, outOfRangeFrom), 1, GAUGE.track)}"></path>` : "";
@@ -961,7 +969,9 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
             <path class="gauge__threshold-band ${className}"
               data-boundary="${escapeHtml(boundary)}"
               d="${gaugeArc(Math.max(0, from), Math.min(1, to), GAUGE.track)}"></path>`).join("");
-    const angle = (135 + clamped * 270).toFixed(2);
+    const greyNeedle = Number.isFinite(greyFraction)
+      ? gaugeNeedle(greyFraction, "gauge__needle--ungraded")
+      : "";
 
     // The title sits ABOVE the face, not on it: naming the dial inside the glass crowded
     // the numerals and the window, and he asked for it out here where a car puts it.
@@ -989,9 +999,8 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
             <g class="gauge__majors" shape-rendering="crispEdges">${majors}</g>
             <g class="gauge__numbers">${numbers}</g>
             ${scale2}
-            <g class="gauge__needle" style="transform: rotate(${angle}deg)">
-              <polygon points="42,48.3 92,50 42,51.7 40,50"></polygon>
-            </g>
+            ${greyNeedle}
+            ${gaugeNeedle(clamped)}
             <circle class="gauge__hub" cx="50" cy="50" r="4"></circle>
             <circle class="gauge__hub-pin" cx="50" cy="50" r="1.4"></circle>
           </svg>
@@ -1001,6 +1010,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
           </div>
           <p class="gauge__sr">${escapeHtml(ariaText)}</p>
         </div>
+        <p class="gauge__caption">${escapeHtml(caption)}</p>
       </article>`;
   }
 
@@ -1043,7 +1053,8 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     // that is printed on this page, so both numbers are checkable by hand and
     // neither can disagree with the other. Percentages are rounded the same way
     // everywhere on the site (nearest whole).
-    const paceScale = dialScale(s.activePace, 6);
+    const todayStats = todayDialStats(data, today);
+    const todayScale = dialScale(todayStats.whiteToday, todayStats.max);
     // Fixed face by request. This dial used to auto-scale to whatever the window
     // held, so 2 units in 3 days drew a full-face needle and read exactly like a
     // brilliant week — the needle carried no information at all. A face that never
@@ -1054,13 +1065,17 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     const recentScale = dialScale(Math.min(s.recentPerDay, RECENT_DIAL_MAX), RECENT_DIAL_MAX);
     const doneScale = dialScale(s.odometer, totalUnits);
     const daysScale = dialScale(s.activeDays, calendarSpan);
-    // Owner-granted dial-only exception: the current Aug 15 pace boundary is 3.38/day.
+    // The red band's boundary is the live minimum needed to finish on time — the
+    // SAME s.requiredPerDay printed in the window as "NEEDS x.xx TO FINISH ON TIME".
+    // It used to be frozen at 3.38 (the Aug 15 figure on the day it was set), which
+    // drifted out of step with the readout as days passed. Tying it to the readout
+    // keeps the red exactly at the minimum, so the band can never disagree with the
+    // number beside it.
     // There used to be a third, orange band from 5.07 up — fifty percent over the needed
     // pace. It is gone by request ("remove the idea of shading past 4"): a band that
     // starts where he is doing WELL reads as another threshold to worry about, and this
     // dial only needs to say one thing, which is whether today clears the bar.
-    const paceBandNeeded = 3.38;
-    const pacePercent = s.requiredPerDay > 0 ? Math.round((s.activePace / s.requiredPerDay) * 100) : 0;
+    const paceBandNeeded = s.requiredPerDay;
     const recentPercent = Math.round((Math.min(s.recentPerDay, RECENT_DIAL_MAX) / RECENT_DIAL_MAX) * 100);
     const donePercent = Math.round(s.tripDone * 100);
     const daysPercent = Math.round(s.showUpRate * 100);
@@ -1082,34 +1097,23 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
     document.querySelector("#effort-content").innerHTML = `
       <div class="effort-gauges">
         ${gaugeDial({
-          // "WORKED" is not decoration: it is the DIVISOR, and it used to live in
-          // the white text on the glass that #93 removed. Deleting that text without
-          // moving the divisor up here would leave this dial reading 3.65 next to a
-          // dial reading 0.67 with nothing on the page explaining why both are true.
-          // The rolling dial needs no such qualifier — "average of 3 days" already
-          // says it divides by all three. (2026-07-26)
-          label: "UNITS PER DAY WORKED",
-          hint: `Units submitted divided by the number of days you actually submitted something. Days you never opened the course are not in the divisor: ${s.odometer} units over ${s.activeDays} days. The inner amber scale is the same needle as a percentage of the ${s.requiredPerDay.toFixed(2)} a day Aug 15 needs.`,
-          scale: paceScale,
-          secondary: { unit: "% OF NEEDED", ticks: percentTicks(paceScale.max, s.requiredPerDay) },
-          readout: s.activePace.toFixed(2),
-          readoutSub: `NEEDS ${s.requiredPerDay.toFixed(2)} TO FINISH ON TIME`,
-          bandTo: 1,
+          label: "TODAY",
+          scale: todayScale,
+          secondary: null,
+          greyFraction: todayStats.greyToday / todayStats.max,
+          readout: String(todayStats.totalToday),
+          readoutSub: "DONE TODAY",
+          caption: "White = what you turned in today. Grey = practice that isn't graded. Red = the least you need today to finish on time.",
+          showRangeBand: false,
           thresholdBands: [
             {
               className: "is-below-pace",
               from: 0,
-              to: paceBandNeeded / paceScale.max,
+              to: Math.min(1, paceBandNeeded / todayStats.max),
               boundary: `below ${paceBandNeeded.toFixed(2)}`,
             },
-            {
-              className: "is-at-pace",
-              from: paceBandNeeded / paceScale.max,
-              to: 1,
-              boundary: `${paceBandNeeded.toFixed(2)} and above`,
-            },
           ],
-          ariaText: `Units per day on the days you work: ${s.activePace.toFixed(2)}, on a dial reading 0 to ${paceScale.max} units per day — ${s.odometer} units over ${s.activeDays} working days. Aug 15 needs ${s.requiredPerDay.toFixed(2)} a day, so the inner amber percentage scale reads ${pacePercent} percent of that pace. Below ${paceBandNeeded.toFixed(2)} units per day is the wide solid red rim band; ${paceBandNeeded.toFixed(2)} and above is the narrower long-dash green band.`
+          ariaText: `${todayStats.totalToday} done today: ${todayStats.whiteToday} gradeable and ${todayStats.greyToday} practice units, on a dial reading 0 to ${todayStats.max}. The red band runs from 0 to the ${paceBandNeeded.toFixed(2)} units needed today.`
         })}
 
         ${gaugeDial({
@@ -1121,6 +1125,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
           secondary: { unit: `% OF ${RECENT_DIAL_MAX} A DAY`, ticks: percentTicks(recentScale.max, RECENT_DIAL_MAX) },
           readout: s.recentPerDay.toFixed(2),
           readoutSub: `PREV ${s.windowDays}: ${s.priorPerDay.toFixed(2)} / DAY`,
+          caption: `This is your daily average across the last ${s.windowDays} calendar days.`,
           bandTo: 1,
           ariaText: `${s.recentPerDay.toFixed(2)} units a day over the last ${s.windowDays} days: ${s.recent3} units submitted from ${formatDay(s.recent3From)} through ${formatDay(s.recent3To)}, divided by all ${s.windowDays} calendar days in the window, whether or not you worked on them. The dial always reads 0 to ${RECENT_DIAL_MAX} units a day. The ${s.windowDays} days before that ran at ${s.priorPerDay.toFixed(2)} a day. The inner amber percentage scale reads the needle as ${recentPercent} percent of the ${RECENT_DIAL_MAX} a day the face holds.${s.recentPerDay > RECENT_DIAL_MAX ? ` The rate is past the end of the face, so the needle rests on ${RECENT_DIAL_MAX} and the inner scale on 100 percent; the window shows the true ${s.recentPerDay.toFixed(2)}.` : ""} ${BAND_TEXT}`
         })}
@@ -1132,6 +1137,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
           secondary: { unit: "% COMPLETE", ticks: percentTicks(doneScale.max, totalUnits) },
           readout: String(s.odometer),
           readoutSub: "KEEPS CLIMBING",
+          caption: "This is every unit you have turned in across both semesters.",
           bandTo: totalUnits / doneScale.max,
           outOfRangeFrom: totalUnits / doneScale.max,
           ariaText: `${s.odometer} of ${totalUnits} units submitted across both semesters, ${s.rowsLeft} still to do, on a dial reading 0 to ${doneScale.max} units. The inner amber percentage scale reads ${donePercent} percent of all ${totalUnits}. The thick band on the rim covers the ${s.odometer} you have done and the thin dashed band runs on to the ${totalUnits}th unit. The neutral shaded rim after ${totalUnits} is outside the course total.`
@@ -1144,6 +1150,7 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
           secondary: { unit: `% OF ${calendarSpan} DAYS`, ticks: percentTicks(daysScale.max, calendarSpan) },
           readout: String(s.activeDays),
           readoutSub: `OF ${calendarSpan} DAYS`,
+          caption: "This counts days when you turned in at least one unit.",
           bandTo: calendarSpan / daysScale.max,
           ariaText: `${s.activeDays} days worked out of the ${calendarSpan} calendar days since ${formatDay(track.firstDay)}, on a dial reading 0 to ${daysScale.max} days. The inner amber percentage scale reads ${daysPercent} percent of those ${calendarSpan} days. The thick band on the rim covers the ${s.activeDays} days you worked and the thin dashed band runs on to the ${calendarSpan}th day since you started.`
         })}
@@ -1333,6 +1340,91 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
         <span class="numeric">${escapeHtml(formatDay(entry.at.slice(0, 10)))}</span>
         · ${escapeHtml(entry.title)}
       </li>`).join("");
+  }
+
+  // HOW THE PAGE GETS USED (#13), and the copy-out that finally drains it (#12).
+  //
+  // GitHub cannot answer "does he open the site" — its traffic API measures the
+  // repo page, not the Pages site, and reads 0. There is no backend here, so the
+  // record can only be localStorage, which means it reaches nobody until somebody
+  // presses the copy control below. Both halves ship together; a tracker with no
+  // drain is what #79 already shipped once by accident.
+  //
+  // He sees the streak. The raw days stay in the copy-out, in parent view.
+  // The arithmetic and the wording are in js/usage.mjs, tested there.
+
+  function usageStored() {
+    return storageGet(USAGE_KEY, null);
+  }
+
+  // Every write goes through here, so a blocked or full localStorage costs a
+  // streak and nothing else — no thrown error on his dashboard.
+  function markUsage(patch) {
+    const today = localIsoDate();
+    const next = patch
+      ? noteToday(usageStored(), today, patch)
+      : noteVisit(usageStored(), today);
+    storageSet(USAGE_KEY, next);
+    return next;
+  }
+
+  function renderStreak() {
+    const line = document.querySelector("#streak-line");
+    if (!line) return;
+    const text = achievementLine(usageSummary(usageStored(), localIsoDate()));
+    line.textContent = text;
+    // Hidden rather than empty: an element that is present but blank still takes
+    // a line of margin, and a blank callout under the dials reads as a bug.
+    line.hidden = text === "";
+  }
+
+  // The section he was looking at when he left. Derived from the sections already
+  // on the page at the moment the page is hidden — no scroll listener, no second
+  // tracking mechanism running while he reads. `visibilitychange` fires where
+  // `unload` is unreliable on mobile, and a write here is one small setItem.
+  function topmostSection() {
+    const visible = [...document.querySelectorAll("main section.panel")]
+      .filter(section => !section.hidden)
+      .map(section => ({ id: section.id, top: section.getBoundingClientRect().top }));
+    if (!visible.length) return null;
+    // The section crossing the top of the viewport, or the first one below it.
+    const straddling = visible.filter(section => section.top <= 1);
+    const chosen = straddling.length
+      ? straddling[straddling.length - 1]
+      : visible.reduce((best, section) => section.top < best.top ? section : best);
+    return chosen.id;
+  }
+
+  function noteSectionOnLeave() {
+    const id = topmostSection();
+    if (id) markUsage({ section: id });
+  }
+
+  function drainSummaryText() {
+    return drainText(usageStored(), requestQueue(), localIsoDate());
+  }
+
+  async function copyDrain() {
+    const status = document.querySelector("#request-copy-status");
+    const fallback = document.querySelector("#request-drain-fallback");
+    const field = document.querySelector("#request-drain-text");
+    const text = drainSummaryText();
+    // The textarea is filled either way: if the clipboard write throws, the text
+    // is already on screen to copy by hand, which is the whole point of not
+    // needing devtools on his laptop.
+    if (field) field.value = text;
+    try {
+      await navigator.clipboard.writeText(text);
+      if (fallback) fallback.hidden = true;
+      if (status) status.textContent = `Copied ${text.split("\n").length} lines to the clipboard.`;
+      return true;
+    } catch {
+      if (fallback) fallback.hidden = false;
+      field?.focus();
+      field?.select();
+      if (status) status.textContent = "This browser refused the clipboard — the text is below, select and copy it.";
+      return false;
+    }
   }
 
   // The one section on this page that does not count rows.
@@ -2000,6 +2092,28 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
         : "This browser will not let the page save. Nothing was lost — the text is still above.";
       if (!saved) field.value = text;
     });
+    document.querySelector("#request-copy")?.addEventListener("click", copyDrain);
+
+    // One delegated listener for both signals, reading the links the panels already
+    // render. Nothing is added to the games or lesson markup for this — no second
+    // copy of "what counts as a game" to drift out of step with the first.
+    document.addEventListener("click", event => {
+      const link = event.target.closest?.("a[href]");
+      if (!link) return;
+      if (link.closest("#games")) markUsage({ games: true });
+      else if (/(^|\/)(lessons|labs)\//.test(link.getAttribute("href") ?? "")) {
+        markUsage({ lesson: true });
+      }
+      renderStreak();
+    });
+
+    // "Where he was when he left" is written when the page is hidden — closing the
+    // tab, switching apps, locking the laptop. pagehide covers the cases
+    // visibilitychange misses.
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") noteSectionOnLeave();
+    });
+    window.addEventListener("pagehide", noteSectionOnLeave);
   }
 
   window.AlgebraQuest = Object.freeze({
@@ -2021,6 +2135,10 @@ import { artifact, isTypingTarget, escapeHtml, localIsoDate, dateDiff, addDays, 
   // Anything he wrote on a previous visit is on screen before the data loads, so
   // the box is never an empty form that ate his last idea.
   renderSavedRequests();
+  // This visit is recorded before the data loads, so the streak survives a page
+  // opened while the network is down — showing up still counts.
+  markUsage(null);
+  renderStreak();
   bindEvents();
   // He is going to hit F12 and poke at this. That is the correct instinct for someone
   // who wants to build software, so the console rewards it instead of hiding from it.
