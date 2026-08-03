@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-03T06:52:27.514Z",
+  "generatedAt": "2026-08-03T17:05:33.150Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-03T06:52:27.512Z",
+      "parsedAt": "2026-08-03T17:05:33.149Z",
       "reportedTotalSeconds": 339720,
       "days": [
         {
@@ -1984,17 +1984,34 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-03T06:52:27.514Z",
-      "reportedTotalSeconds": 92220,
+      "parsedAt": "2026-08-03T17:05:33.150Z",
+      "reportedTotalSeconds": 97080,
       "days": [
         {
+          "date": "2026-08-03",
+          "reportedSeconds": 3,
+          "entries": [
+            {
+              "title": "Categorical Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "9:30 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            }
+          ],
+          "entryCount": 1,
+          "sumSeconds": 3,
+          "credibleSeconds": 3,
+          "idleSuspectCount": 0,
+          "totalsAgree": true
+        },
+        {
           "date": "2026-08-02",
-          "reportedSeconds": 23400,
+          "reportedSeconds": 28200,
           "entries": [
             {
               "title": "Categorical Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
               "startTime": "10:40 PM",
-              "seconds": 4200,
+              "seconds": 9000,
               "idleSuspect": false
             },
             {
@@ -2095,8 +2112,8 @@
             }
           ],
           "entryCount": 17,
-          "sumSeconds": 23407,
-          "credibleSeconds": 23407,
+          "sumSeconds": 28207,
+          "credibleSeconds": 28207,
           "idleSuspectCount": 0,
           "totalsAgree": true
         },
@@ -2501,8 +2518,8 @@
           "totalsAgree": true
         }
       ],
-      "dayCount": 9,
-      "entryCount": 69,
+      "dayCount": 10,
+      "entryCount": 70,
       "idleSuspectCount": 1,
       "daysWithMismatchedTotals": []
     }
