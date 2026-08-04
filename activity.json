@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-04T16:47:40.911Z",
+  "generatedAt": "2026-08-04T22:53:33.886Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-04T16:47:40.910Z",
+      "parsedAt": "2026-08-04T22:53:33.885Z",
       "reportedTotalSeconds": 339720,
       "days": [
         {
@@ -1984,9 +1984,140 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-04T16:47:40.911Z",
-      "reportedTotalSeconds": 129180,
+      "parsedAt": "2026-08-04T22:53:33.886Z",
+      "reportedTotalSeconds": 144360,
       "days": [
+        {
+          "date": "2026-08-04",
+          "reportedSeconds": 15180,
+          "entries": [
+            {
+              "title": "Section 3 Final Test Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "2:10 PM",
+              "seconds": 5220,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "2:07 PM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 3 Final Test Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "1:59 PM",
+              "seconds": 379,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Algebra Tiles - Factoring Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "1:54 PM",
+              "seconds": 267,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve by Graphing Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "1:53 PM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 2 Final Test Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:35 PM",
+              "seconds": 3900,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 2 Final Test Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:24 PM",
+              "seconds": 476,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Writing Quadratic functions Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:13 PM",
+              "seconds": 672,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Transformations) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:12 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Introduction) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:12 PM",
+              "seconds": 16,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Solve Quadratics by Graphing Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "12:08 PM",
+              "seconds": 215,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 3 - Solving Quadratic Equations Algebra I Semester 2",
+              "startTime": "12:08 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Transformations) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:04 PM",
+              "seconds": 133,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Graphing Quadratics Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "11:53 AM",
+              "seconds": 675,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Introduction) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "11:48 AM",
+              "seconds": 284,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "11:48 AM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "11:47 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "10:24 AM",
+              "seconds": 1205,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 1 Final Test Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "9:56 AM",
+              "seconds": 1643,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "9:55 AM",
+              "seconds": 82,
+              "idleSuspect": false
+            }
+          ],
+          "entryCount": 20,
+          "sumSeconds": 15193,
+          "credibleSeconds": 15193,
+          "idleSuspectCount": 0,
+          "totalsAgree": true
+        },
         {
           "date": "2026-08-03",
           "reportedSeconds": 32100,
@@ -2566,8 +2697,8 @@
           "totalsAgree": true
         }
       ],
-      "dayCount": 10,
-      "entryCount": 78,
+      "dayCount": 11,
+      "entryCount": 98,
       "idleSuspectCount": 2,
       "daysWithMismatchedTotals": []
     }
