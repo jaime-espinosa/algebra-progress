@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-04T22:53:33.886Z",
+  "generatedAt": "2026-08-05T06:20:16.359Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-04T22:53:33.885Z",
+      "parsedAt": "2026-08-05T06:20:16.359Z",
       "reportedTotalSeconds": 339720,
       "days": [
         {
@@ -1984,13 +1984,49 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-04T22:53:33.886Z",
-      "reportedTotalSeconds": 144360,
+      "parsedAt": "2026-08-05T06:20:16.359Z",
+      "reportedTotalSeconds": 164160,
       "days": [
         {
           "date": "2026-08-04",
-          "reportedSeconds": 15180,
+          "reportedSeconds": 34980,
           "entries": [
+            {
+              "title": "Section 5 Final Test Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "6:07 PM",
+              "seconds": 14460,
+              "idleSuspect": true
+            },
+            {
+              "title": "Lesson 4: Solve Rational Equations Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "6:00 PM",
+              "seconds": 378,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Solve Rational Equations Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "5:31 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Add and Subtract Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "4:16 PM",
+              "seconds": 4440,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 4 Final Test Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "4:09 PM",
+              "seconds": 324,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Add and Subtract Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "4:08 PM",
+              "seconds": 70,
+              "idleSuspect": false
+            },
             {
               "title": "Section 3 Final Test Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
               "startTime": "2:10 PM",
@@ -2112,10 +2148,10 @@
               "idleSuspect": false
             }
           ],
-          "entryCount": 20,
-          "sumSeconds": 15193,
-          "credibleSeconds": 15193,
-          "idleSuspectCount": 0,
+          "entryCount": 26,
+          "sumSeconds": 34867,
+          "credibleSeconds": 20407,
+          "idleSuspectCount": 1,
           "totalsAgree": true
         },
         {
@@ -2698,8 +2734,8 @@
         }
       ],
       "dayCount": 11,
-      "entryCount": 98,
-      "idleSuspectCount": 2,
+      "entryCount": 104,
+      "idleSuspectCount": 3,
       "daysWithMismatchedTotals": []
     }
   ]
