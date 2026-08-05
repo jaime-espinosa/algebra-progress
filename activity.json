@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-05T16:27:26.185Z",
+  "generatedAt": "2026-08-05T22:01:17.969Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-05T16:27:26.185Z",
+      "parsedAt": "2026-08-05T22:01:17.968Z",
       "reportedTotalSeconds": 339720,
       "days": [
         {
@@ -1984,7 +1984,7 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-05T16:27:26.185Z",
+      "parsedAt": "2026-08-05T22:01:17.969Z",
       "reportedTotalSeconds": 164160,
       "days": [
         {
@@ -2222,114 +2222,11 @@
         {
           "date": "2026-08-02",
           "reportedSeconds": 28200,
-          "entries": [
-            {
-              "title": "Categorical Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
-              "startTime": "10:40 PM",
-              "seconds": 9000,
-              "idleSuspect": false
-            },
-            {
-              "title": "Categorical Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
-              "startTime": "6:39 PM",
-              "seconds": 1802,
-              "idleSuspect": false
-            },
-            {
-              "title": "Solve Rational Equations: Practice Test Algebra I Semester 2 > Section 5 - Rational Expressions",
-              "startTime": "6:34 PM",
-              "seconds": 239,
-              "idleSuspect": false
-            },
-            {
-              "title": "Add and Subtract Rational Expressions: Practice Test Algebra I Semester 2 > Section 5 - Rational Expressions",
-              "startTime": "6:29 PM",
-              "seconds": 272,
-              "idleSuspect": false
-            },
-            {
-              "title": "Multiply and Divide Rational Expressions: Practice Test Algebra I Semester 2 > Section 5 - Rational Expressions",
-              "startTime": "6:25 PM",
-              "seconds": 188,
-              "idleSuspect": false
-            },
-            {
-              "title": "Simplify Rational Expressions: Practice Test Algebra I Semester 2 > Section 5 - Rational Expressions",
-              "startTime": "6:23 PM",
-              "seconds": 111,
-              "idleSuspect": false
-            },
-            {
-              "title": "Solve Radical Equations: Practice Quiz Algebra I Semester 2 > Section 4 - Radical Functions",
-              "startTime": "6:19 PM",
-              "seconds": 178,
-              "idleSuspect": false
-            },
-            {
-              "title": "Multiply and Divide Radical Expressions: Practice Quiz Algebra I Semester 2 > Section 4 - Radical Functions",
-              "startTime": "6:09 PM",
-              "seconds": 600,
-              "idleSuspect": false
-            },
-            {
-              "title": "Combining Radical Expressions: Practice Quiz Algebra I Semester 2 > Section 4 - Radical Functions",
-              "startTime": "6:04 PM",
-              "seconds": 19,
-              "idleSuspect": false
-            },
-            {
-              "title": "Combining Radical Expressions: Practice Quiz Algebra I Semester 2 > Section 4 - Radical Functions",
-              "startTime": "10:49 AM",
-              "seconds": 5580,
-              "idleSuspect": false
-            },
-            {
-              "title": "Graphing Radical Functions: Practice Quiz Algebra I Semester 2 > Section 4 - Radical Functions",
-              "startTime": "10:37 AM",
-              "seconds": 727,
-              "idleSuspect": false
-            },
-            {
-              "title": "Solve Non-Linear Systems: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
-              "startTime": "10:19 AM",
-              "seconds": 1031,
-              "idleSuspect": false
-            },
-            {
-              "title": "Solve by Factoring: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
-              "startTime": "9:53 AM",
-              "seconds": 76,
-              "idleSuspect": false
-            },
-            {
-              "title": "Section Objectives Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
-              "startTime": "9:16 AM",
-              "seconds": 2173,
-              "idleSuspect": false
-            },
-            {
-              "title": "Solve using Quadratic Formula: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
-              "startTime": "9:04 AM",
-              "seconds": 659,
-              "idleSuspect": false
-            },
-            {
-              "title": "Solve by Square Root Method: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
-              "startTime": "8:21 AM",
-              "seconds": 2547,
-              "idleSuspect": false
-            },
-            {
-              "title": "Solve by Square Root Method: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
-              "startTime": "7:29 AM",
-              "seconds": 3005,
-              "idleSuspect": false
-            }
-          ],
           "entryCount": 17,
           "sumSeconds": 28207,
           "credibleSeconds": 28207,
           "idleSuspectCount": 0,
+          "longestSeconds": 9000,
           "totalsAgree": true
         },
         {
