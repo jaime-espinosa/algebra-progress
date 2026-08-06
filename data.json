@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T08:01:13-07:00",
+  "generatedAt": "2026-08-06T15:01:06-07:00",
   "scrapeOk": true,
   "deadline": {
     "date": "2026-08-15",
@@ -1256,9 +1256,9 @@
       "letter": "A",
       "pointsEarned": 536.33,
       "pointsPossible": 569,
-      "gradableDone": 13,
+      "gradableDone": 14,
       "gradableTotal": 41,
-      "allDone": 68,
+      "allDone": 69,
       "allTotal": 103,
       "lmsStart": "2026-06-30",
       "lmsEnd": "2026-08-25",
@@ -1371,7 +1371,8 @@
           "submittedDate": "2026-07-26",
           "lmsDue": "2026-07-03",
           "rowIndex": 4,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-1:assignment-properties-of-exponents",
@@ -1388,7 +1389,8 @@
           "submittedDate": "2026-08-03",
           "lmsDue": "2026-07-04",
           "rowIndex": 5,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-1:graphing-exponential-functions-practice-quiz",
@@ -1405,7 +1407,8 @@
           "submittedDate": "2026-07-31",
           "lmsDue": "2026-07-04",
           "rowIndex": 6,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-1:assignment-graphing-exponential-functions",
@@ -1422,7 +1425,8 @@
           "submittedDate": "2026-08-03",
           "lmsDue": "2026-07-05",
           "rowIndex": 7,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-1:writing-exponential-functions-practice-quiz",
@@ -1439,7 +1443,8 @@
           "submittedDate": "2026-07-31",
           "lmsDue": "2026-07-05",
           "rowIndex": 8,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-1:assignment-writing-exponential-functions",
@@ -1456,7 +1461,8 @@
           "submittedDate": "2026-08-03",
           "lmsDue": "2026-07-05",
           "rowIndex": 9,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-1:geometric-sequences-practice-quiz",
@@ -1473,7 +1479,8 @@
           "submittedDate": "2026-08-01",
           "lmsDue": "2026-07-06",
           "rowIndex": 10,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-1:assignment-geometric-sequences",
@@ -1503,7 +1510,8 @@
           "submittedDate": "2026-08-04",
           "lmsDue": "2026-07-07",
           "rowIndex": 12,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-1:end-of-section-assignment-exponential-functions",
@@ -1533,7 +1541,8 @@
           "submittedDate": "2026-08-01",
           "lmsDue": "2026-07-08",
           "rowIndex": 14,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-2:assignment-quadratic-functions-introduction",
@@ -1563,7 +1572,8 @@
           "submittedDate": "2026-08-01",
           "lmsDue": "2026-07-09",
           "rowIndex": 16,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-2:activity-graphing-quadratics",
@@ -1580,7 +1590,8 @@
           "submittedDate": "2026-08-04",
           "lmsDue": "2026-07-09",
           "rowIndex": 17,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-2:assignment-quadratic-functions-transformations",
@@ -1610,7 +1621,8 @@
           "submittedDate": "2026-08-01",
           "lmsDue": "2026-07-10",
           "rowIndex": 19,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-2:assignment-writing-quadratic-functions",
@@ -1627,7 +1639,8 @@
           "submittedDate": "2026-08-04",
           "lmsDue": "2026-07-11",
           "rowIndex": 20,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-2:modeling-with-quadratic-functions-practice-quiz",
@@ -1644,7 +1657,8 @@
           "submittedDate": "2026-08-01",
           "lmsDue": "2026-07-11",
           "rowIndex": 21,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-2:assignment-modeling-with-quadratic-functions",
@@ -1674,7 +1688,8 @@
           "submittedDate": "2026-08-04",
           "lmsDue": "2026-07-12",
           "rowIndex": 23,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-2:end-of-section-assignment-quadratic-functions",
@@ -1704,7 +1719,8 @@
           "submittedDate": "2026-08-01",
           "lmsDue": "2026-07-14",
           "rowIndex": 25,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-3:activity-solve-quadratics-by-graphing",
@@ -1721,7 +1737,8 @@
           "submittedDate": "2026-08-04",
           "lmsDue": "2026-07-14",
           "rowIndex": 26,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-3:assignment-solve-by-graphing",
@@ -1751,7 +1768,8 @@
           "submittedDate": "2026-08-04",
           "lmsDue": "2026-07-15",
           "rowIndex": 28,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-3:solve-by-factoring-practice-quiz",
@@ -1768,19 +1786,20 @@
           "submittedDate": "2026-08-01",
           "lmsDue": "2026-07-15",
           "rowIndex": 29,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-3:assignment-solve-by-factoring",
           "title": "Assignment: Solve by Factoring",
           "sectionNumber": 3,
           "sectionName": "Solving Quadratic Equations",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-06",
           "lmsDue": "2026-07-15",
           "rowIndex": 30,
-          "ourTarget": "2026-08-09",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1798,7 +1817,8 @@
           "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-16",
           "rowIndex": 31,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-3:assignment-solve-by-square-root-method",
@@ -1828,7 +1848,8 @@
           "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-17",
           "rowIndex": 33,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-3:assignment-solve-using-quadratic-formula",
@@ -1858,7 +1879,8 @@
           "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-17",
           "rowIndex": 35,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-3:assignment-solve-non-linear-systems",
@@ -1888,7 +1910,8 @@
           "submittedDate": "2026-08-04",
           "lmsDue": "2026-07-19",
           "rowIndex": 37,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-3:end-of-section-assignment-solve-quadratic-equations",
@@ -1900,7 +1923,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-19",
           "rowIndex": 38,
-          "ourTarget": "2026-08-10",
+          "ourTarget": "2026-08-09",
           "gradable": true
         },
         {
@@ -1918,7 +1941,8 @@
           "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-20",
           "rowIndex": 39,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-4:assignment-graphing-radical-functions",
@@ -1948,7 +1972,8 @@
           "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-20",
           "rowIndex": 41,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-4:assignment-combining-radical-expressions",
@@ -1978,7 +2003,8 @@
           "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-21",
           "rowIndex": 43,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-4:assignment-multiply-and-divide-radical-expressions",
@@ -2008,7 +2034,8 @@
           "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-22",
           "rowIndex": 45,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-4:assignment-solve-radical-equations",
@@ -2020,7 +2047,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-22",
           "rowIndex": 46,
-          "ourTarget": "2026-08-11",
+          "ourTarget": "2026-08-10",
           "gradable": true
         },
         {
@@ -2038,7 +2065,8 @@
           "submittedDate": "2026-08-04",
           "lmsDue": "2026-07-23",
           "rowIndex": 47,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-4:end-of-section-assignment-radical-functions",
@@ -2068,7 +2096,8 @@
           "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-24",
           "rowIndex": 49,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-5:assignment-solve-rational-expressions",
@@ -2098,7 +2127,8 @@
           "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-25",
           "rowIndex": 51,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-5:assignment-multiply-and-divide-rational-expressions",
@@ -2128,7 +2158,8 @@
           "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-26",
           "rowIndex": 53,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-5:assignment-add-and-subtract-rational-expressions",
@@ -2140,7 +2171,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-27",
           "rowIndex": 54,
-          "ourTarget": "2026-08-12",
+          "ourTarget": "2026-08-11",
           "gradable": true
         },
         {
@@ -2158,7 +2189,8 @@
           "submittedDate": "2026-08-02",
           "lmsDue": "2026-07-27",
           "rowIndex": 55,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-5:assignment-solve-rational-equations",
@@ -2188,7 +2220,8 @@
           "submittedDate": "2026-08-04",
           "lmsDue": "2026-07-28",
           "rowIndex": 57,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-5:end-of-section-assignment-rational-expressions",
@@ -2218,7 +2251,8 @@
           "submittedDate": "2026-08-03",
           "lmsDue": "2026-07-30",
           "rowIndex": 60,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-6:assignment-categorical-data",
@@ -2230,7 +2264,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-30",
           "rowIndex": 61,
-          "ourTarget": "2026-08-13",
+          "ourTarget": "2026-08-12",
           "gradable": true
         },
         {
@@ -2248,7 +2282,8 @@
           "submittedDate": "2026-08-03",
           "lmsDue": "2026-07-30",
           "rowIndex": 62,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-6:assignment-univariate-statistics",
@@ -2278,7 +2313,8 @@
           "submittedDate": "2026-08-03",
           "lmsDue": "2026-07-31",
           "rowIndex": 64,
-          "ourTarget": null
+          "ourTarget": null,
+          "gradable": true
         },
         {
           "id": "sem2:section-6:assignment-bivariate-data",
@@ -2316,7 +2352,7 @@
           "submittedDate": null,
           "lmsDue": "2026-08-02",
           "rowIndex": 67,
-          "ourTarget": "2026-08-14",
+          "ourTarget": "2026-08-13",
           "gradable": true
         }
       ]
