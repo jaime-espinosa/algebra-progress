@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T15:01:06-07:00",
+  "generatedAt": "2026-08-06T16:10:56-07:00",
   "scrapeOk": true,
   "deadline": {
     "date": "2026-08-15",
@@ -1212,7 +1212,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-12",
           "rowIndex": 64,
-          "ourTarget": "2026-08-06",
+          "ourTarget": "2026-08-07",
           "gradable": true
         },
         {
@@ -1256,9 +1256,9 @@
       "letter": "A",
       "pointsEarned": 536.33,
       "pointsPossible": 569,
-      "gradableDone": 14,
+      "gradableDone": 19,
       "gradableTotal": 41,
-      "allDone": 69,
+      "allDone": 75,
       "allTotal": 103,
       "lmsStart": "2026-06-30",
       "lmsEnd": "2026-08-25",
@@ -1353,7 +1353,7 @@
           "submittedDate": null,
           "lmsDue": "2026-08-01",
           "rowIndex": 3,
-          "ourTarget": "2026-08-12",
+          "ourTarget": "2026-08-13",
           "gradable": true
         },
         {
@@ -1523,7 +1523,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-08",
           "rowIndex": 13,
-          "ourTarget": "2026-08-07",
+          "ourTarget": "2026-08-08",
           "gradable": true
         },
         {
@@ -1554,7 +1554,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-09",
           "rowIndex": 15,
-          "ourTarget": "2026-08-07",
+          "ourTarget": "2026-08-08",
           "gradable": true
         },
         {
@@ -1670,7 +1670,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-11",
           "rowIndex": 22,
-          "ourTarget": "2026-08-08",
+          "ourTarget": "2026-08-09",
           "gradable": true
         },
         {
@@ -1701,7 +1701,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-13",
           "rowIndex": 24,
-          "ourTarget": "2026-08-08",
+          "ourTarget": "2026-08-09",
           "gradable": true
         },
         {
@@ -1750,7 +1750,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-14",
           "rowIndex": 27,
-          "ourTarget": "2026-08-08",
+          "ourTarget": "2026-08-09",
           "gradable": true
         },
         {
@@ -1825,12 +1825,12 @@
           "title": "Assignment: Solve by Square Root Method",
           "sectionNumber": 3,
           "sectionName": "Solving Quadratic Equations",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-06",
           "lmsDue": "2026-07-16",
           "rowIndex": 32,
-          "ourTarget": "2026-08-09",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1861,7 +1861,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-17",
           "rowIndex": 34,
-          "ourTarget": "2026-08-09",
+          "ourTarget": "2026-08-10",
           "gradable": true
         },
         {
@@ -1892,7 +1892,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-18",
           "rowIndex": 36,
-          "ourTarget": "2026-08-09",
+          "ourTarget": "2026-08-10",
           "gradable": true
         },
         {
@@ -1923,7 +1923,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-19",
           "rowIndex": 38,
-          "ourTarget": "2026-08-09",
+          "ourTarget": "2026-08-10",
           "gradable": true
         },
         {
@@ -1954,7 +1954,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-20",
           "rowIndex": 40,
-          "ourTarget": "2026-08-10",
+          "ourTarget": "2026-08-11",
           "gradable": true
         },
         {
@@ -1980,12 +1980,12 @@
           "title": "Assignment: Combining Radical Expressions",
           "sectionNumber": 4,
           "sectionName": "Radical Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-06",
           "lmsDue": "2026-07-21",
           "rowIndex": 42,
-          "ourTarget": "2026-08-10",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -2011,12 +2011,12 @@
           "title": "Assignment: Multiply and Divide Radical Expressions",
           "sectionNumber": 4,
           "sectionName": "Radical Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-06",
           "lmsDue": "2026-07-22",
           "rowIndex": 44,
-          "ourTarget": "2026-08-10",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -2042,12 +2042,12 @@
           "title": "Assignment: Solve Radical Equations",
           "sectionNumber": 4,
           "sectionName": "Radical Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-06",
           "lmsDue": "2026-07-22",
           "rowIndex": 46,
-          "ourTarget": "2026-08-10",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -2104,12 +2104,12 @@
           "title": "Assignment: Solve Rational Expressions",
           "sectionNumber": 5,
           "sectionName": "Rational Expressions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-06",
           "lmsDue": "2026-07-25",
           "rowIndex": 50,
-          "ourTarget": "2026-08-11",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -2171,7 +2171,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-27",
           "rowIndex": 54,
-          "ourTarget": "2026-08-11",
+          "ourTarget": "2026-08-12",
           "gradable": true
         },
         {
@@ -2264,7 +2264,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-30",
           "rowIndex": 61,
-          "ourTarget": "2026-08-12",
+          "ourTarget": "2026-08-13",
           "gradable": true
         },
         {
@@ -2326,7 +2326,7 @@
           "submittedDate": null,
           "lmsDue": "2026-08-01",
           "rowIndex": 65,
-          "ourTarget": "2026-08-13",
+          "ourTarget": "2026-08-14",
           "gradable": true
         },
         {
@@ -2339,7 +2339,7 @@
           "submittedDate": null,
           "lmsDue": "2026-08-02",
           "rowIndex": 66,
-          "ourTarget": "2026-08-13",
+          "ourTarget": "2026-08-14",
           "gradable": true
         },
         {
@@ -2352,7 +2352,7 @@
           "submittedDate": null,
           "lmsDue": "2026-08-02",
           "rowIndex": 67,
-          "ourTarget": "2026-08-13",
+          "ourTarget": "2026-08-14",
           "gradable": true
         }
       ]
