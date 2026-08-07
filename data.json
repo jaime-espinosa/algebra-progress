@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T18:29:07-07:00",
+  "generatedAt": "2026-08-06T21:02:22-07:00",
   "scrapeOk": true,
   "deadline": {
     "date": "2026-08-15",
@@ -1185,10 +1185,10 @@
       "id": "sem2",
       "courseId": "264459139",
       "name": "Algebra I Semester 2",
-      "percent": 94.25,
+      "percent": 94.61,
       "letter": "A",
-      "pointsEarned": 536.33,
-      "pointsPossible": 569,
+      "pointsEarned": 574.33,
+      "pointsPossible": 607,
       "gradableDone": 19,
       "gradableTotal": 41,
       "allDone": 75,
@@ -1213,14 +1213,14 @@
         {
           "number": 3,
           "name": "Solving Quadratic Equations",
-          "percent": 99.12,
+          "percent": 99.18,
           "letter": "A",
           "complete": false
         },
         {
           "number": 4,
           "name": "Radical Functions",
-          "percent": 93.33,
+          "percent": 94.87,
           "letter": "A",
           "complete": false
         },
@@ -1727,8 +1727,13 @@
           "title": "Assignment: Solve by Square Root Method",
           "sectionNumber": 3,
           "sectionName": "Solving Quadratic Equations",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 8,
+            "possible": 8,
+            "percent": 100,
+            "letter": "A"
+          },
           "submittedDate": "2026-08-06",
           "lmsDue": "2026-07-16",
           "rowIndex": 32,
@@ -1872,8 +1877,13 @@
           "title": "Assignment: Combining Radical Expressions",
           "sectionNumber": 4,
           "sectionName": "Radical Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 10,
+            "possible": 10,
+            "percent": 100,
+            "letter": "A"
+          },
           "submittedDate": "2026-08-06",
           "lmsDue": "2026-07-21",
           "rowIndex": 42,
@@ -1930,8 +1940,13 @@
           "title": "Assignment: Solve Radical Equations",
           "sectionNumber": 4,
           "sectionName": "Radical Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 20,
+            "possible": 20,
+            "percent": 100,
+            "letter": "A"
+          },
           "submittedDate": "2026-08-06",
           "lmsDue": "2026-07-22",
           "rowIndex": 46,
