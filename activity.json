@@ -1,19 +1,56 @@
 {
-  "generatedAt": "2026-08-09T22:00:58.386Z",
+  "generatedAt": "2026-08-09T22:20:08.085Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-09T22:00:58.385Z",
+      "parsedAt": "2026-08-09T22:20:08.083Z",
       "reportedTotalSeconds": 343740,
       "days": [
         {
           "date": "2026-08-09",
           "reportedSeconds": 3368,
+          "entries": [
+            {
+              "title": "Assignment Section 6 Lesson 1 Section 6 - Piecewise Functions",
+              "startTime": "2:08 PM",
+              "seconds": 131,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 1 Section 6 - Piecewise Functions",
+              "startTime": "12:45 PM",
+              "seconds": 3005,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 1 Section 6 - Piecewise Functions",
+              "startTime": "12:41 PM",
+              "seconds": 10,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 3 Section 6 - Piecewise Functions",
+              "startTime": "12:39 PM",
+              "seconds": 6,
+              "idleSuspect": false
+            },
+            {
+              "title": "Tell us what you think!",
+              "startTime": "12:36 PM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 5 Section 5 - Linear Functions",
+              "startTime": "12:33 PM",
+              "seconds": 212,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 6,
           "sumSeconds": 3368,
           "credibleSeconds": 3368,
           "idleSuspectCount": 0,
-          "longestSeconds": 3005,
           "totalsAgree": true
         },
         {
@@ -2035,17 +2072,126 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-09T22:00:58.386Z",
+      "parsedAt": "2026-08-09T22:20:08.085Z",
       "reportedTotalSeconds": 178260,
       "days": [
         {
           "date": "2026-08-09",
           "reportedSeconds": 10020,
+          "entries": [
+            {
+              "title": "Tell us what you think!",
+              "startTime": "11:46 AM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 6 Final Test Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:21 AM",
+              "seconds": 559,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Data Analysis Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:17 AM",
+              "seconds": 209,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Curve Fitting Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:13 AM",
+              "seconds": 219,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Bivariate Data Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:42 AM",
+              "seconds": 1045,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Bivariate Data Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:36 AM",
+              "seconds": 327,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Univariate Statistics Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:28 AM",
+              "seconds": 505,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Univariate Statistics Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:23 AM",
+              "seconds": 310,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation: Course and Platform Navigation",
+              "startTime": "10:22 AM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Categorical Data Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:05 AM",
+              "seconds": 1011,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Categorical Data Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "9:12 AM",
+              "seconds": 601,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Categorical Data Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "9:04 AM",
+              "seconds": 456,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "9:04 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "8:24 AM",
+              "seconds": 2400,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve Rational Equations Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "8:03 AM",
+              "seconds": 1224,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Add and Subtract Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "7:55 AM",
+              "seconds": 479,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Multiply and Divide Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "7:45 AM",
+              "seconds": 595,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "7:44 AM",
+              "seconds": 74,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 18,
           "sumSeconds": 10028,
           "credibleSeconds": 10028,
           "idleSuspectCount": 0,
-          "longestSeconds": 2400,
           "totalsAgree": true
         },
         {
