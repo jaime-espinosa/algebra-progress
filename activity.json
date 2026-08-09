@@ -1,11 +1,21 @@
 {
-  "generatedAt": "2026-08-09T15:22:43.785Z",
+  "generatedAt": "2026-08-09T22:00:58.386Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-09T15:22:43.784Z",
-      "reportedTotalSeconds": 340320,
+      "parsedAt": "2026-08-09T22:00:58.385Z",
+      "reportedTotalSeconds": 343740,
       "days": [
+        {
+          "date": "2026-08-09",
+          "reportedSeconds": 3368,
+          "entryCount": 6,
+          "sumSeconds": 3368,
+          "credibleSeconds": 3368,
+          "idleSuspectCount": 0,
+          "longestSeconds": 3005,
+          "totalsAgree": true
+        },
         {
           "date": "2026-08-05",
           "reportedSeconds": 609,
@@ -2018,49 +2028,24 @@
           "totalsAgree": true
         }
       ],
-      "dayCount": 29,
-      "entryCount": 282,
+      "dayCount": 30,
+      "entryCount": 288,
       "idleSuspectCount": 2,
       "daysWithMismatchedTotals": []
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-09T15:22:43.785Z",
-      "reportedTotalSeconds": 169980,
+      "parsedAt": "2026-08-09T22:00:58.386Z",
+      "reportedTotalSeconds": 178260,
       "days": [
         {
           "date": "2026-08-09",
-          "reportedSeconds": 1749,
-          "entries": [
-            {
-              "title": "Assignment: Solve Rational Equations Algebra I Semester 2 > Section 5 - Rational Expressions",
-              "startTime": "8:03 AM",
-              "seconds": 601,
-              "idleSuspect": false
-            },
-            {
-              "title": "Assignment: Add and Subtract Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
-              "startTime": "7:55 AM",
-              "seconds": 479,
-              "idleSuspect": false
-            },
-            {
-              "title": "Assignment: Multiply and Divide Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
-              "startTime": "7:45 AM",
-              "seconds": 595,
-              "idleSuspect": false
-            },
-            {
-              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
-              "startTime": "7:44 AM",
-              "seconds": 74,
-              "idleSuspect": false
-            }
-          ],
-          "entryCount": 4,
-          "sumSeconds": 1749,
-          "credibleSeconds": 1749,
+          "reportedSeconds": 10020,
+          "entryCount": 18,
+          "sumSeconds": 10028,
+          "credibleSeconds": 10028,
           "idleSuspectCount": 0,
+          "longestSeconds": 2400,
           "totalsAgree": true
         },
         {
@@ -2970,7 +2955,7 @@
         }
       ],
       "dayCount": 14,
-      "entryCount": 131,
+      "entryCount": 145,
       "idleSuspectCount": 3,
       "daysWithMismatchedTotals": []
     }
