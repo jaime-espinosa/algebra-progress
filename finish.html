@@ -60,10 +60,10 @@
 <body>
   <p class="sub mono">algebra_quest // finish line</p>
   <h1>🏁 Mark's Finish-Line Plan</h1>
-  <p class="sub">Goal: finish Algebra I with a <strong>B or better</strong> — Semester 1, Semester 2, and overall. Course closes <strong>Aug 25</strong>.</p>
+  <p class="sub">Goal: finish Algebra I with a <strong>B or better</strong> — Semester 1, Semester 2, and overall. Deadline: <strong>Aug 13</strong> — 5 days.</p>
 
   <div class="banner">
-    <strong>The one thing that matters:</strong> the assignments you haven't started turn into <em>zeros</em> on Aug 25. Finishing them is what keeps your grade a B. Turn everything in and aim for <strong>83%+</strong> on each — that locks a solid B (see the scale below).
+    <strong>The one thing that matters:</strong> the assignments you haven't started turn into <em>zeros</em> on Aug 13. Finishing them is what keeps your grade a B. That's <strong>27 items in 5 days — about 6 a day.</strong> Turn everything in and aim for <strong>83%+</strong> on each (see the scale below).
   </div>
 
   <div class="panel">
@@ -76,7 +76,7 @@
     <div class="stat"><div class="n">87%</div><div class="l">Sem 1 now</div></div>
     <div class="stat"><div class="n">94%</div><div class="l">Sem 2 (work done)</div></div>
     <div class="stat"><div class="n">27</div><div class="l">Items left</div></div>
-    <div class="stat"><div class="n">2 / day</div><div class="l">Pace to finish</div></div>
+    <div class="stat"><div class="n">~6 / day</div><div class="l">Pace (5 days)</div></div>
   </div>
 
   <h2>Your progress</h2>
@@ -88,8 +88,8 @@
     <ul class="rules">
       <li><strong>Finish all 27 items.</strong> A blank item = 0, and 0s are the only thing that can drop you below a B. Completion is 90% of the battle.</li>
       <li><strong>Aim 83%+ on each</strong> (that's the B line). Use the Practice Quizzes and the site's games/labs to warm up before an assignment.</li>
-      <li><strong>Two items a day.</strong> Check them off below — it saves automatically on this device.</li>
-      <li><strong>Sem 1 first (only 5 left), then Sem 2 in order.</strong> Section 6 (Data Analysis) is the biggest gap — it's the whole back half.</li>
+      <li><strong>About six items a day.</strong> Check them off below — it saves automatically on this device. Falling a day behind means doubling up the next — don't.</li>
+      <li><strong>Sem 1 first (only 5 left), then Sem 2 in order.</strong> Section 6 (Data Analysis) is the biggest gap — it's the whole back half, and its Final Test is the last thing on Aug 13.</li>
       <li><strong>If you score below 70% and a retake is allowed, redo it.</strong> Those extra points are the easiest B insurance.</li>
     </ul>
   </div>
@@ -97,50 +97,41 @@
   <h2>The daily quest log <button class="reset" id="reset">reset checks</button></h2>
   <div id="log"></div>
 
-  <p class="foot">Buffer: Aug 23–25 left open for retakes and teacher grading. You've got this. ⛏️</p>
+  <p class="foot">Aug 13 is the finish line — no buffer. Front-load, don't fall behind, and the Final Test is the last thing you touch. You've got this. ⛏️</p>
 
 <script>
 const PLAN = [
-  { date: "Sat Aug 9",  tag: "Sem 1 cleanup", tasks: [
+  { date: "Sat Aug 9", tag: "Clear all of Sem 1 + start Sem 2", tasks: [
     ["s1","Assignment Section 5 Lesson 3","Sem 1 · Linear Functions"],
-    ["s1","End of Section Assignment: Section 5","Sem 1 · Linear Functions"] ] },
-  { date: "Sun Aug 10", tag: "Sem 1 cleanup", tasks: [
+    ["s1","End of Section Assignment: Section 5","Sem 1 · Linear Functions"],
     ["s1","Assignment Section 6 Lesson 1","Sem 1 · Piecewise Functions"],
-    ["s1","Assignment Section 6 Lesson 3","Sem 1 · Piecewise Functions"] ] },
-  { date: "Mon Aug 11", tag: "Sem 1 done → Sem 2 start", tasks: [
+    ["s1","Assignment Section 6 Lesson 3","Sem 1 · Piecewise Functions"],
     ["s1","End of Section Assignment: Section 6","Sem 1 · Piecewise Functions"],
     ["s2","Assignment: Geometric Sequences","Sem 2 · Exponential Functions"] ] },
-  { date: "Tue Aug 12", tag: "Exponential → Quadratics", tasks: [
+  { date: "Sun Aug 10", tag: "Exponential → Quadratics", tasks: [
     ["s2","End of Section Assignment: Exponential Functions","Sem 2 · Exponential Functions"],
-    ["s2","Assignment: Quadratic Functions (Introduction)","Sem 2 · Quadratic Functions"] ] },
-  { date: "Wed Aug 13", tag: "Quadratics", tasks: [
+    ["s2","Assignment: Quadratic Functions (Introduction)","Sem 2 · Quadratic Functions"],
     ["s2","Assignment: Quadratic Functions (Transformations)","Sem 2 · Quadratic Functions"],
-    ["s2","Assignment: Modeling with Quadratic Functions","Sem 2 · Quadratic Functions"] ] },
-  { date: "Thu Aug 14", tag: "Quadratics → Solving", tasks: [
+    ["s2","Assignment: Modeling with Quadratic Functions","Sem 2 · Quadratic Functions"],
     ["s2","End of Section Assignment: Quadratic Functions","Sem 2 · Quadratic Functions"],
     ["s2","Assignment: Solve by Graphing","Sem 2 · Solving Quadratic Equations"] ] },
-  { date: "Fri Aug 15", tag: "Solving Quadratics", tasks: [
+  { date: "Mon Aug 11", tag: "Solving Quadratics → Radical", tasks: [
     ["s2","Assignment: Solve using Quadratic Formula","Sem 2 · Solving Quadratic Equations"],
-    ["s2","Assignment: Solve Non-Linear Systems","Sem 2 · Solving Quadratic Equations"] ] },
-  { date: "Sat Aug 16", tag: "Solving → Radical", tasks: [
+    ["s2","Assignment: Solve Non-Linear Systems","Sem 2 · Solving Quadratic Equations"],
     ["s2","End of Section Assignment: Solve Quadratic Equations","Sem 2 · Solving Quadratic Equations"],
-    ["s2","Assignment: Graphing Radical Functions","Sem 2 · Radical Functions"] ] },
-  { date: "Sun Aug 17", tag: "Radical → Rational", tasks: [
+    ["s2","Assignment: Graphing Radical Functions","Sem 2 · Radical Functions"],
     ["s2","End of Section Assignment: Radical Functions","Sem 2 · Radical Functions"],
     ["s2","Assignment: Multiply and Divide Rational Expressions","Sem 2 · Rational Expressions"] ] },
-  { date: "Mon Aug 18", tag: "Rational Expressions", tasks: [
+  { date: "Tue Aug 12", tag: "Rational → Data Analysis", tasks: [
     ["s2","Assignment: Add and Subtract Rational Expressions","Sem 2 · Rational Expressions"],
-    ["s2","Assignment: Solve Rational Equations","Sem 2 · Rational Expressions"] ] },
-  { date: "Tue Aug 19", tag: "Rational → Data Analysis", tasks: [
+    ["s2","Assignment: Solve Rational Equations","Sem 2 · Rational Expressions"],
     ["s2","End of Section Assignment: Rational Expressions","Sem 2 · Rational Expressions"],
-    ["s2","Activity: Curve Fitting","Sem 2 · Data Analysis"] ] },
-  { date: "Wed Aug 20", tag: "Data Analysis", tasks: [
+    ["s2","Activity: Curve Fitting","Sem 2 · Data Analysis"],
     ["s2","Assignment: Categorical Data","Sem 2 · Data Analysis"],
     ["s2","Assignment: Univariate Statistics","Sem 2 · Data Analysis"] ] },
-  { date: "Thu Aug 21", tag: "Data Analysis", tasks: [
+  { date: "Wed Aug 13", tag: "Deadline — finish Data Analysis + Final Test", tasks: [
     ["s2","Assignment: Bivariate Data","Sem 2 · Data Analysis"],
-    ["s2","End of Section Assignment: Data Analysis","Sem 2 · Data Analysis"] ] },
-  { date: "Fri Aug 22", tag: "Final push", tasks: [
+    ["s2","End of Section Assignment: Data Analysis","Sem 2 · Data Analysis"],
     ["s2","Section 6 Final Test — study first, then take it","Sem 2 · Data Analysis"] ] }
 ];
 
@@ -180,7 +171,7 @@ function refresh() {
   const left = ids.length - done;
   document.getElementById("pacenote").textContent = left === 0
     ? "🎉 Everything's in. That's your B — nice work."
-    : `${left} left. Keep the 2-a-day pace and you're done by Aug 22, with days to spare.`;
+    : `${left} left before Aug 13. Hold ~6 a day and you finish on time.`;
   document.querySelectorAll(".task").forEach(t => {
     const cb = t.querySelector("input");
     t.classList.toggle("checked", cb.checked);
