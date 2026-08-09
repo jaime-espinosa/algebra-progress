@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-theme="overworld">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Finish Line — Algebra I</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/theme-overworld.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: var(--sans); line-height: 1.5;
+      padding: 16px; max-width: 780px; margin-inline: auto;
+    }
+    a { color: var(--accent); }
+    h1 { font-size: 1.5rem; margin: .2rem 0; }
+    h2 { font-size: 1.05rem; margin: 1.4rem 0 .5rem; color: var(--accent); border-bottom: 1px solid var(--line); padding-bottom: .3rem; }
+    .mono { font-family: var(--mono); }
+    .sub { color: var(--dim); font-size: .9rem; margin-top: 0; }
+    .panel {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: 6px; padding: 14px 16px; margin: 12px 0;
+    }
+    .banner {
+      background: var(--accent-dim); border: 1px solid var(--accent);
+      border-radius: 6px; padding: 14px 16px; margin: 12px 0;
+    }
+    .banner strong { color: var(--text); }
+    .stats { display: flex; flex-wrap: wrap; gap: 10px; }
+    .stat { flex: 1 1 150px; background: var(--panel-solid); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+    .stat .n { font-size: 1.4rem; font-family: var(--mono); color: var(--accent); }
+    .stat .l { font-size: .78rem; color: var(--dim); text-transform: uppercase; letter-spacing: .04em; }
+    ul.rules { margin: .3rem 0; padding-left: 1.2rem; }
+    ul.rules li { margin: .35rem 0; }
+    /* progress bar */
+    .bar-wrap { background: var(--panel-solid); border: 1px solid var(--line); border-radius: 6px; height: 26px; overflow: hidden; position: relative; margin: 8px 0; }
+    .bar-fill { background: var(--accent); height: 100%; width: 0; transition: width .25s; }
+    .bar-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: .85rem; }
+    /* quest day */
+    .day { border: 1px solid var(--line); border-radius: 6px; margin: 10px 0; background: var(--panel); overflow: hidden; }
+    .day.done { opacity: .6; }
+    .day-head { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 12px; background: var(--panel-solid); border-bottom: 1px solid var(--line); }
+    .day-head .date { font-family: var(--mono); color: var(--accent); font-size: .9rem; }
+    .day-head .tag { font-size: .72rem; color: var(--dim); }
+    .task { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; border-top: 1px solid var(--line); cursor: pointer; }
+    .task:first-child { border-top: none; }
+    .task input { width: 20px; height: 20px; margin-top: 1px; accent-color: var(--accent); flex: none; }
+    .task .t { flex: 1; }
+    .task .sec { display: block; color: var(--faint); font-size: .78rem; }
+    .task.checked .t { text-decoration: line-through; color: var(--dim); }
+    .pill { font-size: .68rem; padding: 1px 7px; border-radius: 10px; border: 1px solid var(--line); color: var(--dim); }
+    .pill.s1 { color: var(--warn); border-color: var(--warn); }
+    .pill.s2 { color: var(--accent); border-color: var(--accent); }
+    .foot { color: var(--faint); font-size: .8rem; margin-top: 24px; text-align: center; }
+    .reset { background: none; border: 1px solid var(--line); color: var(--dim); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: .78rem; }
+  </style>
+</head>
+<body>
+  <p class="sub mono">algebra_quest // finish line</p>
+  <h1>🏁 Mark's Finish-Line Plan</h1>
+  <p class="sub">Goal: finish Algebra I with a <strong>B or better</strong> — Semester 1, Semester 2, and overall. Course closes <strong>Aug 25</strong>.</p>
+
+  <div class="banner">
+    <strong>The one thing that matters:</strong> the assignments you haven't started turn into <em>zeros</em> on Aug 25. Finishing them is what keeps your grade a B. Turn everything in and aim for <strong>80%+</strong> on each — do that and you land a B comfortably.
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n">87%</div><div class="l">Sem 1 now</div></div>
+    <div class="stat"><div class="n">94%</div><div class="l">Sem 2 (work done)</div></div>
+    <div class="stat"><div class="n">27</div><div class="l">Items left</div></div>
+    <div class="stat"><div class="n">2 / day</div><div class="l">Pace to finish</div></div>
+  </div>
+
+  <h2>Your progress</h2>
+  <div class="bar-wrap"><div id="bar" class="bar-fill"></div><div id="barlabel" class="bar-label">0 / 27 done</div></div>
+  <p class="sub" id="pacenote"></p>
+
+  <h2>The rules for a B</h2>
+  <div class="panel">
+    <ul class="rules">
+      <li><strong>Finish all 27 items.</strong> A blank item = 0. Completion is 90% of the battle.</li>
+      <li><strong>Aim 80%+ on each.</strong> Use the Practice Quizzes and the site's games/labs to warm up before an assignment.</li>
+      <li><strong>Two items a day.</strong> Check them off below — it saves automatically on this device.</li>
+      <li><strong>Sem 1 first (only 5 left), then Sem 2 in order.</strong> Section 6 (Data Analysis) is the biggest gap — it's the whole back half.</li>
+      <li><strong>If you score below 70% and a retake is allowed, redo it.</strong> Those extra points are the easiest B insurance.</li>
+    </ul>
+  </div>
+
+  <h2>The daily quest log <button class="reset" id="reset">reset checks</button></h2>
+  <div id="log"></div>
+
+  <p class="foot">Buffer: Aug 23–25 left open for retakes and teacher grading. You've got this. ⛏️</p>
+
+<script>
+const PLAN = [
+  { date: "Sat Aug 9",  tag: "Sem 1 cleanup", tasks: [
+    ["s1","Assignment Section 5 Lesson 3","Sem 1 · Linear Functions"],
+    ["s1","End of Section Assignment: Section 5","Sem 1 · Linear Functions"] ] },
+  { date: "Sun Aug 10", tag: "Sem 1 cleanup", tasks: [
+    ["s1","Assignment Section 6 Lesson 1","Sem 1 · Piecewise Functions"],
+    ["s1","Assignment Section 6 Lesson 3","Sem 1 · Piecewise Functions"] ] },
+  { date: "Mon Aug 11", tag: "Sem 1 done → Sem 2 start", tasks: [
+    ["s1","End of Section Assignment: Section 6","Sem 1 · Piecewise Functions"],
+    ["s2","Assignment: Geometric Sequences","Sem 2 · Exponential Functions"] ] },
+  { date: "Tue Aug 12", tag: "Exponential → Quadratics", tasks: [
+    ["s2","End of Section Assignment: Exponential Functions","Sem 2 · Exponential Functions"],
+    ["s2","Assignment: Quadratic Functions (Introduction)","Sem 2 · Quadratic Functions"] ] },
+  { date: "Wed Aug 13", tag: "Quadratics", tasks: [
+    ["s2","Assignment: Quadratic Functions (Transformations)","Sem 2 · Quadratic Functions"],
+    ["s2","Assignment: Modeling with Quadratic Functions","Sem 2 · Quadratic Functions"] ] },
+  { date: "Thu Aug 14", tag: "Quadratics → Solving", tasks: [
+    ["s2","End of Section Assignment: Quadratic Functions","Sem 2 · Quadratic Functions"],
+    ["s2","Assignment: Solve by Graphing","Sem 2 · Solving Quadratic Equations"] ] },
+  { date: "Fri Aug 15", tag: "Solving Quadratics", tasks: [
+    ["s2","Assignment: Solve using Quadratic Formula","Sem 2 · Solving Quadratic Equations"],
+    ["s2","Assignment: Solve Non-Linear Systems","Sem 2 · Solving Quadratic Equations"] ] },
+  { date: "Sat Aug 16", tag: "Solving → Radical", tasks: [
+    ["s2","End of Section Assignment: Solve Quadratic Equations","Sem 2 · Solving Quadratic Equations"],
+    ["s2","Assignment: Graphing Radical Functions","Sem 2 · Radical Functions"] ] },
+  { date: "Sun Aug 17", tag: "Radical → Rational", tasks: [
+    ["s2","End of Section Assignment: Radical Functions","Sem 2 · Radical Functions"],
+    ["s2","Assignment: Multiply and Divide Rational Expressions","Sem 2 · Rational Expressions"] ] },
+  { date: "Mon Aug 18", tag: "Rational Expressions", tasks: [
+    ["s2","Assignment: Add and Subtract Rational Expressions","Sem 2 · Rational Expressions"],
+    ["s2","Assignment: Solve Rational Equations","Sem 2 · Rational Expressions"] ] },
+  { date: "Tue Aug 19", tag: "Rational → Data Analysis", tasks: [
+    ["s2","End of Section Assignment: Rational Expressions","Sem 2 · Rational Expressions"],
+    ["s2","Activity: Curve Fitting","Sem 2 · Data Analysis"] ] },
+  { date: "Wed Aug 20", tag: "Data Analysis", tasks: [
+    ["s2","Assignment: Categorical Data","Sem 2 · Data Analysis"],
+    ["s2","Assignment: Univariate Statistics","Sem 2 · Data Analysis"] ] },
+  { date: "Thu Aug 21", tag: "Data Analysis", tasks: [
+    ["s2","Assignment: Bivariate Data","Sem 2 · Data Analysis"],
+    ["s2","End of Section Assignment: Data Analysis","Sem 2 · Data Analysis"] ] },
+  { date: "Fri Aug 22", tag: "Final push", tasks: [
+    ["s2","Section 6 Final Test — study first, then take it","Sem 2 · Data Analysis"] ] }
+];
+
+const KEY = "finishPlan.v1";
+const state = JSON.parse(localStorage.getItem(KEY) || "{}");
+const log = document.getElementById("log");
+let idSeq = 0;
+const ids = [];
+
+for (const day of PLAN) {
+  const el = document.createElement("div");
+  el.className = "day";
+  const head = document.createElement("div");
+  head.className = "day-head";
+  head.innerHTML = `<span class="date">${day.date}</span><span class="tag">${day.tag}</span>`;
+  el.appendChild(head);
+  for (const [sem, title, sec] of day.tasks) {
+    const id = "t" + (idSeq++);
+    ids.push(id);
+    const row = document.createElement("label");
+    row.className = "task";
+    row.innerHTML =
+      `<input type="checkbox" data-id="${id}" ${state[id] ? "checked" : ""}>` +
+      `<span class="t">${title}<span class="sec">${sec}</span></span>` +
+      `<span class="pill ${sem}">${sem === "s1" ? "Sem 1" : "Sem 2"}</span>`;
+    el.appendChild(row);
+  }
+  log.appendChild(el);
+}
+
+function refresh() {
+  let done = 0;
+  for (const id of ids) if (state[id]) done++;
+  const pct = Math.round((done / ids.length) * 100);
+  document.getElementById("bar").style.width = pct + "%";
+  document.getElementById("barlabel").textContent = `${done} / ${ids.length} done  (${pct}%)`;
+  const left = ids.length - done;
+  document.getElementById("pacenote").textContent = left === 0
+    ? "🎉 Everything's in. That's your B — nice work."
+    : `${left} left. Keep the 2-a-day pace and you're done by Aug 22, with days to spare.`;
+  document.querySelectorAll(".task").forEach(t => {
+    const cb = t.querySelector("input");
+    t.classList.toggle("checked", cb.checked);
+    t.closest(".day");
+  });
+  document.querySelectorAll(".day").forEach(d => {
+    const all = [...d.querySelectorAll("input")].every(i => i.checked);
+    d.classList.toggle("done", all);
+  });
+}
+
+log.addEventListener("change", e => {
+  const id = e.target.dataset.id;
+  if (!id) return;
+  state[id] = e.target.checked;
+  localStorage.setItem(KEY, JSON.stringify(state));
+  refresh();
+});
+
+document.getElementById("reset").addEventListener("click", () => {
+  if (!confirm("Clear all your checkmarks?")) return;
+  for (const id of ids) delete state[id];
+  localStorage.setItem(KEY, JSON.stringify(state));
+  document.querySelectorAll(".task input").forEach(i => (i.checked = false));
+  refresh();
+});
+
+refresh();
+</script>
+</body>
+</html>
