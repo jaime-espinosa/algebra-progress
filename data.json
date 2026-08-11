@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-11T11:30:00-07:00",
+  "generatedAt": "2026-08-11T12:01:07-07:00",
   "scrapeOk": true,
   "deadline": {
     "date": "2026-08-15",
@@ -1243,7 +1243,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-14",
           "rowIndex": 66,
-          "ourTarget": "2026-08-11",
+          "ourTarget": "2026-08-12",
           "gradable": true
         }
       ]
@@ -1256,9 +1256,9 @@
       "letter": "A",
       "pointsEarned": 821.83,
       "pointsPossible": 880,
-      "gradableDone": 28,
+      "gradableDone": 33,
       "gradableTotal": 41,
-      "allDone": 90,
+      "allDone": 95,
       "allTotal": 103,
       "lmsStart": "2026-06-30",
       "lmsEnd": "2026-08-25",
@@ -1289,7 +1289,7 @@
           "name": "Radical Functions",
           "percent": 95.23,
           "letter": "A",
-          "complete": false
+          "complete": true
         },
         {
           "number": 5,
@@ -1303,7 +1303,7 @@
           "name": "Data Analysis",
           "percent": 83.07,
           "letter": "B",
-          "complete": false
+          "complete": true
         }
       ],
       "activities": [
@@ -1608,7 +1608,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-10",
           "rowIndex": 17,
-          "ourTarget": "2026-08-12",
+          "ourTarget": "2026-08-13",
           "gradable": true
         },
         {
@@ -1675,7 +1675,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-11",
           "rowIndex": 21,
-          "ourTarget": "2026-08-12",
+          "ourTarget": "2026-08-13",
           "gradable": true
         },
         {
@@ -1871,12 +1871,12 @@
           "title": "Assignment: Solve using Quadratic Formula",
           "sectionNumber": 3,
           "sectionName": "Solving Quadratic Equations",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-17",
           "rowIndex": 33,
-          "ourTarget": "2026-08-13",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1907,7 +1907,7 @@
           "submittedDate": null,
           "lmsDue": "2026-07-18",
           "rowIndex": 35,
-          "ourTarget": "2026-08-13",
+          "ourTarget": "2026-08-14",
           "gradable": true
         },
         {
@@ -1933,12 +1933,12 @@
           "title": "End Of Section Assignment: Solve Quadratic Equations",
           "sectionNumber": 3,
           "sectionName": "Solving Quadratic Equations",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-19",
           "rowIndex": 37,
-          "ourTarget": "2026-08-13",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1964,12 +1964,12 @@
           "title": "Assignment: Graphing Radical Functions",
           "sectionNumber": 4,
           "sectionName": "Radical Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-20",
           "rowIndex": 39,
-          "ourTarget": "2026-08-14",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -2103,12 +2103,12 @@
           "title": "End of Section Assignment: Radical Functions",
           "sectionNumber": 4,
           "sectionName": "Radical Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-24",
           "rowIndex": 47,
-          "ourTarget": "2026-08-14",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -2350,12 +2350,12 @@
           "title": "Assignment: Univariate Statistics",
           "sectionNumber": 6,
           "sectionName": "Data Analysis",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-31",
           "rowIndex": 61,
-          "ourTarget": "2026-08-14",
+          "ourTarget": null,
           "gradable": true
         },
         {
