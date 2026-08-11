@@ -1,319 +1,2108 @@
 {
-  "generatedAt": "2026-08-11T22:02:08.801Z",
+  "generatedAt": "2026-08-11T22:32:29.123Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-11T22:02:08.800Z",
+      "parsedAt": "2026-08-11T22:32:29.122Z",
       "reportedTotalSeconds": 345180,
       "days": [
         {
           "date": "2026-08-11",
           "reportedSeconds": 1456,
+          "entries": [
+            {
+              "title": "End of Section Assignment: Section 6 Section 6 - Piecewise Functions",
+              "startTime": "12:46 PM",
+              "seconds": 203,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 3 Section 6 - Piecewise Functions",
+              "startTime": "12:45 PM",
+              "seconds": 22,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 1 Section 6 - Piecewise Functions",
+              "startTime": "12:44 PM",
+              "seconds": 75,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 5 Section 5 - Linear Functions",
+              "startTime": "12:26 PM",
+              "seconds": 1038,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 3 Section 5 - Linear Functions",
+              "startTime": "12:24 PM",
+              "seconds": 118,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 5,
           "sumSeconds": 1456,
           "credibleSeconds": 1456,
           "idleSuspectCount": 0,
-          "longestSeconds": 1038,
           "totalsAgree": true
         },
         {
           "date": "2026-08-09",
           "reportedSeconds": 3368,
+          "entries": [
+            {
+              "title": "Assignment Section 6 Lesson 1 Section 6 - Piecewise Functions",
+              "startTime": "2:08 PM",
+              "seconds": 131,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 1 Section 6 - Piecewise Functions",
+              "startTime": "12:45 PM",
+              "seconds": 3005,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 1 Section 6 - Piecewise Functions",
+              "startTime": "12:41 PM",
+              "seconds": 10,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 3 Section 6 - Piecewise Functions",
+              "startTime": "12:39 PM",
+              "seconds": 6,
+              "idleSuspect": false
+            },
+            {
+              "title": "Tell us what you think!",
+              "startTime": "12:36 PM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 5 Section 5 - Linear Functions",
+              "startTime": "12:33 PM",
+              "seconds": 212,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 6,
           "sumSeconds": 3368,
           "credibleSeconds": 3368,
           "idleSuspectCount": 0,
-          "longestSeconds": 3005,
           "totalsAgree": true
         },
         {
           "date": "2026-08-05",
           "reportedSeconds": 609,
+          "entries": [
+            {
+              "title": "End of Section Assignment: Section 6 Section 6 - Piecewise Functions",
+              "startTime": "9:39 PM",
+              "seconds": 267,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 3 Section 6 - Piecewise Functions",
+              "startTime": "9:39 PM",
+              "seconds": 9,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 1 Section 6 - Piecewise Functions",
+              "startTime": "9:38 PM",
+              "seconds": 57,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 5 Section 5 - Linear Functions",
+              "startTime": "9:33 PM",
+              "seconds": 251,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 3 Section 5 - Linear Functions",
+              "startTime": "9:33 PM",
+              "seconds": 25,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 5,
           "sumSeconds": 609,
           "credibleSeconds": 609,
           "idleSuspectCount": 0,
-          "longestSeconds": 267,
           "totalsAgree": true
         },
         {
           "date": "2026-07-26",
           "reportedSeconds": 7,
+          "entries": [
+            {
+              "title": "Contacting your Teacher",
+              "startTime": "2:38 PM",
+              "seconds": 7,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 1,
           "sumSeconds": 7,
           "credibleSeconds": 7,
           "idleSuspectCount": 0,
-          "longestSeconds": 7,
           "totalsAgree": true
         },
         {
           "date": "2026-07-25",
           "reportedSeconds": 12300,
+          "entries": [
+            {
+              "title": "Section 6 Final Test Section 6 - Piecewise Functions",
+              "startTime": "5:59 PM",
+              "seconds": 58,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 6 Final Test Section 6 - Piecewise Functions",
+              "startTime": "4:32 PM",
+              "seconds": 2278,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 6 Final Test Section 6 - Piecewise Functions",
+              "startTime": "10:25 AM",
+              "seconds": 7080,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 6 Final Test Section 6 - Piecewise Functions",
+              "startTime": "9:49 AM",
+              "seconds": 1803,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Absolute Value Graphs Section 6 - Piecewise Functions",
+              "startTime": "9:37 AM",
+              "seconds": 112,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Absolute Value Graphs Section 6 - Piecewise Functions",
+              "startTime": "9:20 AM",
+              "seconds": 981,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 3 Section 5 - Linear Functions",
+              "startTime": "9:19 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 3 Section 6 - Piecewise Functions",
+              "startTime": "9:19 AM",
+              "seconds": 17,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 8,
           "sumSeconds": 12331,
           "credibleSeconds": 12331,
           "idleSuspectCount": 0,
-          "longestSeconds": 7080,
           "totalsAgree": true
         },
         {
           "date": "2026-07-24",
           "reportedSeconds": 37140,
+          "entries": [
+            {
+              "title": "Assignment Section 6 Lesson 3 Section 6 - Piecewise Functions",
+              "startTime": "3:43 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 3 Section 6 - Piecewise Functions",
+              "startTime": "10:16 AM",
+              "seconds": 645,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 3 Section 6 - Piecewise Functions",
+              "startTime": "10:16 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 3 Section 6 - Piecewise Functions",
+              "startTime": "12:07 AM",
+              "seconds": 36480,
+              "idleSuspect": true
+            }
+          ],
           "entryCount": 4,
           "sumSeconds": 37130,
           "credibleSeconds": 650,
           "idleSuspectCount": 1,
-          "longestSeconds": 36480,
           "totalsAgree": true
         },
         {
           "date": "2026-07-23",
           "reportedSeconds": 25140,
+          "entries": [
+            {
+              "title": "Practice Quiz: More Piecewise Functions Section 6 - Piecewise Functions",
+              "startTime": "10:57 PM",
+              "seconds": 4080,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: More Piecewise Functions Section 6 - Piecewise Functions",
+              "startTime": "10:10 PM",
+              "seconds": 2844,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 2 Section 6 - Piecewise Functions",
+              "startTime": "10:06 PM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 2 Section 6 - Piecewise Functions",
+              "startTime": "9:37 PM",
+              "seconds": 1202,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 2 Section 6 - Piecewise Functions",
+              "startTime": "7:33 PM",
+              "seconds": 1803,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Absolute Value Graphs Section 6 - Piecewise Functions",
+              "startTime": "7:32 PM",
+              "seconds": 11,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 2 Section 6 - Piecewise Functions",
+              "startTime": "6:53 PM",
+              "seconds": 41,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Modeling Linear Functions Section 6 - Piecewise Functions",
+              "startTime": "4:14 PM",
+              "seconds": 659,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Absolute Value Equations and Inequalities Section 6 - Piecewise Functions",
+              "startTime": "4:09 PM",
+              "seconds": 291,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 6 Lesson 1 Section 6 - Piecewise Functions",
+              "startTime": "3:37 PM",
+              "seconds": 1905,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Absolute Value Graphs Section 6 - Piecewise Functions",
+              "startTime": "3:08 PM",
+              "seconds": 1729,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Absolute Value Graphs Section 6 - Piecewise Functions",
+              "startTime": "3:04 PM",
+              "seconds": 226,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Section 6 - Piecewise Functions",
+              "startTime": "3:04 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 3 Section 5 - Linear Functions",
+              "startTime": "1:55 PM",
+              "seconds": 3900,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 5 Section 5 - Linear Functions",
+              "startTime": "1:55 PM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 5 Final Test Section 5 - Linear Functions",
+              "startTime": "12:53 PM",
+              "seconds": 1703,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 3 Section 5 - Linear Functions",
+              "startTime": "12:31 PM",
+              "seconds": 1334,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation: Course and Platform Navigation",
+              "startTime": "12:30 PM",
+              "seconds": 8,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 2 Final Test Section 2 - Linear Equations and Inequalities",
+              "startTime": "11:15 AM",
+              "seconds": 3303,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 19,
           "sumSeconds": 25058,
           "credibleSeconds": 25058,
           "idleSuspectCount": 0,
-          "longestSeconds": 4080,
           "totalsAgree": true
         },
         {
           "date": "2026-07-22",
           "reportedSeconds": 31500,
+          "entries": [
+            {
+              "title": "Section 2 Final Test Section 2 - Linear Equations and Inequalities",
+              "startTime": "8:27 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 2 - Linear Equations and Inequalities",
+              "startTime": "8:27 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 4 Section 5 - Linear Functions",
+              "startTime": "2:53 PM",
+              "seconds": 19980,
+              "idleSuspect": true
+            },
+            {
+              "title": "Assignment Section 5 Lesson 4 Section 5 - Linear Functions",
+              "startTime": "1:41 PM",
+              "seconds": 4200,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 3 Section 5 - Linear Functions",
+              "startTime": "1:41 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Arithmetic Sequences Section 5 - Linear Functions",
+              "startTime": "11:39 AM",
+              "seconds": 7200,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 3 Section 5 - Linear Functions",
+              "startTime": "11:38 AM",
+              "seconds": 28,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 3 Section 5 - Linear Functions",
+              "startTime": "1:47 AM",
+              "seconds": 78,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 8,
           "sumSeconds": 31496,
           "credibleSeconds": 11516,
           "idleSuspectCount": 1,
-          "longestSeconds": 19980,
           "totalsAgree": true
         },
         {
           "date": "2026-07-21",
           "reportedSeconds": 27840,
+          "entries": [
+            {
+              "title": "Lesson 4: Arithmetic Sequences Section 5 - Linear Functions",
+              "startTime": "10:21 PM",
+              "seconds": 317,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 3 Section 5 - Linear Functions",
+              "startTime": "10:21 PM",
+              "seconds": 13,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 2 Section 5 - Linear Functions",
+              "startTime": "9:44 PM",
+              "seconds": 2165,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Transformations of Linear Functions Section 5 - Linear Functions",
+              "startTime": "5:19 PM",
+              "seconds": 5700,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Transformations of Linear Functions Section 5 - Linear Functions",
+              "startTime": "4:35 PM",
+              "seconds": 441,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 2 Section 5 - Linear Functions",
+              "startTime": "4:35 PM",
+              "seconds": 14,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Writing Linear Functions Section 5 - Linear Functions",
+              "startTime": "3:40 PM",
+              "seconds": 322,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Area Model Algebra Section 4 - Introduction to Functions",
+              "startTime": "3:14 PM",
+              "seconds": 1527,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Writing Linear Functions Section 5 - Linear Functions",
+              "startTime": "2:54 PM",
+              "seconds": 1195,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Area Model Algebra Section 4 - Introduction to Functions",
+              "startTime": "2:52 PM",
+              "seconds": 120,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 1 Section 5 - Linear Functions",
+              "startTime": "2:52 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 1 Section 5 - Linear Functions",
+              "startTime": "2:12 PM",
+              "seconds": 10,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Area Model Algebra Section 4 - Introduction to Functions",
+              "startTime": "12:53 PM",
+              "seconds": 4740,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 1 Section 5 - Linear Functions",
+              "startTime": "9:52 AM",
+              "seconds": 10860,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 4 Final Test Section 4 - Introduction to Functions",
+              "startTime": "9:51 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 4 Lesson 4 Section 4 - Introduction to Functions",
+              "startTime": "9:42 AM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 4 Final Test Section 4 - Introduction to Functions",
+              "startTime": "9:42 AM",
+              "seconds": 10,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 5 Lesson 1 Section 5 - Linear Functions",
+              "startTime": "9:08 AM",
+              "seconds": 359,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 18,
           "sumSeconds": 27805,
           "credibleSeconds": 27805,
           "idleSuspectCount": 0,
-          "longestSeconds": 10860,
           "totalsAgree": true
         },
         {
           "date": "2026-07-20",
           "reportedSeconds": 26940,
+          "entries": [
+            {
+              "title": "Practice Quiz: Modeling Linear Functions Section 5 - Linear Functions",
+              "startTime": "9:57 PM",
+              "seconds": 1348,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Modeling Linear Functions Section 5 - Linear Functions",
+              "startTime": "9:43 PM",
+              "seconds": 311,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Section 5 - Linear Functions",
+              "startTime": "9:43 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 4 Final Test Section 4 - Introduction to Functions",
+              "startTime": "8:23 PM",
+              "seconds": 1522,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 4 Section 4 - Introduction to Functions",
+              "startTime": "7:25 PM",
+              "seconds": 1825,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 4 Final Test Section 4 - Introduction to Functions",
+              "startTime": "7:25 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 4 Lesson 4 Section 4 - Introduction to Functions",
+              "startTime": "5:40 PM",
+              "seconds": 4980,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Modeling with Functions Section 4 - Introduction to Functions",
+              "startTime": "5:25 PM",
+              "seconds": 871,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Modeling with Functions Section 4 - Introduction to Functions",
+              "startTime": "5:16 PM",
+              "seconds": 547,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 4 Lesson 3 Section 4 - Introduction to Functions",
+              "startTime": "2:32 PM",
+              "seconds": 4020,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Area Model Algebra Section 4 - Introduction to Functions",
+              "startTime": "2:27 PM",
+              "seconds": 288,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Function Builder Section 4 - Introduction to Functions",
+              "startTime": "2:00 PM",
+              "seconds": 1568,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Section 3 - Systems of Equations and Inequalities",
+              "startTime": "2:00 PM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 5 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "1:27 PM",
+              "seconds": 1942,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Operations on Functions Section 4 - Introduction to Functions",
+              "startTime": "1:15 PM",
+              "seconds": 716,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Operations on Functions Section 4 - Introduction to Functions",
+              "startTime": "12:40 PM",
+              "seconds": 414,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Area Model Algebra Section 4 - Introduction to Functions",
+              "startTime": "12:34 PM",
+              "seconds": 247,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 3 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "12:06 PM",
+              "seconds": 1646,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Area Model Algebra Section 4 - Introduction to Functions",
+              "startTime": "12:01 PM",
+              "seconds": 289,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 3 Final Test Section 3 - Systems of Equations and Inequalities",
+              "startTime": "11:35 AM",
+              "seconds": 1587,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Area Model Algebra Section 4 - Introduction to Functions",
+              "startTime": "11:35 AM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 5 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "11:35 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Area Model Algebra Section 4 - Introduction to Functions",
+              "startTime": "11:26 AM",
+              "seconds": 496,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Analyzing Functions Section 4 - Introduction to Functions",
+              "startTime": "11:21 AM",
+              "seconds": 335,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Analyzing Functions Section 4 - Introduction to Functions",
+              "startTime": "11:18 AM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 4 Lesson 2 Section 4 - Introduction to Functions",
+              "startTime": "10:23 AM",
+              "seconds": 955,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 4 Lesson 2 Section 4 - Introduction to Functions",
+              "startTime": "10:18 AM",
+              "seconds": 49,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Analyzing Functions Section 4 - Introduction to Functions",
+              "startTime": "10:03 AM",
+              "seconds": 911,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 28,
           "sumSeconds": 26890,
           "credibleSeconds": 26890,
           "idleSuspectCount": 0,
-          "longestSeconds": 4980,
           "totalsAgree": true
         },
         {
           "date": "2026-07-19",
           "reportedSeconds": 2,
+          "entries": [
+            {
+              "title": "Lesson 2: Analyzing Functions Section 4 - Introduction to Functions",
+              "startTime": "5:49 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 1,
           "sumSeconds": 2,
           "credibleSeconds": 2,
           "idleSuspectCount": 0,
-          "longestSeconds": 2,
           "totalsAgree": true
         },
         {
           "date": "2026-07-18",
           "reportedSeconds": 12780,
+          "entries": [
+            {
+              "title": "Assignment Section 4 Lesson 1 Section 4 - Introduction to Functions",
+              "startTime": "8:49 PM",
+              "seconds": 3166,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Relations and Functions Section 4 - Introduction to Functions",
+              "startTime": "1:28 PM",
+              "seconds": 9600,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 5 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "1:28 PM",
+              "seconds": 38,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 3,
           "sumSeconds": 12804,
           "credibleSeconds": 12804,
           "idleSuspectCount": 0,
-          "longestSeconds": 9600,
           "totalsAgree": true
         },
         {
           "date": "2026-07-15",
           "reportedSeconds": 5160,
+          "entries": [
+            {
+              "title": "Lesson 1: Relations and Functions Section 4 - Introduction to Functions",
+              "startTime": "8:27 PM",
+              "seconds": 1805,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Function Builder Section 4 - Introduction to Functions",
+              "startTime": "8:22 PM",
+              "seconds": 288,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Section 4 - Introduction to Functions",
+              "startTime": "8:21 PM",
+              "seconds": 36,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 3 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "8:18 PM",
+              "seconds": 67,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 3 Final Test Section 3 - Systems of Equations and Inequalities",
+              "startTime": "8:18 PM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 5 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "7:27 PM",
+              "seconds": 2970,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 6,
           "sumSeconds": 5170,
           "credibleSeconds": 5170,
           "idleSuspectCount": 0,
-          "longestSeconds": 2970,
           "totalsAgree": true
         },
         {
           "date": "2026-07-14",
           "reportedSeconds": 2594,
+          "entries": [
+            {
+              "title": "Practice Quiz: Systems of Inequalities Section 3 - Systems of Equations and Inequalities",
+              "startTime": "7:31 PM",
+              "seconds": 600,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 5: Systems of Inequalities Section 3 - Systems of Equations and Inequalities",
+              "startTime": "7:24 PM",
+              "seconds": 451,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 5 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "7:24 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Systems of Inequalities Section 3 - Systems of Equations and Inequalities",
+              "startTime": "6:58 PM",
+              "seconds": 1541,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 4,
           "sumSeconds": 2594,
           "credibleSeconds": 2594,
           "idleSuspectCount": 0,
-          "longestSeconds": 1541,
           "totalsAgree": true
         },
         {
           "date": "2026-07-10",
           "reportedSeconds": 18240,
+          "entries": [
+            {
+              "title": "Assignment Section 3 Lesson 4 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "1:37 PM",
+              "seconds": 4500,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Solve by Elimination Section 3 - Systems of Equations and Inequalities",
+              "startTime": "12:18 PM",
+              "seconds": 4680,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Solving Systems by Elimination Section 3 - Systems of Equations and Inequalities",
+              "startTime": "11:46 AM",
+              "seconds": 1940,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 3 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "11:30 AM",
+              "seconds": 951,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Solve by Substitution Section 3 - Systems of Equations and Inequalities",
+              "startTime": "10:28 AM",
+              "seconds": 3274,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Graphing Lines Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:28 AM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Solving Systems by Substitution Section 3 - Systems of Equations and Inequalities",
+              "startTime": "10:20 AM",
+              "seconds": 509,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Graphing Lines Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:19 AM",
+              "seconds": 63,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 2 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "10:04 AM",
+              "seconds": 901,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Graphing Lines Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:04 AM",
+              "seconds": 13,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Solve by Graphing Section 3 - Systems of Equations and Inequalities",
+              "startTime": "9:58 AM",
+              "seconds": 365,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Graphing Lines Section 2 - Linear Equations and Inequalities",
+              "startTime": "9:45 AM",
+              "seconds": 755,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 1 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "9:40 AM",
+              "seconds": 276,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 13,
           "sumSeconds": 18232,
           "credibleSeconds": 18232,
           "idleSuspectCount": 0,
-          "longestSeconds": 4680,
           "totalsAgree": true
         },
         {
           "date": "2026-07-09",
           "reportedSeconds": 12180,
+          "entries": [
+            {
+              "title": "Practice Quiz: Solutions to Systems Of Equations Section 3 - Systems of Equations and Inequalities",
+              "startTime": "3:47 PM",
+              "seconds": 3017,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 1 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "3:47 PM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Solutions to Systems Of Equations Section 3 - Systems of Equations and Inequalities",
+              "startTime": "3:47 PM",
+              "seconds": 17,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 5 Section 2 - Linear Equations and Inequalities",
+              "startTime": "2:56 PM",
+              "seconds": 1485,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Graphing Lines Section 2 - Linear Equations and Inequalities",
+              "startTime": "2:13 PM",
+              "seconds": 2574,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 2 Section 2 - Linear Equations and Inequalities",
+              "startTime": "2:05 PM",
+              "seconds": 486,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 5 Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:48 PM",
+              "seconds": 1208,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:41 PM",
+              "seconds": 454,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:37 PM",
+              "seconds": 156,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Two Variable Inequalities Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:34 AM",
+              "seconds": 741,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 4 Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:33 AM",
+              "seconds": 23,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Graphing Lines Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:23 AM",
+              "seconds": 601,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 4 Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:23 AM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Two Variable Linear Equations Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:23 AM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 4 Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:14 AM",
+              "seconds": 513,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Two Variable Linear Equations Section 2 - Linear Equations and Inequalities",
+              "startTime": "9:59 AM",
+              "seconds": 930,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 16,
           "sumSeconds": 12218,
           "credibleSeconds": 12218,
           "idleSuspectCount": 0,
-          "longestSeconds": 3017,
           "totalsAgree": true
         },
         {
           "date": "2026-07-08",
           "reportedSeconds": 13440,
+          "entries": [
+            {
+              "title": "Activity: Graphing Lines Section 2 - Linear Equations and Inequalities",
+              "startTime": "4:40 PM",
+              "seconds": 1875,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 3 Section 2 - Linear Equations and Inequalities",
+              "startTime": "4:02 PM",
+              "seconds": 2236,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Literal Equations Section 2 - Linear Equations and Inequalities",
+              "startTime": "3:29 PM",
+              "seconds": 267,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Literal Equations Section 2 - Linear Equations and Inequalities",
+              "startTime": "3:27 PM",
+              "seconds": 8,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 2 Section 2 - Linear Equations and Inequalities",
+              "startTime": "2:44 PM",
+              "seconds": 1786,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Solve Compound Inequalities Section 2 - Linear Equations and Inequalities",
+              "startTime": "2:35 PM",
+              "seconds": 532,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:53 PM",
+              "seconds": 1670,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 4 Section 1 - Algebra Basics",
+              "startTime": "1:52 PM",
+              "seconds": 74,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 3 Section 1 - Algebra Basics",
+              "startTime": "1:51 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 1 Section 1 - Algebra Basics",
+              "startTime": "1:43 PM",
+              "seconds": 353,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 1 Final Test Section 1 - Algebra Basics",
+              "startTime": "1:42 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 4 Section 1 - Algebra Basics",
+              "startTime": "1:21 PM",
+              "seconds": 1254,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Solving Equations and Inequalities Section 1 - Algebra Basics",
+              "startTime": "12:03 PM",
+              "seconds": 35,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:01 PM",
+              "seconds": 87,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 2 Section 2 - Linear Equations and Inequalities",
+              "startTime": "11:57 AM",
+              "seconds": 74,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Two Variable Inequalities Section 2 - Linear Equations and Inequalities",
+              "startTime": "11:57 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 1 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "11:55 AM",
+              "seconds": 27,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 3 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "11:55 AM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Solving Systems by Graphing Section 3 - Systems of Equations and Inequalities",
+              "startTime": "11:41 AM",
+              "seconds": 783,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 5: Two Variable Inequalities Section 2 - Linear Equations and Inequalities",
+              "startTime": "11:10 AM",
+              "seconds": 1893,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Solutions to Systems Of Equations Section 3 - Systems of Equations and Inequalities",
+              "startTime": "11:01 AM",
+              "seconds": 518,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:50 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 22,
           "sumSeconds": 13486,
           "credibleSeconds": 13486,
           "idleSuspectCount": 0,
-          "longestSeconds": 2236,
           "totalsAgree": true
         },
         {
           "date": "2026-07-07",
           "reportedSeconds": 7380,
+          "entries": [
+            {
+              "title": "Practice Quiz: Solutions to Systems Of Equations Section 3 - Systems of Equations and Inequalities",
+              "startTime": "12:52 PM",
+              "seconds": 7380,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:52 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 2,
           "sumSeconds": 7382,
           "credibleSeconds": 7382,
           "idleSuspectCount": 0,
-          "longestSeconds": 7380,
           "totalsAgree": true
         },
         {
           "date": "2026-07-06",
           "reportedSeconds": 15660,
+          "entries": [
+            {
+              "title": "End of Section Assignment: Section 2 Section 2 - Linear Equations and Inequalities",
+              "startTime": "7:24 PM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Solutions to Systems Of Equations Section 3 - Systems of Equations and Inequalities",
+              "startTime": "12:00 PM",
+              "seconds": 5640,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 2 Final Test Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:00 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Solutions to Systems Of Equations Section 3 - Systems of Equations and Inequalities",
+              "startTime": "9:50 AM",
+              "seconds": 7800,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 2 Section 2 - Linear Equations and Inequalities",
+              "startTime": "9:15 AM",
+              "seconds": 2086,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "9:11 AM",
+              "seconds": 119,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 6,
           "sumSeconds": 15655,
           "credibleSeconds": 15655,
           "idleSuspectCount": 0,
-          "longestSeconds": 7800,
           "totalsAgree": true
         },
         {
           "date": "2026-07-05",
           "reportedSeconds": 4800,
+          "entries": [
+            {
+              "title": "End of Section Assignment: Section 2 Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:08 PM",
+              "seconds": 3042,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 2 Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:01 PM",
+              "seconds": 27,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 2 Final Test Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:59 PM",
+              "seconds": 84,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 5: Two Variable Inequalities Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:51 PM",
+              "seconds": 449,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 5: Two Variable Inequalities Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:31 PM",
+              "seconds": 1142,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 2 Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:31 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Solve Compound Inequalities Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:31 PM",
+              "seconds": 24,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "12:29 PM",
+              "seconds": 55,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 8,
           "sumSeconds": 4825,
           "credibleSeconds": 4825,
           "idleSuspectCount": 0,
-          "longestSeconds": 3042,
           "totalsAgree": true
         },
         {
           "date": "2026-07-04",
           "reportedSeconds": 4920,
+          "entries": [
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "2:03 PM",
+              "seconds": 1819,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "11:31 AM",
+              "seconds": 357,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "11:27 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:49 AM",
+              "seconds": 1040,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:33 AM",
+              "seconds": 83,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:23 AM",
+              "seconds": 115,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Graphing Lines Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:23 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:14 AM",
+              "seconds": 583,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "9:58 AM",
+              "seconds": 918,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "9:58 AM",
+              "seconds": 7,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 10,
           "sumSeconds": 4928,
           "credibleSeconds": 4928,
           "idleSuspectCount": 0,
-          "longestSeconds": 1819,
           "totalsAgree": true
         },
         {
           "date": "2026-07-03",
           "reportedSeconds": 4860,
+          "entries": [
+            {
+              "title": "Lesson 4: Two Variable Linear Equations Section 2 - Linear Equations and Inequalities",
+              "startTime": "4:08 PM",
+              "seconds": 606,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "4:07 PM",
+              "seconds": 8,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Literal Equations Section 2 - Linear Equations and Inequalities",
+              "startTime": "2:05 PM",
+              "seconds": 2157,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 2 Section 2 - Linear Equations and Inequalities",
+              "startTime": "2:04 PM",
+              "seconds": 8,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Solve Compound Inequalities Section 2 - Linear Equations and Inequalities",
+              "startTime": "2:04 PM",
+              "seconds": 34,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Solve Compound Inequalities Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:51 PM",
+              "seconds": 749,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 2 Lesson 1 Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:44 PM",
+              "seconds": 436,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:44 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation: Course and Platform Navigation",
+              "startTime": "1:44 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 4 Section 1 - Algebra Basics",
+              "startTime": "1:31 PM",
+              "seconds": 727,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 4 Section 1 - Algebra Basics",
+              "startTime": "1:29 PM",
+              "seconds": 24,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:09 PM",
+              "seconds": 6,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:06 PM",
+              "seconds": 46,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:06 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:05 PM",
+              "seconds": 49,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:03 PM",
+              "seconds": 41,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 16,
           "sumSeconds": 4901,
           "credibleSeconds": 4901,
           "idleSuspectCount": 0,
-          "longestSeconds": 2157,
           "totalsAgree": true
         },
         {
           "date": "2026-07-02",
           "reportedSeconds": 8040,
+          "entries": [
+            {
+              "title": "Lesson 1: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:38 AM",
+              "seconds": 2610,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "8:32 AM",
+              "seconds": 5400,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 2,
           "sumSeconds": 8010,
           "credibleSeconds": 8010,
           "idleSuspectCount": 0,
-          "longestSeconds": 5400,
           "totalsAgree": true
         },
         {
           "date": "2026-07-01",
           "reportedSeconds": 7320,
+          "entries": [
+            {
+              "title": "Lesson 1: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "10:00 AM",
+              "seconds": 7320,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 1,
           "sumSeconds": 7320,
           "credibleSeconds": 7320,
           "idleSuspectCount": 0,
-          "longestSeconds": 7320,
           "totalsAgree": true
         },
         {
           "date": "2026-06-30",
           "reportedSeconds": 2,
+          "entries": [
+            {
+              "title": "Lesson 1: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "8:44 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 1,
           "sumSeconds": 2,
           "credibleSeconds": 2,
           "idleSuspectCount": 0,
-          "longestSeconds": 2,
           "totalsAgree": true
         },
         {
           "date": "2026-06-29",
           "reportedSeconds": 11340,
+          "entries": [
+            {
+              "title": "Lesson 1: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "1:16 PM",
+              "seconds": 4140,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Multi-Step Solutions Section 2 - Linear Equations and Inequalities",
+              "startTime": "11:56 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Section 2 - Linear Equations and Inequalities",
+              "startTime": "11:55 AM",
+              "seconds": 35,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 2 - Linear Equations and Inequalities",
+              "startTime": "11:55 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 1 Section 1 - Algebra Basics",
+              "startTime": "11:31 AM",
+              "seconds": 1437,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 1 Final Test Section 1 - Algebra Basics",
+              "startTime": "11:04 AM",
+              "seconds": 1649,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 4 Section 1 - Algebra Basics",
+              "startTime": "10:11 AM",
+              "seconds": 3152,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Solving Equations and Inequalities Section 1 - Algebra Basics",
+              "startTime": "9:57 AM",
+              "seconds": 855,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Solve by Graphing Section 3 - Systems of Equations and Inequalities",
+              "startTime": "9:57 AM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Solving Systems by Graphing Section 3 - Systems of Equations and Inequalities",
+              "startTime": "9:56 AM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 1 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "9:56 AM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Solutions to Systems Of Equations Section 3 - Systems of Equations and Inequalities",
+              "startTime": "9:56 AM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Solutions to Systems Of Equations Section 3 - Systems of Equations and Inequalities",
+              "startTime": "9:56 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Section 3 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "9:56 AM",
+              "seconds": 6,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 3 - Systems of Equations and Inequalities",
+              "startTime": "9:55 AM",
+              "seconds": 42,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation: Course and Platform Navigation",
+              "startTime": "9:55 AM",
+              "seconds": 5,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 16,
           "sumSeconds": 11349,
           "credibleSeconds": 11349,
           "idleSuspectCount": 0,
-          "longestSeconds": 4140,
           "totalsAgree": true
         },
         {
           "date": "2026-06-26",
           "reportedSeconds": 7560,
+          "entries": [
+            {
+              "title": "Assignment Section 1 Lesson 4 Section 1 - Algebra Basics",
+              "startTime": "2:33 PM",
+              "seconds": 137,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Solving Equations and Inequalities Section 1 - Algebra Basics",
+              "startTime": "2:33 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 4 Section 1 - Algebra Basics",
+              "startTime": "1:19 PM",
+              "seconds": 4380,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Solving Equations and Inequalities Section 1 - Algebra Basics",
+              "startTime": "12:38 PM",
+              "seconds": 2482,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Equality Explorer Section 1 - Algebra Basics",
+              "startTime": "12:28 PM",
+              "seconds": 549,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 5,
           "sumSeconds": 7550,
           "credibleSeconds": 7550,
           "idleSuspectCount": 0,
-          "longestSeconds": 4380,
           "totalsAgree": true
         },
         {
           "date": "2026-06-25",
           "reportedSeconds": 12480,
+          "entries": [
+            {
+              "title": "Lesson 4: Solving Equations and Inequalities Section 1 - Algebra Basics",
+              "startTime": "1:55 PM",
+              "seconds": 1665,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Solving Equations and Inequalities Section 1 - Algebra Basics",
+              "startTime": "1:42 PM",
+              "seconds": 601,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 3 Section 1 - Algebra Basics",
+              "startTime": "1:38 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "1:38 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 3 Section 1 - Algebra Basics",
+              "startTime": "11:43 AM",
+              "seconds": 3600,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Solving Equations and Inequalities Section 1 - Algebra Basics",
+              "startTime": "11:22 AM",
+              "seconds": 698,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Solving Equations and Inequalities Section 1 - Algebra Basics",
+              "startTime": "10:59 AM",
+              "seconds": 1244,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Solving Equations and Inequalities Section 1 - Algebra Basics",
+              "startTime": "10:57 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 3 Section 1 - Algebra Basics",
+              "startTime": "9:40 AM",
+              "seconds": 4620,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "9:39 AM",
+              "seconds": 45,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 10,
           "sumSeconds": 12480,
           "credibleSeconds": 12480,
           "idleSuspectCount": 0,
-          "longestSeconds": 4620,
           "totalsAgree": true
         },
         {
           "date": "2026-06-24",
           "reportedSeconds": 7860,
+          "entries": [
+            {
+              "title": "Practice Quiz: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "2:17 PM",
+              "seconds": 67,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Algebra - Past and Present! Section 1 - Algebra Basics",
+              "startTime": "1:29 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Essential Vocabulary Section 1 - Algebra Basics",
+              "startTime": "1:29 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "1:29 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "1:29 PM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 3 Lesson 1 Section 3 - Systems of Equations and Inequalities",
+              "startTime": "1:27 PM",
+              "seconds": 6,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 3 Section 1 - Algebra Basics",
+              "startTime": "11:03 AM",
+              "seconds": 3960,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "10:00 AM",
+              "seconds": 3720,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 8,
           "sumSeconds": 7770,
           "credibleSeconds": 7770,
           "idleSuspectCount": 0,
-          "longestSeconds": 3960,
           "totalsAgree": true
         },
         {
           "date": "2026-06-23",
           "reportedSeconds": 5280,
+          "entries": [
+            {
+              "title": "Practice Quiz: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "1:38 PM",
+              "seconds": 1999,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "1:27 PM",
+              "seconds": 670,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "11:36 AM",
+              "seconds": 2650,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 3,
           "sumSeconds": 5319,
           "credibleSeconds": 5319,
           "idleSuspectCount": 0,
-          "longestSeconds": 2650,
           "totalsAgree": true
         },
         {
           "date": "2026-06-22",
           "reportedSeconds": 16320,
+          "entries": [
+            {
+              "title": "Lesson 3: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "3:12 PM",
+              "seconds": 26,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 2 Section 1 - Algebra Basics",
+              "startTime": "3:12 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "3:12 PM",
+              "seconds": 6,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Expressions and Equations Section 1 - Algebra Basics",
+              "startTime": "3:05 PM",
+              "seconds": 17,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment Section 1 Lesson 2 Section 1 - Algebra Basics",
+              "startTime": "2:49 PM",
+              "seconds": 957,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Essential Vocabulary Section 1 - Algebra Basics",
+              "startTime": "1:44 PM",
+              "seconds": 3900,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Essential Vocabulary Section 1 - Algebra Basics",
+              "startTime": "1:41 PM",
+              "seconds": 188,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Essential Vocabulary Section 1 - Algebra Basics",
+              "startTime": "1:28 PM",
+              "seconds": 616,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Essential Vocabulary Section 1 - Algebra Basics",
+              "startTime": "11:19 AM",
+              "seconds": 7020,
+              "idleSuspect": false
+            },
+            {
+              "title": "Practice Quiz: Algebra Past and Present Section 1 - Algebra Basics",
+              "startTime": "11:17 AM",
+              "seconds": 119,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Algebra - Past and Present! Section 1 - Algebra Basics",
+              "startTime": "11:04 AM",
+              "seconds": 774,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Section 1 - Algebra Basics",
+              "startTime": "11:04 AM",
+              "seconds": 14,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 1 - Algebra Basics",
+              "startTime": "11:04 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation Quiz: Are you ready to take this course online?",
+              "startTime": "10:59 AM",
+              "seconds": 265,
+              "idleSuspect": false
+            },
+            {
+              "title": "Grading Policy and Tips on Improving Your Scores Getting Started",
+              "startTime": "10:59 AM",
+              "seconds": 22,
+              "idleSuspect": false
+            },
+            {
+              "title": "Course Syllabus and Requirements Getting Started",
+              "startTime": "10:59 AM",
+              "seconds": 17,
+              "idleSuspect": false
+            },
+            {
+              "title": "Getting Started",
+              "startTime": "10:58 AM",
+              "seconds": 43,
+              "idleSuspect": false
+            },
+            {
+              "title": "Course Syllabus and Requirements Getting Started",
+              "startTime": "10:57 AM",
+              "seconds": 60,
+              "idleSuspect": false
+            },
+            {
+              "title": "Welcome to Algebra I Semester 1 ! Getting Started",
+              "startTime": "10:57 AM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Getting Started",
+              "startTime": "10:57 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Welcome to Algebra I Semester 1 ! Getting Started",
+              "startTime": "10:57 AM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Course Syllabus and Requirements Getting Started",
+              "startTime": "10:57 AM",
+              "seconds": 6,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation Quiz: Are you ready to take this course online?",
+              "startTime": "10:57 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Grading Policy and Tips on Improving Your Scores Getting Started",
+              "startTime": "10:56 AM",
+              "seconds": 10,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation Quiz: Are you ready to take this course online?",
+              "startTime": "10:56 AM",
+              "seconds": 1,
+              "idleSuspect": false
+            },
+            {
+              "title": "Red Comet's Plagiarism Policy Getting Started",
+              "startTime": "10:56 AM",
+              "seconds": 6,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation Quiz: Are you ready to take this course online?",
+              "startTime": "10:56 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Code Of Conduct and Acceptable Use Policy Getting Started",
+              "startTime": "10:56 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation Quiz: Are you ready to take this course online?",
+              "startTime": "10:56 AM",
+              "seconds": 1,
+              "idleSuspect": false
+            },
+            {
+              "title": "Contacting your Teacher",
+              "startTime": "10:56 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation Quiz: Are you ready to take this course online?",
+              "startTime": "10:54 AM",
+              "seconds": 103,
+              "idleSuspect": false
+            },
+            {
+              "title": "Contacting your Teacher",
+              "startTime": "10:31 AM",
+              "seconds": 1426,
+              "idleSuspect": false
+            },
+            {
+              "title": "Code Of Conduct and Acceptable Use Policy Getting Started",
+              "startTime": "10:30 AM",
+              "seconds": 20,
+              "idleSuspect": false
+            },
+            {
+              "title": "Red Comet's Plagiarism Policy Getting Started",
+              "startTime": "10:30 AM",
+              "seconds": 19,
+              "idleSuspect": false
+            },
+            {
+              "title": "Grading Policy and Tips on Improving Your Scores Getting Started",
+              "startTime": "10:29 AM",
+              "seconds": 49,
+              "idleSuspect": false
+            },
+            {
+              "title": "Course Syllabus and Requirements Getting Started",
+              "startTime": "10:28 AM",
+              "seconds": 80,
+              "idleSuspect": false
+            },
+            {
+              "title": "Welcome to Algebra I Semester 1 ! Getting Started",
+              "startTime": "10:27 AM",
+              "seconds": 31,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation: Course and Platform Navigation",
+              "startTime": "10:19 AM",
+              "seconds": 476,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 38,
           "sumSeconds": 16304,
           "credibleSeconds": 16304,
           "idleSuspectCount": 0,
-          "longestSeconds": 7020,
           "totalsAgree": true
         }
       ],
@@ -324,157 +2113,1150 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-11T22:02:08.801Z",
+      "parsedAt": "2026-08-11T22:32:29.123Z",
       "reportedTotalSeconds": 183240,
       "days": [
         {
           "date": "2026-08-11",
           "reportedSeconds": 4920,
+          "entries": [
+            {
+              "title": "End of Section Assignment: Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "12:50 PM",
+              "seconds": 269,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "12:23 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "12:19 PM",
+              "seconds": 231,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Transformations) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:18 PM",
+              "seconds": 38,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Modeling with Quadratic functions Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:17 PM",
+              "seconds": 83,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Quadratic Functions Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:08 PM",
+              "seconds": 510,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 3 - Solving Quadratic Equations Algebra I Semester 2",
+              "startTime": "12:08 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Introduction) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:03 PM",
+              "seconds": 296,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve by Graphing Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "12:02 PM",
+              "seconds": 42,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve Non-Linear Systems Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "12:00 PM",
+              "seconds": 72,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Graphing Radical Functions Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "11:53 AM",
+              "seconds": 404,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Radical Functions Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "11:42 AM",
+              "seconds": 669,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve using Quadratic Formula Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "11:38 AM",
+              "seconds": 198,
+              "idleSuspect": false
+            },
+            {
+              "title": "End Of Section Assignment: Solve Quadratic Equations Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "11:36 AM",
+              "seconds": 79,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Univariate Statistics Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:22 AM",
+              "seconds": 803,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Data Analysis Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:22 AM",
+              "seconds": 1141,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 6 - Data Analysis Algebra I Semester 2",
+              "startTime": "10:22 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "10:05 AM",
+              "seconds": 101,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 18,
           "sumSeconds": 4943,
           "credibleSeconds": 4943,
           "idleSuspectCount": 0,
-          "longestSeconds": 1141,
           "totalsAgree": true
         },
         {
           "date": "2026-08-09",
           "reportedSeconds": 10020,
+          "entries": [
+            {
+              "title": "Tell us what you think!",
+              "startTime": "11:46 AM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 6 Final Test Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:21 AM",
+              "seconds": 559,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Data Analysis Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:17 AM",
+              "seconds": 209,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Curve Fitting Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:13 AM",
+              "seconds": 219,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Bivariate Data Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:42 AM",
+              "seconds": 1045,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Bivariate Data Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:36 AM",
+              "seconds": 327,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Univariate Statistics Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:28 AM",
+              "seconds": 505,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Univariate Statistics Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:23 AM",
+              "seconds": 310,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation: Course and Platform Navigation",
+              "startTime": "10:22 AM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Categorical Data Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:05 AM",
+              "seconds": 1011,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Categorical Data Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "9:12 AM",
+              "seconds": 601,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Categorical Data Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "9:04 AM",
+              "seconds": 456,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "9:04 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "8:24 AM",
+              "seconds": 2400,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve Rational Equations Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "8:03 AM",
+              "seconds": 1224,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Add and Subtract Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "7:55 AM",
+              "seconds": 479,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Multiply and Divide Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "7:45 AM",
+              "seconds": 595,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "7:44 AM",
+              "seconds": 74,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 18,
           "sumSeconds": 10028,
           "credibleSeconds": 10028,
           "idleSuspectCount": 0,
-          "longestSeconds": 2400,
           "totalsAgree": true
         },
         {
           "date": "2026-08-06",
           "reportedSeconds": 3780,
+          "entries": [
+            {
+              "title": "Assignment: Solve Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "3:57 PM",
+              "seconds": 398,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "3:57 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Radical Functions Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "3:56 PM",
+              "seconds": 13,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 5 - Rational Expressions Algebra I Semester 2",
+              "startTime": "3:56 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve Radical Equations Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "3:43 PM",
+              "seconds": 542,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Multiply and Divide Radical Expressions Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "3:38 PM",
+              "seconds": 245,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Combining Radical Expressions Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "3:34 PM",
+              "seconds": 249,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Graphing Radical Functions Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "3:33 PM",
+              "seconds": 27,
+              "idleSuspect": false
+            },
+            {
+              "title": "End Of Section Assignment: Solve Quadratic Equations Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "3:29 PM",
+              "seconds": 213,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve Non-Linear Systems Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "3:29 PM",
+              "seconds": 15,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 3 Final Test Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "3:29 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve using Quadratic Formula Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "3:27 PM",
+              "seconds": 131,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve by Square Root Method Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "3:23 PM",
+              "seconds": 191,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "3:13 PM",
+              "seconds": 17,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "3:13 PM",
+              "seconds": 15,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve by Factoring Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "11:31 AM",
+              "seconds": 1125,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Modeling with Quadratic functions Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "11:30 AM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Transformations) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "11:29 AM",
+              "seconds": 16,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Transformations) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "9:09 AM",
+              "seconds": 601,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "9:06 AM",
+              "seconds": 6,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "9:06 AM",
+              "seconds": 19,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 21,
           "sumSeconds": 3837,
           "credibleSeconds": 3837,
           "idleSuspectCount": 0,
-          "longestSeconds": 1125,
           "totalsAgree": true
         },
         {
           "date": "2026-08-05",
           "reportedSeconds": 246,
+          "entries": [
+            {
+              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "9:46 PM",
+              "seconds": 216,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 5 Final Test Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "9:31 PM",
+              "seconds": 30,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 2,
           "sumSeconds": 246,
           "credibleSeconds": 246,
           "idleSuspectCount": 0,
-          "longestSeconds": 216,
           "totalsAgree": true
         },
         {
           "date": "2026-08-04",
           "reportedSeconds": 34980,
+          "entries": [
+            {
+              "title": "Section 5 Final Test Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "6:07 PM",
+              "seconds": 14460,
+              "idleSuspect": true
+            },
+            {
+              "title": "Lesson 4: Solve Rational Equations Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "6:00 PM",
+              "seconds": 378,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Solve Rational Equations Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "5:31 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Add and Subtract Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "4:16 PM",
+              "seconds": 4440,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 4 Final Test Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "4:09 PM",
+              "seconds": 324,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Add and Subtract Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "4:08 PM",
+              "seconds": 70,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 3 Final Test Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "2:10 PM",
+              "seconds": 5220,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "2:07 PM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 3 Final Test Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "1:59 PM",
+              "seconds": 379,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Algebra Tiles - Factoring Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "1:54 PM",
+              "seconds": 267,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Solve by Graphing Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "1:53 PM",
+              "seconds": 7,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 2 Final Test Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:35 PM",
+              "seconds": 3900,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 2 Final Test Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:24 PM",
+              "seconds": 476,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Writing Quadratic functions Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:13 PM",
+              "seconds": 672,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Transformations) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:12 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Introduction) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:12 PM",
+              "seconds": 16,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Solve Quadratics by Graphing Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "12:08 PM",
+              "seconds": 215,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 3 - Solving Quadratic Equations Algebra I Semester 2",
+              "startTime": "12:08 PM",
+              "seconds": 2,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Transformations) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "12:04 PM",
+              "seconds": 133,
+              "idleSuspect": false
+            },
+            {
+              "title": "Activity: Graphing Quadratics Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "11:53 AM",
+              "seconds": 675,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Quadratic functions (Introduction) Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "11:48 AM",
+              "seconds": 284,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "11:48 AM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "11:47 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "End of Section Assignment: Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "10:24 AM",
+              "seconds": 1205,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section 1 Final Test Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "9:56 AM",
+              "seconds": 1643,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "9:55 AM",
+              "seconds": 82,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 26,
           "sumSeconds": 34867,
           "credibleSeconds": 20407,
           "idleSuspectCount": 1,
-          "longestSeconds": 14460,
           "totalsAgree": true
         },
         {
           "date": "2026-08-03",
           "reportedSeconds": 32100,
+          "entries": [
+            {
+              "title": "Assignment: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "2:56 PM",
+              "seconds": 23700,
+              "idleSuspect": true
+            },
+            {
+              "title": "Assignment: Writing Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "2:31 PM",
+              "seconds": 1482,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Writing Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "12:42 PM",
+              "seconds": 1693,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Graphing Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "12:19 PM",
+              "seconds": 1386,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Properties of Exponents Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "11:51 AM",
+              "seconds": 1495,
+              "idleSuspect": false
+            },
+            {
+              "title": "Bivariate Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:34 AM",
+              "seconds": 996,
+              "idleSuspect": false
+            },
+            {
+              "title": "Univariate Statistics: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:22 AM",
+              "seconds": 490,
+              "idleSuspect": false
+            },
+            {
+              "title": "Categorical Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "11:08 AM",
+              "seconds": 842,
+              "idleSuspect": false
+            },
+            {
+              "title": "Categorical Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "9:30 AM",
+              "seconds": 3,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 9,
           "sumSeconds": 32087,
           "credibleSeconds": 8387,
           "idleSuspectCount": 1,
-          "longestSeconds": 23700,
           "totalsAgree": true
         },
         {
           "date": "2026-08-02",
           "reportedSeconds": 28200,
+          "entries": [
+            {
+              "title": "Categorical Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "10:40 PM",
+              "seconds": 9000,
+              "idleSuspect": false
+            },
+            {
+              "title": "Categorical Data: Practice Quiz Algebra I Semester 2 > Section 6 - Data Analysis",
+              "startTime": "6:39 PM",
+              "seconds": 1802,
+              "idleSuspect": false
+            },
+            {
+              "title": "Solve Rational Equations: Practice Test Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "6:34 PM",
+              "seconds": 239,
+              "idleSuspect": false
+            },
+            {
+              "title": "Add and Subtract Rational Expressions: Practice Test Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "6:29 PM",
+              "seconds": 272,
+              "idleSuspect": false
+            },
+            {
+              "title": "Multiply and Divide Rational Expressions: Practice Test Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "6:25 PM",
+              "seconds": 188,
+              "idleSuspect": false
+            },
+            {
+              "title": "Simplify Rational Expressions: Practice Test Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "6:23 PM",
+              "seconds": 111,
+              "idleSuspect": false
+            },
+            {
+              "title": "Solve Radical Equations: Practice Quiz Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "6:19 PM",
+              "seconds": 178,
+              "idleSuspect": false
+            },
+            {
+              "title": "Multiply and Divide Radical Expressions: Practice Quiz Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "6:09 PM",
+              "seconds": 600,
+              "idleSuspect": false
+            },
+            {
+              "title": "Combining Radical Expressions: Practice Quiz Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "6:04 PM",
+              "seconds": 19,
+              "idleSuspect": false
+            },
+            {
+              "title": "Combining Radical Expressions: Practice Quiz Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "10:49 AM",
+              "seconds": 5580,
+              "idleSuspect": false
+            },
+            {
+              "title": "Graphing Radical Functions: Practice Quiz Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "10:37 AM",
+              "seconds": 727,
+              "idleSuspect": false
+            },
+            {
+              "title": "Solve Non-Linear Systems: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "10:19 AM",
+              "seconds": 1031,
+              "idleSuspect": false
+            },
+            {
+              "title": "Solve by Factoring: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "9:53 AM",
+              "seconds": 76,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "9:16 AM",
+              "seconds": 2173,
+              "idleSuspect": false
+            },
+            {
+              "title": "Solve using Quadratic Formula: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "9:04 AM",
+              "seconds": 659,
+              "idleSuspect": false
+            },
+            {
+              "title": "Solve by Square Root Method: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "8:21 AM",
+              "seconds": 2547,
+              "idleSuspect": false
+            },
+            {
+              "title": "Solve by Square Root Method: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "7:29 AM",
+              "seconds": 3005,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 17,
           "sumSeconds": 28207,
           "credibleSeconds": 28207,
           "idleSuspectCount": 0,
-          "longestSeconds": 9000,
           "totalsAgree": true
         },
         {
           "date": "2026-08-01",
           "reportedSeconds": 54060,
+          "entries": [
+            {
+              "title": "Solve by Square Root Method: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "9:30 PM",
+              "seconds": 35400,
+              "idleSuspect": true
+            },
+            {
+              "title": "Solve by Square Root Method: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "8:28 PM",
+              "seconds": 327,
+              "idleSuspect": false
+            },
+            {
+              "title": "Solve by Square Root Method: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "7:14 PM",
+              "seconds": 601,
+              "idleSuspect": false
+            },
+            {
+              "title": "Solve by Factoring: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "5:52 PM",
+              "seconds": 4800,
+              "idleSuspect": false
+            },
+            {
+              "title": "Modeling with Quadratic Functions: Practice Quiz Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "5:42 PM",
+              "seconds": 576,
+              "idleSuspect": false
+            },
+            {
+              "title": "Writing Quadratic Functions: Practice Quiz Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "4:58 PM",
+              "seconds": 2590,
+              "idleSuspect": false
+            },
+            {
+              "title": "Solve by Graphing: Practice Quiz Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "3:43 PM",
+              "seconds": 2321,
+              "idleSuspect": false
+            },
+            {
+              "title": "Quadratic Functions (Transformations): Practice Quiz Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "2:23 PM",
+              "seconds": 3780,
+              "idleSuspect": false
+            },
+            {
+              "title": "Quadratic Functions (Introduction): Practice Quiz Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "1:40 PM",
+              "seconds": 2568,
+              "idleSuspect": false
+            },
+            {
+              "title": "Geometric Sequences: Practice Quiz Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "1:23 PM",
+              "seconds": 990,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 10,
           "sumSeconds": 53953,
           "credibleSeconds": 18553,
           "idleSuspectCount": 1,
-          "longestSeconds": 35400,
           "totalsAgree": true
         },
         {
           "date": "2026-07-31",
           "reportedSeconds": 7920,
+          "entries": [
+            {
+              "title": "Geometric Sequences: Practice Quiz Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "9:09 PM",
+              "seconds": 1799,
+              "idleSuspect": false
+            },
+            {
+              "title": "Writing Exponential Functions: Practice Quiz Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "8:28 PM",
+              "seconds": 2293,
+              "idleSuspect": false
+            },
+            {
+              "title": "Graphing Exponential Functions: Practice Quiz Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "8:10 PM",
+              "seconds": 998,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Properties of Exponents Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "8:01 PM",
+              "seconds": 477,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Multiply and Divide Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "5:11 PM",
+              "seconds": 333,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Simplify Rational Expressions Algebra I Semester 2 > Section 5 - Rational Expressions",
+              "startTime": "5:06 PM",
+              "seconds": 307,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Solve Radical Equations Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "4:59 PM",
+              "seconds": 367,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Multiply and Divide Radical Expressions Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "4:54 PM",
+              "seconds": 306,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Combining Radical Expressions Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "4:48 PM",
+              "seconds": 392,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Graphing Radical Functions Algebra I Semester 2 > Section 4 - Radical Functions",
+              "startTime": "4:41 PM",
+              "seconds": 352,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 5: Solve Non-Linear Systems Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "4:36 PM",
+              "seconds": 316,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 11,
           "sumSeconds": 7940,
           "credibleSeconds": 7940,
           "idleSuspectCount": 0,
-          "longestSeconds": 2293,
           "totalsAgree": true
         },
         {
           "date": "2026-07-29",
           "reportedSeconds": 1761,
+          "entries": [
+            {
+              "title": "Section 1 - Exponential Functions Algebra I Semester 2",
+              "startTime": "10:40 PM",
+              "seconds": 9,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Solve using Quadratic Formula Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "10:02 AM",
+              "seconds": 374,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Solve by Square Root Method Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "9:56 AM",
+              "seconds": 312,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Solve by Factoring Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "9:49 AM",
+              "seconds": 397,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Solve by Graphing Algebra I Semester 2 > Section 3 - Solving Quadratic Equations",
+              "startTime": "9:44 AM",
+              "seconds": 308,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Modeling with Quadratic Functions Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "9:38 AM",
+              "seconds": 361,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 6,
           "sumSeconds": 1761,
           "credibleSeconds": 1761,
           "idleSuspectCount": 0,
-          "longestSeconds": 397,
           "totalsAgree": true
         },
         {
           "date": "2026-07-28",
           "reportedSeconds": 2091,
+          "entries": [
+            {
+              "title": "Lesson 3: Writing Quadratic Functions Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "5:47 PM",
+              "seconds": 331,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Transformations of Quadratic Functions Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "5:41 PM",
+              "seconds": 360,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Introduction to Quadratic Functions Algebra I Semester 2 > Section 2 - Quadratic Functions",
+              "startTime": "5:36 PM",
+              "seconds": 306,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 4: Geometric Sequences Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "5:21 PM",
+              "seconds": 311,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 3: Writing Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "5:13 PM",
+              "seconds": 481,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Graphing Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "5:08 PM",
+              "seconds": 302,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 6,
           "sumSeconds": 2091,
           "credibleSeconds": 2091,
           "idleSuspectCount": 0,
-          "longestSeconds": 481,
           "totalsAgree": true
         },
         {
           "date": "2026-07-27",
           "reportedSeconds": 23,
+          "entries": [
+            {
+              "title": "Lesson 2: Graphing Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "6:17 PM",
+              "seconds": 9,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 2: Graphing Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "12:33 PM",
+              "seconds": 14,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 2,
           "sumSeconds": 23,
           "credibleSeconds": 23,
           "idleSuspectCount": 0,
-          "longestSeconds": 14,
           "totalsAgree": true
         },
         {
           "date": "2026-07-26",
           "reportedSeconds": 1626,
+          "entries": [
+            {
+              "title": "Grading Policy and Tips on Improving Your Scores Getting Started",
+              "startTime": "3:21 PM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Courses Syllabus and Requirements Getting Started",
+              "startTime": "3:21 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Welcome to Algebra I Semester 2! Getting Started",
+              "startTime": "3:21 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Properties of Exponents Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "3:21 PM",
+              "seconds": 6,
+              "idleSuspect": false
+            },
+            {
+              "title": "Assignment: Properties of Exponents Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "3:08 PM",
+              "seconds": 91,
+              "idleSuspect": false
+            },
+            {
+              "title": "Properties of Exponents: Practice Quiz Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "2:53 PM",
+              "seconds": 903,
+              "idleSuspect": false
+            },
+            {
+              "title": "Lesson 1: Properties of Exponents Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "2:46 PM",
+              "seconds": 394,
+              "idleSuspect": false
+            },
+            {
+              "title": "Section Objectives Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "2:46 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            },
+            {
+              "title": "Orientation Quiz: Are you ready to take this course online?",
+              "startTime": "2:39 PM",
+              "seconds": 106,
+              "idleSuspect": false
+            },
+            {
+              "title": "Contacting your Teacher",
+              "startTime": "2:37 PM",
+              "seconds": 111,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 10,
           "sumSeconds": 1626,
           "credibleSeconds": 1626,
           "idleSuspectCount": 0,
-          "longestSeconds": 903,
           "totalsAgree": true
         },
         {
           "date": "2026-07-25",
           "reportedSeconds": 1309,
+          "entries": [
+            {
+              "title": "Contacting your Teacher",
+              "startTime": "5:11 PM",
+              "seconds": 1288,
+              "idleSuspect": false
+            },
+            {
+              "title": "Code Of Conduct and Acceptable Use Policy Getting Started",
+              "startTime": "5:11 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Red Comet's Plagiarism Policy Getting Started",
+              "startTime": "5:11 PM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Grading Policy and Tips on Improving Your Scores Getting Started",
+              "startTime": "5:11 PM",
+              "seconds": 4,
+              "idleSuspect": false
+            },
+            {
+              "title": "Courses Syllabus and Requirements Getting Started",
+              "startTime": "5:11 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            },
+            {
+              "title": "Welcome to Algebra I Semester 2! Getting Started",
+              "startTime": "5:10 PM",
+              "seconds": 3,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 6,
           "sumSeconds": 1309,
           "credibleSeconds": 1309,
           "idleSuspectCount": 0,
-          "longestSeconds": 1288,
           "totalsAgree": true
         },
         {
           "date": "2026-07-03",
           "reportedSeconds": 5,
+          "entries": [
+            {
+              "title": "Welcome to Algebra I Semester 2! Getting Started",
+              "startTime": "12:43 PM",
+              "seconds": 5,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 1,
           "sumSeconds": 5,
           "credibleSeconds": 5,
           "idleSuspectCount": 0,
-          "longestSeconds": 5,
           "totalsAgree": true
         }
       ],
