@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-11T12:01:07-07:00",
+  "generatedAt": "2026-08-11T13:00:59-07:00",
   "scrapeOk": true,
   "deadline": {
     "date": "2026-08-15",
@@ -14,9 +14,9 @@
       "letter": "B",
       "pointsEarned": 978.85,
       "pointsPossible": 1122,
-      "gradableDone": 36,
+      "gradableDone": 41,
       "gradableTotal": 41,
-      "allDone": 100,
+      "allDone": 105,
       "allTotal": 105,
       "lmsStart": "2026-05-19",
       "lmsEnd": "2026-08-25",
@@ -54,14 +54,14 @@
           "name": "Linear Functions",
           "percent": 93.13,
           "letter": "A",
-          "complete": false
+          "complete": true
         },
         {
           "number": 6,
           "name": "Piecewise Functions",
           "percent": 94.94,
           "letter": "A",
-          "complete": false
+          "complete": true
         }
       ],
       "activities": [
@@ -1042,12 +1042,12 @@
           "title": "Assignment Section 5 Lesson 3",
           "sectionNumber": 5,
           "sectionName": "Linear Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-03",
           "rowIndex": 54,
-          "ourTarget": "2026-08-11",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1109,12 +1109,12 @@
           "title": "End of Section Assignment: Section 5",
           "sectionNumber": 5,
           "sectionName": "Linear Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-07",
           "rowIndex": 58,
-          "ourTarget": "2026-08-11",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1140,12 +1140,12 @@
           "title": "Assignment Section 6 Lesson 1",
           "sectionNumber": 6,
           "sectionName": "Piecewise Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-09",
           "rowIndex": 60,
-          "ourTarget": "2026-08-11",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1207,12 +1207,12 @@
           "title": "Assignment Section 6 Lesson 3",
           "sectionNumber": 6,
           "sectionName": "Piecewise Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-12",
           "rowIndex": 64,
-          "ourTarget": "2026-08-11",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1238,12 +1238,12 @@
           "title": "End of Section Assignment: Section 6",
           "sectionNumber": 6,
           "sectionName": "Piecewise Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-14",
           "rowIndex": 66,
-          "ourTarget": "2026-08-12",
+          "ourTarget": null,
           "gradable": true
         }
       ]
@@ -1256,9 +1256,9 @@
       "letter": "A",
       "pointsEarned": 821.83,
       "pointsPossible": 880,
-      "gradableDone": 33,
+      "gradableDone": 41,
       "gradableTotal": 41,
-      "allDone": 95,
+      "allDone": 103,
       "allTotal": 103,
       "lmsStart": "2026-06-30",
       "lmsEnd": "2026-08-25",
@@ -1268,21 +1268,21 @@
           "name": "Exponential Functions",
           "percent": 89.23,
           "letter": "B",
-          "complete": false
+          "complete": true
         },
         {
           "number": 2,
           "name": "Quadratic Functions",
           "percent": 93.81,
           "letter": "A",
-          "complete": false
+          "complete": true
         },
         {
           "number": 3,
           "name": "Solving Quadratic Equations",
           "percent": 99.29,
           "letter": "A",
-          "complete": false
+          "complete": true
         },
         {
           "number": 4,
@@ -1492,12 +1492,12 @@
           "title": "Assignment: Geometric Sequences",
           "sectionNumber": 1,
           "sectionName": "Exponential Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-06",
           "rowIndex": 10,
-          "ourTarget": "2026-08-12",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1523,12 +1523,12 @@
           "title": "End of Section Assignment: Exponential Functions",
           "sectionNumber": 1,
           "sectionName": "Exponential Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-08",
           "rowIndex": 12,
-          "ourTarget": "2026-08-12",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1554,12 +1554,12 @@
           "title": "Assignment: Quadratic functions (Introduction)",
           "sectionNumber": 2,
           "sectionName": "Quadratic Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-09",
           "rowIndex": 14,
-          "ourTarget": "2026-08-12",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1603,12 +1603,12 @@
           "title": "Assignment: Quadratic functions (Transformations)",
           "sectionNumber": 2,
           "sectionName": "Quadratic Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-10",
           "rowIndex": 17,
-          "ourTarget": "2026-08-13",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1670,12 +1670,12 @@
           "title": "Assignment: Modeling with Quadratic functions",
           "sectionNumber": 2,
           "sectionName": "Quadratic Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-11",
           "rowIndex": 21,
-          "ourTarget": "2026-08-13",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1701,12 +1701,12 @@
           "title": "End of Section Assignment: Quadratic Functions",
           "sectionNumber": 2,
           "sectionName": "Quadratic Functions",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-13",
           "rowIndex": 23,
-          "ourTarget": "2026-08-13",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1750,12 +1750,12 @@
           "title": "Assignment: Solve by Graphing",
           "sectionNumber": 3,
           "sectionName": "Solving Quadratic Equations",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-14",
           "rowIndex": 26,
-          "ourTarget": "2026-08-13",
+          "ourTarget": null,
           "gradable": true
         },
         {
@@ -1902,12 +1902,12 @@
           "title": "Assignment: Solve Non-Linear Systems",
           "sectionNumber": 3,
           "sectionName": "Solving Quadratic Equations",
-          "state": "not_started",
+          "state": "submitted_ungraded",
           "score": null,
-          "submittedDate": null,
+          "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-18",
           "rowIndex": 35,
-          "ourTarget": "2026-08-14",
+          "ourTarget": null,
           "gradable": true
         },
         {
