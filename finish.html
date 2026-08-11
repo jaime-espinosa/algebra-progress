@@ -9,24 +9,14 @@
   <link rel="stylesheet" href="css/theme-overworld.css">
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0; background: var(--bg); color: var(--text);
-      font-family: var(--sans); line-height: 1.5;
-      padding: 16px; max-width: 780px; margin-inline: auto;
-    }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.5; padding: 16px; max-width: 820px; margin-inline: auto; }
     a { color: var(--accent); }
     h1 { font-size: 1.5rem; margin: .2rem 0; }
     h2 { font-size: 1.05rem; margin: 1.4rem 0 .5rem; color: var(--accent); border-bottom: 1px solid var(--line); padding-bottom: .3rem; }
     .mono { font-family: var(--mono); }
     .sub { color: var(--dim); font-size: .9rem; margin-top: 0; }
-    .panel {
-      background: var(--panel); border: 1px solid var(--line);
-      border-radius: 6px; padding: 14px 16px; margin: 12px 0;
-    }
-    .banner {
-      background: var(--accent-dim); border: 1px solid var(--accent);
-      border-radius: 6px; padding: 14px 16px; margin: 12px 0;
-    }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; margin: 12px 0; }
+    .banner { background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 6px; padding: 14px 16px; margin: 12px 0; }
     .banner strong { color: var(--text); }
     .stats { display: flex; flex-wrap: wrap; gap: 10px; }
     .stat { flex: 1 1 150px; background: var(--panel-solid); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
@@ -34,11 +24,21 @@
     .stat .l { font-size: .78rem; color: var(--dim); text-transform: uppercase; letter-spacing: .04em; }
     ul.rules { margin: .3rem 0; padding-left: 1.2rem; }
     ul.rules li { margin: .35rem 0; }
-    /* progress bar */
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; margin: 8px 0; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--dim); font-size: .74rem; text-transform: uppercase; letter-spacing: .04em; }
+    td .sec { display: block; color: var(--faint); font-size: .76rem; }
+    tr.heavy td { background: var(--accent-dim); }
+    .impact { color: var(--accent); text-align: right; }
+    .g-yes { color: var(--warn); white-space: nowrap; }
+    .g-likely { color: var(--dim); white-space: nowrap; }
+    .g-no { color: var(--faint); }
+    .redo { font-size: .66rem; padding: 1px 6px; border-radius: 10px; border: 1px solid var(--warn); color: var(--warn); }
+    .scen td:first-child { color: var(--text); }
+    .scen .goal td { background: var(--accent-dim); font-weight: 600; }
     .bar-wrap { background: var(--panel-solid); border: 1px solid var(--line); border-radius: 6px; height: 26px; overflow: hidden; position: relative; margin: 8px 0; }
     .bar-fill { background: var(--accent); height: 100%; width: 0; transition: width .25s; }
     .bar-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: .85rem; }
-    /* quest day */
     .day { border: 1px solid var(--line); border-radius: 6px; margin: 10px 0; background: var(--panel); overflow: hidden; }
     .day.done { opacity: .6; }
     .day-head { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 12px; background: var(--panel-solid); border-bottom: 1px solid var(--line); }
@@ -53,6 +53,7 @@
     .pill { font-size: .68rem; padding: 1px 7px; border-radius: 10px; border: 1px solid var(--line); color: var(--dim); }
     .pill.s1 { color: var(--warn); border-color: var(--warn); }
     .pill.s2 { color: var(--accent); border-color: var(--accent); }
+    .gp { font-size: .66rem; padding: 1px 6px; border-radius: 10px; border: 1px solid var(--warn); color: var(--warn); }
     .foot { color: var(--faint); font-size: .8rem; margin-top: 24px; text-align: center; }
     .reset { background: none; border: 1px solid var(--line); color: var(--dim); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: .78rem; }
   </style>
@@ -60,84 +61,99 @@
 <body>
   <p class="sub mono">algebra_quest // finish line</p>
   <h1>🏁 Mark's Finish-Line Plan</h1>
-  <p class="sub">Goal: finish Algebra I with a <strong>B or better</strong>. Hard deadline <strong>Aug 13</strong> — but this is a <strong>2-day sprint: be done by Aug 10</strong>, then you're clear with 3 days to spare.</p>
+  <p class="sub">Goal: land an <strong>85+ overall</strong> and finish <strong>today</strong>. Hard deadline for grades is <strong>Aug 15</strong>. There are <strong>19 things left</strong> — knock them out in one sitting and you're done.</p>
 
   <div class="banner">
-    <strong>The one thing that matters:</strong> the assignments you haven't started turn into <em>zeros</em>. Finishing them is what keeps your grade a B. This plan clears all <strong>27 items in 2 days — about 13–14 a day.</strong> Heavy, but then you're <em>done</em>. Turn everything in and aim for <strong>83%+</strong> on each (see the scale below).
-  </div>
-
-  <div class="panel">
-    <strong>Seattle Public Schools grade scale</strong> (Policy 2420):
-    A 93 · A− 90 · <strong>B+ 87 · B 83 · B− 80</strong> · C 73 · C− 70 · D 60 · <span style="color:var(--warn)">below 60 = E, no credit</span>.
-    <br><span class="sub">A <strong>B</strong> starts at 83%. You need at least a <strong>D (60%)</strong> to earn credit — so a blank assignment (0%) is what actually hurts you, not a low-but-finished one.</span>
+    <strong>The one thing that matters:</strong> every unfinished item is a <em>zero</em> right now. Those zeros — not low scores — are the only thing dragging you down. If you stop here the grades lock at <strong>Sem 1 78% / Sem 2 73%</strong>. Finish everything at even a rough <strong>60%</strong> and you clear <strong>85 overall</strong>. Aim <strong>85%</strong> and you land around <strong>Sem 1 87% / Sem 2 92%</strong>. <em>(These are Red Comet's own What-If projections — not a guess.)</em>
   </div>
 
   <div class="stats">
     <div class="stat"><div class="n">87%</div><div class="l">Sem 1 now</div></div>
-    <div class="stat"><div class="n">94%</div><div class="l">Sem 2 (work done)</div></div>
-    <div class="stat"><div class="n">27</div><div class="l">Items left</div></div>
-    <div class="stat"><div class="n">~14 / day</div><div class="l">Pace (2-day sprint)</div></div>
+    <div class="stat"><div class="n">90%</div><div class="l">Sem 2 now</div></div>
+    <div class="stat"><div class="n">19</div><div class="l">Items left</div></div>
+    <div class="stat"><div class="n">85+</div><div class="l">Today's target</div></div>
   </div>
 
-  <h2>Your progress</h2>
-  <div class="bar-wrap"><div id="bar" class="bar-fill"></div><div id="barlabel" class="bar-label">0 / 27 done</div></div>
-  <p class="sub" id="pacenote"></p>
+  <h2>What happens at each effort level</h2>
+  <p class="sub">Projected final grade, straight from Red Comet's What-If calculator (all remaining items set to the same score).</p>
+  <table class="scen">
+    <tr><th>If you score…</th><th>Sem 1</th><th>Sem 2</th><th>Overall</th></tr>
+    <tr><td>Nothing — stop now</td><td>78%</td><td>73%</td><td class="mono">75%</td></tr>
+    <tr class="goal"><td>60% on everything</td><td>84%</td><td>86%</td><td class="mono">85% ✅</td></tr>
+    <tr><td>85% on everything</td><td>87%</td><td>92%</td><td class="mono">89%</td></tr>
+    <tr><td>100% on everything</td><td>89%</td><td>95%</td><td class="mono">92%</td></tr>
+  </table>
+  <p class="sub">Sem 1 is the ceiling — only 5 items left, so even a perfect run tops out near 89%. That's fine for an 85 overall. Don't leave anything blank and you're safe.</p>
 
-  <h2>The rules for a B</h2>
+  <h2>Do these first — ranked by grade impact</h2>
+  <p class="sub">"+pts" = how much your final grade moves if you take that one item from 0 to 100%, measured in Red Comet. The <strong>End-of-Section assignments (highlighted)</strong> are worth the most — start there.</p>
+  <table>
+    <tr><th>#</th><th>Sem</th><th>Assignment</th><th>+pts</th><th>Graph?</th></tr>
+      <tr class="heavy"><td class="mono">1</td><td><span class="pill s2">S2</span></td><td>End of Section Assignment: Exponential Functions<span class="sec">Exponential Functions</span></td><td class="mono impact">+3.55</td><td class="g-no">—</td></tr>
+      <tr class="heavy"><td class="mono">2</td><td><span class="pill s2">S2</span></td><td>End of Section Assignment: Quadratic Functions<span class="sec">Quadratic Functions</span></td><td class="mono impact">+3.55</td><td class="g-no">—</td></tr>
+      <tr class="heavy"><td class="mono">3</td><td><span class="pill s1">S1</span></td><td>End of Section Assignment: Section 5<span class="sec">Linear Functions</span></td><td class="mono impact">+3.19</td><td class="g-no">—</td></tr>
+      <tr class="heavy"><td class="mono">4</td><td><span class="pill s2">S2</span></td><td>End of Section Assignment: Data Analysis <span class="redo">redo 0</span><span class="sec">Data Analysis</span></td><td class="mono impact">+2.75</td><td class="g-no">—</td></tr>
+      <tr class="heavy"><td class="mono">5</td><td><span class="pill s2">S2</span></td><td>End of Section Assignment: Radical Functions<span class="sec">Radical Functions</span></td><td class="mono impact">+2.66</td><td class="g-likely">📈 ~</td></tr>
+      <tr class="heavy"><td class="mono">6</td><td><span class="pill s1">S1</span></td><td>End of Section Assignment: Section 6<span class="sec">Piecewise Functions</span></td><td class="mono impact">+2.47</td><td class="g-no">—</td></tr>
+      <tr><td class="mono">7</td><td><span class="pill s1">S1</span></td><td>Assignment Section 5 Lesson 3<span class="sec">Linear Functions</span></td><td class="mono impact">+1.99</td><td class="g-no">—</td></tr>
+      <tr><td class="mono">8</td><td><span class="pill s1">S1</span></td><td>Assignment Section 6 Lesson 1<span class="sec">Piecewise Functions</span></td><td class="mono impact">+1.44</td><td class="g-no">—</td></tr>
+      <tr><td class="mono">9</td><td><span class="pill s1">S1</span></td><td>Assignment Section 6 Lesson 3<span class="sec">Piecewise Functions</span></td><td class="mono impact">+1.44</td><td class="g-no">—</td></tr>
+      <tr class="heavy"><td class="mono">10</td><td><span class="pill s2">S2</span></td><td>End Of Section Assignment: Solve Quadratic Equations<span class="sec">Solving Quadratic Equations</span></td><td class="mono impact">+1.33</td><td class="g-no">—</td></tr>
+      <tr><td class="mono">11</td><td><span class="pill s2">S2</span></td><td>Assignment: Univariate Statistics<span class="sec">Data Analysis</span></td><td class="mono impact">+1.15</td><td class="g-likely">📈 ~</td></tr>
+      <tr><td class="mono">12</td><td><span class="pill s2">S2</span></td><td>Assignment: Geometric Sequences<span class="sec">Exponential Functions</span></td><td class="mono impact">+0.88</td><td class="g-no">—</td></tr>
+      <tr><td class="mono">13</td><td><span class="pill s2">S2</span></td><td>Assignment: Quadratic functions (Introduction)<span class="sec">Quadratic Functions</span></td><td class="mono impact">+0.88</td><td class="g-likely">📈 ~</td></tr>
+      <tr><td class="mono">14</td><td><span class="pill s2">S2</span></td><td>Assignment: Quadratic functions (Transformations)<span class="sec">Quadratic Functions</span></td><td class="mono impact">+0.88</td><td class="g-likely">📈 ~</td></tr>
+      <tr><td class="mono">15</td><td><span class="pill s2">S2</span></td><td>Assignment: Modeling with Quadratic functions<span class="sec">Quadratic Functions</span></td><td class="mono impact">+0.88</td><td class="g-likely">📈 ~</td></tr>
+      <tr><td class="mono">16</td><td><span class="pill s2">S2</span></td><td>Assignment: Solve by Graphing<span class="sec">Solving Quadratic Equations</span></td><td class="mono impact">+0.88</td><td class="g-yes">📈 yes</td></tr>
+      <tr><td class="mono">17</td><td><span class="pill s2">S2</span></td><td>Assignment: Solve Non-Linear Systems<span class="sec">Solving Quadratic Equations</span></td><td class="mono impact">+0.88</td><td class="g-likely">📈 ~</td></tr>
+      <tr><td class="mono">18</td><td><span class="pill s2">S2</span></td><td>Assignment: Graphing Radical Functions<span class="sec">Radical Functions</span></td><td class="mono impact">+0.88</td><td class="g-yes">📈 yes</td></tr>
+      <tr><td class="mono">19</td><td><span class="pill s2">S2</span></td><td>Assignment: Solve using Quadratic Formula<span class="sec">Solving Quadratic Equations</span></td><td class="mono impact">+0.71</td><td class="g-no">—</td></tr>
+  </table>
+  <p class="sub">📈 yes = you'll be graphing. 📈 ~ = likely involves a graph (function families, stats plots). Flags are from the titles — check the lesson to be sure.</p>
+
+  <h2>Get your graph tools ready</h2>
   <div class="panel">
+    <p class="sub">These are the items where you'll want graph paper / Desmos open:</p>
     <ul class="rules">
-      <li><strong>Finish all 27 items.</strong> A blank item = 0, and 0s are the only thing that can drop you below a B. Completion is 90% of the battle.</li>
-      <li><strong>Aim 83%+ on each</strong> (that's the B line). Use the Practice Quizzes and the site's games/labs to warm up before an assignment.</li>
-      <li><strong>Half the list each day — 13–14 items.</strong> Check them off below — it saves automatically on this device. Take short breaks between sections so you don't burn out.</li>
-      <li><strong>Sem 1 first (only 5 left), then Sem 2 in order.</strong> Section 6 (Data Analysis) is the biggest gap — it's the whole back half, and its Final Test is the last thing on Day 2.</li>
-      <li><strong>If you score below 70% and a retake is allowed, redo it.</strong> Those extra points are the easiest B insurance.</li>
+      <li><strong>End of Section Assignment: Radical Functions</strong> <span class="sub">(S2 · likely graphs)</span></li>
+      <li><strong>Assignment: Univariate Statistics</strong> <span class="sub">(S2 · likely graphs)</span></li>
+      <li><strong>Assignment: Quadratic functions (Introduction)</strong> <span class="sub">(S2 · likely graphs)</span></li>
+      <li><strong>Assignment: Quadratic functions (Transformations)</strong> <span class="sub">(S2 · likely graphs)</span></li>
+      <li><strong>Assignment: Modeling with Quadratic functions</strong> <span class="sub">(S2 · likely graphs)</span></li>
+      <li><strong>Assignment: Solve by Graphing</strong> <span class="sub">(S2 · definitely graphs)</span></li>
+      <li><strong>Assignment: Solve Non-Linear Systems</strong> <span class="sub">(S2 · likely graphs)</span></li>
+      <li><strong>Assignment: Graphing Radical Functions</strong> <span class="sub">(S2 · definitely graphs)</span></li>
     </ul>
   </div>
 
-  <h2>The daily quest log <button class="reset" id="reset">reset checks</button></h2>
+  <h2>Your progress</h2>
+  <div class="bar-wrap"><div id="bar" class="bar-fill"></div><div id="barlabel" class="bar-label">0 / 19 done</div></div>
+  <p class="sub" id="pacenote"></p>
+
+  <h2>The rules for an 85</h2>
+  <div class="panel">
+    <ul class="rules">
+      <li><strong>Finish all 19.</strong> A blank = 0, and 0s are the only thing keeping you under 85. Completion is the whole game.</li>
+      <li><strong>Hit the End-of-Section assignments first</strong> — the six highlighted rows are worth ~18 of the points on the board.</li>
+      <li><strong>Aim 85%, but 60% still clears it.</strong> Don't stall on a hard one — a rough finish beats a blank every time. Use the Practice Quizzes and the site games/labs to warm up.</li>
+      <li><strong>One item's already a 0 you can fix</strong> — "End of Section Assignment: Data Analysis" was turned in blank. Redoing it is free points.</li>
+      <li><strong>If you score below 70% and a retake is allowed, redo it.</strong> Easiest insurance there is.</li>
+    </ul>
+  </div>
+
+  <h2>The quest log <button class="reset" id="reset">reset checks</button></h2>
   <div id="log"></div>
 
-  <p class="foot">Two hard days and you're done — finished by Aug 10, a full 3 days before the Aug 13 deadline. Final Test is the very last thing you touch. You've got this. ⛏️</p>
+  <p class="foot">One focused push and you're done — well before the Aug 15 deadline. Heavy hitters first, graphs ready, nothing left blank. You've got this. ⛏️<br><span class="mono" style="font-size:.72rem">report generated 2026-08-11 18:02 UTC</span></p>
 
 <script>
-const PLAN = [
-  { date: "Day 1 · Sat Aug 9", tag: "All of Sem 1 + Sem 2 through Quadratics", tasks: [
-    ["s1","Assignment Section 5 Lesson 3","Sem 1 · Linear Functions"],
-    ["s1","End of Section Assignment: Section 5","Sem 1 · Linear Functions"],
-    ["s1","Assignment Section 6 Lesson 1","Sem 1 · Piecewise Functions"],
-    ["s1","Assignment Section 6 Lesson 3","Sem 1 · Piecewise Functions"],
-    ["s1","End of Section Assignment: Section 6","Sem 1 · Piecewise Functions"],
-    ["s2","Assignment: Geometric Sequences","Sem 2 · Exponential Functions"],
-    ["s2","End of Section Assignment: Exponential Functions","Sem 2 · Exponential Functions"],
-    ["s2","Assignment: Quadratic Functions (Introduction)","Sem 2 · Quadratic Functions"],
-    ["s2","Assignment: Quadratic Functions (Transformations)","Sem 2 · Quadratic Functions"],
-    ["s2","Assignment: Modeling with Quadratic Functions","Sem 2 · Quadratic Functions"],
-    ["s2","End of Section Assignment: Quadratic Functions","Sem 2 · Quadratic Functions"],
-    ["s2","Assignment: Solve by Graphing","Sem 2 · Solving Quadratic Equations"],
-    ["s2","Assignment: Solve using Quadratic Formula","Sem 2 · Solving Quadratic Equations"],
-    ["s2","Assignment: Solve Non-Linear Systems","Sem 2 · Solving Quadratic Equations"] ] },
-  { date: "Day 2 · Sun Aug 10", tag: "Radical → Rational → Data Analysis + Final Test", tasks: [
-    ["s2","End of Section Assignment: Solve Quadratic Equations","Sem 2 · Solving Quadratic Equations"],
-    ["s2","Assignment: Graphing Radical Functions","Sem 2 · Radical Functions"],
-    ["s2","End of Section Assignment: Radical Functions","Sem 2 · Radical Functions"],
-    ["s2","Assignment: Multiply and Divide Rational Expressions","Sem 2 · Rational Expressions"],
-    ["s2","Assignment: Add and Subtract Rational Expressions","Sem 2 · Rational Expressions"],
-    ["s2","Assignment: Solve Rational Equations","Sem 2 · Rational Expressions"],
-    ["s2","End of Section Assignment: Rational Expressions","Sem 2 · Rational Expressions"],
-    ["s2","Activity: Curve Fitting","Sem 2 · Data Analysis"],
-    ["s2","Assignment: Categorical Data","Sem 2 · Data Analysis"],
-    ["s2","Assignment: Univariate Statistics","Sem 2 · Data Analysis"],
-    ["s2","Assignment: Bivariate Data","Sem 2 · Data Analysis"],
-    ["s2","End of Section Assignment: Data Analysis","Sem 2 · Data Analysis"],
-    ["s2","Section 6 Final Test — study first, then take it","Sem 2 · Data Analysis"] ] }
-];
-
-const KEY = "finishPlan.v1";
+const PLAN_ITEMS = [["s2","End of Section Assignment: Exponential Functions","Sem 2 · Exponential Functions","no"],["s2","End of Section Assignment: Quadratic Functions","Sem 2 · Quadratic Functions","no"],["s1","End of Section Assignment: Section 5","Sem 1 · Linear Functions","no"],["s2","End of Section Assignment: Data Analysis","Sem 2 · Data Analysis","no"],["s2","End of Section Assignment: Radical Functions","Sem 2 · Radical Functions","likely"],["s1","End of Section Assignment: Section 6","Sem 1 · Piecewise Functions","no"],["s1","Assignment Section 5 Lesson 3","Sem 1 · Linear Functions","no"],["s1","Assignment Section 6 Lesson 1","Sem 1 · Piecewise Functions","no"],["s1","Assignment Section 6 Lesson 3","Sem 1 · Piecewise Functions","no"],["s2","End Of Section Assignment: Solve Quadratic Equations","Sem 2 · Solving Quadratic Equations","no"],["s2","Assignment: Univariate Statistics","Sem 2 · Data Analysis","likely"],["s2","Assignment: Geometric Sequences","Sem 2 · Exponential Functions","no"],["s2","Assignment: Quadratic functions (Introduction)","Sem 2 · Quadratic Functions","likely"],["s2","Assignment: Quadratic functions (Transformations)","Sem 2 · Quadratic Functions","likely"],["s2","Assignment: Modeling with Quadratic functions","Sem 2 · Quadratic Functions","likely"],["s2","Assignment: Solve by Graphing","Sem 2 · Solving Quadratic Equations","yes"],["s2","Assignment: Solve Non-Linear Systems","Sem 2 · Solving Quadratic Equations","likely"],["s2","Assignment: Graphing Radical Functions","Sem 2 · Radical Functions","yes"],["s2","Assignment: Solve using Quadratic Formula","Sem 2 · Solving Quadratic Equations","no"]];
+const PLAN = [{ date: "Today", tag: "All 19 — heaviest first", tasks: PLAN_ITEMS }];
+const KEY = "finishPlan.v2";
 const state = JSON.parse(localStorage.getItem(KEY) || "{}");
 const log = document.getElementById("log");
 let idSeq = 0;
 const ids = [];
-
 for (const day of PLAN) {
   const el = document.createElement("div");
   el.className = "day";
@@ -145,20 +161,20 @@ for (const day of PLAN) {
   head.className = "day-head";
   head.innerHTML = `<span class="date">${day.date}</span><span class="tag">${day.tag}</span>`;
   el.appendChild(head);
-  for (const [sem, title, sec] of day.tasks) {
+  for (const [sem, title, sec, graph] of day.tasks) {
     const id = "t" + (idSeq++);
     ids.push(id);
     const row = document.createElement("label");
     row.className = "task";
+    const gp = graph === "yes" ? '<span class="gp">📈</span>' : graph === "likely" ? '<span class="gp" style="opacity:.6">📈?</span>' : '';
     row.innerHTML =
       `<input type="checkbox" data-id="${id}" ${state[id] ? "checked" : ""}>` +
-      `<span class="t">${title}<span class="sec">${sec}</span></span>` +
+      `<span class="t">${title}<span class="sec">${sec}</span></span>` + gp +
       `<span class="pill ${sem}">${sem === "s1" ? "Sem 1" : "Sem 2"}</span>`;
     el.appendChild(row);
   }
   log.appendChild(el);
 }
-
 function refresh() {
   let done = 0;
   for (const id of ids) if (state[id]) done++;
@@ -167,19 +183,11 @@ function refresh() {
   document.getElementById("barlabel").textContent = `${done} / ${ids.length} done  (${pct}%)`;
   const left = ids.length - done;
   document.getElementById("pacenote").textContent = left === 0
-    ? "🎉 Everything's in. That's your B — nice work."
-    : `${left} left. Knock out ~half today, the rest tomorrow — done by Aug 10.`;
-  document.querySelectorAll(".task").forEach(t => {
-    const cb = t.querySelector("input");
-    t.classList.toggle("checked", cb.checked);
-    t.closest(".day");
-  });
-  document.querySelectorAll(".day").forEach(d => {
-    const all = [...d.querySelectorAll("input")].every(i => i.checked);
-    d.classList.toggle("done", all);
-  });
+    ? "🎉 Everything's in. That's your 85 — nice work."
+    : `${left} left. Heaviest ones first — don't leave any blank.`;
+  document.querySelectorAll(".task").forEach(t => t.classList.toggle("checked", t.querySelector("input").checked));
+  document.querySelectorAll(".day").forEach(d => d.classList.toggle("done", [...d.querySelectorAll("input")].every(i => i.checked)));
 }
-
 log.addEventListener("change", e => {
   const id = e.target.dataset.id;
   if (!id) return;
@@ -187,7 +195,6 @@ log.addEventListener("change", e => {
   localStorage.setItem(KEY, JSON.stringify(state));
   refresh();
 });
-
 document.getElementById("reset").addEventListener("click", () => {
   if (!confirm("Clear all your checkmarks?")) return;
   for (const id of ids) delete state[id];
@@ -195,7 +202,6 @@ document.getElementById("reset").addEventListener("click", () => {
   document.querySelectorAll(".task input").forEach(i => (i.checked = false));
   refresh();
 });
-
 refresh();
 </script>
 </body>
