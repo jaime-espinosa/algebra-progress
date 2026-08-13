@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-12T15:30:53-07:00",
+  "generatedAt": "2026-08-12T21:01:17-07:00",
   "scrapeOk": true,
   "deadline": {
     "date": "2026-08-15",
@@ -10,10 +10,10 @@
       "id": "sem1",
       "courseId": "264459140",
       "name": "Algebra I Semester 1",
-      "percent": 87.24,
-      "letter": "B",
+      "percent": 78.05,
+      "letter": "C",
       "pointsEarned": 978.85,
-      "pointsPossible": 1122,
+      "pointsPossible": 1254,
       "gradableDone": 41,
       "gradableTotal": 41,
       "allDone": 105,
@@ -52,15 +52,15 @@
         {
           "number": 5,
           "name": "Linear Functions",
-          "percent": 93.13,
-          "letter": "A",
+          "percent": 67.37,
+          "letter": "D",
           "complete": true
         },
         {
           "number": 6,
           "name": "Piecewise Functions",
-          "percent": 94.94,
-          "letter": "A",
+          "percent": 60.93,
+          "letter": "D",
           "complete": true
         }
       ],
@@ -988,8 +988,13 @@
           "title": "Assignment Section 5 Lesson 3",
           "sectionNumber": 5,
           "sectionName": "Linear Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 25,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-03",
           "rowIndex": 54,
@@ -1051,8 +1056,13 @@
           "title": "End of Section Assignment: Section 5",
           "sectionNumber": 5,
           "sectionName": "Linear Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 40,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-07",
           "rowIndex": 58,
@@ -1080,8 +1090,13 @@
           "title": "Assignment Section 6 Lesson 1",
           "sectionNumber": 6,
           "sectionName": "Piecewise Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 18,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-09",
           "rowIndex": 60,
@@ -1143,8 +1158,13 @@
           "title": "Assignment Section 6 Lesson 3",
           "sectionNumber": 6,
           "sectionName": "Piecewise Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 18,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-12",
           "rowIndex": 64,
@@ -1172,8 +1192,13 @@
           "title": "End of Section Assignment: Section 6",
           "sectionNumber": 6,
           "sectionName": "Piecewise Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 31,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-14",
           "rowIndex": 66,
@@ -1185,10 +1210,10 @@
       "id": "sem2",
       "courseId": "264459139",
       "name": "Algebra I Semester 2",
-      "percent": 91.24,
-      "letter": "A",
-      "pointsEarned": 840.33,
-      "pointsPossible": 921,
+      "percent": 76.09,
+      "letter": "C",
+      "pointsEarned": 857.63,
+      "pointsPossible": 1127,
       "gradableDone": 41,
       "gradableTotal": 41,
       "allDone": 103,
@@ -1199,29 +1224,29 @@
         {
           "number": 1,
           "name": "Exponential Functions",
-          "percent": 89.23,
-          "letter": "B",
+          "percent": 64.44,
+          "letter": "D",
           "complete": true
         },
         {
           "number": 2,
           "name": "Quadratic Functions",
-          "percent": 89.8,
-          "letter": "A",
+          "percent": 68.62,
+          "letter": "D",
           "complete": true
         },
         {
           "number": 3,
           "name": "Solving Quadratic Equations",
-          "percent": 99.29,
-          "letter": "A",
+          "percent": 78.64,
+          "letter": "C",
           "complete": true
         },
         {
           "number": 4,
           "name": "Radical Functions",
-          "percent": 95.23,
-          "letter": "A",
+          "percent": 74.07,
+          "letter": "C",
           "complete": true
         },
         {
@@ -1234,7 +1259,7 @@
         {
           "number": 6,
           "name": "Data Analysis",
-          "percent": 76.08,
+          "percent": 70.4,
           "letter": "C",
           "complete": true
         }
@@ -1415,8 +1440,13 @@
           "title": "Assignment: Geometric Sequences",
           "sectionNumber": 1,
           "sectionName": "Exponential Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 10,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-06",
           "rowIndex": 10,
@@ -1444,8 +1474,13 @@
           "title": "End of Section Assignment: Exponential Functions",
           "sectionNumber": 1,
           "sectionName": "Exponential Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 40,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-08",
           "rowIndex": 12,
@@ -1524,8 +1559,13 @@
           "title": "Assignment: Quadratic functions (Transformations)",
           "sectionNumber": 2,
           "sectionName": "Quadratic Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 10,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-10",
           "rowIndex": 17,
@@ -1587,8 +1627,13 @@
           "title": "Assignment: Modeling with Quadratic functions",
           "sectionNumber": 2,
           "sectionName": "Quadratic Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 10,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-11",
           "rowIndex": 21,
@@ -1616,8 +1661,13 @@
           "title": "End of Section Assignment: Quadratic Functions",
           "sectionNumber": 2,
           "sectionName": "Quadratic Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 12.8,
+            "possible": 40,
+            "percent": 32,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-13",
           "rowIndex": 23,
@@ -1662,8 +1712,13 @@
           "title": "Assignment: Solve by Graphing",
           "sectionNumber": 3,
           "sectionName": "Solving Quadratic Equations",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 10,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-14",
           "rowIndex": 26,
@@ -1776,8 +1831,13 @@
           "title": "Assignment: Solve using Quadratic Formula",
           "sectionNumber": 3,
           "sectionName": "Solving Quadratic Equations",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 2.5,
+            "possible": 8,
+            "percent": 31.25,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-17",
           "rowIndex": 33,
@@ -1805,8 +1865,13 @@
           "title": "Assignment: Solve Non-Linear Systems",
           "sectionNumber": 3,
           "sectionName": "Solving Quadratic Equations",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 2,
+            "possible": 10,
+            "percent": 20,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-18",
           "rowIndex": 35,
@@ -1834,8 +1899,13 @@
           "title": "End Of Section Assignment: Solve Quadratic Equations",
           "sectionNumber": 3,
           "sectionName": "Solving Quadratic Equations",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 15,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-19",
           "rowIndex": 37,
@@ -1863,8 +1933,13 @@
           "title": "Assignment: Graphing Radical Functions",
           "sectionNumber": 4,
           "sectionName": "Radical Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 10,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-20",
           "rowIndex": 39,
@@ -1994,8 +2069,13 @@
           "title": "End of Section Assignment: Radical Functions",
           "sectionNumber": 4,
           "sectionName": "Radical Functions",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 30,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-24",
           "rowIndex": 47,
@@ -2227,8 +2307,13 @@
           "title": "Assignment: Univariate Statistics",
           "sectionNumber": 6,
           "sectionName": "Data Analysis",
-          "state": "submitted_ungraded",
-          "score": null,
+          "state": "graded",
+          "score": {
+            "earned": 0,
+            "possible": 13,
+            "percent": 0,
+            "letter": "F"
+          },
           "submittedDate": "2026-08-11",
           "lmsDue": "2026-07-31",
           "rowIndex": 61,
