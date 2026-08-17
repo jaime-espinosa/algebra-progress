@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-17T04:01:13.173Z",
+  "generatedAt": "2026-08-17T04:32:33.090Z",
   "courses": [
     {
       "semesterId": "sem1",
-      "parsedAt": "2026-08-17T04:01:13.167Z",
+      "parsedAt": "2026-08-17T04:32:33.089Z",
       "reportedTotalSeconds": 345180,
       "days": [
         {
@@ -2113,17 +2113,24 @@
     },
     {
       "semesterId": "sem2",
-      "parsedAt": "2026-08-17T04:01:13.173Z",
+      "parsedAt": "2026-08-17T04:32:33.090Z",
       "reportedTotalSeconds": 183240,
       "days": [
         {
           "date": "2026-08-15",
           "reportedSeconds": 36,
+          "entries": [
+            {
+              "title": "End of Section Assignment: Exponential Functions Algebra I Semester 2 > Section 1 - Exponential Functions",
+              "startTime": "11:46 PM",
+              "seconds": 36,
+              "idleSuspect": false
+            }
+          ],
           "entryCount": 1,
           "sumSeconds": 36,
           "credibleSeconds": 36,
           "idleSuspectCount": 0,
-          "longestSeconds": 36,
           "totalsAgree": true
         },
         {
